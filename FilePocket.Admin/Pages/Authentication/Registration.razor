@@ -1,0 +1,58 @@
+﻿@page "/registration"
+
+@using FilePocket.Admin.Models.Authentication
+@using Radzen
+@using Radzen.Blazor
+
+<RadzenRow Gap="0" Class="rz-my-12 rz-mx-auto rz-border-radius-6 rz-shadow-10" Style="width: 100%; max-width: 800px; overflow: hidden;">
+    <RadzenColumn Size="12" SizeMD="6">
+        <RadzenCard Class="rz-shadow-0 rz-border-radius-0 rz-text-align-center rz-p-12" Style="height: 100%; background-color #9921e8; background-image: linear-gradient(315deg, #9921e8 0%, #5f72be 74%);">
+            <RadzenText TextStyle="TextStyle.DisplayH3" TagName="TagName.H2" Class="rz-color-white rz-mb-6">Welcome!</RadzenText>
+            <RadzenText TextStyle="TextStyle.H6" Class="rz-color-white">Manage your files like a pro!</RadzenText>
+        </RadzenCard>
+    </RadzenColumn>
+    <RadzenColumn Size="12" SizeMD="6">
+        <RadzenCard Class="rz-shadow-0 rz-border-radius-0 rz-p-12">
+            <RadzenText TextStyle="TextStyle.H5" TagName="TagName.H2" Class="rz-mb-6">
+                Registration
+            </RadzenText>
+            <RadzenTemplateForm TItem="RegistrationModel" Data=@_registrationModel Submit="OnSubmit">
+                <RadzenStack Gap="0">
+                    <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0">Email</RadzenText>
+                    <RadzenFormField Variant="Variant.Outlined">
+                        <ChildContent>
+                            <RadzenTextBox Name="Email" @bind-Value=@_registrationModel.Email />
+                        </ChildContent>
+                        <Helper>
+                            <RadzenRequiredValidator Component="Email" Text="Email is required." />
+                            <RadzenEmailValidator Component="Email" Text="Provide a valid email address" />
+                        </Helper>
+                    </RadzenFormField>
+                    <br />
+                    <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0">Password</RadzenText>
+                    <RadzenFormField Variant="Variant.Outlined">
+                        <ChildContent>
+                            <RadzenPassword Name="Password" @bind-Value=@_registrationModel.Password />
+                        </ChildContent>
+                        <Helper>                            
+                            <RadzenRequiredValidator Component="Password" Text="Password is required." />
+                        </Helper>
+                    </RadzenFormField>
+                    <br />
+                    <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0">Confirm password</RadzenText>
+                    <RadzenFormField Variant="Variant.Outlined">
+                        <ChildContent>
+                            <RadzenPassword Name="ConfirmPassword" @bind-Value=@_registrationModel.ConfirmPassword />
+                        </ChildContent>
+                        <Helper>
+                            <RadzenRequiredValidator Component="ConfirmPassword" Text="Password confirmation is required." />
+                            <RadzenCompareValidator Visible=@(!string.IsNullOrEmpty(_registrationModel.ConfirmPassword)) Value=@_registrationModel.Password Component="ConfirmPassword" Text="Passwords do not match" />
+                        </Helper>
+                    </RadzenFormField>
+                    <br />
+                    <RadzenButton ButtonType="ButtonType.Submit" Text="Register"></RadzenButton>
+                </RadzenStack>
+            </RadzenTemplateForm>
+        </RadzenCard>
+    </RadzenColumn>
+</RadzenRow>

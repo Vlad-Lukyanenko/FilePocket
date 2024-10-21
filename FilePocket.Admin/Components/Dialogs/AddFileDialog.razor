@@ -1,0 +1,100 @@
+﻿@using FilePocket.Admin.Models.Files
+@using FilePocket.Admin.Models.Storage
+
+
+<RadzenTemplateForm TItem="StorageModel" Data="@_selectedStorage" Style="position: relative">
+    <RadzenStack Gap="2.5rem">
+        <RadzenStack Gap="0.5rem" Style="position: relative">
+            <RadzenDropDown @bind-Value="@_selectedStorage"
+                            Data="@Storages"
+                            TextProperty="@nameof(StorageModel.Name)"
+                            Style="width: 100%; max-width: 400px;"
+                            Name="StorageSelect"
+                            AllowClear=true
+                            Placeholder="Select storage"
+                            Change="HandleStorageChange" 
+                            Disabled="@_inProgress" />
+            <RadzenText class="rz-messages-error" Style="position: absolute; top: 45px;">
+                @(_storageIsSelected ? "" : "Select storage to upload file!")
+            </RadzenText>
+
+        </RadzenStack>
+        <InputFile id="InputFile" OnChange="HandleInputFileChange" style="display: none" />
+        <RadzenStack Gap="0.5rem" Style="position: relative">
+            <RadzenStack Orientation="Orientation.Horizontal"
+                         JustifyContent="JustifyContent.SpaceBetween"
+                         class="controls-container">
+                <RadzenTextBox Disabled
+                               Placeholder="@(_file != null ? _file.File.Name : "File not selected")"
+                               Style="width: 340px" />
+                <RadzenButton id="OpenButton"
+                              ButtonStyle="ButtonStyle.Light"
+                              Icon="folder_open" 
+                              Disabled="@_inProgress" />
+            </RadzenStack>
+        </RadzenStack>
+        <RadzenStack Gap="1rem" Style="position: relative">
+            <RadzenTextBox @bind-Value="_fileName"
+                           @oninput="HandleFileNameInput"
+                           class="form-control"
+                           Disabled="@(_file==null || _inProgress)"
+                           Placeholder="Rename file here if necessary" />
+            <RadzenText class="rz-messages-error" Style="position: absolute; top: 45px;">
+                @(_fileNameIsCorrect ? "" : _fileNameIssueMessage)
+            </RadzenText>
+        </RadzenStack>
+        <RadzenStack Orientation="Orientation.Horizontal"
+                     JustifyContent="JustifyContent.SpaceBetween"
+                     class="controls">
+            <RadzenButton ButtonType="ButtonType.Reset"
+                          Text="Reset"
+                          ButtonStyle="ButtonStyle.Danger"
+                          Shade="Shade.Dark"
+                          Click="HandleReset" 
+                          Disabled="@_inProgress"/>
+            <RadzenButton Text="Submit"
+                          Click="HandleUpload"
+                          Disabled="@_inProgress" />
+        </RadzenStack>
+    </RadzenStack>
+    @if (_inProgress)
+    {
+        <div class="progress-container">
+            <RadzenProgressBarCircular Class="rz-my-12 rz-mx-auto"
+                                       Value="100" ShowValue="false"
+                                       Mode="ProgressBarMode.Indeterminate"
+                                       Size="ProgressBarCircularSize.Large" />
+        </div>
+    }
+</RadzenTemplateForm>
+
+
+<style>
+    .controls button {
+        width: 90px;
+    }
+
+    #OpenButton {
+        display: block;
+        width: 40px !important;
+        border-radius: 50%;
+    }
+    .progress-container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+    }
+</style>
+
+<script>
+    function addListener() {
+        document.getElementById("OpenButton")
+            .addEventListener("click", dispatchClick);
+    }
+
+    function dispatchClick(e) {
+        var event = new MouseEvent("click");
+        document.getElementById("InputFile").dispatchEvent(event);
+    }
+</script>

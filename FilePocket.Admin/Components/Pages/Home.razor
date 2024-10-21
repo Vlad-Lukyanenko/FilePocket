@@ -1,0 +1,33 @@
+﻿@page "/"
+@using FilePocket.Admin.AuthFeatures
+@using Microsoft.AspNetCore.Components.Authorization
+
+<RadzenRow Gap="0" Class="rz-my-12 rz-mx-auto rz-border-radius-6 rz-shadow-10" Style="width: 100%; max-width: 800px; overflow: hidden;">    
+    <RadzenColumn Size="12" SizeMD="6">
+        <RadzenCard Class="rz-shadow-0 rz-border-radius-0 rz-text-align-center rz-p-12" Style="height: 100%; background-color #9921e8; background-image: linear-gradient(315deg, #9921e8 0%, #5f72be 74%);">
+            <RadzenText TextStyle="TextStyle.DisplayH3" TagName="TagName.H2" Class="rz-color-white rz-mb-6">File storage</RadzenText>
+            <RadzenText TextStyle="TextStyle.H6" Class="rz-color-white">The best file management service ever existed!</RadzenText>
+        </RadzenCard>
+    </RadzenColumn>
+    <AuthorizeView>
+        <NotAuthorized>
+            <RadzenColumn Size="12" SizeMD="6">                
+                <RadzenCard Class="rz-shadow-0 rz-border-radius-0 rz-p-12" Style="height: 100%; align-content:center;">
+                    <RadzenText Class="rz-my-5" TextStyle="TextStyle.H5" TagName="TagName.H2">
+                        <RadzenLink Style="color: var(--rz-primary-light)" Icon="login" Path="login" Text="Login" />
+                    </RadzenText>
+                    <RadzenText Class="rz-my-5" TextStyle="TextStyle.H5" TagName="TagName.H2">
+                        <RadzenLink Style="color: var(--rz-primary-light)" Icon="person" Path="registration" Text="Registration" />
+                    </RadzenText>                                                         
+                </RadzenCard>
+            </RadzenColumn>
+        </NotAuthorized>
+        <Authorized>
+            <RadzenColumn Size="12" SizeMD="6">
+                <RadzenCard Class="rz-shadow-0 rz-border-radius-0 rz-p-12" Style="height: 100%;">
+                    <RadzenImage Path="assets/welcome_to_the_app.png" Style="width: 18rem;" />
+                </RadzenCard>
+            </RadzenColumn>
+        </Authorized>
+    </AuthorizeView>      
+</RadzenRow>

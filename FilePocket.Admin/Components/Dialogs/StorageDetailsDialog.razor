@@ -1,0 +1,12 @@
+﻿@using FilePocket.Admin.Models.Storage
+
+<RadzenTemplateForm TItem="StorageModel" Data="Storage">
+    <RadzenStack Gap="2.5rem" Style="position: relative">
+        <RadzenText>
+            <p><strong>Storage name: @Storage.Name</strong></p>
+            <p><strong>Created date: @Storage.DateCreated.ToString("dd.MM.yyyy")</strong></p>
+            <p><strong>Number of files in a Storage: @Storage.NumberOfFiles</strong></p>
+            <p><strong>Size of all files in Storage: @FormatFileSize(Storage.TotalFileSize)</strong></p>
+        </RadzenText>
+    </RadzenStack>
+</RadzenTemplateForm>

@@ -1,0 +1,27 @@
+﻿@using FilePocket.Admin.Models.Storage
+
+<RadzenTemplateForm TItem="AddStorageModel" Data="NewStorage" Submit="InvokeOnSubmit">
+    <RadzenStack Gap="2.5rem" Style="position: relative">
+        <RadzenTextBox @bind-Value="NewStorage.Name" Name="Name" Placeholder="Storage Name" />
+        <RadzenRequiredValidator Component="Name"
+                                 Text="Storage Name is required"
+                                 Style="position: absolute; top: 45px;" />
+        <RadzenCustomValidator Component="Name"
+                               Validator="@(()=>ValidateName())"
+                               Text="Storage with such name already exists"
+                               Style="position: absolute; top: 45px;" />
+        <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween" class="controls">
+            <RadzenButton ButtonType="ButtonType.Reset"
+                          Text="Reset"
+                          ButtonStyle="ButtonStyle.Danger"
+                          Shade="Shade.Dark" />
+            <RadzenButton ButtonType="ButtonType.Submit" Text="Submit" />
+        </RadzenStack>
+    </RadzenStack>
+</RadzenTemplateForm>
+
+<style>
+    .controls button {
+        width: 90px;
+    }
+</style>

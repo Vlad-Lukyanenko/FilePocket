@@ -1,0 +1,15 @@
+﻿<div style="display: flex; flex-direction: column; align-items: center; height: 100%; padding: 0; margin: 0; border: none; background-color: transparent;">
+    @if (!string.IsNullOrEmpty(ImageUrl))
+    {
+        <img src="@ImageUrl" style="width: 100%; height: auto; max-height: 80%; object-fit: contain; border: none; margin: 0;" />
+
+        <div style="text-align: center; margin-top: 10px;">
+            <p>Date Created: @DateCreated.ToString("dd.MM.yyyy HH:mm:ss")</p>
+            <p>File Size: @(Math.Round((FileSize ?? 0) / 1024.0, 1)) MB</p>
+        </div>
+    }
+    else
+    {
+        <p>Image is not found.</p>
+    }
+</div>

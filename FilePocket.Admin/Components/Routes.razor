@@ -1,0 +1,17 @@
+﻿@using FilePocket.Admin.Components.Pages
+@using FilePocket.Admin.Pages.Authentication
+@using Microsoft.AspNetCore.Components.Authorization
+
+<Router AppAssembly="typeof(Program).Assembly">
+    <Found Context="routeData">
+        <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(Layout.MainLayout)">
+            <Authorizing>
+                <RadzenProgressBarCircular Class="rz-my-12 rz-mx-auto" Value="100" ShowValue="false" Mode="ProgressBarMode.Indeterminate" Size="ProgressBarCircularSize.Large" />
+            </Authorizing>
+            <NotAuthorized>
+                <Home />
+            </NotAuthorized>
+        </AuthorizeRouteView>
+        <FocusOnNavigate RouteData="routeData" Selector="h1" />
+    </Found>
+</Router>

@@ -1,0 +1,29 @@
+﻿@using FilePocket.Admin.Models.Files
+@using FilePocket.Admin.Models.Storage
+
+<RadzenStack Gap="2.5rem">
+    <RadzenStack Gap="0.5rem">
+        <RadzenText >
+            <p>You are going to delete the file:</p>
+            <p><strong>@File.OriginalName</strong></p>
+            <p>from storage:</p>
+            <p><strong>@File.StorageName</strong></p>
+        </RadzenText>
+    </RadzenStack>
+    <RadzenStack Orientation="Orientation.Horizontal"
+                 JustifyContent="JustifyContent.SpaceBetween"
+                 class="controls">
+        <RadzenButton Text="Cancel"
+                      ButtonStyle="ButtonStyle.Warning"
+                      Click="HandleCancel" />
+        <RadzenButton Text="Delete"
+                      ButtonStyle="ButtonStyle.Secondary"
+                      Click="HandleDelete" />
+    </RadzenStack>
+</RadzenStack>
+
+<style>
+    .controls button {
+        width: 90px;
+    }
+</style>

@@ -1,0 +1,24 @@
+﻿@page "/login"
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.Forms
+@using Radzen.Blazor
+
+<RadzenRow Gap="0" Class="rz-my-12 rz-mx-auto rz-border-radius-6 rz-shadow-10" Style="width: 100%; max-width: 800px; overflow: hidden;">
+    <RadzenColumn Size="12" SizeMD="6">
+        <RadzenCard Class="rz-shadow-0 rz-border-radius-0 rz-text-align-center rz-p-12" Style="height: 100%; background-color #9921e8; background-image: linear-gradient(315deg, #9921e8 0%, #5f72be 74%);">
+            <RadzenText TextStyle="TextStyle.DisplayH3" TagName="TagName.H2" Class="rz-color-white rz-mb-6">Welcome!</RadzenText>
+            <RadzenText TextStyle="TextStyle.H6" Class="rz-color-white">Manage your files like a pro!</RadzenText>
+        </RadzenCard>
+    </RadzenColumn>
+    <RadzenColumn Size="12" SizeMD="6">
+        <RadzenCard Class="rz-shadow-0 rz-border-radius-0 rz-p-12">
+            <RadzenText TextStyle="TextStyle.H5" TagName="TagName.H2" Class="rz-mb-6">
+                Login
+            </RadzenText>
+            <RadzenTemplateForm Data=@("SimpleLogin")>
+                <RadzenLogin AllowRegister="false" AllowResetPassword="false" 
+                             UserText="Email" Login=@(args => LoginAsync(args)) />
+            </RadzenTemplateForm>
+        </RadzenCard>
+    </RadzenColumn>
+</RadzenRow>

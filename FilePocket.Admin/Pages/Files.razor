@@ -1,0 +1,265 @@
+@page "/files"
+@using FilePocket.Domain.Models
+@using Radzen
+@using Radzen.Blazor
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using Microsoft.AspNetCore.Components.Forms
+
+
+@if (_filteredFiles is null || _storages is null)
+{
+    <RadzenProgressBarCircular Class="rz-my-12 rz-mx-auto" Value="100" ShowValue="false" Mode="ProgressBarMode.Indeterminate" Size="ProgressBarCircularSize.Large" />
+}
+else
+{
+    <RadzenCard class="rz-mx-auto" Style="width: 100%; max-width: 1200px;">
+        <RadzenRow JustifyContent="JustifyContent.SpaceBetween" class="control">
+            <RadzenText TextStyle="TextStyle.H4" style="color: var(--rz-info-dark);">Files</RadzenText>
+            <RadzenButton Text="Add"
+                          ButtonStyle="ButtonStyle.Primary"
+                          Click="ShowAddFileDialog"
+                          Style="height: 32px" />
+        </RadzenRow>
+        <br />
+        <div class="caption">
+            <EditForm Model="_filterOptions" class="form">
+                <InputSelect class="form-select"
+                             aria-label="Storage select"
+                             Value="@_filterOptions.StorageName"
+                             ValueExpression="@(()=>_filterOptions.StorageName)"
+                             ValueChanged="@(async(string name)=>{await SelectedStorageChanged(name);})">
+                    <option value="" selected="@(_filterOptions.StorageName == string.Empty)">All Storages</option>
+                    @foreach (var storage in _storages)
+                    {
+                        <option value="@storage.Name" selected="@(_filterOptions.StorageName == storage.Name)">
+                            @storage.Name
+                        </option>
+                    }
+                </InputSelect>
+                <span>|</span>
+                <input class="form-control"
+                       style="width: 250px;"
+                       placeholder="Search in File Name"
+                       value="@_filterOptions.OriginalNameContains"
+                       oninput="@(async (ChangeEventArgs e)=>await FileNameContainsChanged(e))" />
+                <span>|</span>
+                <InputSelect class="form-select"
+                             aria-label="Type select"
+                             ValueExpression="@(()=>_filterOptions.FileType)"
+                             Value="_filterOptions.FileType"
+                             ValueChanged="@(async (string fileType) => {await FileTypeChanged(fileType);})">
+                    <option value="" selected="@(_filterOptions.FileType == string.Empty)">All Types</option>
+                    @foreach (FileTypes fileType in Enum.GetValues(typeof(FileTypes)))
+                    {
+                        <option value="@fileType">
+                            @fileType.ToString()
+                        </option>
+                    }
+                </InputSelect>
+                <span>|</span>
+                <InputDate Type="InputDateType.Date"
+                           class="form-control"
+                           style="width: 160px;"
+                           placeholder="After date"
+                           Value="@_filterOptions.AfterDate"
+                           ValueExpression="@(()=>_filterOptions.AfterDate)"
+                           ValueChanged="@(async (DateTime? date)=> await AfterDateChanged(date))" />
+                <span>|</span>
+                <InputDate Type="InputDateType.Date"
+                           class="form-control"
+                           style="width: 160px;"
+                           placeholder="Before date"
+                           Value="@_filterOptions.BeforeDate"
+                           ValueExpression="@(()=>_filterOptions.BeforeDate)"
+                           ValueChanged="@(async (DateTime? date) => await BeforeDateChanged(date))" />
+                <RadzenButton ButtonType="ButtonType.Reset"
+                              Text="Reset"
+                              ButtonStyle="ButtonStyle.Warning"
+                              Click="ResetButtonClick" />
+            </EditForm>
+        </div>
+        <br />
+
+        <QuickGrid Items="_filteredFiles.Files!.AsQueryable()" Class="quick-grid" Virtualize="true">
+            <TemplateColumn Title="File Name" Sortable="true">
+                <span style="cursor: pointer" ondblclick="@(async () => await ShowImageThumbnaiClick(context))">
+                    @context.OriginalName
+                </span>
+            </TemplateColumn>
+            <PropertyColumn Property="f => f.StorageName" Title="Storage" Sortable="true" />
+            <PropertyColumn Property="f => f.FileType" Title="Type" Sortable="true" Align="Align.Right" />
+            <TemplateColumn Title="Size (KB)">
+                <RadzenText Text="@String.Format("{0:N2}", context.FileSize)" />
+            </TemplateColumn>
+            <PropertyColumn Property="f => f.DateCreated" Title="Created" Sortable="true" />
+            <TemplateColumn>
+                <RadzenRow class="controls-container" JustifyContent="JustifyContent.End">
+                    <RadzenButton Icon="content_copy"
+                                  ButtonStyle="ButtonStyle.Primary"
+                                  Shade="Shade.Light"
+                                  Click="@(async () => await CopyIdToClipboard(context))" />
+                    <RadzenButton Icon="download"
+                                  ButtonStyle="ButtonStyle.Success"
+                                  Click="@(async () => await DownloadFile(context))" />
+                    <RadzenButton Icon="close"
+                                  ButtonStyle="ButtonStyle.Secondary"
+                                  Click="@(async () => await ShowDeleteFileDialog(context))" />
+                </RadzenRow>
+            </TemplateColumn>
+        </QuickGrid>
+
+        <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween" class="pagination">
+            <RadzenText>
+                <strong>@_filteredFiles.ItemsCount</strong> items
+            </RadzenText>
+            <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Right">
+                <RadzenDropDown @bind-Value="@_filterOptions.PageSize"
+                                Data="@_pageSizes"
+                                Name="PageSizeSelect"
+                                Style="width: 100%; max-width: 200px;"
+                                Change="OnPageSizeChanged">
+                    <Template>
+                        Files to display: @(context)
+                    </Template>
+                    <ValueTemplate>
+                        Files to display: @(context)
+                    </ValueTemplate>
+                </RadzenDropDown>
+            </RadzenStack>
+            <RadzenStack Gap="0.25rem"
+                         Orientation="Orientation.Horizontal"
+                         JustifyContent="JustifyContent.Right"
+                         class="page-control">
+                <RadzenText onclick="@(()=>GoToFirstPage())" aria-label="First">
+                    <RadzenIcon Icon="first_page" />
+                </RadzenText>
+                <RadzenText onclick="@(()=>GoToPrevPage())" aria-label="Previous">
+                    <RadzenIcon Icon="chevron_left" />
+                </RadzenText>
+                <RadzenText>
+                    Page <strong>@_filterOptions.PageNumber</strong> of <strong>@_filteredFiles.PagesCount</strong>
+                </RadzenText>
+                <RadzenText onclick="@(()=>GoToNextPage())" aria-label="Next">
+                    <RadzenIcon Icon="chevron_right" />
+                </RadzenText>
+                <RadzenText onclick="@(()=>GoToLastPage())" aria-label="Last">
+                    <RadzenIcon Icon="last_page" />
+                </RadzenText>
+            </RadzenStack>
+        </RadzenStack>
+    </RadzenCard>
+}
+
+<style>
+
+    .control button,
+    .form button {
+        width: 85px;
+    }
+
+    .pagination {
+        padding-top: 18px;
+    }
+
+        .pagination button {
+            border-radius: 50%;
+            width: 42px;
+            height: 42px;
+        }
+
+        .pagination .rz-text-body1 {
+            padding: 9px 12px;
+        }
+
+    tr:not(:first-child):hover {
+        background-color: rgba(225, 225, 225, .5);
+    }
+
+    .caption {
+        display: flow;
+    }
+
+        .form-select,
+        .form-control,
+        .caption h3,
+        .caption span:not(:last-child) {
+            float: left;
+            margin-right: 8px;
+        }
+
+        .caption span:not(:last-child) {
+            padding: 6px;
+            margin-bottom: 8px;
+        }
+
+        .caption button {
+            float: right;
+        }
+
+    .form-select {
+        width: fit-content;
+    }
+
+    .quick-grid {
+        width: 100%;
+    }
+
+    thead {
+        position: sticky;
+        top: 0;
+        background-color: white;
+        z-index: 1;
+    }
+
+    th {
+        line-height: 23.5px;
+        padding: 8px;
+        border-bottom: 1px solid black;
+    }
+
+    td {
+        line-height: 32px;
+        padding: 8px !important;
+        border-bottom: 1px solid #DEE2E6;
+    }
+
+    tbody td {
+        white-space: nowrap;
+        overflow: hidden;
+        max-width: 0;
+        text-overflow: ellipsis;
+    }
+
+    .quick-grid th:first-child {
+        width: 30%;
+    }
+
+    .quick-grid th:nth-child(3),
+    .quick-grid th:nth-child(4) {
+        width: 90px;
+    }
+
+    .quick-grid th:nth-child(5) {
+        width: 190px;
+    }
+
+    .quick-grid th:last-child {
+        width: 165px;
+    }
+
+    .controls-container button {
+        display: block;
+        border-radius: 50%;
+    }
+
+
+    .page-control p {
+        caret-color: transparent;
+    }
+
+        .page-control p:not(:nth-child(3)):hover {
+            cursor: pointer;
+        }
+
+</style>
+
