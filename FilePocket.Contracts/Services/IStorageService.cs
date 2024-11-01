@@ -4,7 +4,7 @@ namespace FilePocket.Contracts.Services;
 
 public interface IStorageService
 {
-    Task<IEnumerable<StorageModel>> GetAllAsync(bool trackChanges);
+    Task<IEnumerable<StorageModel>> GetAllAsync(Guid userId, bool trackChanges);
 
     Task<StorageModel> GetByIdAsync(Guid storageId, bool trackChanges);
 

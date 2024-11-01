@@ -1,0 +1,63 @@
+﻿@inherits LayoutComponentBase
+
+<style>
+    .text-header {
+        color: #2c638f;
+    }
+</style>
+
+<div class="container">
+    <div class="row">
+        <nav class="navbar  rounded-bottom">
+            <a class="navbar-brand ms-2 fw-bold text-header" href="#">
+                <img src="./assets/img/logo.png" alt="Logo" width="32" height="32" class="d-inline-block align-text-top">
+                File Pocket
+            </a>
+            <form class="d-flex" role="search">
+                <input class="form-control me-2" type="search" placeholder="looking for something?" aria-label="Search">
+                <button class="btn btn-light" type="submit">Search</button>
+            </form>
+            <span class="btn btn-outline-danger">
+                Logout
+            </span>
+        </nav>
+    </div>
+    <div class="row">&nbsp;</div>
+    <div class="row">
+        <div class="col-2">
+            <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
+                <li class="nav-item">
+                    <a href="#" class="nav-link align-middle px-0 text-dark fw-semibold">
+                        <i class="fs-4 bi-house"></i> <span class="ms-1 d-none d-sm-inline">Home</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/pockets" class="nav-link align-middle px-0 text-dark fw-semibold">
+                        <i class="fs-4 bi-archive"></i> <span class="ms-1 d-none d-sm-inline">Pockets</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link align-middle px-0 text-dark fw-semibold">
+                        <i class="fs-4 bi-file-richtext"></i> <span class="ms-1 d-none d-sm-inline">Files</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link align-middle px-0 text-dark fw-semibold">
+                        <i class="fs-4 bi-person-badge"></i> <span class="ms-1 d-none d-sm-inline">Profile</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link align-middle px-0 text-dark fw-semibold">
+                        <i class="fs-4 bi bi-gear"></i> <span class="ms-1 d-none d-sm-inline">Settings</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <div class="col bg-light rounded">
+            @Body
+        </div>
+    </div>
+</div>
+
+
+

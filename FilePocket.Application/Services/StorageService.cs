@@ -21,9 +21,9 @@ public class StorageService : IStorageService
         _defaultCapacity = configuration.GetValue<double>("DefaultCapacity")!;
     }
 
-    public async Task<IEnumerable<StorageModel>> GetAllAsync(bool trackChanges)
+    public async Task<IEnumerable<StorageModel>> GetAllAsync(Guid userId, bool trackChanges)
     {
-        var storages = await _repository.Storage.GetAllAsync(trackChanges);
+        var storages = await _repository.Storage.GetAllAsync(userId, trackChanges);
 
         return _mapper.Map<IEnumerable<StorageModel>>(storages);
     }

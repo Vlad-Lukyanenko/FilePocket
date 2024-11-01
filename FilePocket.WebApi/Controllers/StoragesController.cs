@@ -8,7 +8,7 @@ namespace FilePocket.WebApi.Controllers;
 
 [Route("api/storages")]
 [ApiController]
-[Authorize]
+//[Authorize]
 public class StoragesController : ControllerBase
 {
     private readonly IServiceManager _service;
@@ -25,12 +25,10 @@ public class StoragesController : ControllerBase
         return Ok("Pong");
     }
 
-    [HttpGet("all")]
-    //[Authorize(Roles = "Administrator")]
-    [Authorize]
-    public async Task<IActionResult> GetAll()
+    [HttpGet("all/user/{userId:Guid}")]
+    public async Task<IActionResult> GetAll([FromRoute] Guid userId)
     {
-        var storages = await _service.StorageService.GetAllAsync(trackChanges: false);
+        var storages = await _service.StorageService.GetAllByUserIdAsync(userId, trackChanges: false);
 
         return Ok(storages);
     }

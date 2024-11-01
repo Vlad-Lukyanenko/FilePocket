@@ -29,6 +29,21 @@ builder.Services.AddDbContext<FilePocketDbContext>(options =>
 builder.Services.AddControllers()
     .AddApplicationPart(typeof(WebApiAssemblyReference).Assembly);
 
+var frontendUrl = builder.Configuration["FrontendUrl"];
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigin", builder =>
+    {
+
+        builder.WithOrigins(frontendUrl!) // Allow the frontend origin
+               .AllowAnyMethod()
+               .AllowAnyHeader()
+               .AllowCredentials() // If using cookies or authentication
+               .WithExposedHeaders("X-Pagination");
+    });
+});
+
 builder.Services.Configure<ApiBehaviorOptions>(options =>
 {
     options.SuppressModelStateInvalidFilter = true;
@@ -99,6 +114,8 @@ if (app.Environment.IsDevelopment())
 app.ApplyMigrations();
 
 app.UseHttpsRedirection();
+
+app.UseCors("AllowSpecificOrigin");
 
 app.UseAuthentication();
 app.UseAuthorization();

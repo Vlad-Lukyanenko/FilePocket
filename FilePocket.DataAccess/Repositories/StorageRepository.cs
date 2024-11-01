@@ -12,9 +12,9 @@ public class StorageRepository : RepositoryBase<Storage>, IStorageRepository
     {
     }
 
-    public async Task<IEnumerable<Storage>> GetAllAsync(bool trackChanges)
+    public async Task<IEnumerable<Storage>> GetAllAsync(Guid userId, bool trackChanges)
     {
-        return await FindAll(trackChanges).OrderBy(c => c.Name).ToListAsync();
+        return await FindByCondition(c => c.UserId == userId, trackChanges).OrderByDescending(c => c.DateCreated).ToListAsync();
     }
 
     public async Task<IEnumerable<Storage>> GetAllByUserIdAsync(Guid userId, bool trackChanges)

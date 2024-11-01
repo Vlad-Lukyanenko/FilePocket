@@ -23,6 +23,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FilePocket.Application", "F
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FilePocket.Admin", "FilePocket.Admin\FilePocket.Admin.csproj", "{9FF1F3C1-EC22-4AC5-ADA2-6F0D0D167C6A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FilePocket.Client", "FilePocket.Client\FilePocket.Client.csproj", "{76DBF0FA-E371-4999-91A4-45C4AE24770C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -61,6 +63,10 @@ Global
 		{9FF1F3C1-EC22-4AC5-ADA2-6F0D0D167C6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9FF1F3C1-EC22-4AC5-ADA2-6F0D0D167C6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9FF1F3C1-EC22-4AC5-ADA2-6F0D0D167C6A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{76DBF0FA-E371-4999-91A4-45C4AE24770C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{76DBF0FA-E371-4999-91A4-45C4AE24770C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{76DBF0FA-E371-4999-91A4-45C4AE24770C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{76DBF0FA-E371-4999-91A4-45C4AE24770C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -74,6 +80,7 @@ Global
 		{D71D0BBC-2B89-442A-B881-267B2AEBE31C} = {76CF0651-8C6B-41A2-A89F-A4AC74D1A1DE}
 		{4B38AA2A-CAF5-4CC4-9FB9-382C8AB63EEE} = {76CF0651-8C6B-41A2-A89F-A4AC74D1A1DE}
 		{9FF1F3C1-EC22-4AC5-ADA2-6F0D0D167C6A} = {0DA83947-CD95-48CD-8F77-1B69A0CE8C0B}
+		{76DBF0FA-E371-4999-91A4-45C4AE24770C} = {0DA83947-CD95-48CD-8F77-1B69A0CE8C0B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A0BCF19C-C939-40F1-B3B8-3AC28471F554}

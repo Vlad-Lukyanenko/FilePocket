@@ -1,4 +1,5 @@
-﻿using FilePocket.Contracts.Repositories;
+﻿using AutoMapper;
+using FilePocket.Contracts.Repositories;
 using FilePocket.Contracts.Services;
 using FilePocket.Domain.Entities;
 using FilePocket.Domain.Models;
@@ -8,7 +9,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using SixLabors.ImageSharp;
 
-
 namespace FilePocket.Application.Services;
 
 public class FileService : IFileService
@@ -17,13 +17,20 @@ public class FileService : IFileService
     private readonly IRepositoryManager _repository;
     private readonly IUploadService _uploadService;
     private readonly IImageService _imageService;
+    private readonly IMapper _mapper;
 
-    public FileService(IRepositoryManager repository, IConfiguration configuration, IUploadService uploadService, IImageService imageService)
+    public FileService(
+        IRepositoryManager repository, 
+        IConfiguration configuration, 
+        IUploadService uploadService, 
+        IImageService imageService, 
+        IMapper mapper)
     {
         _repository = repository;
         _rootFolder = configuration.GetValue<string>("AppRootFolder")!;
         _uploadService = uploadService;
         _imageService = imageService;
+        _mapper = mapper;
     }
 
     public IUploadService UploadService { get => _uploadService; }
@@ -35,30 +42,10 @@ public class FileService : IFileService
         CheckIfStorageExists(storage, storageId);
 
         var fileUploadSummaries = await _repository.FileUploadSummary.GetAllByStorageIdAsync(storageId);
-        var filesResponses = new List<FileResponseModel>();
 
-        foreach (var fileSummary in fileUploadSummaries)
-        {
-            var fullPath = GetFullPath(fileSummary);
-            
-            CheckIfFileExistsOnDisk(fullPath);
+        var result = _mapper.Map<List<FileResponseModel>>(fileUploadSummaries);
 
-            var fileByteArray = await File.ReadAllBytesAsync(fullPath);
-            var storageName = (await _repository.Storage.GetByIdAsync(storageId)).Name;
-
-            filesResponses.Add(new FileResponseModel
-            {
-                Id = fileSummary.Id,
-                FileByteArray = fileByteArray,
-                OriginalName = fileSummary.OriginalName,
-                FileType = fileSummary.FileType,
-                DateCreated = fileSummary.DateCreated,
-                StorageId = fileSummary.StorageId,
-                StorageName = storageName
-            });
-        }
-
-        return filesResponses;
+        return result;
     }
 
     public async Task<IEnumerable<FileResponseModel>> GetFilteredFilesAsync(FilesFilterOptionsModel filterOptionsModel)
@@ -111,7 +98,16 @@ public class FileService : IFileService
 
         var fileByteArray = await File.ReadAllBytesAsync(fullPath);
 
-        return new FileResponseModel { FileByteArray = fileByteArray, OriginalName = fileUploadSummary.OriginalName };
+        return new FileResponseModel 
+        { 
+            Id = fileUploadSummary.Id,
+            DateCreated = fileUploadSummary.DateCreated,
+            StorageId = fileUploadSummary.StorageId,
+            FileSize = fileUploadSummary.FileSize,
+            FileType = fileUploadSummary.FileType,
+            FileByteArray = fileByteArray, 
+            OriginalName = fileUploadSummary.OriginalName 
+        };
     }
 
     public async Task<FileResponseModel> GetImageThumbnailAsync(Guid storageId, Guid id, int maxSize)

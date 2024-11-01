@@ -15,9 +15,9 @@ public class StorageRequests : IStorageRequests
     }
 
 
-    public async Task<IEnumerable<StorageModel>> GetAllAsync()
+    public async Task<IEnumerable<StorageModel>> GetAllAsync(Guid userId)
     {
-        var response = await _authorizedRequests.GetAsyncRequest("api/storages/all");
+        var response = await _authorizedRequests.GetAsyncRequest($"api/storages/all/user/{userId}");
         var content = await response.Content.ReadAsStringAsync();
 
         return JsonConvert.DeserializeObject<IEnumerable<StorageModel>>(content)!;

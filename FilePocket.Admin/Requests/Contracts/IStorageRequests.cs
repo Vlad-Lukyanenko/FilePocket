@@ -4,7 +4,7 @@ namespace FilePocket.Admin.Requests.Contracts;
 
 public interface IStorageRequests
 {
-    Task<IEnumerable<StorageModel>> GetAllAsync();
+    Task<IEnumerable<StorageModel>> GetAllAsync(Guid userId);
     Task<bool> PostAsync(AddStorageModel storage);
     Task<bool> DeleteAsync(Guid id);
     Task<bool> PutAsync(StorageModel storage);

@@ -1,0 +1,71 @@
+﻿@page "/pockets/{PocketIdParam}/info"
+@using FilePocket.Client.Services.Helpers
+@inject NavigationManager Navigation;
+
+<style>
+    .validation-error {
+        background-color: #ff8059;
+        border: solid 1px;
+    }
+</style>
+
+<div class="container">
+    <div class="container w-75 pt-3">
+        <div class="row d-flex justify-content-end">
+            <a href="/pockets" class="btn btn-outline-secondary" style="width:6em; margin-right:0.8em;">Go back</a>
+        </div>
+
+        <br />
+
+        <div class="container border p-3 mb-3">
+
+            @if (_pocketInfo is not null)
+            {
+                <p class="fw-semibold mb-0">Id:</p>
+                <div class="mb-2">
+                    @_pocketInfo.Id
+                    <button class="btn btn-sm btn-light" @onclick="CopyIdToClipboard"><i class="bi bi-copy"></i></button>
+                </div>
+
+                <p class="fw-semibold mb-0">Name:</p>
+                <div class="mb-2">
+
+                    @if (!_updateProcessStarted)
+                    {
+                        <span class="me-1">@_pocketInfo.Name</span>
+                    }
+                    else
+                    {
+                        <input type="text" @bind="_newPocketName" class="w-50 me-2 @(string.IsNullOrWhiteSpace(_newPocketName) && _updateProcessStarted ? "validation-error" : "")" />
+                    }
+
+                    @if (!_updateProcessStarted)
+                    {
+                        <button class="btn btn-sm btn-light" @onclick="UpdateClicked"><i class="bi bi-pencil-square"></i></button>
+                    }
+                    @if (_updateProcessStarted)
+                    {
+                        <button class="btn btn-sm btn-light" style="margin-top:-5px;" title="Confirm" @onclick="ConfirmUpdateClicked"><i class="bi-check-square"></i></button>
+                        <button class="btn btn-sm btn-light" style="margin-top:-5px;" title="Cancel" @onclick="CancelUpdateClicked"><i class="bi bi-x-square"></i></button>
+                    }
+                </div>
+
+                <p class="fw-semibold mb-0">Number of files:</p>
+                <p>@_pocketInfo.NumberOfFiles</p>
+
+                <p class="fw-semibold mb-0">Total size:</p>
+                <p>@Tools.FormatFileSize(_pocketInfo.TotalFileSize)</p>
+
+                <p class="fw-semibold mb-0">Created at:</p>
+                <p>@_pocketInfo.DateCreated</p>
+            }
+            
+        </div>
+    </div>
+</div>
+
+<script>
+    function copyToClipboard(text) {
+        navigator.clipboard.writeText(text);
+    }
+</script>

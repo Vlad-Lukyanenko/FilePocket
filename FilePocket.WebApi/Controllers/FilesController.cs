@@ -9,12 +9,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 
-
 namespace FilePocket.WebApi.Controllers;
 
 [Route("api/files/")]
 [ApiController]
-[Authorize]
+//[Authorize]
 public class FilesController : ControllerBase
 {
     private readonly IServiceManager _service;
@@ -32,10 +31,10 @@ public class FilesController : ControllerBase
         return Ok("Pong");
     }
 
-    [HttpGet("all", Name = "All")]
-    public async Task<IActionResult> GetAll(Guid storageId)
+    [HttpGet("pocket/{pocketId}", Name = "All")]
+    public async Task<IActionResult> GetAll([FromRoute] Guid pocketId)
     {
-        var fileUploadSummaries = await _service.FileService.GetAllFilesByStorageIdAsync(storageId);
+        var fileUploadSummaries = await _service.FileService.GetAllFilesByStorageIdAsync(pocketId);
 
         return Ok(fileUploadSummaries);
     }
@@ -72,10 +71,10 @@ public class FilesController : ControllerBase
         return Ok(response);
     }
 
-    [HttpGet("{id:guid}", Name = "FileByUploadSummaryId")]
-    public async Task<IActionResult> Get(Guid storageId, Guid id)
+    [HttpGet("{fileId:guid}/storages/{storageId:guid}")]
+    public async Task<IActionResult> Get(Guid storageId, Guid fileId)
     {
-        var file = await _service.FileService.GetFileByIdAsync(storageId, id);
+        var file = await _service.FileService.GetFileByIdAsync(storageId, fileId);
 
         return Ok(file);
     }

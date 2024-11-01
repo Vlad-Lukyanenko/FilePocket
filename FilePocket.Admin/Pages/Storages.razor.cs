@@ -43,7 +43,7 @@ public partial class Storages
 
     private async Task LoadStorages()
     {
-        _storages = (await StorageRequests.GetAllAsync()).Where(x => x.UserId == _user!.Id).ToList();
+        _storages = (await StorageRequests.GetAllAsync(_user!.Id!.Value)).ToList();
     }
 
     private async Task LoadStorageInfo(Guid id)

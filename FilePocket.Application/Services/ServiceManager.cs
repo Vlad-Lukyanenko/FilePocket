@@ -27,7 +27,7 @@ public class ServiceManager : IServiceManager
         IImageService imageService)
     {
         _storageService = new Lazy<IStorageService>(() => new StorageService(repositoryManager, mapper, configuration));
-        _fileService = new Lazy<IFileService>(() => new FileService(repositoryManager, configuration, uploadService, imageService));
+        _fileService = new Lazy<IFileService>(() => new FileService(repositoryManager, configuration, uploadService, imageService, mapper));
         _authenticationService = new Lazy<IAuthenticationService>(() => new AuthenticationService(mapper, logger, userManager, options));
     }
 
