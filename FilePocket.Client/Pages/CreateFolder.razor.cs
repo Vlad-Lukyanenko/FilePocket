@@ -16,23 +16,7 @@ namespace FilePocket.Client.Pages
 
         private async Task CreateFolderAsync()
         {
-            if (string.IsNullOrEmpty(_folderName))
-            {
-                _validName = false;
-            }
-            
-            var model = new CreatePocketModel()
-            {
-                Name = _folderName,
-                UserId = Guid.Parse("a9b78973-6458-498f-a313-ae26e56d223c")
-            };
-
-            var result = await FolderRequests.CreateAsync(model);
-
-            if (result)
-            {
-                Navigation.NavigateTo($"/pockets/{PocketIdParam}/files");
-            }
+           
         }
 
         private void NameChanged()
