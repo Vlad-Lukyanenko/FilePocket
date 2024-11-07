@@ -8,7 +8,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace FilePocket.Application.Services;
 
-public class StorageService : IStorageService
+public class StorageService : IPocketService
 {
     private readonly IRepositoryManager _repository;
     private readonly IMapper _mapper;
@@ -19,13 +19,6 @@ public class StorageService : IStorageService
         _repository = repository;
         _mapper = mapper;
         _defaultCapacity = configuration.GetValue<double>("DefaultCapacity")!;
-    }
-
-    public async Task<IEnumerable<StorageModel>> GetAllAsync(Guid userId, bool trackChanges)
-    {
-        var storages = await _repository.Storage.GetAllAsync(userId, trackChanges);
-
-        return _mapper.Map<IEnumerable<StorageModel>>(storages);
     }
 
     public async Task<StorageModel> GetByIdAsync(Guid storageId, bool trackChanges)

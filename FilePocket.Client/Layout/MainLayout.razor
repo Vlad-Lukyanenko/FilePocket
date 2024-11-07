@@ -7,56 +7,69 @@
 </style>
 
 <div class="container">
-    <div class="row">
-        <nav class="navbar  rounded-bottom">
-            <a class="navbar-brand ms-2 fw-bold text-header" href="#">
-                <img src="./assets/img/logo.png" alt="Logo" width="32" height="32" class="d-inline-block align-text-top">
-                File Pocket
-            </a>
-            <form class="d-flex" role="search">
-                <input class="form-control me-2" type="search" placeholder="looking for something?" aria-label="Search">
-                <button class="btn btn-light" type="submit">Search</button>
-            </form>
-            <span class="btn btn-outline-danger">
-                Logout
-            </span>
+    <!-- Navbar -->
+    <div class="row position-relative">
+        <nav class="navbar navbar-expand-md rounded-bottom w-100">
+            <div class="container-fluid d-flex flex-column flex-md-row align-items-center">
+
+                <!-- Brand Logo and Name -->
+                <a class="navbar-brand fw-bold text-header mb-2 mb-md-0 me-auto" href="#">
+                    <img src="./assets/img/logo.png" alt="Logo" width="32" height="32" class="d-inline-block align-text-top">
+                    File Pocket
+                </a>
+
+                <!-- Centered Search Form on large screens -->
+                <form class="d-flex mb-2 mb-md-0 mx-auto" role="search">
+                    <input class="form-control me-2" type="search" placeholder="looking for something?" aria-label="Search">
+                    <button class="btn btn-light" type="submit">Search</button>
+                </form>
+
+                <!-- Logout Button - Top right on small screens, inline on larger screens -->
+                <span class="btn btn-outline-danger position-absolute top-0 end-0 mt-2 me-2 position-md-static mb-2 mb-md-0">
+                    Logout
+                </span>
+            </div>
         </nav>
     </div>
-    <div class="row">&nbsp;</div>
-    <div class="row">
-        <div class="col-2">
-            <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
+
+    <div class="row mt-0">
+        <!-- Sidebar Menu -->
+        <div class="col-12 col-md-2 d-flex justify-content-center justify-content-md-start align-items-center align-items-md-start mb-1">
+            <ul class="nav nav-pills flex-row flex-md-column mb-0" id="menu">
                 <li class="nav-item">
-                    <a href="#" class="nav-link align-middle px-0 text-dark fw-semibold">
-                        <i class="fs-4 bi-house"></i> <span class="ms-1 d-none d-sm-inline">Home</span>
+                    <a href="#" class="nav-link text-dark fw-semibold px-2">
+                        <i class="fs-4 bi-house"></i> <span class="ms-1 d-none d-md-inline">Home</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="/pockets" class="nav-link align-middle px-0 text-dark fw-semibold">
-                        <i class="fs-4 bi-archive"></i> <span class="ms-1 d-none d-sm-inline">Pockets</span>
+                    <a href="/pockets" class="nav-link text-dark fw-semibold px-2">
+                        <i class="fs-4 bi-archive"></i> <span class="ms-1 d-none d-md-inline">Pockets</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="#" class="nav-link align-middle px-0 text-dark fw-semibold">
-                        <i class="fs-4 bi-file-richtext"></i> <span class="ms-1 d-none d-sm-inline">Files</span>
+                    <a href="#" class="nav-link text-dark fw-semibold px-2">
+                        <i class="fs-4 bi-file-richtext"></i> <span class="ms-1 d-none d-md-inline">Files</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="#" class="nav-link align-middle px-0 text-dark fw-semibold">
-                        <i class="fs-4 bi-person-badge"></i> <span class="ms-1 d-none d-sm-inline">Profile</span>
+                    <a href="#" class="nav-link text-dark fw-semibold px-2">
+                        <i class="fs-4 bi-person-badge"></i> <span class="ms-1 d-none d-md-inline">Profile</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="#" class="nav-link align-middle px-0 text-dark fw-semibold">
-                        <i class="fs-4 bi bi-gear"></i> <span class="ms-1 d-none d-sm-inline">Settings</span>
+                    <a href="#" class="nav-link text-dark fw-semibold px-2">
+                        <i class="fs-4 bi bi-gear"></i> <span class="ms-1 d-none d-md-inline">Settings</span>
                     </a>
                 </li>
             </ul>
         </div>
-        <div class="col bg-light rounded">
+
+        <!-- Main Content Area -->
+        <div class="col-12 col-md-10 bg-light rounded">
             @Body
         </div>
     </div>
+
 </div>
 
 

@@ -35,7 +35,7 @@ public class FileService : IFileService
 
     public IUploadService UploadService { get => _uploadService; }
 
-    public async Task<IEnumerable<FileResponseModel>> GetAllFilesByStorageIdAsync(Guid storageId)
+    public async Task<IEnumerable<FileResponseModel>> GetAllFilesFromPocketAsync(Guid storageId)
     {
         var storage = await _repository.Storage.GetByIdAsync(storageId);
 
@@ -106,6 +106,21 @@ public class FileService : IFileService
             FileSize = fileUploadSummary.FileSize,
             FileType = fileUploadSummary.FileType,
             FileByteArray = fileByteArray, 
+            OriginalName = fileUploadSummary.OriginalName 
+        };
+    }
+
+    public async Task<FileResponseModel> GetFileInfoByIdAsync(Guid storageId, Guid id)
+    {
+        var fileUploadSummary = await GetFileByIdAndStorageIdAsync(storageId, id);
+
+        return new FileResponseModel 
+        { 
+            Id = fileUploadSummary.Id,
+            DateCreated = fileUploadSummary.DateCreated,
+            StorageId = fileUploadSummary.StorageId,
+            FileSize = fileUploadSummary.FileSize,
+            FileType = fileUploadSummary.FileType,
             OriginalName = fileUploadSummary.OriginalName 
         };
     }
@@ -200,9 +215,9 @@ public class FileService : IFileService
 
     public async Task DeleteFileAsync(Guid storageId, Guid id)
     {
-        var storage = await _repository.Storage.GetByIdAsync(storageId);
+        //var storage = await _repository.Storage.GetByIdAsync(storageId);
 
-        CheckIfStorageExists(storage, storageId);
+        //CheckIfStorageExists(storage, storageId);
 
         var fileUploadSummaryToDelete = await GetFileByIdAndStorageIdAsync(storageId, id);
         var fullPath = GetFullPath(fileUploadSummaryToDelete);

@@ -17,7 +17,7 @@ a, .btn-link {
 }
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
 .content {
@@ -100,4 +100,18 @@ a, .btn-link {
 
 code {
     color: #c02d76;
+}
+
+
+@media (max-width: 767px) {
+    #menu {
+        display: flex !important;
+        flex-direction: row !important;
+        justify-content: center;
+    }
+
+        #menu .nav-item {
+            flex: 1;
+            text-align: center;
+        }
 }

@@ -21,10 +21,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Folder Include="wwwroot\assets\img\" />
-	</ItemGroup>
-
-	<ItemGroup>
 	  <Content Update="wwwroot\appsettings.Development.json">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Content>

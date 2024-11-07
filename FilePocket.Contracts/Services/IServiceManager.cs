@@ -2,7 +2,7 @@
 
 public interface IServiceManager
 {
-    IStorageService StorageService { get; }
+    IPocketService StorageService { get; }
 
     IFileService FileService { get; }
 

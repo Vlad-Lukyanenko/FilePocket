@@ -1,0 +1,75 @@
+﻿@page "/pockets/{PocketIdParam}/files/{FileIdParam}"
+
+@using FilePocket.Client.Services.Helpers
+
+<div class="container-fluid" style="min-height: 600px;">
+    <div class="container-fluid w-100 w-md-75 h-100 pt-3 pb-4">
+        @if (_file is not null)
+        {
+            var goBackUrl = $"/pockets/{PocketIdParam}/files";
+            <TopSubMenu Url="@goBackUrl" Title="My File" />
+
+            <!-- Action Button Row -->
+            <div class="row mx-auto">
+                <div class="col-12 mb-3 d-flex align-items-center">
+                    <button class="btn btn-outline-success ms-auto p-1 px-3" @onclick="DownloadFile">
+                        <i class="bi bi-download"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- File Details Table -->
+            <div class="w-100 text-center">
+                <div class="table-responsive">
+                    <table class="table table-light mx-auto">
+                        <thead>
+                            <tr>
+                                <th scope="col">Name</th>
+                                <th scope="col">Size</th>
+                                <th scope="col">Type</th>
+                                <th scope="col">Created at</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>@_file.OriginalName</td>
+                                <td>@Tools.FormatFileSize(_file.FileSize)</td>
+                                <td>@_file.FileType</td>
+                                <td>@_file.DateCreated</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <br />
+
+                <!-- Display Image if File Type is Image -->
+                @if (_file.FileType == "Image")
+                {
+                    <img class="img-fluid border p-2 rounded" src="@_imageContent" />
+                }
+            </div>
+        }
+        else
+        {
+            <!-- Loading Spinner -->
+            <div class="container-fluid w-100 h-100 text-center p-4 d-flex justify-content-center align-items-center">
+                <div class="spinner-grow" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+
+<script>
+    function saveFile(filename, bytesBase64) {
+        var link = document.createElement('a');
+        link.download = filename;
+        link.href = "data:application/octet-stream;base64," + bytesBase64;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+</script>

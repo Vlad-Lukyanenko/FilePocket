@@ -11,15 +11,17 @@ public interface IFileService
 
     Session CreateSession(Guid userId, Guid storageId, CreateSessionParams sessionParams);
 
-    Task<IEnumerable<FileResponseModel>> GetAllFilesByStorageIdAsync(Guid storageId);
+    Task<IEnumerable<FileResponseModel>> GetAllFilesFromPocketAsync(Guid pocketId);
 
     Task<IEnumerable<FileResponseModel>> GetFilteredFilesAsync(FilesFilterOptionsModel filterOptionsModel);
 
     Task<int> GetFilteredFilesCountAsync(FilesFilterOptionsModel filterOptionsModel);
 
-    Task<FileResponseModel> GetFileByIdAsync(Guid storageId, Guid id);
+    Task<FileResponseModel> GetFileByIdAsync(Guid pocketId, Guid fileId);
 
-    Task<FileResponseModel> GetImageThumbnailAsync(Guid storageId, Guid id, int maxSize);
+    Task<FileResponseModel> GetFileInfoByIdAsync(Guid pocketId, Guid fileId);
+
+    Task<FileResponseModel> GetImageThumbnailAsync(Guid pocketId, Guid fileId, int maxSize);
 
     Task<List<FileResponseModel>> GetImageThumbnailsAsync(List<UserIconInfoRequest> request, Guid storageId, int maxSize);
 

@@ -1,5 +1,4 @@
 ﻿using FilePocket.Contracts.Services;
-using FilePocket.Domain.Entities;
 using FilePocket.Domain.Models;
 using FilePocket.Shared.Claims;
 using FilePocket.Shared.Exceptions;
@@ -11,9 +10,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FilePocket.WebApi.Controllers;
 
-[Route("api/files/")]
+[Route("api/")]
 [ApiController]
-//[Authorize]
 public class FilesController : ControllerBase
 {
     private readonly IServiceManager _service;
@@ -24,22 +22,22 @@ public class FilesController : ControllerBase
     }
 
     #region GET
-    [HttpGet("ping")]
+    [HttpGet("files/ping")]
     [AllowAnonymous]
     public IActionResult Ping()
     {
         return Ok("Pong");
     }
 
-    [HttpGet("pocket/{pocketId}", Name = "All")]
-    public async Task<IActionResult> GetAll([FromRoute] Guid pocketId)
+    [HttpGet("pockets/{pocketId}/files", Name = "All")]
+    public async Task<IActionResult> GetAllFromPocket([FromRoute] Guid pocketId)
     {
-        var fileUploadSummaries = await _service.FileService.GetAllFilesByStorageIdAsync(pocketId);
+        var fileUploadSummaries = await _service.FileService.GetAllFilesFromPocketAsync(pocketId);
 
         return Ok(fileUploadSummaries);
     }
 
-    [HttpGet("filtered")]
+    [HttpGet("files/filtered")]
     public async Task<IActionResult> GetFilteredFiles([FromQuery] FilesFilterOptionsModel? filterOptionsModel)
     {
         if (filterOptionsModel == null)
@@ -63,37 +61,44 @@ public class FilesController : ControllerBase
 
     }
 
-    [HttpGet("check")]
-    public async Task<IActionResult> CheckIfFileExists(string fileName, Guid storageId)
-    {
-        var response = await _service.FileService.CheckIfFileExists(fileName, storageId);
+    //[HttpGet("check")]
+    //public async Task<IActionResult> CheckIfFileExists(string fileName, Guid storageId)
+    //{
+    //    var response = await _service.FileService.CheckIfFileExists(fileName, storageId);
 
-        return Ok(response);
-    }
+    //    return Ok(response);
+    //}
 
-    [HttpGet("{fileId:guid}/storages/{storageId:guid}")]
-    public async Task<IActionResult> Get(Guid storageId, Guid fileId)
+    [HttpGet("files/{fileId:guid}/pockets/{pocketId:guid}")]
+    public async Task<IActionResult> Get(Guid pocketId, Guid fileId)
     {
-        var file = await _service.FileService.GetFileByIdAsync(storageId, fileId);
+        var file = await _service.FileService.GetFileByIdAsync(pocketId, fileId);
 
         return Ok(file);
     }
 
-    [HttpGet("storage/{storageId:guid}/image/thumbnail")]
-    //[AllowAnonymous]
-    public async Task<IActionResult> GetImageThumbnail(
-        [FromRoute, Required] Guid storageId,
-        [FromQuery, Required] Guid id,
-        [FromQuery, Required] int size)
+    [HttpGet("pockets/{pocketId:guid}/files/{fileId:guid}/info")]
+    public async Task<IActionResult> GetInfo(Guid pocketId, Guid fileId)
     {
-        var image = await _service.FileService.GetImageThumbnailAsync(storageId, id, size);
+        var file = await _service.FileService.GetFileInfoByIdAsync(pocketId, fileId);
+
+        return Ok(file);
+    }
+
+    [HttpGet("pockets/{pocketId:guid}/files/{imageId:guid}/thumbnail/{size}")]
+    public async Task<IActionResult> GetImageThumbnail(
+        [FromRoute, Required] Guid pocketId,
+        [FromRoute, Required] Guid imageId,
+        [FromRoute, Required] int size)
+    {
+        var image = await _service.FileService.GetImageThumbnailAsync(pocketId, imageId, size);
 
         return Ok(image);
     }
     #endregion
 
     #region POST
-    [HttpPost]
+    [HttpPost("files")]
     public async Task<IActionResult> UploadFile([FromForm] FileInformation fileInformation)
     {
         var validationResult = ValidateFile(fileInformation);
@@ -104,113 +109,22 @@ public class FilesController : ControllerBase
 
         try
         {
-            var fileUploadSummary = await _service.FileService.UploadFileAsync(fileInformation.File!, fileInformation.ClientId!.Value, fileInformation.StorageId!.Value);
+            var fileUploadSummary = await _service.FileService.UploadFileAsync(fileInformation.File!, fileInformation.ClientId!.Value, fileInformation.PocketId!.Value);
 
-            return CreatedAtRoute(
-                "FileByUploadSummaryId",
-                new
-                {
-                    fileInformation.StorageId,
-                    id = fileUploadSummary.Id
-                }, fileUploadSummary);
+            return Ok(fileUploadSummary);
         }
         catch (FileAlreadyUploadedException e)
         {
             return BadRequest(e.Message);
         }
-    }
-
-    [HttpPost("{storageId:guid}")]
-    public async Task<IActionResult> Create([FromForm] IFormFile? file, [FromRoute] Guid? storageId)
-    {
-        if (file is null || file.Length == 0)
-        {
-            return BadRequest("Nothing to upload.");
-        }
-
-        if (storageId is null)
-        {
-            return BadRequest("StorageId cannot be null");
-        }
-
-        try
-        {
-            var userId = GetUserId();
-
-            var fileUploadSummary = await _service.FileService.UploadFileAsync(file, userId, storageId.Value);
-
-            return CreatedAtRoute("FileByUploadSummaryId", new { storageId, id = fileUploadSummary.Id }, fileUploadSummary);
-
-        }
-        catch (FileAlreadyUploadedException e)
-        {
-            return BadRequest(e.Message);
-        }
-    }
-
-    [HttpPost("session/user/{userId:guid}/storage/{storageId:guid}")]
-    public IActionResult StartSession([FromRoute] Guid userId, [FromRoute] Guid storageId, [FromBody] CreateSessionParams sessionParams)
-    {
-        var session = _service.FileService.CreateSession(
-                userId,
-                storageId,
-                sessionParams);
-
-        return Ok(new
-        {
-            FileName = sessionParams.FileName!,
-            session!.Id,
-            session!.UserId,
-            session!.StorageId,
-            session!.FileInfo.ChunkSize,
-        });
-    }
-
-    [HttpPost("upload/user/{userId}/storage/{storageId}/session/{sessionId}")]
-    public async Task<IActionResult> UploadFileChunk(
-        [FromForm] IFormFile file,
-        [FromRoute, Required] string userId,
-        [FromRoute, Required] string storageId,
-        [FromRoute, Required] string sessionId,
-        [FromQuery, Required] int chunkNumber)
-
-    {
-        if (string.IsNullOrWhiteSpace(userId))
-            return BadRequest("User missing");
-
-        if (string.IsNullOrWhiteSpace(storageId))
-            return BadRequest("Stroage ID is missing");
-
-        if (string.IsNullOrWhiteSpace(sessionId))
-            return BadRequest("Session ID is missing");
-
-        if (chunkNumber < 1)
-            return BadRequest("Invalid chunk number");
-
-        await _service.FileService.UploadFileChunkAsync(file!, userId, storageId, sessionId, chunkNumber);
-
-        return Ok();
-    }
-
-    [HttpPost("storage/{storageId:guid}/image/thumbnails")]
-    public async Task<IActionResult> GetImageThumbnails(
-    [FromBody, Required] List<UserIconInfoRequest> request,
-    [FromRoute, Required] Guid storageId,
-    [FromQuery, Required] int size)
-    {
-        var images = await _service.FileService.GetImageThumbnailsAsync(request, storageId, size);
-
-        return CreatedAtRoute("All", new { storageId }, images!);
     }
     #endregion
 
     #region DELETE
-    [HttpDelete("{id:guid}")]
-    //[Authorize(Roles = "Administrator")]
-    [Authorize]
-    public async Task<IActionResult> Delete(Guid storageId, Guid id)
+    [HttpDelete("pockets/{pocketId:guid}/files/{fileId:guid}")]
+    public async Task<IActionResult> Delete([FromRoute] Guid pocketId, [FromRoute] Guid fileId)
     {
-        await _service.FileService.DeleteFileAsync(storageId, id);
+        await _service.FileService.DeleteFileAsync(pocketId, fileId);
 
         return NoContent();
     }
@@ -231,7 +145,7 @@ public class FilesController : ControllerBase
             return BadRequest("Nothing to upload.");
         }
 
-        if (fileInformation.StorageId is null)
+        if (fileInformation.PocketId is null)
         {
             return BadRequest("StorageId cannot be null");
         }
@@ -251,7 +165,7 @@ public class FilesController : ControllerBase
     public class FileInformation
     {
         public Guid? ClientId { get; set; }
-        public Guid? StorageId { get; set; }
+        public Guid? PocketId { get; set; }
         public IFormFile? File { get; set; }
     }
 }

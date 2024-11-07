@@ -11,7 +11,7 @@ namespace FilePocket.Application.Services;
 
 public class ServiceManager : IServiceManager
 {
-    private readonly Lazy<IStorageService> _storageService;
+    private readonly Lazy<IPocketService> _storageService;
     private readonly Lazy<IFileService> _fileService;
     private readonly Lazy<IAuthenticationService> _authenticationService;
 
@@ -26,12 +26,12 @@ public class ServiceManager : IServiceManager
         IUploadService uploadService,
         IImageService imageService)
     {
-        _storageService = new Lazy<IStorageService>(() => new StorageService(repositoryManager, mapper, configuration));
+        _storageService = new Lazy<IPocketService>(() => new StorageService(repositoryManager, mapper, configuration));
         _fileService = new Lazy<IFileService>(() => new FileService(repositoryManager, configuration, uploadService, imageService, mapper));
         _authenticationService = new Lazy<IAuthenticationService>(() => new AuthenticationService(mapper, logger, userManager, options));
     }
 
-    public IStorageService StorageService => _storageService.Value;
+    public IPocketService StorageService => _storageService.Value;
 
     public IFileService FileService => _fileService.Value;
 

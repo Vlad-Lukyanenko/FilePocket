@@ -1,0 +1,102 @@
+﻿@page "/pockets"
+
+@inject NavigationManager Navigation;
+
+<style>
+    .validation-error {
+        background-color: #ff8059;
+        border: solid 1px;
+    }
+</style>
+
+<div class="container-fluid" style="min-height: 600px;">
+    <div class="container-fluid w-100 w-md-75 pt-3">
+
+        <!-- Top SubMenu -->
+        <TopSubMenu Title="My pockets" />
+
+        @if (_pockets is not null && _pockets.Any())
+        {
+           <!-- Action Button Row -->
+            <div class="row mx-auto">
+                <div class="col-12 d-flex align-items-center mb-3">
+                    <!-- New Pocket Button -->
+                    <div>
+                        <a href="/pockets/new" class="btn btn-outline-success p-0">
+                            <i class="ps-2 pe-2 bi bi-bag-plus fs-4"></i>
+                        </a>
+                    </div>
+                </div>
+            </div> 
+            <br />
+        }
+        
+        @if (_pockets is not null && _pockets.Any())
+        {
+            <!-- Responsive Table -->
+            <div class="table-responsive" style="min-height: 500px;">
+                    <table class="table table-light table-hover mx-auto h-100">
+                    <thead>
+                        <tr>
+                            <th scope="col" class="col-1">#</th>
+                            <th scope="col" class="col-7">Name</th>
+                            <th scope="col" class="col-4 text-center">Options</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            var i = 1;
+                        }
+                        @foreach (var pocket in _pockets)
+                        {
+                            <tr>
+                                <th scope="row">@(i)</th>
+                                <td>
+                                    <a class="link-offset-2 link-underline link-underline-opacity-0 link-dark" href="/pockets/{@pocket.Id}/files">
+                                        <img src="./assets/img/pocket.png" width="24em" class="me-1" />
+                                        <div class="fw-semibold d-inline mt-5">
+                                            @pocket.Name
+                                        </div>
+                                    </a>
+                                </td>
+                                <td class="text-center">
+                                    @if (pocket.Id != _pocketIdToBeChanged)
+                                    {
+                                        <div class="dropdown">
+                                          <button class="btn btn-outline dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            . . .
+                                          </button>
+                                          <ul class="dropdown-menu">
+                                            <li><a class="dropdown-item btn btn-light" @onclick="() => ShowDetailsClicked(pocket)">Info</a></li>
+                                            <li><a class="dropdown-item btn btn-light" @onclick="() => RemoveClicked(pocket)">Delete</a></li>
+                                          </ul>
+                                        </div>
+                                        @* <button class="btn btn-light me-1" title="Information" @onclick="() => ShowDetailsClicked(pocket)"><i class="bi bi-info-circle"></i></button>
+                                        <button class="btn btn-light" title="Remove" @onclick="() => RemoveClicked(pocket)"><i class="bi bi-trash"></i></button> *@
+                                    }
+
+                                    @if (_removalProcessStarted && pocket.Id == _pocketIdToBeChanged)
+                                    {
+                                        <button class="btn btn-light ms-1" title="Confirm" @onclick="ConfirmDeletionClicked"><i class="bi-check-square"></i></button>
+                                        <button class="btn btn-light ms-1" title="Cancel" @onclick="CancelDeletionClicked"><i class="bi bi-x-square"></i></button>
+                                    }
+                                </td>
+                            </tr>
+                            i++;
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="mx-auto w-100 text-center fw-semibold mt-4">
+                <img src="./assets/img/oops.png" width="100" class="mb-3 opacity-75">
+                <p class="h5 mb-1">Looks like you do not have any pockets yet.</p>
+                <p class="h5 mb-4">Let's create the first one.</p>
+                    <a href="/pockets/new" class="btn btn-outline-success fw-semibold p-2 ps-5 pe-5">Create</a>
+            </div>
+        }
+    </div>
+</div>
+

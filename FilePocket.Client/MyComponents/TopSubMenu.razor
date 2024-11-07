@@ -1,0 +1,19 @@
+﻿@* Top menu - start *@
+<div class="row mx-auto">
+    <div class="col-12 position-relative d-flex align-items-center">
+        <!-- Back button aligned to the left -->
+        <a href="@Url" class="btn btn-outline-secondary" style="width:4em; margin-right: 0.5em;">
+            <i class="bi bi-arrow-90deg-left"></i>
+        </a>
+        <!-- Centered "About Pocket" text -->
+        <div class="text-header position-absolute start-50 translate-middle-x h4 mb-2" style="margin-top: 0.5em;">@Title</div>
+    </div>
+</div>
+<hr class="hr" />
+
+@* Top menu - end *@
+
+@code {
+    [Parameter] public string Url { get; set; } = string.Empty;
+    [Parameter] public string Title { get; set; } = string.Empty;
+}

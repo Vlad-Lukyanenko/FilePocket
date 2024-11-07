@@ -23,7 +23,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FilePocket.Application", "F
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FilePocket.Admin", "FilePocket.Admin\FilePocket.Admin.csproj", "{9FF1F3C1-EC22-4AC5-ADA2-6F0D0D167C6A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FilePocket.Client", "FilePocket.Client\FilePocket.Client.csproj", "{76DBF0FA-E371-4999-91A4-45C4AE24770C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FilePocket.Client", "FilePocket.Client\FilePocket.Client.csproj", "{76DBF0FA-E371-4999-91A4-45C4AE24770C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
