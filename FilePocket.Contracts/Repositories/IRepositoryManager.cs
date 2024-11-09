@@ -3,6 +3,8 @@
 public interface IRepositoryManager
 {
     IStorageRepository Storage { get; }
+    
+    IFolderRepository Folder { get; }
 
     IFileUploadSummaryRepository FileUploadSummary { get; }
 

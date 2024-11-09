@@ -54,11 +54,34 @@
                     @{
                         var i = 1;
                     }
+                    @foreach (var folder in _folders)
+                    {
+                        <tr>
+                            <th scope="row">
+                                <input class="form-check-input" id="folder_@i" checked="@folder.IsSelected" @oninput="() => ChildFolderCheckboxChanged(folder.Id!.Value)" type="checkbox" />
+                                <label class="form-check-label" for="flexCheckDefault">
+                                    @(i)
+                                </label>
+                            </th>
+                            <td>
+                                <a class="link-offset-2 link-underline link-underline-opacity-0 link-dark fw-semibold" href="/pockets/@folder.PocketId/folders/{@folder.Id}">
+                                    @folder.Name
+                                </a>
+                            </td>
+                            <td>
+                                <i class="bi bi-folder" title="Folder"></i>
+                            </td>
+                            <td>
+                                ...
+                            </td>
+                        </tr>
+                        i++;
+                    }
                     @foreach (var file in _cFiles)
                     {
                         <tr>
                             <th scope="row">
-                                <input class="form-check-input" id="file_@i" checked="@file.IsSelected" @oninput="() => ChildCheckboxChanged(file.Id)" type="checkbox" />
+                                <input class="form-check-input" id="file_@i" checked="@file.IsSelected" @oninput="() => ChildFileCheckboxChanged(file.Id)" type="checkbox" />
                                 <label class="form-check-label" for="flexCheckDefault">
                                     @(i)
                                 </label>

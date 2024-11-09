@@ -3,6 +3,7 @@ using System;
 using FilePocket.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FilePocket.DataAccess.Migrations
 {
     [DbContext(typeof(FilePocketDbContext))]
-    partial class FilePocketDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241108230346_CreateFolders")]
+    partial class CreateFolders
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -45,9 +48,6 @@ namespace FilePocket.DataAccess.Migrations
                     b.Property<string>("FileType")
                         .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<Guid?>("FolderId")
-                        .HasColumnType("uuid");
 
                     b.Property<string>("OriginalName")
                         .IsRequired()

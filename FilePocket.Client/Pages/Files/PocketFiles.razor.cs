@@ -1,5 +1,7 @@
-﻿using FilePocket.Client.Services.Files.Models;
+﻿using FilePocket.Client.Features.Folders.Models;
+using FilePocket.Client.Services.Files.Models;
 using FilePocket.Client.Services.Files.Requests;
+using FilePocket.Client.Services.Folders.Requests;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.JSInterop;
@@ -18,11 +20,15 @@ namespace FilePocket.Client.Pages.Files
         [Inject]
         private IFileRequests FileRequests { get; set; } = default!;
 
+        [Inject]
+        private IFolderRequests FolderRequests { get; set; } = default!;
+
         private Guid _pocketId => Guid.Parse(PocketIdParam);
 
         private ConcurrentBag<FileInfoModel> _cFiles = new();
         private ConcurrentBag<FileInfoModel> _tempFiles = new();
         private List<Guid> _selectedFiles = new();
+        private ConcurrentBag<FolderModel> _folders = new();
 
         private int maxAllowedFiles = 15;
         private bool showInputFile = true;
@@ -35,10 +41,16 @@ namespace FilePocket.Client.Pages.Files
         protected override async Task OnInitializedAsync()
         {
             var files = await FileRequests.GetFilesAsync(_pocketId);
+            var folders = (await FolderRequests.GetAllAsync(_pocketId)).ToList();
 
             foreach (var file in files)
             {
                 _cFiles.Add(file);
+            }
+
+            foreach (var folder in folders)
+            {
+                _folders.Add(folder);
             }
         }
 
@@ -48,46 +60,91 @@ namespace FilePocket.Client.Pages.Files
 
             _rmBtnDisabled = !_selectedAll;
 
+            foreach (var folder in _folders)
+            {
+                folder.IsSelected = _selectedAll;
+            }
+
             foreach (var file in _cFiles)
             {
                 file.IsSelected = _selectedAll;
             }
         }
 
-        private void ChildCheckboxChanged(Guid fileId)
+        private void ChildFileCheckboxChanged(Guid fileId)
         {
             var f = _cFiles.First(c => c.Id == fileId);
 
             f.IsSelected = !f.IsSelected;
 
-            _rmBtnDisabled = !_cFiles.Any(c => c.IsSelected);
+            var selectedFiles = _cFiles.Any(c => c.IsSelected);
+            var selectedFolders = _folders.Any(c => c.IsSelected);
+
+            _rmBtnDisabled = !(selectedFiles || selectedFolders);
+        }
+
+        private void ChildFolderCheckboxChanged(Guid folderId)
+        {
+            var f = _folders.First(c => c.Id == folderId);
+
+            f.IsSelected = !f.IsSelected;
+
+            var selectedFiles = _cFiles.Any(c => c.IsSelected);
+            var selectedFolders = _folders.Any(c => c.IsSelected);
+
+            _rmBtnDisabled = !(selectedFiles || selectedFolders);
         }
 
         private async void DeleteSelectedFiles()
         {
             var selectedFiles = _cFiles.Where(c => c.IsSelected);
+            var selectedFolders = _folders.Where(c => c.IsSelected);
 
-            if (!selectedFiles.Any())
+            if (!selectedFiles.Any() && !selectedFolders.Any())
             {
                 return;
             }
 
-            await Parallel.ForEachAsync(selectedFiles, async (file, cancellation) =>
+            if (selectedFolders.Any())
             {
-                await FileRequests.DeleteFile(_pocketId, file.Id);
-            });
-
-            var tmp = new ConcurrentBag<FileInfoModel>();
-
-            foreach (var f in _cFiles)
-            {
-                if (!f.IsSelected)
+                await Parallel.ForEachAsync(selectedFolders, async (folder, cancellation) =>
                 {
-                    tmp.Add(f);
+                    await FolderRequests.DeleteAsync(folder.Id!.Value);
+                });
+
+                var tmp = new ConcurrentBag<FolderModel>();
+
+                foreach (var f in _folders)
+                {
+                    if (!f.IsSelected)
+                    {
+                        tmp.Add(f);
+                    }
                 }
+
+                _folders = tmp;
             }
 
-            _cFiles = tmp;
+            if (selectedFiles.Any())
+            {
+                await Parallel.ForEachAsync(selectedFiles, async (file, cancellation) =>
+                {
+                    await FileRequests.DeleteFile(_pocketId, file.Id);
+                });
+
+                var tmp = new ConcurrentBag<FileInfoModel>();
+
+                foreach (var f in _cFiles)
+                {
+                    if (!f.IsSelected)
+                    {
+                        tmp.Add(f);
+                    }
+                }
+
+                _cFiles = tmp;
+            }
+
             _rmBtnDisabled = true;
             StateHasChanged();
         }
@@ -105,8 +162,8 @@ namespace FilePocket.Client.Pages.Files
                         fileContent.Headers.ContentType = new MediaTypeHeaderValue(GetContentType(file.ContentType));
 
                         content.Add(content: fileContent, name: "file", fileName: file.Name);
-                        content.Add(content: new StringContent(ClientId), "ClientId" );
-                        content.Add(content: new StringContent(PocketIdParam), "PocketId" );
+                        content.Add(content: new StringContent(ClientId), "ClientId");
+                        content.Add(content: new StringContent(PocketIdParam), "PocketId");
 
                         var uploadedFile = await FileRequests.UploadFileAsync(content, _pocketId);
 

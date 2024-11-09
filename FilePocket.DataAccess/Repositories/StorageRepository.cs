@@ -1,6 +1,5 @@
 ﻿using FilePocket.Contracts.Repositories;
 using FilePocket.Domain.Entities;
-using FilePocket.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace FilePocket.DataAccess.Repositories;

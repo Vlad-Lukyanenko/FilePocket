@@ -31,6 +31,7 @@ builder.Services.AddScoped<QueryStringConverter>();
 builder.Services.AddScoped<AuthenticationStateProvider, AuthStateProvider>();
 builder.Services.AddScoped<IStorageRequests, StorageRequests>();
 builder.Services.AddScoped<IFileRequests, FileRequests>();
+
 builder.Services.AddScoped<IUserRequests, UserRequests>();
 builder.Services.AddScoped<IHttpRequests, HttpAuthorizedRequests>(
     serviceProvider => new HttpAuthorizedRequests(

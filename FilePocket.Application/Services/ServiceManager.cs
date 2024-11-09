@@ -13,6 +13,7 @@ public class ServiceManager : IServiceManager
 {
     private readonly Lazy<IPocketService> _storageService;
     private readonly Lazy<IFileService> _fileService;
+    private readonly Lazy<IFolderService> _folderService;
     private readonly Lazy<IAuthenticationService> _authenticationService;
 
 
@@ -28,12 +29,15 @@ public class ServiceManager : IServiceManager
     {
         _storageService = new Lazy<IPocketService>(() => new StorageService(repositoryManager, mapper, configuration));
         _fileService = new Lazy<IFileService>(() => new FileService(repositoryManager, configuration, uploadService, imageService, mapper));
+        _folderService = new Lazy<IFolderService>(() => new FolderService(repositoryManager, mapper));
         _authenticationService = new Lazy<IAuthenticationService>(() => new AuthenticationService(mapper, logger, userManager, options));
     }
 
     public IPocketService StorageService => _storageService.Value;
 
     public IFileService FileService => _fileService.Value;
+
+    public IFolderService FolderService => _folderService.Value;
 
     public IAuthenticationService AuthenticationService => _authenticationService.Value;
 }

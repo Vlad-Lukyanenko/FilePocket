@@ -22,6 +22,8 @@ public class FilePocketDbContext : IdentityDbContext<User, Role, Guid>
 
     public DbSet<Storage> Storages { get; set; }
 
+    public DbSet<Folder> Folders { get; set; }
+
     private void SeedRolesWithAdminUser(ModelBuilder builder)
     {
         Guid adminUserId = Guid.NewGuid();

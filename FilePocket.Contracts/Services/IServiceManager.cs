@@ -6,5 +6,7 @@ public interface IServiceManager
 
     IFileService FileService { get; }
 
+    IFolderService FolderService { get; }
+
     IAuthenticationService AuthenticationService { get; }
 }

@@ -8,7 +8,6 @@ public class FileUploadSummaryProfile : Profile
 {
     public FileUploadSummaryProfile()
     {
-        CreateMap<FileUploadSummary, FileUploadInfo>();
-        CreateMap<FileUploadSummary, FileResponseModel>();
+        
     }
 }

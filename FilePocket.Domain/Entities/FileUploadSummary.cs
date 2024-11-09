@@ -27,7 +27,10 @@ public class FileUploadSummary
     [Required]
     public double FileSize { get; set; }
 
+    [Required]
     public Guid StorageId { get; set; }
+    
+    public Guid? FolderId { get; set; }
 
     public virtual Storage? Storage { get; set; }
 }

@@ -1,27 +1,71 @@
-﻿using FilePocket.Client.Services.Pockets.Models;
+﻿using FilePocket.Client.Features.Folders.Models;
+using FilePocket.Client.Pages.Pockets;
+using Newtonsoft.Json;
+using System.Text;
 
 namespace FilePocket.Client.Services.Folders.Requests
 {
     public class FolderRequests : IFolderRequests
     {
-        public Task<IEnumerable<PocketModel>> GetAllAsync(Guid userId)
+        private const string HttpClientName = "FilePocketApi";
+
+        private readonly HttpClient _httpClient;
+
+        public FolderRequests(IHttpClientFactory factory)
+        {
+            _httpClient = factory.CreateClient(HttpClientName);
+        }
+
+        public async Task<bool> CreateAsync(FolderModel folder)
+        {
+            var content = GetStringContent(folder);
+
+            var response = await _httpClient.PostAsync("api/folders", content);
+
+            return response.IsSuccessStatusCode;
+        }
+
+        public async Task<IEnumerable<FolderModel>> GetAllAsync(Guid pocketId, Guid parentFolderId)
+        {
+            var url = $"api/pockets/{pocketId}/parent-folder/{parentFolderId}/folders";
+            
+            var response = await _httpClient.GetAsync(url);
+
+            var content = await response.Content.ReadAsStringAsync();
+
+            return JsonConvert.DeserializeObject<IEnumerable<FolderModel>>(content)!;
+        }
+
+        public async Task<IEnumerable<FolderModel>> GetAllAsync(Guid pocketId)
+        {
+            var url = $"api/pockets/{pocketId}/folders";
+            
+            var response = await _httpClient.GetAsync(url);
+
+            var content = await response.Content.ReadAsStringAsync();
+
+            return JsonConvert.DeserializeObject<IEnumerable<FolderModel>>(content)!;
+        }
+
+        public async Task<bool> DeleteAsync(Guid folderId)
+        {
+            var url = $"api/folders/{folderId}";
+
+            var response = await _httpClient.DeleteAsync(url);
+
+            return response.IsSuccessStatusCode;
+        }
+
+        public Task<bool> UpdateAsync(FolderModel folder)
         {
             throw new NotImplementedException();
         }
 
-        public Task<bool> CreateAsync(CreatePocketModel pocket)
+        private static StringContent? GetStringContent(object? obj)
         {
-            throw new NotImplementedException();
-        }
+            var json = JsonConvert.SerializeObject(obj);
 
-        public Task<bool> DeleteAsync(Guid id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<bool> UpdateAsync(PocketModel pocket)
-        {
-            throw new NotImplementedException();
+            return new StringContent(json, Encoding.UTF8, "application/json");
         }
     }
 }

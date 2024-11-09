@@ -8,6 +8,5 @@ public class UserProfile : Profile
 {
     public UserProfile()
     {
-        CreateMap<UserRegistrationModel, User>();
     }
 }

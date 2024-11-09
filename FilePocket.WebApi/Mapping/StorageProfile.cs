@@ -8,7 +8,6 @@ public class StorageProfile : Profile
 {
     public StorageProfile()
     {
-        CreateMap<StorageModel, Storage>().ReverseMap();
-        CreateMap<StorageForManipulationsModel, Storage>();
+        
     }
 }
