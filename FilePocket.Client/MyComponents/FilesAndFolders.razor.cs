@@ -7,6 +7,7 @@ using System.Collections.Concurrent;
 using System.Net.Http.Headers;
 using FilePocket.Client.Features.Folders.Models;
 using FilePocket.Client.Services.Files.Requests;
+using System;
 
 namespace FilePocket.Client.MyComponents
 {
@@ -46,20 +47,16 @@ namespace FilePocket.Client.MyComponents
             await InitPage();
         }
 
-        private async void GoToFolder(Guid pocketId, Guid? folderId)
+        protected override async Task OnParametersSetAsync()
         {
-            var url = $"/pockets/{pocketId}/folders/{folderId}/files";
-
-            PocketId = pocketId;
-
-            if (folderId is not null)
-            {
-                FolderId = folderId.Value;
-            }
-
-            Navigation.NavigateTo(url);
             await InitPage();
             StateHasChanged();
+        }
+
+        private void GoToFolder(Guid pocketId, Guid? folderId)
+        {
+            var url = $"/pockets/{pocketId}/folders/{folderId}/files";
+            Navigation.NavigateTo(url);
         }
 
         private async Task InitPage()

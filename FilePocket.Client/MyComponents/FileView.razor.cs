@@ -40,8 +40,6 @@ namespace FilePocket.Client.MyComponents
             }
 
             var folderId = Guid.Parse(FolderId);
-            //var currentFolder = await FolderRequests.GetAsync(folderId);
-
 
             return $"/pockets/{PocketId}/folders/{folderId}/files";
         }

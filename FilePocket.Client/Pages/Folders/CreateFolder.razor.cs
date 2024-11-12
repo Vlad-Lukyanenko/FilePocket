@@ -18,6 +18,18 @@ namespace FilePocket.Client.Pages.Folders
         private bool _validName = true;
         private Guid _pocketId => Guid.Parse(PocketIdParam);
 
+        private string GetGoBackUrl()
+        {
+            if (string.IsNullOrWhiteSpace(FolderIdParam))
+            {
+                return $"/pockets/{PocketIdParam}/files";
+            }
+
+            var folderId = Guid.Parse(FolderIdParam);
+
+            return $"/pockets/{PocketIdParam}/folders/{folderId}/files";
+        }
+
         private async Task CreateFolderAsync()
         {
             Guid? folderId = null;
@@ -40,7 +52,8 @@ namespace FilePocket.Client.Pages.Folders
 
             if (result)
             {
-                Navigation.NavigateTo($"/pockets/{PocketIdParam}/files");
+                var url = GetGoBackUrl();
+                Navigation.NavigateTo(url);
             }
         }
 

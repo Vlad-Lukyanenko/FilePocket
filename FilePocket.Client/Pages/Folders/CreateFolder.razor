@@ -6,11 +6,7 @@
 <div class="container-fluid" style="min-height: 600px;">
     <div class="container-fluid w-100 w-md-75 pt-3">
 
-        @* Back Button and Title *@
-        @{
-            var goBackUrl = $"/pockets/{PocketIdParam}/files";
-        }
-        <TopSubMenu Url="@goBackUrl" Title="New Folder" />
+        <TopSubMenu Url="@GetGoBackUrl()" Title="New Folder" />
 
         <!-- Form Container -->
         <div class="border p-3 mt-3">
