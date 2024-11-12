@@ -48,6 +48,19 @@ public class FileService : IFileService
         return result;
     }
 
+    public async Task<IEnumerable<FileResponseModel>> GetAllFilesFromPocketAsync(Guid storageId, Guid folderId)
+    {
+        var storage = await _repository.Storage.GetByIdAsync(storageId);
+
+        CheckIfStorageExists(storage, storageId);
+
+        var fileUploadSummaries = await _repository.FileUploadSummary.GetAllByStorageIdAndFolderIdAsync(storageId, folderId);
+
+        var result = _mapper.Map<List<FileResponseModel>>(fileUploadSummaries);
+
+        return result;
+    }
+
     public async Task<IEnumerable<FileResponseModel>> GetFilteredFilesAsync(FilesFilterOptionsModel filterOptionsModel)
     {
         var filesResponses = new List<FileResponseModel>();
@@ -151,7 +164,7 @@ public class FileService : IFileService
         return response;
     }
 
-    public async Task<FileUploadSummary> UploadFileAsync(IFormFile file, Guid userId, Guid storageId)
+    public async Task<FileUploadSummary> UploadFileAsync(IFormFile file, Guid userId, Guid storageId, Guid? folderId)
     {
         var storage = await _repository.Storage.GetByIdAsync(storageId);
 
@@ -166,7 +179,8 @@ public class FileService : IFileService
             Path = path,
             FileType = DefineFileType(fileExtension),
             FileSize = file.Length / 1024,
-            StorageId = storageId
+            StorageId = storageId,
+            FolderId = folderId
         };
 
         _repository.FileUploadSummary.CreateFileUploadSummary(fileUploadSummaryToCreate);

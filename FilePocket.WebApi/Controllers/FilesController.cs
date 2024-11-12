@@ -29,10 +29,18 @@ public class FilesController : ControllerBase
         return Ok("Pong");
     }
 
-    [HttpGet("pockets/{pocketId}/files", Name = "All")]
+    [HttpGet("pockets/{pocketId}/files")]
     public async Task<IActionResult> GetAllFromPocket([FromRoute] Guid pocketId)
     {
         var fileUploadSummaries = await _service.FileService.GetAllFilesFromPocketAsync(pocketId);
+
+        return Ok(fileUploadSummaries);
+    }
+
+    [HttpGet("pockets/{pocketId:guid}/folders/{folderId:guid}/files")]
+    public async Task<IActionResult> GetAllFromPocket([FromRoute] Guid pocketId, [FromRoute] Guid folderId)
+    {
+        var fileUploadSummaries = await _service.FileService.GetAllFilesFromPocketAsync(pocketId, folderId);
 
         return Ok(fileUploadSummaries);
     }
@@ -109,7 +117,7 @@ public class FilesController : ControllerBase
 
         try
         {
-            var fileUploadSummary = await _service.FileService.UploadFileAsync(fileInformation.File!, fileInformation.ClientId!.Value, fileInformation.PocketId!.Value);
+            var fileUploadSummary = await _service.FileService.UploadFileAsync(fileInformation.File!, fileInformation.ClientId!.Value, fileInformation.PocketId!.Value, fileInformation.FolderId);
 
             return Ok(fileUploadSummary);
         }
@@ -166,6 +174,7 @@ public class FilesController : ControllerBase
     {
         public Guid? ClientId { get; set; }
         public Guid? PocketId { get; set; }
+        public Guid? FolderId { get; set; }
         public IFormFile? File { get; set; }
     }
 }

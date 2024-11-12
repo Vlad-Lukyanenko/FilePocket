@@ -13,6 +13,8 @@ public interface IFileService
 
     Task<IEnumerable<FileResponseModel>> GetAllFilesFromPocketAsync(Guid pocketId);
 
+    Task<IEnumerable<FileResponseModel>> GetAllFilesFromPocketAsync(Guid pocketId, Guid folderId);
+
     Task<IEnumerable<FileResponseModel>> GetFilteredFilesAsync(FilesFilterOptionsModel filterOptionsModel);
 
     Task<int> GetFilteredFilesCountAsync(FilesFilterOptionsModel filterOptionsModel);
@@ -25,7 +27,7 @@ public interface IFileService
 
     Task<List<FileResponseModel>> GetImageThumbnailsAsync(List<UserIconInfoRequest> request, Guid storageId, int maxSize);
 
-    Task<FileUploadSummary> UploadFileAsync(IFormFile file, Guid userId, Guid storageId);
+    Task<FileUploadSummary> UploadFileAsync(IFormFile file, Guid userId, Guid storageId, Guid? folderId);
 
     Task UploadFileChunkAsync(IFormFile file, string userId, string storageId, string sessionId, int chunkNumber);
 

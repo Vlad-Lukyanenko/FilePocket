@@ -35,6 +35,15 @@ namespace FilePocket.Client.Services.Files.Requests
             return JsonConvert.DeserializeObject<List<FileInfoModel>>(content)!;
         }
 
+        public async Task<List<FileInfoModel>> GetFilesAsync(Guid pocketId, Guid folderId)
+        {
+            var response = await _httpClient.GetAsync(FileUrl.GetAll(pocketId, folderId));
+
+            var content = await response.Content.ReadAsStringAsync();
+
+            return JsonConvert.DeserializeObject<List<FileInfoModel>>(content)!;
+        }
+
         public async Task<FileModel> GetFileInfoAsync(Guid pocketId, Guid fileId)
         {
             var response = await _httpClient.GetAsync(FileUrl.GetFileInfo(pocketId, fileId));

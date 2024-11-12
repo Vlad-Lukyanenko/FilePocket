@@ -11,18 +11,28 @@ namespace FilePocket.Client.Pages.Folders
         [Parameter]
         public string PocketIdParam { get; set; } = string.Empty;
 
+        [Parameter]
+        public string FolderIdParam { get; set; } = string.Empty;
+
         private string _folderName = string.Empty;
         private bool _validName = true;
         private Guid _pocketId => Guid.Parse(PocketIdParam);
 
         private async Task CreateFolderAsync()
         {
+            Guid? folderId = null;
+
+            if(!string.IsNullOrWhiteSpace(FolderIdParam) && FolderIdParam != Guid.Empty.ToString())
+            {
+                folderId = Guid.Parse(FolderIdParam);
+            }
+
             var folder = new FolderModel()
             {
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow,
                 Name = _folderName,
-                ParentFolderId = null,
+                ParentFolderId = folderId,
                 PocketId = _pocketId
             };
 

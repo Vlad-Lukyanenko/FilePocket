@@ -11,6 +11,7 @@
         public DateTime DateCreated { get; set; }
 
         public Guid StorageId { get; set; }
+        public Guid? FolderId { get; set; }
 
         public double FileSize { get; set; }
 

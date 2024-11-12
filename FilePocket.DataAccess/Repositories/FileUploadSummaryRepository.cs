@@ -14,7 +14,12 @@ public class FileUploadSummaryRepository : RepositoryBase<FileUploadSummary>, IF
 
     public async Task<IEnumerable<FileUploadSummary>> GetAllByStorageIdAsync(Guid storageId, bool trackChanges)
     {
-        return await FindByCondition(e => e.StorageId.Equals(storageId), trackChanges).ToListAsync();
+        return await FindByCondition(e => e.StorageId.Equals(storageId) && e.FolderId == null, trackChanges).ToListAsync();
+    }
+
+    public async Task<IEnumerable<FileUploadSummary>> GetAllByStorageIdAndFolderIdAsync(Guid storageId, Guid folderId, bool trackChanges)
+    {
+        return await FindByCondition(e => e.StorageId.Equals(storageId) && e.FolderId.Equals(folderId), trackChanges).ToListAsync();
     }
 
     public async Task<IEnumerable<FileUploadSummary>> GetFilteredFilesAsync(FilesFilterOptionsModel filterOptionsModel, bool trackChanges)

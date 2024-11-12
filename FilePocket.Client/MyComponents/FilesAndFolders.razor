@@ -1,10 +1,7 @@
-﻿@page "/pockets/{PocketIdParam}/files"
-
-<FilesAndFolders PocketId="@_pocketId" FolderId="Guid.Empty"></FilesAndFolders>
-
-@* @using FilePocket.Client.Services.Helpers
+﻿@using FilePocket.Client.Services.Helpers
 
 @inject IJSRuntime JS
+@inject NavigationManager Navigation;
 
 <div class="container-fluid" style="min-height: 600px;">
     <div class="container-fluid w-100 w-md-75 pt-3">
@@ -23,7 +20,7 @@
                 </label>
 
                 <!-- New Folder Button -->
-                <a href="/pockets/@_pocketId/folders/new" class="btn btn-outline-warning p-0 ps-2 pe-2">
+                <a href="/pockets/@PocketId/folders/@FolderId/new" class="btn btn-outline-warning p-0 ps-2 pe-2">
                     <i class="bi bi-folder-plus fs-4"></i>
                 </a>
 
@@ -66,7 +63,11 @@
                                 </label>
                             </th>
                             <td>
-                                <a class="link-offset-2 link-underline link-underline-opacity-0 link-dark fw-semibold" href="/pockets/@folder.PocketId/folders/@folder.Id">
+                                @{
+                                    var url = $"/pockets/{folder.PocketId}/folders/{folder.Id}";
+                                }
+
+                                <a class="link-offset-2 link-underline link-underline-opacity-0 link-dark fw-semibold" @onclick="() => GoToFolder(folder.PocketId, folder.Id)">
                                     @folder.Name
                                 </a>
                             </td>
@@ -122,4 +123,3 @@
         document.getElementById(inputId).value = null;
     }
 </script>
- *@
