@@ -1,20 +1,27 @@
 ﻿using FilePocket.Client.Services.Files.Models;
 using FilePocket.Client.Services.Files.Requests;
+using FilePocket.Client.Services.Folders.Requests;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 
-namespace FilePocket.Client.Pages.Files
+namespace FilePocket.Client.MyComponents
 {
-    public partial class File
+    public partial class FileView
     {
         [Parameter]
-        public string PocketIdParam { get; set; } = string.Empty;
+        public string PocketId { get; set; } = string.Empty;
 
         [Parameter]
-        public string FileIdParam { get; set; } = string.Empty;
+        public string FolderId { get; set; } = string.Empty;
+
+        [Parameter]
+        public string FileId { get; set; } = string.Empty;
 
         [Inject]
         private IFileRequests FileRequests { get; set; } = default!;
+
+        [Inject]
+        private IFolderRequests FolderRequests { get; set; } = default!;
 
         [Inject]
         private IJSRuntime JSRuntime { get; set; } = default!;
@@ -25,17 +32,29 @@ namespace FilePocket.Client.Pages.Files
         private FileModel? _file;
         private string _imageContent = string.Empty;
 
+        private string GetGoBackUrl()
+        {
+            if (string.IsNullOrWhiteSpace(FolderId))
+            {
+                return $"/pockets/{PocketId}/files";
+            }
+
+            var folderId = Guid.Parse(FolderId);
+            //var currentFolder = await FolderRequests.GetAsync(folderId);
+
+
+            return $"/pockets/{PocketId}/folders/{folderId}/files";
+        }
 
         protected override async Task OnInitializedAsync()
         {
-            _pocketId = Guid.Parse(PocketIdParam);
-            _fileId = Guid.Parse(FileIdParam);
+            _pocketId = Guid.Parse(PocketId);
+            _fileId = Guid.Parse(FileId);
 
             _file = await FileRequests.GetFileInfoAsync(_pocketId, _fileId);
 
             if (_file.FileType == "Image")
             {
-                //_file = await FileRequests.GetFileAsync(_pocketId, _fileId);
                 _file = await FileRequests.GetImageThumbnailAsync(_pocketId, _fileId, 700);
 
                 var base64 = Convert.ToBase64String(_file.FileByteArray!);

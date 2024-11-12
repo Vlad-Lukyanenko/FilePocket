@@ -28,11 +28,26 @@ namespace FilePocket.DataAccess.Repositories
             }
         }
 
+        public void DeleteByPocketId(Guid pocketId)
+        {
+            var folders = DbContext.Set<Folder>().Where(x => x.PocketId == pocketId);
+
+            if (folders.Any())
+            {
+                DbContext.Set<Folder>().RemoveRange(folders);
+            }
+        }
+
         public async Task<List<Folder>> GetAllAsync(Guid pocketId, Guid? parentFolderId)
         {
             var result = DbContext.Set<Folder>().Where(c => c.PocketId == pocketId && c.ParentFolderId == parentFolderId);
 
             return await result.ToListAsync();
+        }
+
+        public Task<Folder?> GetAsync(Guid folderId)
+        {
+            return DbContext.Set<Folder>().FirstOrDefaultAsync(x => x.Id == folderId);
         }
     }
 }

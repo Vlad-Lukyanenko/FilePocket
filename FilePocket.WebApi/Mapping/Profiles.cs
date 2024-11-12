@@ -16,7 +16,7 @@ namespace FilePocket.WebApi.Mapping
             CreateMap<StorageModel, Storage>().ReverseMap();
             CreateMap<StorageForManipulationsModel, Storage>();
 
-            CreateMap<FolderModel, Folder>().ReverseMap();
+            CreateMap<FolderModel?, Folder?>().ReverseMap();
         }
     }
 }

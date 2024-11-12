@@ -6,6 +6,8 @@ namespace FilePocket.Contracts.Repositories
     {
         void Create(Folder folder);
         void Delete(Guid folderId);
+        void DeleteByPocketId(Guid pocketId);
+        Task<Folder?> GetAsync(Guid folderId);
         Task<List<Folder>> GetAllAsync(Guid pocketId, Guid? parentFolderId);
     }
 }

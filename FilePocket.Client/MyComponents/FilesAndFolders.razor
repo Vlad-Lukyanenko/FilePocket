@@ -7,7 +7,7 @@
     <div class="container-fluid w-100 w-md-75 pt-3">
 
         <!-- Top SubMenu -->
-        <TopSubMenu Url="/pockets" Title="My Files" />
+        <TopSubMenu Url="@_goBackUrl" Title="My Files" />
 
         <!-- Action Buttons Row -->
         <div class="row mx-auto">
@@ -63,10 +63,6 @@
                                 </label>
                             </th>
                             <td>
-                                @{
-                                    var url = $"/pockets/{folder.PocketId}/folders/{folder.Id}";
-                                }
-
                                 <a class="link-offset-2 link-underline link-underline-opacity-0 link-dark fw-semibold" @onclick="() => GoToFolder(folder.PocketId, folder.Id)">
                                     @folder.Name
                                 </a>
@@ -90,7 +86,12 @@
                                 </label>
                             </th>
                             <td>
-                                <a class="link-offset-2 link-underline link-underline-opacity-0 link-dark" href="/pockets/@file.StorageId/files/@file.Id">
+                                @{
+                                    var url = FolderId is null
+                                    ? $"/pockets/{file.StorageId}/files/{file.Id}"
+                                    : $"/pockets/{PocketId}/folders/{FolderId}/files/{file.Id}";
+                                }
+                                <a class="link-offset-2 link-underline link-underline-opacity-0 link-dark" href="@url">
                                     @file.OriginalName
                                 </a>
                             </td>

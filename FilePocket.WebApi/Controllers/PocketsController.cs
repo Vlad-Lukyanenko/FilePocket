@@ -85,6 +85,7 @@ public class PocketsController : ControllerBase
     [HttpDelete("{pocketId:guid}")]
     public async Task<IActionResult> Delete([FromRoute] Guid pocketId)
     {
+        await _service.FolderService.DeleteByPocketIdAsync(pocketId);
         await _service.StorageService.DeleteStorageAsync(pocketId, trackChanges: false);
 
         return NoContent();

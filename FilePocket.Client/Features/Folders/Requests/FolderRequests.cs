@@ -36,6 +36,17 @@ namespace FilePocket.Client.Services.Folders.Requests
             return JsonConvert.DeserializeObject<IEnumerable<FolderModel>>(content)!;
         }
 
+        public async Task<FolderModel> GetAsync(Guid folderId)
+        { 
+            var url = $"api/folders/{folderId}";
+            
+            var response = await _httpClient.GetAsync(url);
+
+            var content = await response.Content.ReadAsStringAsync();
+
+            return JsonConvert.DeserializeObject<FolderModel>(content)!;
+        }
+
         public async Task<IEnumerable<FolderModel>> GetAllAsync(Guid pocketId)
         {
             var url = $"api/pockets/{pocketId}/folders";

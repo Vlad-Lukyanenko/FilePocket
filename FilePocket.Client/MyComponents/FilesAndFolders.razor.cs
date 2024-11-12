@@ -7,7 +7,6 @@ using System.Collections.Concurrent;
 using System.Net.Http.Headers;
 using FilePocket.Client.Features.Folders.Models;
 using FilePocket.Client.Services.Files.Requests;
-using FilePocket.Client.Pages.Pockets;
 
 namespace FilePocket.Client.MyComponents
 {
@@ -19,7 +18,7 @@ namespace FilePocket.Client.MyComponents
         public Guid PocketId { get; set; }
 
         [Parameter]
-        public Guid FolderId { get; set; } = Guid.Empty;
+        public Guid? FolderId { get; set; } = null;
 
         [Inject]
         private IFileRequests FileRequests { get; set; } = default!;
@@ -27,7 +26,7 @@ namespace FilePocket.Client.MyComponents
         [Inject]
         private IFolderRequests FolderRequests { get; set; } = default!;
 
-        //private Guid _pocketId => Guid.Parse(PocketId);
+        private string _goBackUrl = string.Empty;
 
         private ConcurrentBag<FileInfoModel> _cFiles = new();
         private ConcurrentBag<FileInfoModel> _tempFiles = new();
@@ -49,13 +48,13 @@ namespace FilePocket.Client.MyComponents
 
         private async void GoToFolder(Guid pocketId, Guid? folderId)
         {
-            var url = $"/pockets/{pocketId}/folders/{folderId}";
+            var url = $"/pockets/{pocketId}/folders/{folderId}/files";
 
             PocketId = pocketId;
 
-            if(folderId is not null)
+            if (folderId is not null)
             {
-                FolderId = folderId.Value; 
+                FolderId = folderId.Value;
             }
 
             Navigation.NavigateTo(url);
@@ -71,15 +70,15 @@ namespace FilePocket.Client.MyComponents
             List<FileInfoModel> files;
             List<FolderModel> folders;
 
-            if (FolderId == Guid.Empty)
+            if (FolderId == null)
             {
                 folders = (await FolderRequests.GetAllAsync(PocketId)).ToList();
                 files = await FileRequests.GetFilesAsync(PocketId);
             }
             else
-            {   
-                folders = (await FolderRequests.GetAllAsync(PocketId, FolderId)).ToList();
-                files = await FileRequests.GetFilesAsync(PocketId, FolderId);
+            {
+                folders = (await FolderRequests.GetAllAsync(PocketId, FolderId.Value)).ToList();
+                files = await FileRequests.GetFilesAsync(PocketId, FolderId.Value);
             }
 
             foreach (var file in files)
@@ -90,6 +89,21 @@ namespace FilePocket.Client.MyComponents
             foreach (var folder in folders)
             {
                 _folders.Add(folder);
+            }
+
+            var currentFolder = FolderId is null ? null : await FolderRequests.GetAsync(FolderId.Value);
+
+            if (currentFolder?.Id is null)
+            {
+                _goBackUrl = "/pockets";
+            }
+            else if (currentFolder.ParentFolderId is null)
+            {
+                _goBackUrl = $"/pockets/{PocketId}/files";
+            }
+            else
+            {
+                _goBackUrl = $"/pockets/{PocketId}/folders/{currentFolder.ParentFolderId}/files";
             }
         }
 

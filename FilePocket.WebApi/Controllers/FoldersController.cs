@@ -23,6 +23,14 @@ namespace FilePocket.WebApi.Controllers
             return Ok();
         }
 
+        [HttpGet("folders/{folderId:guid}")]
+        public async Task<IActionResult> Get([FromRoute] Guid folderId)
+        {
+            var folder = await _service.FolderService.GetAsync(folderId);
+
+            return Ok(folder);
+        }
+
         [HttpGet("pockets/{pocketId:guid}/folders")]
         public async Task<IActionResult> GetAll([FromRoute] Guid pocketId)
         {

@@ -1,13 +1,11 @@
-﻿@page "/pockets/{PocketIdParam}/files/{FileIdParam}"
-
-@using FilePocket.Client.Services.Helpers
+﻿@using FilePocket.Client.Services.Helpers
 
 <div class="container-fluid" style="min-height: 600px;">
     <div class="container-fluid w-100 w-md-75 h-100 pt-3 pb-4">
         @if (_file is not null)
         {
-            var goBackUrl = $"/pockets/{PocketIdParam}/files";
-            <TopSubMenu Url="@goBackUrl" Title="My File" />
+
+            <TopSubMenu Url="@GetGoBackUrl()" Title="My File" />
 
             <!-- Action Button Row -->
             <div class="row mx-auto">
