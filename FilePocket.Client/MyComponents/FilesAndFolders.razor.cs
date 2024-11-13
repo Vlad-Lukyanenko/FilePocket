@@ -7,7 +7,6 @@ using System.Collections.Concurrent;
 using System.Net.Http.Headers;
 using FilePocket.Client.Features.Folders.Models;
 using FilePocket.Client.Services.Files.Requests;
-using System;
 
 namespace FilePocket.Client.MyComponents
 {
@@ -51,12 +50,6 @@ namespace FilePocket.Client.MyComponents
         {
             await InitPage();
             StateHasChanged();
-        }
-
-        private void GoToFolder(Guid pocketId, Guid? folderId)
-        {
-            var url = $"/pockets/{pocketId}/folders/{folderId}/files";
-            Navigation.NavigateTo(url);
         }
 
         private async Task InitPage()

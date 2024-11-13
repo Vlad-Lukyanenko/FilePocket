@@ -31,17 +31,13 @@ namespace FilePocket.Client.MyComponents
 
         private FileModel? _file;
         private string _imageContent = string.Empty;
+        private string _goBackUrl = string.Empty;
 
-        private string GetGoBackUrl()
+        private void InitGoBackUrl()
         {
-            if (string.IsNullOrWhiteSpace(FolderId))
-            {
-                return $"/pockets/{PocketId}/files";
-            }
-
-            var folderId = Guid.Parse(FolderId);
-
-            return $"/pockets/{PocketId}/folders/{folderId}/files";
+             _goBackUrl = string.IsNullOrWhiteSpace(FolderId)
+                ? $"/pockets/{PocketId}/files"
+                : $"/pockets/{PocketId}/folders/{FolderId}/files";
         }
 
         protected override async Task OnInitializedAsync()
@@ -58,6 +54,8 @@ namespace FilePocket.Client.MyComponents
                 var base64 = Convert.ToBase64String(_file.FileByteArray!);
                 _imageContent = $"data:image/jpeg;base64,{base64}";
             }
+
+            InitGoBackUrl();
         }
 
         private async void DownloadFile()
