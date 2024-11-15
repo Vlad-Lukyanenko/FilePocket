@@ -29,14 +29,7 @@ public class AuthStateProvider : AuthenticationStateProvider
             return _anonymous;
         }
 
-        _httpClient.DefaultRequestHeaders.Authorization = 
-            new AuthenticationHeaderValue("bearer", token);
-
-        var claims = new List<Claim>
-        { 
-            new Claim(ClaimTypes.Name, "John Doe"),
-            new Claim(ClaimTypes.Role, "Administrator")
-        };
+        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
 
         return new AuthenticationState(
                 new ClaimsPrincipal(

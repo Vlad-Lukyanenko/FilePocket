@@ -2,7 +2,6 @@
 using FilePocket.Domain.Models;
 using FilePocket.Shared.Claims;
 using FilePocket.Shared.Exceptions;
-using MagpieChat.Domain.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -12,6 +11,7 @@ namespace FilePocket.WebApi.Controllers;
 
 [Route("api/")]
 [ApiController]
+[Authorize]
 public class FilesController : ControllerBase
 {
     private readonly IServiceManager _service;

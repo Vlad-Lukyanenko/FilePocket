@@ -19,9 +19,10 @@ namespace FilePocket.Client
             builder.RootComponents.Add<HeadOutlet>("head::after");
 
             var apiUrl = builder.Configuration.GetValue<string>("BaseAddresses:ApiBaseUrl")!;
-            builder.Services.AddHttpClient("FilePocketApi", client =>
-                client.BaseAddress = new Uri(apiUrl));
+            builder.Services.AddHttpClient("FilePocketApi", client => client.BaseAddress = new Uri(apiUrl))
+                            .AddHttpMessageHandler<AuthHandler>();
 
+            builder.Services.AddTransient<AuthHandler>();
             builder.Services.AddScoped<IAuthentictionRequests, AuthentictionRequests>();
             builder.Services.AddScoped<IPocketRequests, PocketRequests>();
             builder.Services.AddScoped<IFileRequests, FileRequests>();

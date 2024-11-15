@@ -1,5 +1,7 @@
-﻿using FilePocket.Client.Services.Pockets.Models;
+﻿using Blazored.LocalStorage;
+using FilePocket.Client.Services.Pockets.Models;
 using Newtonsoft.Json;
+using System.Net.Http.Headers;
 using System.Text;
 
 namespace FilePocket.Client.Services.Pockets.Requests
@@ -9,10 +11,12 @@ namespace FilePocket.Client.Services.Pockets.Requests
         private const string HttpClientName = "FilePocketApi";
 
         private readonly HttpClient _httpClient;
+        private readonly ILocalStorageService _localStorage;
 
-        public PocketRequests(IHttpClientFactory factory)
+        public PocketRequests(IHttpClientFactory factory, ILocalStorageService localStorage)
         {
             _httpClient = factory.CreateClient(HttpClientName);
+            _localStorage = localStorage; 
         }
 
         public async Task<IEnumerable<PocketModel>> GetAllAsync(Guid userId)

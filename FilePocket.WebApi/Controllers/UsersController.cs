@@ -11,13 +11,15 @@ namespace FilePocket.WebApi.Controllers
     public class UsersController : ControllerBase
     {
         private readonly UserManager<User> _userManager;
-    public UsersController(UserManager<User> userManager)
-    {
-            _userManager = userManager;
-    }
-        [HttpGet("{name}")]
-        public async Task<IActionResult> GetUserByName(string name) {
 
+        public UsersController(UserManager<User> userManager)
+        {
+            _userManager = userManager;
+        }
+
+        [HttpGet("{name}")]
+        public async Task<IActionResult> GetUserByName(string name)
+        {
             var user = await _userManager.FindByNameAsync(name);
 
             return Ok(user);

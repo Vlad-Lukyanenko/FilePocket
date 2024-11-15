@@ -7,7 +7,7 @@ namespace FilePocket.WebApi.Controllers;
 
 [Route("api/pockets")]
 [ApiController]
-//[Authorize]
+[Authorize]
 public class PocketsController : ControllerBase
 {
     private readonly IServiceManager _service;

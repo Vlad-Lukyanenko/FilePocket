@@ -1,11 +1,13 @@
 ﻿using FilePocket.Contracts.Services;
 using FilePocket.Domain.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FilePocket.WebApi.Controllers
 {
     [Route("api/")]
     [ApiController]
+    [Authorize]
     public class FoldersController : ControllerBase
     {
         private readonly IServiceManager _service;
