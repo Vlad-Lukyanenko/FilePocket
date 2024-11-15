@@ -30,7 +30,7 @@ public class ServiceManager : IServiceManager
         _storageService = new Lazy<IPocketService>(() => new StorageService(repositoryManager, mapper, configuration));
         _fileService = new Lazy<IFileService>(() => new FileService(repositoryManager, configuration, uploadService, imageService, mapper));
         _folderService = new Lazy<IFolderService>(() => new FolderService(repositoryManager, mapper));
-        _authenticationService = new Lazy<IAuthenticationService>(() => new AuthenticationService(mapper, logger, userManager, options));
+        _authenticationService = new Lazy<IAuthenticationService>(() => new AuthenticationService(logger, userManager, options, mapper));
     }
 
     public IPocketService StorageService => _storageService.Value;

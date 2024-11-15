@@ -2,11 +2,11 @@
 
 public class JwtConfigurationModel
 {
-    public string? ValidIssuer { get; set; }
+    public string ValidIssuer { get; set; } = string.Empty;
 
-    public string? ValidAudience { get; set; }
+    public string ValidAudience { get; set; } = string.Empty;
 
-    public string? TokenKey { get; set; }
+    public string TokenKey { get; set; } = string.Empty;
 
-    public string? Expires { get; set; }
+    public string Expires { get; set; } = string.Empty;
 }

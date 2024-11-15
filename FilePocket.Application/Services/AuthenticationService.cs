@@ -22,22 +22,28 @@ public class AuthenticationService : IAuthenticationService
     private readonly UserManager<User> _userManager;
     private User? _user;
 
-    public AuthenticationService(IMapper mapper, ILoggerService logger, UserManager<User> userManager, IOptions<JwtConfigurationModel> options)
+    public AuthenticationService(
+        ILoggerService logger,
+        UserManager<User> userManager,
+        IOptions<JwtConfigurationModel> options,
+        IMapper mapper)
     {
-        _mapper = mapper;
         _logger = logger;
         _userManager = userManager;
         _jwtConfiguration = options.Value;
+        _mapper = mapper;
     }
 
     public async Task<IdentityResult> RegisterUser(UserRegistrationModel userForRegistration)
     {
         var user = _mapper.Map<User>(userForRegistration);
+        user.UserName = userForRegistration.Email;
+        
         var result = await _userManager.CreateAsync(user, userForRegistration.Password!);
 
         if (result.Succeeded)
         {
-            await _userManager.AddToRolesAsync(user, userForRegistration.Roles!);
+            await _userManager.AddToRolesAsync(user, new List<string> { "Administrator" });
         }
 
         return result;
@@ -71,22 +77,29 @@ public class AuthenticationService : IAuthenticationService
         }
 
         await _userManager.UpdateAsync(_user);
+        
+        //return new JwtSecurityTokenHandler().WriteToken(tokenOptions);
+
         var accessToken = new JwtSecurityTokenHandler().WriteToken(tokenOptions);
 
-        return new TokenModel { AccessToken = accessToken, RefreshToken = refreshToken };
+        return new TokenModel
+        {
+            IsSuccess = true,
+            Token = accessToken,
+        };
     }
 
     public async Task<TokenModel> RefreshToken(TokenModel tokenModel)
     {
-        var principal = GetPrincipalFromExpiredToken(tokenModel.AccessToken!);
-        var user = await _userManager.FindByNameAsync(principal.Identity!.Name!);
+        //var principal = GetPrincipalFromExpiredToken(tokenModel.AccessToken!);
+        //var user = await _userManager.FindByNameAsync(principal.Identity!.Name!);
 
-        if (user is null || user.RefreshToken != tokenModel.RefreshToken || user.RefreshTokenExpiryTime <= DateTime.Now)
-        {
-            throw new RefreshTokenBadRequest();
-        }
+        //if (user is null || user.RefreshToken != tokenModel.RefreshToken || user.RefreshTokenExpiryTime <= DateTime.Now)
+        //{
+        //    throw new RefreshTokenBadRequest();
+        //}
 
-        _user = user;
+        //_user = user;
 
         return await CreateToken(populateExp: false);
     }

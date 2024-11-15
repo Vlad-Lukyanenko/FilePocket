@@ -2,7 +2,14 @@
 
 public class TokenModel
 {
-    public string? AccessToken { get; init; }
+    //public string Issuer { get; set; } = string.Empty;
 
-    public string? RefreshToken { get; init; }
+    //public string Audience { get; set; } = string.Empty;
+
+    //public string AccessToken { get; set; } = string.Empty;
+
+    //public string RefreshToken { get; set; } = string.Empty;
+
+    public bool IsSuccess { get; set; }
+    public string Token { get; set; } = string.Empty;
 }

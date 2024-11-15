@@ -14,17 +14,12 @@ public class AuthenticationController : ControllerBase
         _service = service;
     }
 
-    [HttpPost]
-    public async Task<IActionResult> RegisterUser([FromBody] UserRegistrationModel? userForRegistration)
+    [HttpPost("register")]
+    public async Task<IActionResult> RegisterUser([FromBody] UserRegistrationModel userForRegistration)
     {
-        if (userForRegistration is null)
+        if (userForRegistration is null || !ModelState.IsValid)
         {
-            return BadRequest("User to register is null");
-        }
-
-        if (!ModelState.IsValid)
-        {
-            return UnprocessableEntity(ModelState);
+            return BadRequest();
         }
 
         var result = await _service.AuthenticationService.RegisterUser(userForRegistration);
@@ -43,7 +38,7 @@ public class AuthenticationController : ControllerBase
     }
 
     [HttpPost("login")]
-    public async Task<IActionResult> Authenticate([FromBody] UserLoginModel? user)
+    public async Task<IActionResult> Login([FromBody] UserLoginModel? user)
     {
         if (user is null)
         {

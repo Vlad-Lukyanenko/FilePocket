@@ -4,9 +4,11 @@ namespace FilePocket.Client.Services.Authentication.Requests
 {
     public interface IAuthentictionRequests
     {
-        Task<bool> RegisterUserAsync(RegistrationModel registrationModel);
+        Task<bool> RegisterUserAsync(RegistrationRequest registrationModel);
 
-        Task<TokenModel> LoginUserAsync(LoginModel loginModel);
+        Task<TokenModel> LoginAsync(LoginModel loginModel);
+        
+        Task Logout();
 
         Task<TokenModel> RefreshAccessTokenAsync(TokenModel tokenModel);
     }

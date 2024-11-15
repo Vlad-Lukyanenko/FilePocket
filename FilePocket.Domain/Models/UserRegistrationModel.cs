@@ -4,17 +4,12 @@ namespace FilePocket.Domain.Models;
 
 public class UserRegistrationModel
 {
-    public string? FirstName { get; init; }
-
-    public string? LastName { get; init; }
-
-    [Required(ErrorMessage = "Username is required")]
-    public string? UserName { get; init; }
+    [Required(ErrorMessage = "Email is required")]
+    public string Email { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "Password is required")]
-    public string? Password { get; init; }
-
-    public string? Email { get; init; }
-
-    public ICollection<string>? Roles { get; init; }
+    public string Password { get; set; } = string.Empty;
+    
+    [Compare(nameof(Password), ErrorMessage = "The password and confirmation password do not match.")]
+    public string ConfirmPassword { get; set; } = string.Empty;
 }
