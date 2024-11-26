@@ -1,4 +1,6 @@
 ﻿@page "/pockets/{PocketId}/files"
 @page "/pockets/{PocketId}/folders/{FolderId}/files"
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
 
 <FilesAndFolders PocketId="_pocketId" FolderId="_folderId"></FilesAndFolders>

@@ -73,33 +73,32 @@ public class AuthenticationService : IAuthenticationService
 
         if (populateExp)
         {
-            _user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(3);
+            _user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
         }
 
         await _userManager.UpdateAsync(_user);
         
-        //return new JwtSecurityTokenHandler().WriteToken(tokenOptions);
-
         var accessToken = new JwtSecurityTokenHandler().WriteToken(tokenOptions);
 
         return new TokenModel
         {
             IsSuccess = true,
             Token = accessToken,
+            RefreshToken = refreshToken
         };
     }
 
     public async Task<TokenModel> RefreshToken(TokenModel tokenModel)
     {
-        //var principal = GetPrincipalFromExpiredToken(tokenModel.AccessToken!);
-        //var user = await _userManager.FindByNameAsync(principal.Identity!.Name!);
+        var principal = GetPrincipalFromExpiredToken(tokenModel.Token!);
+        var user = await _userManager.FindByNameAsync(principal.Identity!.Name!);
 
-        //if (user is null || user.RefreshToken != tokenModel.RefreshToken || user.RefreshTokenExpiryTime <= DateTime.Now)
-        //{
-        //    throw new RefreshTokenBadRequest();
-        //}
+        if (user is null || user.RefreshToken != tokenModel.RefreshToken || user.RefreshTokenExpiryTime <= DateTime.Now)
+        {
+            throw new RefreshTokenBadRequest();
+        }
 
-        //_user = user;
+        _user = user;
 
         return await CreateToken(populateExp: false);
     }

@@ -1,4 +1,5 @@
-﻿using FilePocket.Client.Features.Files;
+﻿using FilePocket.Client.Features;
+using FilePocket.Client.Features.Files;
 using FilePocket.Client.Services.Files.Models;
 using Newtonsoft.Json;
 using System.Net.Http.Json;
@@ -9,62 +10,51 @@ namespace FilePocket.Client.Services.Files.Requests
     {
         private const string HttpClientName = "FilePocketApi";
 
-        private readonly HttpClient _httpClient;
+        private readonly FilePocketApiClient _apiClient;
 
-
-        public FileRequests(IHttpClientFactory factory)
+        public FileRequests(FilePocketApiClient apiClient)
         {
-            _httpClient = factory.CreateClient(HttpClientName);
+            _apiClient = apiClient;
         }
 
         public async Task<FileModel> GetFileAsync(Guid pocketId, Guid fileId)
         {
-            var response = await _httpClient.GetAsync(FileUrl.GetFile(pocketId, fileId));
-
-            var content = await response.Content.ReadAsStringAsync();
+            var content = await _apiClient.GetAsync(FileUrl.GetFile(pocketId, fileId));
 
             return JsonConvert.DeserializeObject<FileModel>(content)!;
         }
 
         public async Task<List<FileInfoModel>> GetFilesAsync(Guid pocketId)
         {
-            var response = await _httpClient.GetAsync(FileUrl.GetAll(pocketId));
-
-            var content = await response.Content.ReadAsStringAsync();
+            var content = await _apiClient.GetAsync(FileUrl.GetAll(pocketId));
 
             return JsonConvert.DeserializeObject<List<FileInfoModel>>(content)!;
         }
 
         public async Task<List<FileInfoModel>> GetFilesAsync(Guid pocketId, Guid folderId)
         {
-            var response = await _httpClient.GetAsync(FileUrl.GetAll(pocketId, folderId));
-
-            var content = await response.Content.ReadAsStringAsync();
+            var content = await _apiClient.GetAsync(FileUrl.GetAll(pocketId, folderId));
 
             return JsonConvert.DeserializeObject<List<FileInfoModel>>(content)!;
         }
 
         public async Task<FileModel> GetFileInfoAsync(Guid pocketId, Guid fileId)
         {
-            var response = await _httpClient.GetAsync(FileUrl.GetFileInfo(pocketId, fileId));
-
-            var content = await response.Content.ReadAsStringAsync();
+            var content = await _apiClient.GetAsync(FileUrl.GetFileInfo(pocketId, fileId));
 
             return JsonConvert.DeserializeObject<FileModel>(content)!;
         }
 
         public async Task<FileModel> GetImageThumbnailAsync(Guid pocketId, Guid imageId, int size)
         {
-            var response = await _httpClient.GetAsync(FileUrl.GetImageThumbnail(pocketId, imageId, size));
-
-            var content = await response.Content.ReadAsStringAsync();
+            var content = await _apiClient.GetAsync(FileUrl.GetImageThumbnail(pocketId, imageId, size));
 
             return JsonConvert.DeserializeObject<FileModel>(content)!;
         }
 
         public async Task<FileModel> UploadFileAsync(MultipartFormDataContent content, Guid pocketId)
         {
-            var response = await _httpClient.PostAsync(FileUrl.UploadFile, content);
+            var response = await _apiClient.PostAsync(FileUrl.UploadFile, content);
 
             var result = await response.Content.ReadFromJsonAsync<FileModel>();
 
@@ -75,7 +65,7 @@ namespace FilePocket.Client.Services.Files.Requests
 
         public async Task DeleteFile(Guid pocketId, Guid fileId)
         {
-            var response = await _httpClient.DeleteAsync(FileUrl.DeleteFile(pocketId, fileId));
+            var response = await _apiClient.DeleteAsync(FileUrl.DeleteFile(pocketId, fileId));
 
             response.EnsureSuccessStatusCode();
         }

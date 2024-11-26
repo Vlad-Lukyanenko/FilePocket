@@ -1,5 +1,7 @@
 ﻿@page "/pockets/{PocketIdParam}/folders/{FolderIdParam}/new"
-       
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
+
 @inject IJSRuntime JS
 @inject NavigationManager Navigation;
 

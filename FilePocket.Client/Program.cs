@@ -1,5 +1,7 @@
 using Blazored.LocalStorage;
+using FilePocket.Client.Features;
 using FilePocket.Client.Features.Authentication;
+using FilePocket.Client.Services.Authentication;
 using FilePocket.Client.Services.Authentication.Requests;
 using FilePocket.Client.Services.Files.Requests;
 using FilePocket.Client.Services.Folders.Requests;
@@ -19,10 +21,16 @@ namespace FilePocket.Client
             builder.RootComponents.Add<HeadOutlet>("head::after");
 
             var apiUrl = builder.Configuration.GetValue<string>("BaseAddresses:ApiBaseUrl")!;
-            builder.Services.AddHttpClient("FilePocketApi", client => client.BaseAddress = new Uri(apiUrl))
-                            .AddHttpMessageHandler<AuthHandler>();
+            builder.Services.AddHttpClient<FilePocketApiClient>("FilePocketApi", client =>
+            {
+                client.BaseAddress = new Uri(apiUrl);
+                client.DefaultRequestHeaders.Add("Accept", "application/json");
+            }).AddHttpMessageHandler<AuthHandler>();
 
+            builder.Services.AddScoped<AuthenticationStateProvider, AuthStateProvider>();
+            builder.Services.AddScoped<FilePocketApiClient>();
             builder.Services.AddTransient<AuthHandler>();
+
             builder.Services.AddScoped<IAuthentictionRequests, AuthentictionRequests>();
             builder.Services.AddScoped<IPocketRequests, PocketRequests>();
             builder.Services.AddScoped<IFileRequests, FileRequests>();
@@ -30,7 +38,7 @@ namespace FilePocket.Client
 
             builder.Services.AddBlazoredLocalStorage();
             builder.Services.AddAuthorizationCore();
-            builder.Services.AddScoped<AuthenticationStateProvider,  AuthStateProvider>();
+
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
             await builder.Build().RunAsync();

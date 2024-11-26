@@ -1,18 +1,18 @@
 ﻿using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Authorization;
 using System.Security.Claims;
-using System.Net.Http.Headers;
 
 namespace FilePocket.Client.Features.Authentication;
 
 public class AuthStateProvider : AuthenticationStateProvider
 {
-    private readonly HttpClient _httpClient;
+    private readonly FilePocketApiClient _apiClient;
     private readonly ILocalStorageService _localStorage;
     private readonly AuthenticationState _anonymous;
-    public AuthStateProvider(HttpClient httpClient, ILocalStorageService localStorage)
+
+    public AuthStateProvider(FilePocketApiClient apiClient, ILocalStorageService localStorage)
     {
-        _httpClient = httpClient;
+        _apiClient = apiClient;
         _localStorage = localStorage;
 
         var anonymous = new ClaimsIdentity();
@@ -29,7 +29,7 @@ public class AuthStateProvider : AuthenticationStateProvider
             return _anonymous;
         }
 
-        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
+        _apiClient.SetBearerAuthorizationHeader(token);
 
         return new AuthenticationState(
                 new ClaimsPrincipal(

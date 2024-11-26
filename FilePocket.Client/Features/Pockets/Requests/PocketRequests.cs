@@ -1,29 +1,27 @@
 ﻿using Blazored.LocalStorage;
+using FilePocket.Client.Features;
 using FilePocket.Client.Services.Pockets.Models;
 using Newtonsoft.Json;
-using System.Net.Http.Headers;
 using System.Text;
 
 namespace FilePocket.Client.Services.Pockets.Requests
 {
     public class PocketRequests : IPocketRequests
     {
-        private const string HttpClientName = "FilePocketApi";
-
-        private readonly HttpClient _httpClient;
+        private readonly FilePocketApiClient _apiClient;
         private readonly ILocalStorageService _localStorage;
 
-        public PocketRequests(IHttpClientFactory factory, ILocalStorageService localStorage)
+        public PocketRequests(
+            FilePocketApiClient apiClient,
+            ILocalStorageService localStorage)
         {
-            _httpClient = factory.CreateClient(HttpClientName);
+            _apiClient = apiClient;
             _localStorage = localStorage; 
         }
 
         public async Task<IEnumerable<PocketModel>> GetAllAsync(Guid userId)
         {
-            var response = await _httpClient.GetAsync(PocketUrl.GetAll(userId));
-
-            var content = await response.Content.ReadAsStringAsync();
+            var content = await _apiClient.GetAsync(PocketUrl.GetAll(userId));
 
             return JsonConvert.DeserializeObject<IEnumerable<PocketModel>>(content)!;
         }
@@ -31,9 +29,7 @@ namespace FilePocket.Client.Services.Pockets.Requests
         public async Task<PocketModel> GetInfoAsync(Guid pocketId)
         {
             var url = PocketUrl.GetInfo(pocketId);
-            var response = await _httpClient.GetAsync(url);
-
-            var content = await response.Content.ReadAsStringAsync();
+            var content = await _apiClient.GetAsync(url);
 
             return JsonConvert.DeserializeObject<PocketModel>(content)!;
         }
@@ -42,7 +38,7 @@ namespace FilePocket.Client.Services.Pockets.Requests
         {
             var content = GetStringContent(pocket);
 
-            var response = await _httpClient.PostAsync(PocketUrl.BaseUrl, content);
+            var response = await _apiClient.PostAsync(PocketUrl.BaseUrl, content);
 
             return response.IsSuccessStatusCode;
         }
@@ -51,14 +47,14 @@ namespace FilePocket.Client.Services.Pockets.Requests
         {
             var content = GetStringContent(pocket);
 
-            var response = await _httpClient.PutAsync(PocketUrl.Update(pocket.Id), content);
+            var response = await _apiClient.PutAsync(PocketUrl.Update(pocket.Id), content);
 
             return response.IsSuccessStatusCode;
         }
 
         public async Task<bool> DeleteAsync(Guid pocketId)
         {
-            var response = await _httpClient.DeleteAsync(PocketUrl.Update(pocketId));
+            var response = await _apiClient.DeleteAsync(PocketUrl.Update(pocketId));
 
             return response.IsSuccessStatusCode;
         }

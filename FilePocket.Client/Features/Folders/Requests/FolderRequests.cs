@@ -1,5 +1,5 @@
-﻿using FilePocket.Client.Features.Folders.Models;
-using FilePocket.Client.Pages.Pockets;
+﻿using FilePocket.Client.Features;
+using FilePocket.Client.Features.Folders.Models;
 using Newtonsoft.Json;
 using System.Text;
 
@@ -9,18 +9,17 @@ namespace FilePocket.Client.Services.Folders.Requests
     {
         private const string HttpClientName = "FilePocketApi";
 
-        private readonly HttpClient _httpClient;
-
-        public FolderRequests(IHttpClientFactory factory)
+        private readonly FilePocketApiClient _apiClient;
+        public FolderRequests(FilePocketApiClient apiClient)
         {
-            _httpClient = factory.CreateClient(HttpClientName);
+            _apiClient = apiClient;
         }
 
         public async Task<bool> CreateAsync(FolderModel folder)
         {
             var content = GetStringContent(folder);
 
-            var response = await _httpClient.PostAsync("api/folders", content);
+            var response = await _apiClient.PostAsync("api/folders", content);
 
             return response.IsSuccessStatusCode;
         }
@@ -29,9 +28,7 @@ namespace FilePocket.Client.Services.Folders.Requests
         {
             var url = $"api/pockets/{pocketId}/parent-folder/{parentFolderId}/folders";
             
-            var response = await _httpClient.GetAsync(url);
-
-            var content = await response.Content.ReadAsStringAsync();
+            var content = await _apiClient.GetAsync(url);
 
             return JsonConvert.DeserializeObject<IEnumerable<FolderModel>>(content)!;
         }
@@ -40,9 +37,7 @@ namespace FilePocket.Client.Services.Folders.Requests
         { 
             var url = $"api/folders/{folderId}";
             
-            var response = await _httpClient.GetAsync(url);
-
-            var content = await response.Content.ReadAsStringAsync();
+            var content = await _apiClient.GetAsync(url);
 
             return JsonConvert.DeserializeObject<FolderModel>(content)!;
         }
@@ -51,9 +46,7 @@ namespace FilePocket.Client.Services.Folders.Requests
         {
             var url = $"api/pockets/{pocketId}/folders";
             
-            var response = await _httpClient.GetAsync(url);
-
-            var content = await response.Content.ReadAsStringAsync();
+            var content = await _apiClient.GetAsync(url);
 
             return JsonConvert.DeserializeObject<IEnumerable<FolderModel>>(content)!;
         }
@@ -62,7 +55,7 @@ namespace FilePocket.Client.Services.Folders.Requests
         {
             var url = $"api/folders/{folderId}";
 
-            var response = await _httpClient.DeleteAsync(url);
+            var response = await _apiClient.DeleteAsync(url);
 
             return response.IsSuccessStatusCode;
         }

@@ -10,6 +10,6 @@ namespace FilePocket.Client.Services.Authentication.Requests
         
         Task Logout();
 
-        Task<TokenModel> RefreshAccessTokenAsync(TokenModel tokenModel);
+        Task<TokenModel> RefreshAccessTokenAsync();
     }
 }
