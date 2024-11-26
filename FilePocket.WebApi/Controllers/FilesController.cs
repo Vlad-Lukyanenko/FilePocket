@@ -81,13 +81,14 @@ public class FilesController : ControllerBase
     }
 
     [HttpGet("storage/{storageId:guid}/image/thumbnail")]
-    //[AllowAnonymous]
     public async Task<IActionResult> GetImageThumbnail(
         [FromRoute, Required] Guid storageId,
         [FromQuery, Required] Guid id,
         [FromQuery, Required] int size)
     {
-        var image = await _service.FileService.GetImageThumbnailAsync(storageId, id, size);
+        var image = await _service.FileService.GetThumbnailAsync(storageId, id, size);
+
+        if(image.FileByteArray!.Length == 0) return BadRequest(image);
 
         return Ok(image);
     }
@@ -199,7 +200,7 @@ public class FilesController : ControllerBase
     [FromRoute, Required] Guid storageId,
     [FromQuery, Required] int size)
     {
-        var images = await _service.FileService.GetImageThumbnailsAsync(request, storageId, size);
+        var images = await _service.FileService.GetThumbnailsAsync(request, storageId, size);
 
         return CreatedAtRoute("All", new { storageId }, images!);
     }
