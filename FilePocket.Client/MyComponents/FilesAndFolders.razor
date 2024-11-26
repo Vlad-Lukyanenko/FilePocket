@@ -19,10 +19,20 @@
                     <InputFile hidden id="fileInput" OnChange="LoadFiles" multiple />
                 </label>
 
-                <!-- New Folder Button -->
-                <a href="/pockets/@PocketId/folders/@FolderId/new" class="btn btn-outline-warning p-0 ps-2 pe-2">
-                    <i class="bi bi-folder-plus fs-4"></i>
-                </a>
+                @if (FolderId is null)
+                {
+                    <!-- New Folder Button -->
+                    <a href="/pockets/@PocketId/folders/new" class="btn btn-outline-warning p-0 ps-2 pe-2">
+                        <i class="bi bi-folder-plus fs-4"></i>
+                    </a>
+                }
+                else
+                {
+                    <!-- New Folder Button -->
+                    <a href="/pockets/@PocketId/folders/@FolderId/new" class="btn btn-outline-warning p-0 ps-2 pe-2">
+                        <i class="bi bi-folder-plus fs-4"></i>
+                    </a>
+                }
 
                 <!-- Delete Button aligned to right -->
                 <button class="btn @(_rmBtnDisabled ? "btn-outline-secondary" : "btn-outline-danger") ms-auto p-0 ps-2 pe-2" disabled="@_rmBtnDisabled" @onclick="DeleteSelectedFiles">
