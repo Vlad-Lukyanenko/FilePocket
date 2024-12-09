@@ -43,7 +43,7 @@ namespace FilePocket.Admin.Requests
             return await GetResult<bool>(response);
         }
 
-        public async Task<ImageResponseModel> GetImageThumbnailAsync(Guid storageId, Guid imageId, int size)
+        public async Task<ImageResponseModel> GetThumbnailAsync(Guid storageId, Guid imageId, int size)
         {
             var url = $"api/files/storage/{storageId}/image/thumbnail?id={imageId}&size={size}";
             var response = await _authorizedRequests.GetAsyncRequest(url);

@@ -19,9 +19,9 @@ public interface IFileService
 
     Task<FileResponseModel> GetFileByIdAsync(Guid storageId, Guid id);
 
-    Task<FileResponseModel> GetImageThumbnailAsync(Guid storageId, Guid id, int maxSize);
+    Task<FileResponseModel> GetThumbnailAsync(Guid storageId, Guid id, int maxSize);
 
-    Task<List<FileResponseModel>> GetImageThumbnailsAsync(List<UserIconInfoRequest> request, Guid storageId, int maxSize);
+    Task<List<FileResponseModel>> GetThumbnailsAsync(List<UserIconInfoRequest> request, Guid storageId, int maxSize);
 
     Task<FileUploadSummary> UploadFileAsync(IFormFile file, Guid userId, Guid storageId);
 

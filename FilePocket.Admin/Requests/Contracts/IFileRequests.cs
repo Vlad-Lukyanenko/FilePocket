@@ -15,6 +15,6 @@ namespace FilePocket.Admin.Requests.Contracts
         Task<bool> PostAsync(MultipartFormDataContent content, SessionModel session, int chunkNumber);
         Task<bool> CheckIfFileExists(string fileName, Guid storageId);
         Task<SessionModel> CreateSession(Guid userId, Guid storageId, CreateSessionParams createParams);
-        Task<ImageResponseModel> GetImageThumbnailAsync(Guid storageId, Guid imageId, int size);
+        Task<ImageResponseModel> GetThumbnailAsync(Guid storageId, Guid imageId, int size);
     }
 }

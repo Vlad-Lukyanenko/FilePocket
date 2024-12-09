@@ -225,7 +225,7 @@ namespace FilePocket.Admin.Pages
             Guid imageId = file.Id;
             int size = 500;
 
-            var imageResponse = await FileRequests.GetImageThumbnailAsync(storageId, imageId, size);
+            var imageResponse = await FileRequests.GetThumbnailAsync(storageId, imageId, size);
 
             if (imageResponse != null)
             {
