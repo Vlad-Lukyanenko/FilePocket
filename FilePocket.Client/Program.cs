@@ -1,7 +1,8 @@
 using Blazored.LocalStorage;
+using FilePocket.Admin.Requests;
+using FilePocket.Admin.Requests.Contracts;
 using FilePocket.Client.Features;
 using FilePocket.Client.Features.Authentication;
-using FilePocket.Client.Services.Authentication;
 using FilePocket.Client.Services.Authentication.Requests;
 using FilePocket.Client.Services.Files.Requests;
 using FilePocket.Client.Services.Folders.Requests;
@@ -35,6 +36,7 @@ namespace FilePocket.Client
             builder.Services.AddScoped<IPocketRequests, PocketRequests>();
             builder.Services.AddScoped<IFileRequests, FileRequests>();
             builder.Services.AddScoped<IFolderRequests, FolderRequests>();
+            builder.Services.AddScoped<IUserRequests, UserRequests>();
 
             builder.Services.AddBlazoredLocalStorage();
             builder.Services.AddAuthorizationCore();

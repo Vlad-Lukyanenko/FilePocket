@@ -77,7 +77,7 @@ public class FilesController : ControllerBase
     //    return Ok(response);
     //}
 
-    [HttpGet("files/{fileId:guid}/pockets/{pocketId:guid}")]
+    [HttpGet("pockets/{pocketId:guid}/files/{fileId:guid}")]
     public async Task<IActionResult> Get(Guid pocketId, Guid fileId)
     {
         var file = await _service.FileService.GetFileByIdAsync(pocketId, fileId);
@@ -99,10 +99,23 @@ public class FilesController : ControllerBase
         [FromRoute, Required] Guid imageId,
         [FromRoute, Required] int size)
     {
-        var image = await _service.FileService.GetImageThumbnailAsync(pocketId, imageId, size);
+        var image = await _service.FileService.GetThumbnailAsync(pocketId, imageId, size);
 
         return Ok(image);
     }
+
+    [HttpPost("pockets/{pocketId:guid}/thumbnails/{size}")]
+    public async Task<IActionResult> GetImageThumbnails(
+        [FromBody, Required] List<UserIconInfoRequest> request,
+        [FromRoute, Required] Guid pocketId,
+        [FromRoute, Required] int size)
+    {
+        var images = await _service.FileService.GetThumbnailsAsync(request, pocketId, size);
+
+        return CreatedAtRoute("All", new { pocketId }, images!);
+    }
+
+
     #endregion
 
     #region POST
@@ -126,6 +139,35 @@ public class FilesController : ControllerBase
             return BadRequest(e.Message);
         }
     }
+
+    // if necessery
+
+    //public async Task<IActionResult> Create([FromForm] IFormFile? file, [FromRoute] Guid? storageId)
+    //{
+    //    if (file is null || file.Length == 0)
+    //    {
+    //        return BadRequest("Nothing to upload.");
+    //    }
+
+    //    if (storageId is null)
+    //    {
+    //        return BadRequest("StorageId cannot be null");
+    //    }
+
+    //    try
+    //    {
+    //        var userId = GetUserId();
+
+    //        var fileUploadSummary = await _service.FileService.UploadFileAsync(file, userId, storageId.Value);
+
+    //        return CreatedAtRoute("FileByUploadSummaryId", new { storageId, id = fileUploadSummary.Id }, fileUploadSummary);
+
+    //    }
+    //    catch (FileAlreadyUploadedException e)
+    //    {
+    //        return BadRequest(e.Message);
+    //    }
+    //}
     #endregion
 
     #region DELETE

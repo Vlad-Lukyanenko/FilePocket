@@ -69,6 +69,20 @@ public class PocketsController : ControllerBase
         return Ok(createdStorage);
     }
 
+    [HttpPost("client")]
+    [AllowAnonymous]
+    public async Task<IActionResult> CreateByClientApp([FromBody] StorageForManipulationsModel pocket)
+    {
+        if (!ModelState.IsValid)
+        {
+            return UnprocessableEntity(ModelState);
+        }
+
+        var createdStorage = await _service.StorageService.CreateStorageAsync(pocket);
+
+        return Ok(createdStorage);
+    }
+
     [HttpPut("{pocketId:guid}")]
     public async Task<IActionResult> Update([FromRoute] Guid pocketId, [FromBody] StorageForManipulationsModel storage)
     {

@@ -4,10 +4,8 @@ using FilePocket.Contracts.Services;
 using FilePocket.Domain.Entities;
 using FilePocket.Domain.Models;
 using FilePocket.Shared.Exceptions;
-using MagpieChat.Domain.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
-using SixLabors.ImageSharp;
 
 namespace FilePocket.Application.Services;
 
@@ -138,16 +136,16 @@ public class FileService : IFileService
         };
     }
 
-    public async Task<FileResponseModel> GetImageThumbnailAsync(Guid storageId, Guid id, int maxSize)
+    public async Task<FileResponseModel> GetThumbnailAsync(Guid storageId, Guid id, int maxSize)
     {
         var storage = await _repository.Storage.GetByIdAsync(storageId);
 
         CheckIfStorageExists(storage, storageId);
 
-        return await GetImageThumbnailInternalAsync(id, maxSize, storage);
+        return await GetThumbnailInternalAsync(id, maxSize, storage);
     }
 
-    public async Task<List<FileResponseModel>> GetImageThumbnailsAsync(List<UserIconInfoRequest> request, Guid storageId, int maxSize)
+    public async Task<List<FileResponseModel>> GetThumbnailsAsync(List<UserIconInfoRequest> request, Guid storageId, int maxSize)
     {
         var storage = await _repository.Storage.GetByIdAsync(storageId);
 
@@ -157,7 +155,7 @@ public class FileService : IFileService
 
         foreach (var item in request)
         {
-            var fileModel = await GetImageThumbnailInternalAsync(item.IconId, maxSize, storage);
+            var fileModel = await GetThumbnailInternalAsync(item.IconId, maxSize, storage);
             response.Add(fileModel);
         }
 
@@ -399,6 +397,14 @@ public class FileService : IFileService
         }
     }
 
+    private static void CheckIfFileIsVideo(string fileType)
+    {
+        if (fileType != FileTypes.Video.ToString())
+        {
+            throw new InvalidFileTypeException(fileType);
+        }
+    }
+
     private async Task FinalizeUploding(IFormFile file, Guid userId, Guid storageId, Session session)
     {
         var storage = await _repository.Storage.GetByIdAsync(storageId);
@@ -448,54 +454,73 @@ public class FileService : IFileService
         Directory.Delete(session.ChunksDirectory, true);
     }
 
-    private static void RedefineDimensions(int maxSize, Image image, out int width, out int height)
-    {
-        if (image.Width > image.Height)
-        {
-            width = maxSize;
-            height = (maxSize / image.Width) * image.Height;
-        }
-        else
-        {
-            height = maxSize;
-            width = maxSize / image.Height * image.Width;
-        }
-    }
-
-    private async Task<FileResponseModel> GetImageThumbnailInternalAsync(Guid id, int maxSize, Storage storage)
+    private async Task<FileResponseModel> GetThumbnailInternalAsync(Guid id, int maxSize, Storage storage)
     {
         var fileUploadSummary = await GetFileByIdAndStorageIdAsync(storage.Id, id);
         var fullPath = GetFullPath(fileUploadSummary);
 
         CheckIfFileExistsInStorage(fileUploadSummary, id);
         CheckIfFileExistsOnDisk(fullPath);
-        CheckIfFileIsImage(fileUploadSummary.FileType!);
 
-        var image = _imageService.GetImage(fullPath);
-        int width, height;
-
-        if (Math.Max(image.Width, image.Height) > maxSize)
+        if (fileUploadSummary.FileType == FileTypes.Image.ToString())
         {
-            RedefineDimensions(maxSize, image, out width, out height);
+            CheckIfFileIsImage(fileUploadSummary.FileType!);
+
+            var image = _imageService.GetImage(fullPath);
+
+            return GetResizedThumbnail(maxSize, storage.Name!, fileUploadSummary, image.Width, image.Height, File.ReadAllBytes(fullPath));
+        }
+        if (fileUploadSummary.FileType == FileTypes.Video.ToString())
+        {
+            CheckIfFileIsVideo(fileUploadSummary.FileType!);
+
+            var frame = _imageService.ExtractFirstFrame(fullPath);
+
+            if (frame.FrameBytes.Length == 0)
+            {
+                return new FileResponseModel();
+            }
+
+            return GetResizedThumbnail(maxSize, storage.Name!, fileUploadSummary, frame.Width, frame.Height, frame.FrameBytes);
+        }
+        return new FileResponseModel();
+    }
+
+    private FileResponseModel GetResizedThumbnail(int maxSize, string storageName, FileUploadSummary fileUploadSummary, int width, int height, byte[] bytes)
+    {
+        int outWidth, outHeight;
+
+        if (Math.Max(width, height) > maxSize)
+        {
+            if (width > height)
+            {
+                outWidth = maxSize;
+                outHeight = (maxSize / width) * height;
+            }
+            else
+            {
+                outHeight = maxSize;
+                outWidth = maxSize / height * width;
+            }
         }
         else
         {
-            width = image.Width;
-            height = image.Height;
+            outWidth = width;
+            outHeight = height;
         }
 
-        var imageByteArray = _imageService.ResizeImage(File.ReadAllBytes(fullPath), width, height);
+        var thumbnailByteArray = _imageService.ResizeImage(bytes, outWidth, outHeight);
 
         return new FileResponseModel
         {
             Id = fileUploadSummary.Id,
-            FileByteArray = imageByteArray,
+            FileByteArray = thumbnailByteArray,
             OriginalName = fileUploadSummary.OriginalName,
             FileType = fileUploadSummary.FileType,
             DateCreated = fileUploadSummary.DateCreated,
             StorageId = fileUploadSummary.StorageId,
             FileSize = fileUploadSummary.FileSize,
-            StorageName = storage.Name
+            StorageName = storageName
         };
     }
 }
