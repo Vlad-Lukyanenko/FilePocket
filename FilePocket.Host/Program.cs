@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Identity;
 using FilePocket.Domain.Models;
 using Microsoft.OpenApi.Models;
 using FilePocket.Domain.Models.Configuration;
+using FilePocket.WebApi.Attributes;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -66,7 +67,7 @@ builder.Services.ConfigureJWT(builder.Configuration);
 
 builder.Services.Configure<AdminSeedingDataModel>(builder.Configuration.GetSection("AdminSeedingData"));
 builder.Services.Configure<JwtConfigurationModel>(builder.Configuration.GetSection("JwtSettings"));
-builder.Services.Configure<ClientAppsRequestHeaderSettings>(builder.Configuration.GetSection("ClientAppsRequestHeaderSettings"));
+builder.Services.Configure<ApiKeyConfigurationModel>(builder.Configuration.GetSection("ApiKeySettings"));
 builder.Services.AddHostedService<InitialRolesAndAdminSeeding>();
 
 // Add services to the container.
@@ -103,7 +104,7 @@ builder.Services.AddScoped<IImageService, ImageService>();
 builder.Services.AddScoped<IFolderService, FolderService>();
 builder.Services.AddSingleton<IUploadService, UploadService>();
 builder.Services.AddScoped<IServiceManager, ServiceManager>();
-builder.Services.AddScoped<RequireHeaderAttribute>();
+builder.Services.AddScoped<JwtOrApiKeyAuthorizeAttribute>();
 
 var app = builder.Build();
 app.UseExceptionHandler(opt => { });

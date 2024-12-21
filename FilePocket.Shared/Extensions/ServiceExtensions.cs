@@ -1,4 +1,4 @@
-﻿using FilePocket.Domain.Models;
+﻿using FilePocket.Domain.Models.Configuration;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

@@ -2,16 +2,18 @@
 using FilePocket.Domain.Models;
 using FilePocket.Shared.Claims;
 using FilePocket.Shared.Exceptions;
+using FilePocket.WebApi.Attributes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using NpgsqlTypes;
 using System.ComponentModel.DataAnnotations;
 
 namespace FilePocket.WebApi.Controllers;
 
 [Route("api/")]
 [ApiController]
-[Authorize]
+[ServiceFilter(typeof(JwtOrApiKeyAuthorizeAttribute))]
 public class FilesController : ControllerBase
 {
     private readonly IServiceManager _service;
@@ -29,7 +31,7 @@ public class FilesController : ControllerBase
         return Ok("Pong");
     }
 
-    [HttpGet("pockets/{pocketId}/files")]
+    [HttpGet("pockets/{pocketId}/files", Name = "All")]
     public async Task<IActionResult> GetAllFromPocket([FromRoute] Guid pocketId)
     {
         var fileUploadSummaries = await _service.FileService.GetAllFilesFromPocketAsync(pocketId);
@@ -140,34 +142,6 @@ public class FilesController : ControllerBase
         }
     }
 
-    // if necessery
-
-    //public async Task<IActionResult> Create([FromForm] IFormFile? file, [FromRoute] Guid? storageId)
-    //{
-    //    if (file is null || file.Length == 0)
-    //    {
-    //        return BadRequest("Nothing to upload.");
-    //    }
-
-    //    if (storageId is null)
-    //    {
-    //        return BadRequest("StorageId cannot be null");
-    //    }
-
-    //    try
-    //    {
-    //        var userId = GetUserId();
-
-    //        var fileUploadSummary = await _service.FileService.UploadFileAsync(file, userId, storageId.Value);
-
-    //        return CreatedAtRoute("FileByUploadSummaryId", new { storageId, id = fileUploadSummary.Id }, fileUploadSummary);
-
-    //    }
-    //    catch (FileAlreadyUploadedException e)
-    //    {
-    //        return BadRequest(e.Message);
-    //    }
-    //}
     #endregion
 
     #region DELETE
