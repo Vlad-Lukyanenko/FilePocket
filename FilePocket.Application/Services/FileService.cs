@@ -136,16 +136,16 @@ public class FileService : IFileService
         };
     }
 
-    public async Task<FileResponseModel> GetThumbnailAsync(Guid storageId, Guid id, int maxSize)
+    public async Task<FileResponseModel> GetThumbnailAsync(Guid storageId, Guid imageId, int maxSize)
     {
         var storage = await _repository.Storage.GetByIdAsync(storageId);
 
         CheckIfStorageExists(storage, storageId);
 
-        return await GetThumbnailInternalAsync(id, maxSize, storage);
+        return await GetThumbnailInternalAsync(imageId, maxSize, storage);
     }
 
-    public async Task<List<FileResponseModel>> GetThumbnailsAsync(List<UserIconInfoRequest> request, Guid storageId, int maxSize)
+    public async Task<List<FileResponseModel>> GetThumbnailsAsync(Guid storageId, Guid[] imageIds, int maxSize)
     {
         var storage = await _repository.Storage.GetByIdAsync(storageId);
 
@@ -153,9 +153,9 @@ public class FileService : IFileService
 
         var response = new List<FileResponseModel>();
 
-        foreach (var item in request)
+        foreach (var imageId in imageIds)
         {
-            var fileModel = await GetThumbnailInternalAsync(item.IconId, maxSize, storage);
+            var fileModel = await GetThumbnailInternalAsync(imageId, maxSize, storage);
             response.Add(fileModel);
         }
 

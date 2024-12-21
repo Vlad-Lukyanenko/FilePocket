@@ -108,11 +108,11 @@ public class FilesController : ControllerBase
 
     [HttpPost("pockets/{pocketId:guid}/thumbnails/{size}")]
     public async Task<IActionResult> GetImageThumbnails(
-        [FromBody, Required] List<UserIconInfoRequest> request,
+        [FromBody, Required] Guid[] imageIds,
         [FromRoute, Required] Guid pocketId,
         [FromRoute, Required] int size)
     {
-        var images = await _service.FileService.GetThumbnailsAsync(request, pocketId, size);
+        var images = await _service.FileService.GetThumbnailsAsync(pocketId, imageIds,  size);
 
         return CreatedAtRoute("All", new { pocketId }, images!);
     }
@@ -175,15 +175,6 @@ public class FilesController : ControllerBase
         }
 
         return null;
-    }
-
-    private static byte[] ToByteArray(Stream stream)
-    {
-        using (var ms = new MemoryStream())
-        {
-            stream.CopyTo(ms);
-            return ms.ToArray();
-        }
     }
 
     public class FileInformation

@@ -24,7 +24,7 @@ public interface IFileService
 
     Task<FileResponseModel> GetThumbnailAsync(Guid pocketId, Guid fileId, int maxSize);
 
-    Task<List<FileResponseModel>> GetThumbnailsAsync(List<UserIconInfoRequest> request, Guid storageId, int maxSize);
+    Task<List<FileResponseModel>> GetThumbnailsAsync(Guid storageId, Guid[] fileIds, int maxSize);
 
     Task<FileUploadSummary> UploadFileAsync(IFormFile file, Guid userId, Guid storageId, Guid? folderId);
 

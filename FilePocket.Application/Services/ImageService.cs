@@ -4,6 +4,7 @@ using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.ImageSharp.Processing;
 using FilePocket.Domain.Models;
 using OpenCvSharp;
+using SixLabors.ImageSharp.PixelFormats;
 
 
 namespace FilePocket.Application.Services
@@ -17,11 +18,32 @@ namespace FilePocket.Application.Services
 
         public byte[] ResizeImage(byte[] imageBytes, int width, int height)
         {
-            using var image = Image.Load(imageBytes);
+            using var image = Image.Load<Rgba32>(imageBytes);
             image.Mutate(x => x.Resize(width, height));
 
+            image.ProcessPixelRows(accessor =>
+            {
+                var white = Color.White;
+
+                for (int y = 0; y < accessor.Height; y++)
+                {
+                    var pixelRow = accessor.GetRowSpan(y);
+
+                    for (int x = 0; x < pixelRow.Length; x++)
+                    {
+                        ref Rgba32 pixel = ref pixelRow[x];
+                        if (pixel.A <= 25)
+                        {
+                            pixel = white;
+                        }
+                    }
+                }
+            });
+
             using var ms = new MemoryStream();
-            image.Save(ms, new JpegEncoder());
+            var encoder = new JpegEncoder() { Quality = 90 };
+            image.Save(ms, encoder);
+
             return ms.ToArray();
         }
 
