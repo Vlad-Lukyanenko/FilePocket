@@ -1,6 +1,6 @@
 ﻿using FilePocket.Client.Features.Users.Models;
 
-namespace FilePocket.Admin.Requests.Contracts
+namespace FilePocket.Client.Features.Users.Requests
 {
     public interface IUserRequests
     {

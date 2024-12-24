@@ -1,8 +1,7 @@
 using Blazored.LocalStorage;
-using FilePocket.Admin.Requests;
-using FilePocket.Admin.Requests.Contracts;
 using FilePocket.Client.Features;
 using FilePocket.Client.Features.Authentication;
+using FilePocket.Client.Features.Users.Requests;
 using FilePocket.Client.Services.Authentication.Requests;
 using FilePocket.Client.Services.Files.Requests;
 using FilePocket.Client.Services.Folders.Requests;

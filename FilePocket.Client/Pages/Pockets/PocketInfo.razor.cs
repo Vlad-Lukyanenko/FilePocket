@@ -1,5 +1,5 @@
-﻿using FilePocket.Admin.Requests.Contracts;
-using FilePocket.Client.Features.Users.Models;
+﻿using FilePocket.Client.Features.Users.Models;
+using FilePocket.Client.Features.Users.Requests;
 using FilePocket.Client.Services.Pockets.Models;
 using FilePocket.Client.Services.Pockets.Requests;
 using Microsoft.AspNetCore.Components;

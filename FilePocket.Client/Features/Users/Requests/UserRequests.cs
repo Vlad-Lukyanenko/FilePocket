@@ -1,9 +1,8 @@
-﻿using FilePocket.Admin.Requests.Contracts;
-using FilePocket.Client.Features;
+﻿using FilePocket.Client.Features;
 using FilePocket.Client.Features.Users.Models;
 using Newtonsoft.Json;
 
-namespace FilePocket.Admin.Requests
+namespace FilePocket.Client.Features.Users.Requests
 {
     public class UserRequests : IUserRequests
     {
