@@ -35,9 +35,9 @@ namespace FilePocket.Client.MyComponents
 
         private void InitGoBackUrl()
         {
-             _goBackUrl = string.IsNullOrWhiteSpace(FolderId)
-                ? $"/pockets/{PocketId}/files"
-                : $"/pockets/{PocketId}/folders/{FolderId}/files";
+            _goBackUrl = string.IsNullOrWhiteSpace(FolderId)
+               ? $"/pockets/{PocketId}/files"
+               : $"/pockets/{PocketId}/folders/{FolderId}/files";
         }
 
         protected override async Task OnInitializedAsync()
@@ -60,8 +60,95 @@ namespace FilePocket.Client.MyComponents
 
         private async void DownloadFile()
         {
-            var base64 = Convert.ToBase64String(_file!.FileByteArray!);
-            await JSRuntime.InvokeVoidAsync("saveFile", _file!.OriginalName, base64);
+            var file = await FileRequests.GetFileAsync(_pocketId, _fileId);
+            var base64 = Convert.ToBase64String(file!.FileByteArray!);
+            var mimeType = GetMimeType(file.OriginalName!);
+            await JSRuntime.InvokeVoidAsync("saveFile", file.OriginalName, mimeType, base64);
         }
+
+        private string GetMimeType(string fileName)
+        {
+            var extension = Path.GetExtension(fileName).ToLowerInvariant();
+            return extension switch
+            {
+                // Text
+                ".txt" => "text/plain",
+                ".csv" => "text/csv",
+                ".log" => "text/plain",
+                ".xml" => "application/xml",
+                ".html" => "text/html",
+                ".htm" => "text/html",
+                ".json" => "application/json",
+
+                // Images
+                ".png" => "image/png",
+                ".jpg" => "image/jpeg",
+                ".jpeg" => "image/jpeg",
+                ".gif" => "image/gif",
+                ".bmp" => "image/bmp",
+                ".svg" => "image/svg+xml",
+                ".ico" => "image/vnd.microsoft.icon",
+                ".tiff" => "image/tiff",
+                ".webp" => "image/webp",
+
+                // Audio
+                ".mp3" => "audio/mpeg",
+                ".wav" => "audio/wav",
+                ".ogg" => "audio/ogg",
+                ".m4a" => "audio/mp4",
+                ".flac" => "audio/flac",
+
+                // Video
+                ".mp4" => "video/mp4",
+                ".avi" => "video/x-msvideo",
+                ".mov" => "video/quicktime",
+                ".wmv" => "video/x-ms-wmv",
+                ".flv" => "video/x-flv",
+                ".mkv" => "video/x-matroska",
+                ".webm" => "video/webm",
+
+                // Documents
+                ".pdf" => "application/pdf",
+                ".doc" => "application/msword",
+                ".docx" => "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                ".xls" => "application/vnd.ms-excel",
+                ".xlsx" => "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                ".ppt" => "application/vnd.ms-powerpoint",
+                ".pptx" => "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+
+                // eBooks
+                ".epub" => "application/epub+zip",
+                ".mobi" => "application/x-mobipocket-ebook",
+                ".fb2" => "application/x-fictionbook+xml",
+
+                // Archives
+                ".zip" => "application/zip",
+                ".rar" => "application/vnd.rar",
+                ".7z" => "application/x-7z-compressed",
+                ".tar" => "application/x-tar",
+                ".gz" => "application/gzip",
+
+                // Code
+                ".js" => "application/javascript",
+                ".css" => "text/css",
+                ".java" => "text/x-java-source",
+                ".c" => "text/x-c",
+                ".cpp" => "text/x-c",
+                ".py" => "text/x-python",
+                ".php" => "application/x-httpd-php",
+                ".sh" => "application/x-sh",
+                ".bat" => "application/x-msdos-program",
+
+                // Fonts
+                ".ttf" => "font/ttf",
+                ".otf" => "font/otf",
+                ".woff" => "font/woff",
+                ".woff2" => "font/woff2",
+
+                // Fallback
+                _ => "application/octet-stream", // Default MIME type
+            };
+        }
+
     }
 }

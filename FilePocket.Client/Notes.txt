@@ -1,0 +1,2 @@
+1. Left side menu
+	Layout -> MainLayout.razor
