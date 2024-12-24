@@ -11,6 +11,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using FilePocket.Shared.Claims;
+using FilePocket.Domain.Models.Configuration;
 
 namespace FilePocket.Application.Services;
 

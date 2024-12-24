@@ -1,6 +1,5 @@
 ﻿using FilePocket.Domain.Entities;
 using FilePocket.Domain.Models;
-using MagpieChat.Domain.Models;
 using Microsoft.AspNetCore.Http;
 
 namespace FilePocket.Contracts.Services;
@@ -23,9 +22,9 @@ public interface IFileService
 
     Task<FileResponseModel> GetFileInfoByIdAsync(Guid pocketId, Guid fileId);
 
-    Task<FileResponseModel> GetImageThumbnailAsync(Guid pocketId, Guid fileId, int maxSize);
+    Task<FileResponseModel> GetThumbnailAsync(Guid pocketId, Guid fileId, int maxSize);
 
-    Task<List<FileResponseModel>> GetImageThumbnailsAsync(List<UserIconInfoRequest> request, Guid storageId, int maxSize);
+    Task<List<FileResponseModel>> GetThumbnailsAsync(Guid storageId, Guid[] fileIds, int maxSize);
 
     Task<FileUploadSummary> UploadFileAsync(IFormFile file, Guid userId, Guid storageId, Guid? folderId);
 

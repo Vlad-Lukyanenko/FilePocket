@@ -1,28 +1,40 @@
-﻿using FilePocket.Client.Services.Pockets.Models;
+﻿using FilePocket.Client.Features.Users.Models;
+using FilePocket.Client.Features.Users.Requests;
+using FilePocket.Client.Services.Pockets.Models;
 using FilePocket.Client.Services.Pockets.Requests;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 
 namespace FilePocket.Client.Pages.Pockets
 {
     public partial class Pockets
     {
         private List<PocketModel> _pockets = default!;
-        
         private Guid _pocketIdToBeChanged;
-
         private bool _removalProcessStarted = false;
-        
+        private LoggedInUserModel? _user;
+        private string _userName = string.Empty;
+
+        [Inject] IUserRequests UserRequests { get; set; } = default!;
+        [Inject] private AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
         [Inject] private IPocketRequests PocketRequests { get; set; } = default!;
 
         protected override async Task OnInitializedAsync()
         {
+            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            var user = authState.User;
+
+            _userName = user.Identity?.Name!;
+            _user = await UserRequests.GetByUserNameAsync(_userName);
+
+            if (_user == null) return;
+
             _pockets = await GetAllPockets();
         }
 
         private async Task<List<PocketModel>> GetAllPockets()
         {
-            //temp solution
-            var userId = Guid.Parse("a9b78973-6458-498f-a313-ae26e56d223c");
+            var userId = _user!.Id!.Value; //Guid.Parse("a9b78973-6458-498f-a313-ae26e56d223c");
 
             var pockets = await PocketRequests.GetAllAsync(userId);
 

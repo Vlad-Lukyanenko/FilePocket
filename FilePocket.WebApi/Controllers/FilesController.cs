@@ -2,16 +2,18 @@
 using FilePocket.Domain.Models;
 using FilePocket.Shared.Claims;
 using FilePocket.Shared.Exceptions;
+using FilePocket.WebApi.Attributes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using NpgsqlTypes;
 using System.ComponentModel.DataAnnotations;
 
 namespace FilePocket.WebApi.Controllers;
 
 [Route("api/")]
 [ApiController]
-[Authorize]
+[ServiceFilter(typeof(JwtOrApiKeyAuthorizeAttribute))]
 public class FilesController : ControllerBase
 {
     private readonly IServiceManager _service;
@@ -29,7 +31,7 @@ public class FilesController : ControllerBase
         return Ok("Pong");
     }
 
-    [HttpGet("pockets/{pocketId}/files")]
+    [HttpGet("pockets/{pocketId}/files", Name = "All")]
     public async Task<IActionResult> GetAllFromPocket([FromRoute] Guid pocketId)
     {
         var fileUploadSummaries = await _service.FileService.GetAllFilesFromPocketAsync(pocketId);
@@ -77,7 +79,7 @@ public class FilesController : ControllerBase
     //    return Ok(response);
     //}
 
-    [HttpGet("files/{fileId:guid}/pockets/{pocketId:guid}")]
+    [HttpGet("pockets/{pocketId:guid}/files/{fileId:guid}")]
     public async Task<IActionResult> Get(Guid pocketId, Guid fileId)
     {
         var file = await _service.FileService.GetFileByIdAsync(pocketId, fileId);
@@ -99,10 +101,23 @@ public class FilesController : ControllerBase
         [FromRoute, Required] Guid imageId,
         [FromRoute, Required] int size)
     {
-        var image = await _service.FileService.GetImageThumbnailAsync(pocketId, imageId, size);
+        var image = await _service.FileService.GetThumbnailAsync(pocketId, imageId, size);
 
         return Ok(image);
     }
+
+    [HttpPost("pockets/{pocketId:guid}/thumbnails/{size}")]
+    public async Task<IActionResult> GetImageThumbnails(
+        [FromBody, Required] Guid[] imageIds,
+        [FromRoute, Required] Guid pocketId,
+        [FromRoute, Required] int size)
+    {
+        var images = await _service.FileService.GetThumbnailsAsync(pocketId, imageIds,  size);
+
+        return CreatedAtRoute("All", new { pocketId }, images!);
+    }
+
+
     #endregion
 
     #region POST
@@ -126,6 +141,7 @@ public class FilesController : ControllerBase
             return BadRequest(e.Message);
         }
     }
+
     #endregion
 
     #region DELETE
@@ -159,15 +175,6 @@ public class FilesController : ControllerBase
         }
 
         return null;
-    }
-
-    private static byte[] ToByteArray(Stream stream)
-    {
-        using (var ms = new MemoryStream())
-        {
-            stream.CopyTo(ms);
-            return ms.ToArray();
-        }
     }
 
     public class FileInformation

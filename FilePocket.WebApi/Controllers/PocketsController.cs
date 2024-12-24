@@ -1,5 +1,6 @@
 ﻿using FilePocket.Contracts.Services;
 using FilePocket.Domain.Models;
+using FilePocket.WebApi.Attributes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,7 +8,7 @@ namespace FilePocket.WebApi.Controllers;
 
 [Route("api/pockets")]
 [ApiController]
-[Authorize]
+[ServiceFilter(typeof(JwtOrApiKeyAuthorizeAttribute))]
 public class PocketsController : ControllerBase
 {
     private readonly IServiceManager _service;

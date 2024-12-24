@@ -2,7 +2,7 @@
 using FilePocket.Contracts.Repositories;
 using FilePocket.Contracts.Services;
 using FilePocket.Domain.Entities;
-using FilePocket.Domain.Models;
+using FilePocket.Domain.Models.Configuration;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;

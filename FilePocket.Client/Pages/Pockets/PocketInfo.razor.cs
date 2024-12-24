@@ -1,6 +1,9 @@
-﻿using FilePocket.Client.Services.Pockets.Models;
+﻿using FilePocket.Client.Features.Users.Models;
+using FilePocket.Client.Features.Users.Requests;
+using FilePocket.Client.Services.Pockets.Models;
 using FilePocket.Client.Services.Pockets.Requests;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.JSInterop;
 
 namespace FilePocket.Client.Pages.Pockets
@@ -9,11 +12,13 @@ namespace FilePocket.Client.Pages.Pockets
     {
         [Parameter]
         public string PocketIdParam { get; set; } = string.Empty;
-
-        [Inject] private IJSRuntime JSRuntime { get; set; } = default!;
-
         private Guid _pocketId => Guid.Parse(PocketIdParam);
+        private LoggedInUserModel? _user;
+        private string _userName = string.Empty;
 
+        [Inject] IUserRequests UserRequests { get; set; } = default!;
+        [Inject] private AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
+        [Inject] private IJSRuntime JSRuntime { get; set; } = default!;
         [Inject] private IPocketRequests PocketRequests { get; set; } = default!;
 
         private bool _updateProcessStarted = false;
@@ -24,9 +29,17 @@ namespace FilePocket.Client.Pages.Pockets
 
         protected override async Task OnInitializedAsync()
         {
+            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            var user = authState.User;
+
+            _userName = user.Identity?.Name!;
+            _user = await UserRequests.GetByUserNameAsync(_userName);
+
+            if (_user == null) return;
+
             _pocketInfo = await PocketRequests.GetInfoAsync(_pocketId);
             _pocketInfo.Id = _pocketId;
-            _pocketInfo.UserId = Guid.Parse("a9b78973-6458-498f-a313-ae26e56d223c");
+            _pocketInfo.UserId = _user!.Id!.Value; // Guid.Parse("a9b78973-6458-498f-a313-ae26e56d223c");
         }
 
         private async void CopyIdToClipboard()

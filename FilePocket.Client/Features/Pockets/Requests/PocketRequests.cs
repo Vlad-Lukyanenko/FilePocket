@@ -38,6 +38,8 @@ namespace FilePocket.Client.Services.Pockets.Requests
         {
             var content = GetStringContent(pocket);
 
+            var url = PocketUrl.BaseUrl;
+
             var response = await _apiClient.PostAsync(PocketUrl.BaseUrl, content);
 
             return response.IsSuccessStatusCode;
