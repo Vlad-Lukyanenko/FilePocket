@@ -17,10 +17,10 @@
 
         <!-- Top SubMenu -->
         <TopSubMenu Title="My pockets" />
-
-        @if (_pockets is not null && _pockets.Any())
+        
+        @if (_pockets.Any())
         {
-           <!-- Action Button Row -->
+            <!-- Action Button Row -->
             <div class="row mx-auto">
                 <div class="col-12 d-flex align-items-center mb-3">
                     <!-- New Pocket Button -->
@@ -32,10 +32,7 @@
                 </div>
             </div> 
             <br />
-        }
-        
-        @if (_pockets is not null && _pockets.Any())
-        {
+
             <!-- Responsive Table -->
             <div class="table-responsive" style="min-height: 500px;">
                     <table class="table table-light table-hover mx-auto h-100">
@@ -94,12 +91,24 @@
         }
         else
         {
-            <div class="mx-auto w-100 text-center fw-semibold mt-4">
-                <img src="./assets/img/oops.png" width="100" class="mb-3 opacity-75">
-                <p class="h5 mb-1">Looks like you do not have any pockets yet.</p>
-                <p class="h5 mb-4">Let's create the first one.</p>
+            if (!_loading)
+            {
+                <div class="mx-auto w-100 text-center fw-semibold mt-4">
+                    <img src="./assets/img/oops.png" width="100" class="mb-3 opacity-75">
+                    <p class="h5 mb-1">Looks like you do not have any pockets yet.</p>
+                    <p class="h5 mb-4">Let's create the first one.</p>
                     <a href="/pockets/new" class="btn btn-outline-success fw-semibold p-2 ps-5 pe-5">Create</a>
-            </div>
+                </div>
+            }
+            else
+            {
+                <!-- Loading Spinner -->
+                <div class="container-fluid w-100 h-100 text-center p-4 d-flex justify-content-center align-items-center">
+                    <div class="spinner-grow" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            }
         }
     </div>
 </div>
