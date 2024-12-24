@@ -6,7 +6,7 @@ public interface IPocketService
 {
     Task<StorageModel> GetByIdAsync(Guid storageId, bool trackChanges);
 
-    Task<IEnumerable<StorageModel>> GetAllByUserIdAsync(Guid userId, bool trackChanges);
+    Task<List<StorageModel>> GetAllByUserIdAsync(Guid userId, bool trackChanges);
 
     Task<StorageModel> CreateStorageAsync(StorageForManipulationsModel storage);
 

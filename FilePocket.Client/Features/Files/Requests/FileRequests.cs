@@ -8,8 +8,6 @@ namespace FilePocket.Client.Services.Files.Requests
 {
     public class FileRequests : IFileRequests
     {
-        private const string HttpClientName = "FilePocketApi";
-
         private readonly FilePocketApiClient _apiClient;
 
         public FileRequests(FilePocketApiClient apiClient)

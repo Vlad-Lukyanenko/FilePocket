@@ -7,8 +7,6 @@ namespace FilePocket.Client.Services.Folders.Requests
 {
     public class FolderRequests : IFolderRequests
     {
-        private const string HttpClientName = "FilePocketApi";
-
         private readonly FilePocketApiClient _apiClient;
         public FolderRequests(FilePocketApiClient apiClient)
         {

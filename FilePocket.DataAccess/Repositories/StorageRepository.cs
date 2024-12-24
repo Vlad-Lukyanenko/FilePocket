@@ -11,12 +11,12 @@ public class StorageRepository : RepositoryBase<Storage>, IStorageRepository
     {
     }
 
-    public async Task<IEnumerable<Storage>> GetAllAsync(Guid userId, bool trackChanges)
+    public async Task<List<Storage>> GetAllAsync(Guid userId, bool trackChanges)
     {
         return await FindByCondition(c => c.UserId == userId, trackChanges).OrderByDescending(c => c.DateCreated).ToListAsync();
     }
 
-    public async Task<IEnumerable<Storage>> GetAllByUserIdAsync(Guid userId, bool trackChanges)
+    public async Task<List<Storage>> GetAllByUserIdAsync(Guid userId, bool trackChanges)
     {
         return await FindByCondition(e => e.UserId.Equals(userId), trackChanges).ToListAsync();
     }
@@ -53,7 +53,6 @@ public class StorageRepository : RepositoryBase<Storage>, IStorageRepository
 
         return totalFileSizeInBytes;
     }
-
 
     public void CreateStorage(Storage storage)
     {

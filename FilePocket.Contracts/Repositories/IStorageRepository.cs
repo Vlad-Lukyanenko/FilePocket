@@ -4,11 +4,11 @@ namespace FilePocket.Contracts.Repositories;
 
 public interface IStorageRepository
 {
-    Task<IEnumerable<Storage>> GetAllAsync(Guid userId,bool trackChanges);
+    Task<List<Storage>> GetAllAsync(Guid userId,bool trackChanges);
 
     Task<Storage> GetByIdAsync(Guid storageId, bool trackChanges = false);
 
-    Task<IEnumerable<Storage>> GetAllByUserIdAsync(Guid userId, bool trackChanges = false);
+    Task<List<Storage>> GetAllByUserIdAsync(Guid userId, bool trackChanges = false);
 
     void CreateStorage(Storage storage);
 

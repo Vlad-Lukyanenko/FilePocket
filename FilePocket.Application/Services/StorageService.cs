@@ -54,12 +54,11 @@ public class StorageService : IPocketService
         return totalSizeWithNewFile <= defaultCapacityInBytes;
     }
 
-
-    public async Task<IEnumerable<StorageModel>> GetAllByUserIdAsync(Guid userId, bool trackChanges)
+    public async Task<List<StorageModel>> GetAllByUserIdAsync(Guid userId, bool trackChanges)
     {
         var storages = await _repository.Storage.GetAllByUserIdAsync(userId, trackChanges);
 
-        return _mapper.Map<IEnumerable<StorageModel>>(storages);
+        return _mapper.Map<List<StorageModel>>(storages);
     }
 
     public async Task<StorageModel> CreateStorageAsync(StorageForManipulationsModel storage)

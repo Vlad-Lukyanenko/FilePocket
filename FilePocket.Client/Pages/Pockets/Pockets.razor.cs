@@ -9,7 +9,7 @@ namespace FilePocket.Client.Pages.Pockets
 {
     public partial class Pockets
     {
-        private List<PocketModel> _pockets = default!;
+        private List<PocketModel> _pockets = new List<PocketModel>();
         private Guid _pocketIdToBeChanged;
         private bool _removalProcessStarted = false;
         private LoggedInUserModel? _user;
@@ -34,7 +34,7 @@ namespace FilePocket.Client.Pages.Pockets
 
         private async Task<List<PocketModel>> GetAllPockets()
         {
-            var userId = _user!.Id!.Value; //Guid.Parse("a9b78973-6458-498f-a313-ae26e56d223c");
+            var userId = _user!.Id!.Value;
 
             var pockets = await PocketRequests.GetAllAsync(userId);
 
