@@ -49,9 +49,9 @@ namespace FilePocket.Client.MyComponents
 
             if (_file.FileType == "Image")
             {
-                _file = await FileRequests.GetImageThumbnailAsync(_pocketId, _fileId, 700);
+                _file = await FileRequests.GetImageThumbnailAsync(_pocketId, _fileId, 500);
 
-                var base64 = Convert.ToBase64String(_file.FileByteArray!);
+                string base64 = Convert.ToBase64String(new ReadOnlySpan<byte>(_file.FileByteArray!));
                 _imageContent = $"data:image/jpeg;base64,{base64}";
             }
 
