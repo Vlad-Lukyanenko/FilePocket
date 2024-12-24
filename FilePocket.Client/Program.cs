@@ -21,15 +21,16 @@ namespace FilePocket.Client
             builder.RootComponents.Add<HeadOutlet>("head::after");
 
             var apiUrl = builder.Configuration.GetValue<string>("BaseAddresses:ApiBaseUrl")!;
+            
+            builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(apiUrl) });
+            
             builder.Services.AddHttpClient<FilePocketApiClient>("FilePocketApi", client =>
             {
-                client.BaseAddress = new Uri(apiUrl);
                 client.DefaultRequestHeaders.Add("Accept", "application/json");
-            }).AddHttpMessageHandler<AuthHandler>();
-
+            });
+            
             builder.Services.AddScoped<AuthenticationStateProvider, AuthStateProvider>();
             builder.Services.AddScoped<FilePocketApiClient>();
-            builder.Services.AddTransient<AuthHandler>();
 
             builder.Services.AddScoped<IAuthentictionRequests, AuthentictionRequests>();
             builder.Services.AddScoped<IPocketRequests, PocketRequests>();
@@ -39,8 +40,6 @@ namespace FilePocket.Client
 
             builder.Services.AddBlazoredLocalStorage();
             builder.Services.AddAuthorizationCore();
-
-            builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
             await builder.Build().RunAsync();
         }

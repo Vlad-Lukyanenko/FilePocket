@@ -41,11 +41,6 @@ namespace FilePocket.Client.MyComponents
 
         private bool _selectedAll;
 
-        protected override async Task OnInitializedAsync()
-        {
-            await InitPage();
-        }
-
         protected override async Task OnParametersSetAsync()
         {
             await InitPage();
