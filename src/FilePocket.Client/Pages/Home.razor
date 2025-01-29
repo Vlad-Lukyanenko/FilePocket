@@ -1,0 +1,72 @@
+﻿@page "/"
+@using FilePocket.Client.Helpers
+
+<AuthorizeView>
+    <Authorized>
+        <div class="container-fluid" style="min-height: 600px;">
+            <div class="container-fluid w-100 w-md-75">
+                <div class="d-flex justify-content-center align-items-center mt-0">
+                    <img src="./assets/img/upload.png" class="me-2" style="width: 22px; height: 22px;" />
+                    <h5 class="section-heading mb-0 text-header">Uploaded files</h5>
+                </div>
+                <hr />
+
+                @if (_files?.Any() == true)
+                {
+                    <FilesBlock Files="_files" />
+                }
+                else
+                {
+                    <div class="text-center no-content">
+                        <h6>You don't have any uploaded files yet.</h6>
+                    </div>
+                }
+
+                <div class="d-flex justify-content-center align-items-center mt-4">
+                    <img src="./assets/img/share.png" class="me-2" style="width: 22px; height: 22px;" />
+                    <h5 class="section-heading mb-0 text-header">Shared files</h5>
+                </div>
+                <hr />
+
+                @if (_sharedFiles?.Any() == true)
+                {
+                    <SharedFilesBlock SharedFiles="_sharedFiles" />
+                }
+                else
+                {
+                    <div class="text-center no-content">
+                        <h6>You don't have any shared files yet.</h6>
+                    </div>
+                }
+            </div>
+        </div>
+        <br />
+        <br />
+    </Authorized>
+    <NotAuthorized>
+        <section>
+            <div class="container">
+                <div class="card border-light-subtle shadow-sm">
+                    <div class="row g-0 pt-3">
+                        <div class="col text-center mb-5">
+                            <h3 class="welcome-heading">Simple, Reliable, and Secure Cloud Storage</h3>
+
+                            <p class="mx-auto mt-4 description-text">
+                                <strong>FilePocket</strong> is a cloud storage solution that can be easily deployed
+                                locally or on a server using <strong>Docker</strong>. Our solution is perfect for individual users and organizations,
+                                offering unmatched flexibility, top-tier security, and effortless file management.
+                            </p>
+
+                            <img src="./assets/img/home-page.png"
+                                 class="mx-auto d-block home-image"
+                                 alt="Home Page Image" />
+
+                            <p class="sign-link"><strong>Already registered?</strong> <a href="/sign-in" class="auth-link">Sign in</a> and start using FilePocket right now!</p>
+                            <p class="sign-link"><strong>New user?</strong> <a href="/sign-up" class="auth-link">Create</a> an account now and experience the ultimate convenience of file management with FilePocket!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </NotAuthorized>
+</AuthorizeView>

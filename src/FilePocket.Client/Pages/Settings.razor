@@ -1,0 +1,35 @@
+﻿@page "/settings"
+
+<div class="container-fluid" style="min-height: 600px;">
+    <div class="container-fluid w-100 w-md-75">
+
+        <TopSubMenu Title="Settings" ShowBackButton="false" />
+
+        @if (_isLoading)
+        {
+            <!-- Loading Spinner -->
+            <div class="container-fluid w-100 h-100 text-center p-4 d-flex justify-content-center align-items-center">
+                <div class="spinner-grow" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+        }
+        else
+        {
+            <!-- Form Container -->
+            <div class="border p-3 mt-3">
+                <div class="col-12 col-md-9 col-lg-6 text-center mx-auto">
+                    <strong>API key will be here</strong>
+                </div>
+            </div>
+        }
+
+        <br />
+    </div>
+</div>
+
+@code {
+    private bool _isLoading;
+    private string _alertStyle;
+    private string _alertMessage;
+}

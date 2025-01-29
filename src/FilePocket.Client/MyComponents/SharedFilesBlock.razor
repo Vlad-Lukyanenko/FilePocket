@@ -1,0 +1,25 @@
+﻿@using FilePocket.Client.Features.SharedFiles.Models
+@using FilePocket.Client.Helpers
+
+<div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4 text-center justify-content-center">
+    @foreach (var f in SharedFiles)
+    {
+        <div class="col text-center text-break" style="width: 10.5em;">
+            <div class="card h-100 shadow-sm">
+
+                <div class="card-body pb-0 mb-0">
+                    <a class="file-link text-decoration-none" title="@f.OriginalName" href="/files/shared/@f.SharedFileId/info">
+                        <img src="./assets/img/fileTypes/@Tools.GetIconName(f.FileType!)" width="56" class="d-block mx-auto mb-3" alt="File icon" />
+                        <h6 class="card-title" style="font-size: 0.8em">@Tools.TruncateString(f.OriginalName!)</h6>
+                    </a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+
+    [Parameter]
+    public List<SharedFileView>? SharedFiles { get; set; }
+}

@@ -1,0 +1,78 @@
+﻿@using FilePocket.Client.Features
+@inject NavigationManager Navigation
+
+<style>
+    .back-button {
+        width: 4em;
+        margin-right: 0.5em;
+    }
+
+    .text-header {
+        color: #437fb0;
+        font-weight: 600;
+        font-size: 1.4em;
+        text-align: center;
+        margin: 0;
+        width: 100%;
+    }
+
+    @@media (max-width: 768px) {
+        .back-button {
+            margin-right: 0.25em;
+        }
+
+        .text-header {
+            font-size: 1.25rem;
+        }
+    }
+
+    .my-col-12 {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        padding: 0 10px;
+    }
+
+    .back-button {
+        position: absolute;
+        left: 0;
+        margin-left: 10px;
+    }
+</style>
+
+<div class="row mx-auto">
+    <div class="my-col-12  d-flex align-items-center position-relative">
+        <!-- Back Button (Left Side) -->
+        @if (ShowBackButton)
+        {
+            <button @onclick="GoBack" href="@Url" class="btn btn-sm m-0 btn-outline-secondary back-button position-absolute start-0">
+                <i class="bi bi-arrow-90deg-left"></i>
+            </button>
+        }
+
+        <!-- Title (Centered) -->
+        <div class="text-header text-center mb-2 w-100">
+            @Title
+        </div>
+    </div>
+</div>
+<hr class="hr p-0 mb-3 mt-1" />
+
+@code {
+    [Parameter] public string Url { get; set; } = string.Empty;
+    [Parameter] public string Title { get; set; } = string.Empty;
+    [Parameter] public bool ShowBackButton { get; set; } = true;
+
+    [Inject]
+    private NavigationHistoryService NavigationHistory { get; set; } = default!;
+
+    private void GoBack()
+    {
+        var previousUrl = NavigationHistory.GetPreviousUrl();
+        if (previousUrl != null)
+        {
+            Navigation.NavigateTo(previousUrl);
+        }
+    }
+}

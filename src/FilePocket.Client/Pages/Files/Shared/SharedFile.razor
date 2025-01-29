@@ -1,0 +1,52 @@
+﻿@page "/files/{SharedFileId}/shared"
+@layout EmptyLayout
+
+@if (_sharedFile is not null)
+{
+    <div class="d-flex justify-content-center align-items-center vh-100">
+        <div class="text-center">
+            <img src="./assets/img/elephant.png" style="width: 320px;" />
+            <h3>Shared File</h3>
+            <h5 class="mb-3 mt-1">
+                <strong>@GetUserName()</strong> shared a file with you
+            </h5>
+            <h5 style="color:#0b4a78">[ @_sharedFile.FileName ]</h5>
+            <br />
+            <button class="btn btn-success" @onclick="DownloadFile">
+                Download
+            </button>
+            <br />
+            <br />
+
+            @if (_showLoader)
+            {
+                <div class="spinner-grow text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            }
+        </div>
+    </div>
+}
+else
+{
+    <div class="d-flex justify-content-center align-items-center vh-100">
+        <div class="text-center">
+            <img src="./assets/img/not-found.png" style="width: 256px; margin-bottom: 2em;" />
+            <h3>Oops. File not found!</h3>
+            <h5>This is might be an incorrect link or the file no longer exists</h5>
+        </div>
+    </div>
+}
+
+<script>
+    function saveFile(filename, mimeType, bytesBase64) {
+        var link = document.createElement('a');
+        link.download = filename;
+        link.href = `data:${mimeType};base64,${bytesBase64}`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+</script>
+
+

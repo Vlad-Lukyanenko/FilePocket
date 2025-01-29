@@ -1,0 +1,69 @@
+﻿@page "/sign-up"
+@using FilePocket.Client.Services.Authentication.Models
+
+<section>
+    <div class="container">
+        <div class="card border-light-subtle shadow-sm">
+            <div class="row g-0">
+                <!-- Image Column -->
+                <div class="col-12 col-md-6">
+                    <img class="img-fluid rounded-start w-90 h-90 ps-1 pt-5" loading="lazy" src="./assets/img/sign-up.png" alt="Sign-up illustration">
+                </div>
+
+                <!-- Form Column -->
+                <div class="col-12 col-md-6">
+                    <div class="card-body p-3 p-md-4 p-xl-5">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="mb-5">
+                                    <h3>Sign-up</h3>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sign-up Form -->
+                        <EditForm Model="@_registrationRequest" OnSubmit="@FormSubmitted" style="text-align: left;">
+                            <div class="row gy-3 gy-md-4 overflow-hidden">
+                                <!-- Email Input -->
+                                <div class="col-12">
+                                    <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
+                                    <InputText @bind-Value="_registrationRequest.Email" type="email" class="form-control" placeholder="name@example.com" id="email" required />
+                                </div>
+
+                                <!-- Password Input -->
+                                <div class="col-12">
+                                    <label for="password" class="form-label">Password <span class="text-danger">*</span></label>
+                                    <InputText @bind-Value="_registrationRequest.Password" type="password" class="form-control" id="password" required />
+                                </div>
+
+                                <!-- Confirm Password Input -->
+                                <div class="col-12">
+                                    <label for="confirmPassword" class="form-label">Confirm password <span class="text-danger">*</span></label>
+                                    <InputText @bind-Value="_registrationRequest.ConfirmPassword" type="password" class="form-control" id="confirmPassword" required />
+                                </div>
+
+                                <!-- Submit Button -->
+                                <div class="col-12">
+                                    <div class="d-grid">
+                                        <button class="btn btn-primary btn-lg" type="submit">Sign-up now</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </EditForm>
+
+                        <!-- Additional Links -->
+                        <div class="row">
+                            <div class="col-12">
+                                <hr class="mt-4 mb-2 border-secondary-subtle">
+                                <div class="d-flex gap-2 gap-md-4 flex-column flex-md-row justify-content-md-end">
+                                    <label>Already have an account?</label>
+                                    <a href="/sign-in" class="link-secondary text-decoration-none">Sign-in</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,56 @@
+﻿@using FilePocket.Client.Helpers
+@using FilePocket.Client.Services.Files.Models
+@using System.Collections.Concurrent
+@using System.Collections.ObjectModel
+
+<div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4 text-center justify-content-center">
+
+    @if (Files is not null && Files.Any())
+    {
+        foreach (var f in Files)
+        {
+            <div class="card h-100 shadow-sm me-2 pt-2" style="width: 8em;">
+                <a class="file-link text-decoration-none" title="@f.OriginalName" href="@GetFileUrl(f.Id, f.PocketId, f.FolderId)">
+
+                    @if (f.IsLoaded)
+                    {
+                        <img src="./assets/img/fileTypes/@Tools.GetIconName(f.FileType!)" width="56" class="d-block mx-auto mb-3" alt="File icon" />
+                    }
+                    else
+                    {
+                        <img src="./assets/img/loading.gif" width="56" class="d-block mx-auto mb-3" alt="File icon" />
+                    }
+
+                    <h6 class="card-title" style="font-size: 0.8em">@Tools.TruncateString(f.OriginalName!)</h6>
+                </a>
+            </div>
+        }
+    }
+
+</div>
+
+@code {
+
+    [Parameter]
+    public ObservableCollection<FileInfoModel>? Files { get; set; }
+
+    private string GetFileUrl(Guid fileId, Guid? pocketId, Guid? folderId)
+    {
+        if (pocketId is null && folderId is null)
+        {
+            return $"/files/{fileId}";
+        }
+
+        if (pocketId is null)
+        {
+            return $"/folders/{folderId}/files/{fileId}";
+        }
+
+        if (folderId is null)
+        {
+            return $"/pockets/{pocketId}/files/{fileId}";
+        }
+
+        return $"/pockets/{pocketId}/folders/{folderId}/files/{fileId}";
+    }
+}
