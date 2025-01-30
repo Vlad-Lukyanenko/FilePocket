@@ -23,11 +23,9 @@ namespace FilePocket.Client.Services.Authentication.Requests
             _localStorage = localStorage;
         }
 
-        public async Task<bool> RegisterUserAsync(RegistrationRequest registrationRequest)
+        public Task<HttpResponseMessage> RegisterUserAsync(RegistrationRequest registrationRequest)
         {
-            var response = await _apiClient.PostAsJsonAsync(AuthUrl.AuthenticationUrl, registrationRequest);
-
-            return response.IsSuccessStatusCode;
+            return _apiClient.PostAsJsonAsync(AuthUrl.AuthenticationUrl, registrationRequest);
         }
 
         public async Task<TokenModel> LoginAsync(LoginModel loginModel)

@@ -22,26 +22,34 @@
                         </div>
 
                         <!-- Sign-up Form -->
-                        <EditForm Model="@_registrationRequest" OnSubmit="@FormSubmitted" style="text-align: left;">
+                        <EditForm Model="_registrationRequest" OnValidSubmit="HandleValidSubmit" Context="formContext">
+                            <DataAnnotationsValidator />
+                            @* <ValidationSummary /> *@
+
+                            @foreach (var error in _errors)
+                            {
+                                <p class="text-danger">@error</p>
+                            }
+
                             <div class="row gy-3 gy-md-4 overflow-hidden">
                                 <!-- Email Input -->
-                                <div class="col-12">
+                                <div class="col-12 text-start">
                                     <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
-                                    <InputText @bind-Value="_registrationRequest.Email" type="email" class="form-control" placeholder="name@example.com" id="email" required />
+                                    <InputText @bind-Value="_registrationRequest.Email" type="email" class="form-control" placeholder="name@example.com" id="email" />
+                                    <ValidationMessage For="() => _registrationRequest.Email" class="text-danger" />
                                 </div>
-
                                 <!-- Password Input -->
-                                <div class="col-12">
+                                <div class="col-12 text-start">
                                     <label for="password" class="form-label">Password <span class="text-danger">*</span></label>
-                                    <InputText @bind-Value="_registrationRequest.Password" type="password" class="form-control" id="password" required />
+                                    <InputText @bind-Value="_registrationRequest.Password" type="password" class="form-control" id="password" />
+                                    <ValidationMessage For="() => _registrationRequest.Password" class="text-danger" />
                                 </div>
-
                                 <!-- Confirm Password Input -->
-                                <div class="col-12">
+                                <div class="col-12 text-start">
                                     <label for="confirmPassword" class="form-label">Confirm password <span class="text-danger">*</span></label>
-                                    <InputText @bind-Value="_registrationRequest.ConfirmPassword" type="password" class="form-control" id="confirmPassword" required />
+                                    <InputText @bind-Value="_registrationRequest.ConfirmPassword" type="password" class="form-control" id="confirmPassword" />
+                                    <ValidationMessage For="() => _registrationRequest.ConfirmPassword" class="text-danger" />
                                 </div>
-
                                 <!-- Submit Button -->
                                 <div class="col-12">
                                     <div class="d-grid">
