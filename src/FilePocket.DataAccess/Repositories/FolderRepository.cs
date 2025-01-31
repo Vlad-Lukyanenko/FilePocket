@@ -2,7 +2,6 @@
 using FilePocket.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using System.Collections.Generic;
 
 namespace FilePocket.DataAccess.Repositories
 {
@@ -95,11 +94,6 @@ namespace FilePocket.DataAccess.Repositories
                     await dbContext.SaveChangesAsync();
                 }
             }
-        }
-
-        public Task<List<Folder>> GetChildFolders(Guid parentFolderId)
-        {
-            return DbContext.Folders.Where(f => f.ParentFolderId == parentFolderId).ToListAsync();
         }
     }
 }
