@@ -21,6 +21,14 @@
                         Please provide a valid pocket name.
                     </div>
                 }
+                <label for="pocketDescription" class="form-label fw-semibold mt-3">Description:</label>
+                <textarea @bind="_pocketDescription" @onblur="DescriptionChanged" class="form-control" id="pocketDescription" rows="4" maxlength="500"></textarea>
+                @if (_pocketDescription?.Length > 500)
+                {
+                    <div class="text-danger">
+                        Description cannot exceed 500 characters.
+                    </div>
+                }
                 <!-- Submit Button -->
                 <div class="d-flex justify-content-end mt-3">
                     <button class="btn btn-outline-success fw-semibold p-2 ps-5 pe-5" @onclick="CreatePocketAsync">Create</button>
