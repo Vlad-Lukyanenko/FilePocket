@@ -30,11 +30,12 @@ public class PocketService : IPocketService
 
     public async Task<PocketDetailsModel> GetPocketDetailsAsync(Guid userId, Guid pocketId, bool trackChanges)
     {
-        var (name, dateCreated, numberOfFiles, totalFileSize) = await _repository.Pocket.GetPocketDetailsAsync(userId, pocketId, trackChanges);
+        var (name, description, dateCreated, numberOfFiles, totalFileSize) = await _repository.Pocket.GetPocketDetailsAsync(userId, pocketId, trackChanges);
 
         var pocket = new PocketDetailsModel
         {
             Name = name,
+            Description = description,
             DateCreated = dateCreated,
             NumberOfFiles = numberOfFiles,
             TotalFileSize = totalFileSize

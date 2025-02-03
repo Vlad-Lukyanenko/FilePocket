@@ -16,7 +16,7 @@ public interface IPocketRepository
 
     void UpdatePocket(Pocket pocket);
 
-    Task<(string Name, DateTime DateCreated, int NumberOfFiles, double TotalFileSize)> GetPocketDetailsAsync(Guid userId, Guid pocketId, bool trackChanges);
+    Task<(string Name,string Description, DateTime DateCreated, int NumberOfFiles, double TotalFileSize)> GetPocketDetailsAsync(Guid userId, Guid pocketId, bool trackChanges);
 
     Task<double> GetTotalFileSizeAsync(Guid userId, Guid pocketId, bool trackChanges);
 }

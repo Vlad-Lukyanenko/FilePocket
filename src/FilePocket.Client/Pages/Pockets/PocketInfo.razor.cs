@@ -22,6 +22,9 @@ namespace FilePocket.Client.Pages.Pockets
         [Inject] private IPocketRequests PocketRequests { get; set; } = default!;
 
         private bool _updateProcessStarted = false;
+        private bool _updateDescriptionProcessStarted = false;
+        private string _oldPocketDescription = string.Empty;
+        private string _newPocketDescription=string.Empty;
         private string _oldPocketName = string.Empty;
         private string _newPocketName = string.Empty;
 
@@ -79,6 +82,37 @@ namespace FilePocket.Client.Pages.Pockets
             _updateProcessStarted = false;
             _oldPocketName = string.Empty;
             _newPocketName = string.Empty;
+        }
+        private async Task UpdateDescriptionClicked()
+        {
+            _updateDescriptionProcessStarted = true;
+            _newPocketDescription = _pocketInfo.Description;
+            _oldPocketDescription = _pocketInfo.Description;
+
+        }
+        private async Task ConfirmDescriptionUpdateClicked()
+        {
+            if (string.IsNullOrWhiteSpace(_newPocketDescription))
+            {
+                return;
+            }
+
+            if (_pocketInfo is not null && _newPocketDescription != _oldPocketDescription)
+            {
+                _pocketInfo.Description = _newPocketDescription;
+                _updateDescriptionProcessStarted = false;
+
+                await PocketRequests.UpdateAsync(_pocketInfo);
+            }
+
+            _updateDescriptionProcessStarted = false;
+            _oldPocketDescription = string.Empty;
+            _newPocketDescription = string.Empty;
+           
+        }
+        private void CancelDescriptionUpdateClicked()
+        {
+            _updateDescriptionProcessStarted = false;
         }
     }
 }

@@ -129,7 +129,11 @@ builder.Services.AddScoped<IServiceManager, ServiceManager>();
 builder.Services.AddScoped<JwtOrApiKeyAuthorizeAttribute>();
 
 var app = builder.Build();
-
+//using (var scope = app.Services.CreateScope())
+//{
+//    var dbContext = scope.ServiceProvider.GetRequiredService<FilePocketDbContext>();
+//    dbContext.Database.Migrate(); 
+//}
 app.UseCors("AllowSpecificOrigin");
 
 app.UseExceptionHandler(opt => { });

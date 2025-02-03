@@ -26,7 +26,7 @@ public class PocketRepository : RepositoryBase<Pocket>, IPocketRepository
         return (await FindByCondition(c => c.Id.Equals(pocketId) && c.UserId.Equals(userId), trackChanges).SingleOrDefaultAsync())!;
     }
 
-    public async Task<(string Name, DateTime DateCreated, int NumberOfFiles, double TotalFileSize)> GetPocketDetailsAsync(Guid userId, Guid pocketId, bool trackChanges)
+    public async Task<(string Name,string Description, DateTime DateCreated, int NumberOfFiles, double TotalFileSize)> GetPocketDetailsAsync(Guid userId, Guid pocketId, bool trackChanges)
     {
         var query = FindByCondition(c => c.Id.Equals(pocketId) && c.UserId.Equals(userId), trackChanges);
 
@@ -37,7 +37,7 @@ public class PocketRepository : RepositoryBase<Pocket>, IPocketRepository
         var totalFileSize = pocket.FileMetadata?.Sum(f => f.FileSize) ?? 0;
         var numberOfFiles = pocket.FileMetadata?.Count ?? 0;
 
-        return (pocket.Name, pocket.DateCreated, numberOfFiles, totalFileSize);
+        return (pocket.Name,pocket.Description, pocket.DateCreated, numberOfFiles, totalFileSize);
     }
 
     public async Task<double> GetTotalFileSizeAsync(Guid userId, Guid pocketId, bool trackChanges)

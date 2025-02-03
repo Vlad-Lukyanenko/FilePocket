@@ -51,7 +51,27 @@
                         <button class="btn btn-sm btn-light" title="Cancel" @onclick="CancelUpdateClicked"><i class="bi bi-x-square"></i></button>
                     }
                 </div>
-
+                <!-- Description Section -->
+                <p class="fw-semibold mb-0">Description:</p>
+                <div class="d-flex align-items-center mb-3">
+                    @if (!_updateDescriptionProcessStarted)
+                    {
+                        <span class="text-muted me-2">@_pocketInfo.Description</span>
+                        <button class="btn btn-sm btn-light" @onclick="UpdateDescriptionClicked">
+                            <i class="bi bi-pencil-square"></i>
+                        </button>
+                    }
+                    else
+                    {
+                        <input type="text" @bind="_newPocketDescription" class="form-control form-control-sm me-2 w-100 w-md-50 @(string.IsNullOrWhiteSpace(_newPocketDescription) && _updateDescriptionProcessStarted ? "validation-error" : "")" />
+                        <button class="btn btn-sm btn-light me-1" title="Confirm" @onclick="ConfirmDescriptionUpdateClicked">
+                            <i class="bi-check-square"></i>
+                        </button>
+                        <button class="btn btn-sm btn-light" title="Cancel" @onclick="CancelDescriptionUpdateClicked">
+                            <i class="bi bi-x-square"></i>
+                        </button>
+                    }
+                </div>
                 <!-- Number of Files Section -->
                 <p class="fw-semibold mb-0">Number of files:</p>
                 <p>@_pocketInfo.NumberOfFiles</p>
