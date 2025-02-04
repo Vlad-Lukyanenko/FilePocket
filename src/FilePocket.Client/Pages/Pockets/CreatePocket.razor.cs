@@ -9,6 +9,7 @@ namespace FilePocket.Client.Pages.Pockets
 {
     public partial class CreatePocket
     {
+        private const int MaxDescriptionLength = 500;
         private string _pocketName = string.Empty;
         private string _pocketDescription = string.Empty;
         private bool _validName = true;
@@ -59,7 +60,11 @@ namespace FilePocket.Client.Pages.Pockets
         }
         private void DescriptionChanged()
         {
+<<<<<<< Updated upstream
             _validDescription = !string.IsNullOrEmpty(_pocketDescription);
+=======
+            _validDescription = !string.IsNullOrWhiteSpace(_pocketDescription);
+>>>>>>> Stashed changes
         }
     }
 }

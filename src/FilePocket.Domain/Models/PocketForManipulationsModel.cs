@@ -11,4 +11,6 @@ public class PocketForManipulationsModel
 
     [Required]
     public Guid UserId { get; set; }
+    [MaxLength(500)]
+    public string? Description { get; set; }
 }

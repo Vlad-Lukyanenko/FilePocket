@@ -20,5 +20,9 @@ public class Pocket
     public DateTime DateCreated { get; set; } = DateTime.UtcNow;
     [MaxLength(500)]
     public string? Description { get; set; }
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
     public virtual ICollection<FileMetadata>? FileMetadata { get; set; }
 }
