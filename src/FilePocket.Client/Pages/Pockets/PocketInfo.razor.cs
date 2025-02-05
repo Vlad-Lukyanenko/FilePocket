@@ -24,11 +24,7 @@ namespace FilePocket.Client.Pages.Pockets
         private bool _updateProcessStarted = false;
         private bool _updateDescriptionProcessStarted = false;
         private string _oldPocketDescription = string.Empty;
-<<<<<<< Updated upstream
-        private string _newPocketDescription=string.Empty;
-=======
         private string _newPocketDescription = string.Empty;
->>>>>>> Stashed changes
         private string _oldPocketName = string.Empty;
         private string _newPocketName = string.Empty;
 
@@ -112,11 +108,6 @@ namespace FilePocket.Client.Pages.Pockets
             _updateDescriptionProcessStarted = false;
             _oldPocketDescription = string.Empty;
             _newPocketDescription = string.Empty;
-<<<<<<< Updated upstream
-           
-=======
-
->>>>>>> Stashed changes
         }
         private void CancelDescriptionUpdateClicked()
         {

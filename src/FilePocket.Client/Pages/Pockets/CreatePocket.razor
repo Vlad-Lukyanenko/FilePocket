@@ -22,19 +22,11 @@
                     </div>
                 }
                 <label for="pocketDescription" class="form-label fw-semibold mt-3">Description:</label>
-<<<<<<< Updated upstream
-                <textarea @bind="_pocketDescription" @onblur="DescriptionChanged" class="form-control" id="pocketDescription" rows="4" maxlength="500"></textarea>
-                @if (_pocketDescription?.Length > 500)
-                {
-                    <div class="text-danger">
-                        Description cannot exceed 500 characters.
-=======
                 <textarea @bind="_pocketDescription" @onblur="DescriptionChanged" class="form-control" id="pocketDescription" rows="4" maxlength="@MaxDescriptionLength"></textarea>
                 @if (_pocketDescription?.Length > MaxDescriptionLength)
                 {
                     <div class="text-danger">
                         Description cannot exceed @MaxDescriptionLength characters.
->>>>>>> Stashed changes
                     </div>
                 }
                 <!-- Submit Button -->

@@ -17,11 +17,6 @@ public interface IPocketRepository
 
     void UpdatePocket(Pocket pocket);
 
-<<<<<<< Updated upstream
-    Task<(string Name,string Description, DateTime DateCreated, int NumberOfFiles, double TotalFileSize)> GetPocketDetailsAsync(Guid userId, Guid pocketId, bool trackChanges);
-=======
     Task<PocketDetailsModel> GetPocketDetailsAsync(Guid userId, Guid pocketId, bool trackChanges);
->>>>>>> Stashed changes
-
     Task<double> GetTotalFileSizeAsync(Guid userId, Guid pocketId, bool trackChanges);
 }
