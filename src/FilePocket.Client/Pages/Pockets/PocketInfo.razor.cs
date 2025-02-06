@@ -93,7 +93,7 @@ namespace FilePocket.Client.Pages.Pockets
         }
         private async Task ConfirmDescriptionUpdateClicked()
         {
-            if (string.IsNullOrWhiteSpace(_newPocketDescription) || _newPocketDescription.Length > Tools.MaxDescriptionLength)
+            if (_newPocketDescription.Length > Tools.MaxDescriptionLength)
             {
                 return;
             }

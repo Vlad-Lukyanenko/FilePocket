@@ -63,7 +63,7 @@
                     }
                     else
                     {
-                        <input maxlength="MaxDescriptionLength" type="text" @bind="_newPocketDescription" class="form-control form-control-sm me-2 w-100 w-md-50 @(string.IsNullOrWhiteSpace(_newPocketDescription) && _updateDescriptionProcessStarted ? "validation-error" : "")" />
+                        <input maxlength="MaxDescriptionLength" type="text" @bind="_newPocketDescription" class="form-control form-control-sm me-2 w-100 w-md-50 " />
                         <button class="btn btn-sm btn-light me-1" title="Confirm" @onclick="ConfirmDescriptionUpdateClicked">
                             <i class="bi-check-square"></i>
                         </button>
