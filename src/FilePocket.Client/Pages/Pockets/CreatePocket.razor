@@ -1,5 +1,6 @@
 ﻿@page "/pockets/new"
 @using Microsoft.AspNetCore.Authorization
+@using FilePocket.Client.Helpers
 @attribute [Authorize]
 
 @inject NavigationManager Navigation;
@@ -22,11 +23,11 @@
                     </div>
                 }
                 <label for="pocketDescription" class="form-label fw-semibold mt-3">Description:</label>
-                <textarea @bind="_pocketDescription" @onblur="DescriptionChanged" class="form-control" id="pocketDescription" rows="4" maxlength="@MaxDescriptionLength"></textarea>
-                @if (_pocketDescription?.Length > MaxDescriptionLength)
+                <textarea @bind="_pocketDescription" @onblur="DescriptionChanged" class="form-control" id="pocketDescription" rows="4" maxlength="MaxDescriptionLength"></textarea>
+                @if (_pocketDescription?.Length > Tools.MaxDescriptionLength)
                 {
                     <div class="text-danger">
-                        Description cannot exceed @MaxDescriptionLength characters.
+                        Description cannot exceed @Tools.MaxDescriptionLength characters.
                     </div>
                 }
                 <!-- Submit Button -->

@@ -1,5 +1,6 @@
 ﻿using FilePocket.Client.Features.Users.Models;
 using FilePocket.Client.Features.Users.Requests;
+using FilePocket.Client.Helpers;
 using FilePocket.Client.Services.Pockets.Models;
 using FilePocket.Client.Services.Pockets.Requests;
 using Microsoft.AspNetCore.Components;
@@ -9,7 +10,6 @@ namespace FilePocket.Client.Pages.Pockets
 {
     public partial class CreatePocket
     {
-        private const int MaxDescriptionLength = 500;
         private string _pocketName = string.Empty;
         private string _pocketDescription = string.Empty;
         private bool _validName = true;
@@ -60,7 +60,7 @@ namespace FilePocket.Client.Pages.Pockets
         }
         private void DescriptionChanged()
         {
-            _validDescription = !string.IsNullOrWhiteSpace(_pocketDescription);
+            _validDescription = !string.IsNullOrWhiteSpace(_pocketDescription) && _pocketDescription.Length <= Tools.MaxDescriptionLength;
         }
     }
 }

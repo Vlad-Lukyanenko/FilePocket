@@ -1,5 +1,6 @@
 ﻿using FilePocket.Client.Features.Users.Models;
 using FilePocket.Client.Features.Users.Requests;
+using FilePocket.Client.Helpers;
 using FilePocket.Client.Services.Pockets.Models;
 using FilePocket.Client.Services.Pockets.Requests;
 using Microsoft.AspNetCore.Components;
@@ -92,7 +93,7 @@ namespace FilePocket.Client.Pages.Pockets
         }
         private async Task ConfirmDescriptionUpdateClicked()
         {
-            if (string.IsNullOrWhiteSpace(_newPocketDescription))
+            if (string.IsNullOrWhiteSpace(_newPocketDescription) || _newPocketDescription.Length > Tools.MaxDescriptionLength)
             {
                 return;
             }
