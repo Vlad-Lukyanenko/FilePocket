@@ -54,6 +54,7 @@
                 <!-- Description Section -->
                 <p class="fw-semibold mb-0">Description:</p>
                 <div class="d-flex align-items-center mb-3">
+                    
                     @if (!_updateDescriptionProcessStarted)
                     {
                         <span class="text-muted me-2">@_pocketInfo.Description</span>
@@ -72,7 +73,7 @@
                         </button>
                     }
                 </div>
-                @if (_newPocketDescription?.Length > Tools.MaxDescriptionLength)
+                @if (_newPocketDescription?.Length > Tools.MaxDescriptionLength && _newPocketDescription != _oldPocketDescription)
                 {
                     <div class="text-danger">
                         Description cannot exceed @Tools.MaxDescriptionLength characters.

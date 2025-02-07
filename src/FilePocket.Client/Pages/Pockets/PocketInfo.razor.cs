@@ -112,6 +112,7 @@ namespace FilePocket.Client.Pages.Pockets
         }
         private void CancelDescriptionUpdateClicked()
         {
+            _newPocketDescription = _oldPocketDescription;
             _updateDescriptionProcessStarted = false;
         }
     }
