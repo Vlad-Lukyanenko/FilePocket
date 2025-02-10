@@ -58,6 +58,7 @@ namespace FilePocket.Client.Pages.Pockets
         {
             _validName = !string.IsNullOrEmpty(_pocketName);
         }
+
         private void DescriptionChanged()
         {
             _validDescription = !string.IsNullOrWhiteSpace(_pocketDescription) && _pocketDescription.Length <= Tools.MaxDescriptionLength;
