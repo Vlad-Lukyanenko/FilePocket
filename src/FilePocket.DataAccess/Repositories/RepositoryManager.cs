@@ -1,6 +1,9 @@
-﻿using FilePocket.Contracts.Repositories;
+﻿using System.Data;
+using System.Data.Common;
+using FilePocket.Contracts.Repositories;
 using FilePocket.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace FilePocket.DataAccess.Repositories;
@@ -12,6 +15,7 @@ public class RepositoryManager : IRepositoryManager
     private readonly Lazy<ISharedFileRepository> _sharedFileRepository;
     private readonly Lazy<IFolderRepository> _folderRepository;
     private readonly Lazy<IFileMetadataRepository> _fileMetadataRepository;
+    private readonly Lazy<IAccountConsumptionRepository> _accountConsumptionRepository;
 
     public RepositoryManager(FilePocketDbContext dbContext, UserManager<User> userManager, IServiceScopeFactory scopeFactory)
     {
@@ -20,30 +24,42 @@ public class RepositoryManager : IRepositoryManager
         _sharedFileRepository = new Lazy<ISharedFileRepository>(() => new SharedFileRepository(dbContext, userManager));
         _folderRepository = new Lazy<IFolderRepository>(() => new FolderRepository(dbContext, scopeFactory));
         _fileMetadataRepository = new Lazy<IFileMetadataRepository>(() => new FileMetadataRepository(dbContext));
+        _accountConsumptionRepository = new Lazy<IAccountConsumptionRepository>(() => new AccountConsumptionRepository(dbContext));
     }
 
-    public IPocketRepository Pocket
+    public IPocketRepository Pocket => _pocketRepository.Value;
+    public ISharedFileRepository SharedFile => _sharedFileRepository.Value;
+    public IFolderRepository Folder => _folderRepository.Value;
+    public IFileMetadataRepository FileMetadata => _fileMetadataRepository.Value;
+    public IAccountConsumptionRepository AccountConsumption => _accountConsumptionRepository.Value;
+
+    public Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken cancellationToken = default)
     {
-        get { return _pocketRepository.Value; }
+        return _dbContext.Database.BeginTransactionAsync(cancellationToken);
     }
 
-    public ISharedFileRepository SharedFile
+    public Task CommitTransactionAsync(IDbTransaction transaction, CancellationToken cancellationToken = default)
     {
-        get { return _sharedFileRepository.Value; }
+        if (transaction is not DbTransaction dbTransaction)
+        {
+            throw new ArgumentException("Transaction must be of type DbTransaction", nameof(transaction));
+        }
+
+        return dbTransaction.CommitAsync(cancellationToken);
     }
 
-    public IFolderRepository Folder
+    public Task RollbackTransactionAsync(IDbTransaction transaction, CancellationToken cancellationToken = default)
     {
-        get { return _folderRepository.Value; }
+        if (transaction is not DbTransaction dbTransaction)
+        {
+            throw new ArgumentException("Transaction must be of type DbTransaction", nameof(transaction));
+        }
+
+        return dbTransaction.RollbackAsync(cancellationToken);
     }
 
-    public IFileMetadataRepository FileMetadata
+    public async Task SaveChangesAsync(CancellationToken cancellationToken = default)
     {
-        get { return _fileMetadataRepository.Value; }
-    }
-
-    public async Task SaveChangesAsync()
-    {
-        await _dbContext.SaveChangesAsync();
+        await _dbContext.SaveChangesAsync(cancellationToken);
     }
 }
