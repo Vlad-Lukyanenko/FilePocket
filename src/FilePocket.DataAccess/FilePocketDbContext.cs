@@ -1,32 +1,27 @@
 ﻿using FilePocket.Domain.Entities;
+using FilePocket.Domain.Entities.Consumption;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace FilePocket.DataAccess;
 
-public class FilePocketDbContext : IdentityDbContext<User, Role, Guid>
+public class FilePocketDbContext(DbContextOptions<FilePocketDbContext> options)
+    : IdentityDbContext<User, Role, Guid>(options)
 {
-    public FilePocketDbContext(DbContextOptions<FilePocketDbContext> options)
-        : base(options)
-    {
-    }
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(FilePocketDbContext).Assembly);
     }
 
-    public DbSet<FileMetadata> FilesMetadata { get; set; }
-
+    public DbSet<FileMetadata> FilesMetadata { get; set; } // should be created inside pocket, or linked to default pocket
+    
     public DbSet<Pocket> Pockets { get; set; }
-
-    public DbSet<Folder> Folders { get; set; }
-
+    public DbSet<Folder> Folders { get; set; } // should be created inside pocket only
     public DbSet<SharedFile> SharedFiles { get; set; }
 
-    public DbSet<AccountSettings> AccountSettings { get; set; }
+    public DbSet<AccountConsumption> AccountConsumptions { get; set; }
 
     private void SeedRolesWithAdminUser(ModelBuilder builder)
     {
