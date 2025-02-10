@@ -15,7 +15,6 @@ namespace FilePocket.Client.Pages.Pockets
         private LoggedInUserModel? _user;
         private string _userName = string.Empty;
         private bool _loading = true;
-
         [Inject] IUserRequests UserRequests { get; set; } = default!;
         [Inject] private AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
         [Inject] private IPocketRequests PocketRequests { get; set; } = default!;
@@ -33,7 +32,7 @@ namespace FilePocket.Client.Pages.Pockets
             _pockets = await GetAllPockets();
             _loading = false;
         }
-
+        
         private async Task<List<PocketModel>> GetAllPockets()
         {
             var userId = _user!.Id!.Value;

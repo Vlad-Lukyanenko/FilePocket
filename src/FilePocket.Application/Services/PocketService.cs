@@ -30,17 +30,7 @@ public class PocketService : IPocketService
 
     public async Task<PocketDetailsModel> GetPocketDetailsAsync(Guid userId, Guid pocketId, bool trackChanges)
     {
-        var (name, dateCreated, numberOfFiles, totalFileSize) = await _repository.Pocket.GetPocketDetailsAsync(userId, pocketId, trackChanges);
-
-        var pocket = new PocketDetailsModel
-        {
-            Name = name,
-            DateCreated = dateCreated,
-            NumberOfFiles = numberOfFiles,
-            TotalFileSize = totalFileSize
-        };
-
-        return _mapper.Map<PocketDetailsModel>(pocket);
+        return await _repository.Pocket.GetPocketDetailsAsync(userId, pocketId, trackChanges);
     }
 
     public async Task<bool> GetComparingDefaultCapacityWithTotalFilesSizeInPocket(Guid userId, Guid pocketId, double newFileSize)

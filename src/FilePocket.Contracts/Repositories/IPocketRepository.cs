@@ -1,4 +1,5 @@
 ﻿using FilePocket.Domain.Entities;
+using FilePocket.Domain.Models;
 
 namespace FilePocket.Contracts.Repositories;
 
@@ -16,7 +17,6 @@ public interface IPocketRepository
 
     void UpdatePocket(Pocket pocket);
 
-    Task<(string Name, DateTime DateCreated, int NumberOfFiles, double TotalFileSize)> GetPocketDetailsAsync(Guid userId, Guid pocketId, bool trackChanges);
-
+    Task<PocketDetailsModel> GetPocketDetailsAsync(Guid userId, Guid pocketId, bool trackChanges);
     Task<double> GetTotalFileSizeAsync(Guid userId, Guid pocketId, bool trackChanges);
 }

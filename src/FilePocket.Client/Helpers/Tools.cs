@@ -4,6 +4,7 @@ namespace FilePocket.Client.Helpers
 {
     public static class Tools
     {
+        public const int MaxDescriptionLength = 500;
         public static string FormatFileSize(double? fileSizeInKilobytes)
         {
             if (fileSizeInKilobytes is null)

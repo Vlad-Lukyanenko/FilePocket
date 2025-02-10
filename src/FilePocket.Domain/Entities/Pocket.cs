@@ -18,6 +18,7 @@ public class Pocket
 
     [Required]
     public DateTime DateCreated { get; set; } = DateTime.UtcNow;
-
+    [MaxLength(500)]
+    public string? Description { get; set; }
     public virtual ICollection<FileMetadata>? FileMetadata { get; set; }
 }

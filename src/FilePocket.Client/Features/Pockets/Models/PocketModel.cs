@@ -9,7 +9,7 @@ public class PocketModel
     public Guid UserId { get; set; }
 
     public string Name { get; set; } = string.Empty;
-
+    public string? Description { get; set; } 
     public DateTime DateCreated { get; set; }
 
     public int? NumberOfFiles { get; set; }
