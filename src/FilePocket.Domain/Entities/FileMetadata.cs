@@ -1,37 +1,62 @@
 ﻿using FilePocket.Domain.Models;
-using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
 
 namespace FilePocket.Domain.Entities;
 
-[Index(nameof(ActualName), IsUnique = true)]
 public class FileMetadata
 {
-    public Guid Id { get; set; }
+    public FileMetadata() {}
+    private FileMetadata(
+        Guid id, Guid userId,
+        string originalName, string actualName, 
+        string path, FileTypes fileType, double fileSize,
+        Guid? pocketId, Guid? folderId, 
+        DateTime dateCreated,
+        bool isDeleted)
+    {
+        Id = id;
+        OriginalName = originalName;
+        ActualName = actualName;
+        Path = path;
+        FileType = fileType;
+        FileSize = fileSize;
+        UserId = userId;
+        PocketId = pocketId;
+        FolderId = folderId;
+        DateCreated = dateCreated;
+        IsDeleted = isDeleted;
+    }
 
-    [Required]
-    public string? OriginalName { get; set; }
+    public Guid Id { get; init; }
+    public string OriginalName { get; init; }
+    public string ActualName { get; init; }
+    public string Path { get; init; }
+    public FileTypes FileType { get; init; }
+    public double FileSize { get; init; }
+    public Guid UserId { get; init; }
+    public Guid? PocketId { get; init; }
+    public Guid? FolderId { get; init; }
+    public DateTime DateCreated { get; init; }
+    public bool IsDeleted { get; private set; }
 
-    public string ActualName { get; set; } = Guid.NewGuid().ToString();
+    public void MarkAsDeleted()
+    {
+        IsDeleted = true;
+    }
 
-    [Required]
-    public string? Path { get; set; }
+    public static FileMetadata Create(
+        Guid userId, 
+        string originalFileName, string filePath, FileTypes fileType, double fileSizeInMbs,
+        Guid? pocketId, Guid? folderId)
+    {
+        var fileId = Guid.NewGuid();
+        var actualName = Guid.NewGuid().ToString();
 
-    [Required]
-    public FileTypes? FileType { get; set; }
-
-    [Required]
-    public DateTime DateCreated { get; set; } = DateTime.UtcNow;
-
-    [Required]
-    public double FileSize { get; set; }
-
-    public Guid? PocketId { get; set; }
-
-    [Required]
-    public Guid UserId { get; set; }
-    
-    public Guid? FolderId { get; set; }
-
-    public bool IsDeleted { get; set; }
+        return new FileMetadata(
+            fileId, userId,
+            originalFileName, actualName,
+            filePath, fileType, fileSizeInMbs,
+            pocketId, folderId,
+            DateTime.UtcNow,
+            isDeleted: false);
+    }
 }
