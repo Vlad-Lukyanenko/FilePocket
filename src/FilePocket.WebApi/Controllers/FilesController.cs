@@ -98,7 +98,7 @@ public class FilesController : BaseController
     [HttpDelete("files/{fileId:guid}")]
     public async Task<IActionResult> Delete( [FromRoute] Guid fileId)
     {
-        await _service.FileService.DeleteFileAsync(UserId, fileId);
+        await _service.FileService.RemoveFileAsync(UserId, fileId);
 
         return NoContent();
     }
