@@ -20,6 +20,7 @@ public class AuthenticationService : IAuthenticationService
     private readonly IMapper _mapper;
     private readonly ILoggerService _logger;
     private readonly JwtConfigurationModel _jwtConfiguration;
+    private readonly AccountConsumptionConfigurationModel _accountConsumptionConfiguration;
     private readonly UserManager<User> _userManager;
     private User? _user;
 
@@ -27,19 +28,24 @@ public class AuthenticationService : IAuthenticationService
         ILoggerService logger,
         UserManager<User> userManager,
         IOptions<JwtConfigurationModel> options,
+        IOptions<AccountConsumptionConfigurationModel> accountConsumptionConfiguration,
         IMapper mapper)
     {
         _logger = logger;
         _userManager = userManager;
         _jwtConfiguration = options.Value;
+        _accountConsumptionConfiguration = accountConsumptionConfiguration.Value;
         _mapper = mapper;
     }
 
     public async Task<IdentityResult> RegisterUser(UserRegistrationModel userForRegistration)
     {
         var user = _mapper.Map<User>(userForRegistration);
-        user.UserName = userForRegistration.Email;
-        
+
+        user.WithId()
+            .WithUsername(userForRegistration.Email)
+            .ConfigureAccountConsumptions(_accountConsumptionConfiguration);
+
         var result = await _userManager.CreateAsync(user, userForRegistration.Password!);
 
         if (result.Succeeded)
