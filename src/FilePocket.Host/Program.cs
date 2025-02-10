@@ -88,6 +88,7 @@ builder.Services.AddIdentity<User, Role>(o =>
 builder.Services.ConfigureJWT(builder.Configuration);
 
 builder.Services.Configure<AdminSeedingDataModel>(builder.Configuration.GetSection("AdminSeedingData"));
+builder.Services.Configure<AccountConsumptionConfigurationModel>(builder.Configuration.GetSection(key: AccountConsumptionConfigurationModel.Section));
 builder.Services.Configure<JwtConfigurationModel>(builder.Configuration.GetSection("JwtSettings"));
 builder.Services.Configure<ApiKeyConfigurationModel>(builder.Configuration.GetSection("ApiKeySettings"));
 builder.Services.AddHostedService<InitialRolesAndAdminSeeding>();
