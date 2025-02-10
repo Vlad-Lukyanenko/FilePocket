@@ -1,5 +1,6 @@
 ﻿using FilePocket.Domain.Entities;
 using FilePocket.Domain.Models;
+using FilePocket.Domain.Models.Configuration;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -52,18 +53,22 @@ public class InitialRolesAndAdminSeeding : BackgroundService
 
         var admin = new User
         {
+            Id = Guid.NewGuid(),
             Email = _adminSeedingData.Email,
             EmailConfirmed = true,
-            FirstName = _adminSeedingData.FirstName,
-            LastName = _adminSeedingData.LastName,
             UserName = _adminSeedingData.UserName,
             NormalizedUserName = _adminSeedingData.UserName!.ToUpper(),
             NormalizedEmail = _adminSeedingData.Email!.ToUpper(),
             SecurityStamp = Guid.NewGuid().ToString()
         };
 
-        var passwordHasher = new PasswordHasher<User>();
-        admin.PasswordHash = passwordHasher.HashPassword(admin, _adminSeedingData.Password!);
+        admin.WithFirstName(_adminSeedingData.FirstName!)
+            .WithLastName(_adminSeedingData.LastName!)
+            .WithPassword(_adminSeedingData.Password!);
+
+        var consumptionConfiguration = _serviceProvider.GetService<IOptions<AccountConsumptionConfigurationModel>>();
+        admin.ConfigureAccountConsumptions(consumptionConfiguration?.Value);
+
         dbContext.Users.Add(admin);
 
         var adminRole = await dbContext.Roles.FirstAsync(x => x.Name!.Equals("Administrator"), token);
