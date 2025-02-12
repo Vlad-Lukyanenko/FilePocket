@@ -4,6 +4,8 @@ using FilePocket.WebApi.Attributes;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
+using System.Net;
+using FilePocket.Domain.Models;
 
 namespace FilePocket.WebApi.Controllers;
 
@@ -21,17 +23,18 @@ public class FilesController : BaseController
 
     #region POST
     [HttpPost("files")]
+    [ProducesResponseType<FileResponseModel>((int) HttpStatusCode.OK)]
+    [ProducesResponseType<BadRequestObjectResult>((int) HttpStatusCode.BadRequest)]
     public async Task<IActionResult> UploadFile([FromForm] FileInformation fileInformation)
     {
         var validationResult = ValidateFile(fileInformation);
         if (validationResult is not null)
-        {
             return validationResult;
-        }
 
         try
         {
-            var fileMetadata = await _service.FileService.UploadFileAsync(fileInformation.File!, UserId, fileInformation.PocketId, fileInformation.FolderId);
+            var fileMetadata = await _service.FileService.UploadFileAsync(
+                UserId, fileInformation.File!, fileInformation.PocketId, fileInformation.FolderId);
 
             return Ok(fileMetadata);
         }
@@ -106,7 +109,7 @@ public class FilesController : BaseController
 
     private BadRequestObjectResult? ValidateFile(FileInformation fileInformation)
     {
-        if (fileInformation.File is null)
+        if (fileInformation.File is null || fileInformation.File.Length == 0)
         {
             return BadRequest("Nothing to upload.");
         }
