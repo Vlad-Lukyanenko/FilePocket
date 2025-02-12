@@ -38,8 +38,8 @@ public interface IFileProvider
 public interface IFileService : IFileProvider
 {
     Task<FileResponseModel?> UploadFileAsync(
-        IFormFile file,
         Guid userId,
+        IFormFile file,
         Guid? pocketId,
         Guid? folderId,
         CancellationToken cancellationToken = default);
