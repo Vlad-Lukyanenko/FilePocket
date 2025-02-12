@@ -2,13 +2,13 @@ using AutoMapper;
 using FilePocket.Contracts.Repositories;
 using FilePocket.Contracts.Services;
 using FilePocket.Domain.Entities;
-using FilePocket.Domain.Entities.Consumption;
 using FilePocket.Domain.Entities.Consumption.Errors;
 using FilePocket.Domain.Models;
 using FilePocket.Shared.Exceptions;
 using FilePocket.Shared.Extensions.Files;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
+using StorageConsumption = FilePocket.Domain.Entities.Consumption.StorageConsumption;
 
 namespace FilePocket.Application.Services;
 
@@ -93,8 +93,8 @@ public class FileService(
     }
 
     public async Task<FileResponseModel?> UploadFileAsync(
-        IFormFile file,
         Guid userId,
+        IFormFile file,
         Guid? pocketId,
         Guid? folderId, 
         CancellationToken cancellationToken = default)
@@ -110,7 +110,7 @@ public class FileService(
             if (storageConsumption is null)
                 throw new AccountConsumptionNotFoundException(userId);
 
-            var fileSizeInMbs = file.Length.ConvertKilobytesToMegabytes();
+            var fileSizeInMbs = file.Length.ToMegabytes();
             if (storageConsumption.RemainingSizeMb < fileSizeInMbs)
                 throw new InsufficientStorageCapacityException(
                     storageConsumption.RemainingSizeMb, additionalUsedMb: fileSizeInMbs);
@@ -184,11 +184,14 @@ public class FileService(
             return fileMetadata is null ? null : new FileResponseModel
             {
                 Id = fileMetadata.Id,
-                DateCreated = fileMetadata.DateCreated,
+                UserId = fileMetadata.UserId,
                 PocketId = fileMetadata.PocketId,
-                FileSize = fileMetadata.FileSize,
+                FolderId = fileMetadata.FolderId,
+                FileSize = fileMetadata.FileSize.ToBytes(),
                 FileType = fileMetadata.FileType,
-                OriginalName = fileMetadata.OriginalName
+                ActualName = fileMetadata.ActualName,
+                OriginalName = fileMetadata.OriginalName,
+                DateCreated = fileMetadata.DateCreated,
             };
         }
     }
@@ -211,7 +214,8 @@ public class FileService(
             if (storageConsumption is null)
                 throw new AccountConsumptionNotFoundException(userId);
 
-            RemoveFileFromFileSystemSync(fileMetadata);
+            fileMetadata.MarkAsDeleted();
+            RemoveFromFileSystemSync(fileMetadata);
             DecreaseStorageConsumption(storageConsumption, fileMetadata.FileSize);
 
             await repository.SaveChangesAsync(cancellationToken);
@@ -231,7 +235,7 @@ public class FileService(
             repository.AccountConsumption.Update(storageConsumption);
         }
 
-        void RemoveFileFromFileSystemSync(FileMetadata fileToRemove)
+        void RemoveFromFileSystemSync(FileMetadata fileToRemove)
         {
             var fullPath = Path.Combine(
                 fileToRemove.Path,
@@ -337,14 +341,6 @@ public class FileService(
             PocketId = fileMetadata.PocketId,
             FileSize = fileMetadata.FileSize,
         };
-    }
-
-    private void AddFileToPocketEvent(Pocket pocket, double fileSize)
-    {
-        pocket.NumberOfFiles = pocket.NumberOfFiles is null ? 1 : pocket.NumberOfFiles + 1;
-        pocket.TotalSize = pocket.TotalSize is null ? fileSize : pocket.TotalSize + fileSize;
-
-        repository.Pocket.UpdatePocket(pocket);
     }
 
     private void RemoveFileFromPocketEvent(Pocket pocket, double fileSize)
