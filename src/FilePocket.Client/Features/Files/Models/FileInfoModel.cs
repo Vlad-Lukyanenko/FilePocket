@@ -21,5 +21,18 @@ namespace FilePocket.Client.Services.Files.Models
         public bool IsSelected { get; set; }
 
         public bool IsLoaded { get; set; } = true;
+        
+        public bool HasFailedUpload { get; set; }
+
+        public void MarkAsFailedUpload()
+        {
+            HasFailedUpload = true;
+        }
+    }
+    
+    public class FileUploadError
+    {
+        public string OriginalName { get; set; }
+        public string ErrorMessage { get; set; }
     }
 }

@@ -29,7 +29,7 @@ public class StorageConsumption : AccountConsumption
             throw new UsedAmountMustBePositiveException();
 
         if (RemainingSizeMb < additionalUsedMb)
-            throw new InsufficientStorageCapacityException(RemainingSizeMb, additionalUsedMb);
+            throw new InsufficientStorageCapacityException(Used, Total, additionalUsedMb);
 
         Used += additionalUsedMb;
         UpdatedAt = DateTime.UtcNow;

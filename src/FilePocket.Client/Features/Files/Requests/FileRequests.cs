@@ -4,6 +4,7 @@ using FilePocket.Client.Helpers;
 using FilePocket.Client.Services.Files.Models;
 using Newtonsoft.Json;
 using System.Net.Http.Json;
+using FilePocket.Client.Shared.Models;
 
 namespace FilePocket.Client.Services.Files.Requests
 {
@@ -98,6 +99,12 @@ namespace FilePocket.Client.Services.Files.Requests
         public async Task<FileModel> UploadFileAsync(MultipartFormDataContent content)
         {
             var response = await _apiClient.PostAsync(FileUrl.UploadFile, content);
+
+            if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            {
+                var errorDetails = await ErrorDetailsModel.UnwrapErrorAsync(response);
+               errorDetails.Throw();
+            }
 
             var result = await response.Content.ReadFromJsonAsync<FileModel>();
 
