@@ -29,11 +29,32 @@
 
 </div>
 
+<!-- Error Block -->
+@if (Errors is not null && Errors.Any())
+{
+    <div class="fixed-bottom p-3" style="z-index: 1050;">
+        @* Iterate over a copy of the collection to avoid issues when removing items during iteration *@
+        @foreach (var fileUploadError in Errors.ToList())
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <strong>Holy guacamole!</strong> Looks like file upload for @fileUploadError.OriginalName went wrong. @fileUploadError.ErrorMessage
+                <button type="button"
+                        class="btn-close"
+                        aria-label="Close"
+                        @onclick="() => RemoveError(fileUploadError)">
+                </button>
+            </div>
+        }
+    </div>
+}
+
 @code {
 
-    [Parameter]
-    public ObservableCollection<FileInfoModel>? Files { get; set; }
+    [Parameter] public ObservableCollection<FileInfoModel>? Files { get; set; }
+    [Parameter] public ObservableCollection<FileUploadError> Errors { get; set; }
 
+    private void RemoveError(FileUploadError error) => Errors.Remove(error);
+    
     private string GetFileUrl(Guid fileId, Guid? pocketId, Guid? folderId)
     {
         if (pocketId is null && folderId is null)

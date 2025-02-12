@@ -113,7 +113,9 @@ public class FileService(
             var fileSizeInMbs = file.Length.ToMegabytes();
             if (storageConsumption.RemainingSizeMb < fileSizeInMbs)
                 throw new InsufficientStorageCapacityException(
-                    storageConsumption.RemainingSizeMb, additionalUsedMb: fileSizeInMbs);
+                    storageConsumption.Used, 
+                    storageConsumption.Total,
+                    additionalUsedMb: fileSizeInMbs);
 
             var fileExtension = Path.GetExtension(file.FileName);
             var fileType = Tools.DefineFileType(fileExtension);
