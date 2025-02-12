@@ -10,7 +10,7 @@ public interface IFileMetadataRepository
 
     Task<List<FileMetadata>> GetAllAsync(Guid userId, Guid? pocketId, Guid? folderId, bool trackChanges = false);
 
-    Task<FileMetadata> GetByIdAsync(Guid fileId, bool trackChanges = false);
+    Task<FileMetadata> GetByIdAsync(Guid userId, Guid fileId, bool trackChanges = false);
 
     void UpdateFileMetadata(FileMetadata fileMetadata);
 

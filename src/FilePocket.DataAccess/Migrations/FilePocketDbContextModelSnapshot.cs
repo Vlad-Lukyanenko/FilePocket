@@ -25,7 +25,7 @@ namespace FilePocket.DataAccess.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("FilePocket.Domain.Entities.AccountSettings", b =>
+            modelBuilder.Entity("FilePocket.Domain.Entities.Consumption.AccountConsumption", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -34,8 +34,15 @@ namespace FilePocket.DataAccess.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("StorageCapacity")
-                        .HasColumnType("integer");
+                    b.Property<bool>("IsActivated")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true);
+
+                    b.Property<string>("MetricType")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -45,7 +52,14 @@ namespace FilePocket.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("AccountSettings");
+                    b.HasIndex("UserId", "MetricType")
+                        .IsUnique();
+
+                    b.ToTable("AccountConsumptions");
+
+                    b.HasDiscriminator<string>("MetricType").HasValue("AccountConsumption");
+
+                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("FilePocket.Domain.Entities.FileMetadata", b =>
@@ -56,7 +70,8 @@ namespace FilePocket.DataAccess.Migrations
 
                     b.Property<string>("ActualName")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
                     b.Property<DateTime>("DateCreated")
                         .HasColumnType("timestamp with time zone");
@@ -71,11 +86,14 @@ namespace FilePocket.DataAccess.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
 
                     b.Property<string>("OriginalName")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
                     b.Property<string>("Path")
                         .IsRequired()
@@ -93,6 +111,8 @@ namespace FilePocket.DataAccess.Migrations
                         .IsUnique();
 
                     b.HasIndex("PocketId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("FilesMetadata");
                 });
@@ -154,6 +174,8 @@ namespace FilePocket.DataAccess.Migrations
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Pockets");
                 });
@@ -385,11 +407,52 @@ namespace FilePocket.DataAccess.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("FilePocket.Domain.Entities.Consumption.StorageConsumption", b =>
+                {
+                    b.HasBaseType("FilePocket.Domain.Entities.Consumption.AccountConsumption");
+
+                    b.Property<double>("Total")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("double precision");
+
+                    b.Property<double>("Used")
+                        .ValueGeneratedOnAdd()
+                        .HasPrecision(18, 2)
+                        .HasColumnType("double precision")
+                        .HasDefaultValue(0.0);
+
+                    b.HasDiscriminator().HasValue("StorageCapacity");
+                });
+
+            modelBuilder.Entity("FilePocket.Domain.Entities.Consumption.AccountConsumption", b =>
+                {
+                    b.HasOne("FilePocket.Domain.Entities.User", null)
+                        .WithMany("AccountConsumptions")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("FilePocket.Domain.Entities.FileMetadata", b =>
                 {
                     b.HasOne("FilePocket.Domain.Entities.Pocket", null)
                         .WithMany("FileMetadata")
                         .HasForeignKey("PocketId");
+
+                    b.HasOne("FilePocket.Domain.Entities.User", null)
+                        .WithMany("FilesMetadata")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("FilePocket.Domain.Entities.Pocket", b =>
+                {
+                    b.HasOne("FilePocket.Domain.Entities.User", null)
+                        .WithMany("Pockets")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -446,6 +509,15 @@ namespace FilePocket.DataAccess.Migrations
             modelBuilder.Entity("FilePocket.Domain.Entities.Pocket", b =>
                 {
                     b.Navigation("FileMetadata");
+                });
+
+            modelBuilder.Entity("FilePocket.Domain.Entities.User", b =>
+                {
+                    b.Navigation("AccountConsumptions");
+
+                    b.Navigation("FilesMetadata");
+
+                    b.Navigation("Pockets");
                 });
 #pragma warning restore 612, 618
         }
