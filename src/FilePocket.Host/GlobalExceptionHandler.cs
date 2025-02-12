@@ -1,4 +1,5 @@
-﻿using FilePocket.Contracts.Services;
+﻿using System.ComponentModel.DataAnnotations;
+using FilePocket.Contracts.Services;
 using FilePocket.Domain.Models;
 using FilePocket.Shared.Exceptions;
 using Microsoft.AspNetCore.Diagnostics;
@@ -31,19 +32,20 @@ public class GlobalExceptionHandler : IExceptionHandler
         {
             NotFoundException => StatusCodes.Status404NotFound,
             BadRequestException => StatusCodes.Status400BadRequest,
+            ValidationException => StatusCodes.Status400BadRequest,
+            InvalidOperationException => StatusCodes.Status500InternalServerError,
             _ => StatusCodes.Status500InternalServerError
         };
 
-        if (contextFeature != null)
-        {
-            _log.Error($"Something went wrong: {exception.Message}");
+        _log.Error($"Something went wrong: {exception.Message}");
 
-            await httpContext.Response.WriteAsync(new ErrorDetailsModel()
-            {
-                StatusCode = httpContext.Response.StatusCode,
-                Message = contextFeature.Error.Message
-            }.ToString());
-        }
+        var errorDetails = new ErrorDetailsModel
+        {
+            StatusCode = httpContext.Response.StatusCode,
+            Message = contextFeature.Error.Message
+        };
+
+        await httpContext.Response.WriteAsync(errorDetails.ToString(), cancellationToken);
 
         return true;
     }
