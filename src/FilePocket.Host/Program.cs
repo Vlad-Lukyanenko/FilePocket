@@ -152,3 +152,6 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+// Used by FilePocket.Application.IntegrationTests project
+public partial class Program {}
