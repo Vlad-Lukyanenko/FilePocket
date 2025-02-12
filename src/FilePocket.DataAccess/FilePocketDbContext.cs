@@ -20,7 +20,6 @@ public class FilePocketDbContext(DbContextOptions<FilePocketDbContext> options)
     public DbSet<Pocket> Pockets { get; set; }
     public DbSet<Folder> Folders { get; set; } // should be created inside pocket only
     public DbSet<SharedFile> SharedFiles { get; set; }
-
     public DbSet<AccountConsumption> AccountConsumptions { get; set; }
 
     private void SeedRolesWithAdminUser(ModelBuilder builder)

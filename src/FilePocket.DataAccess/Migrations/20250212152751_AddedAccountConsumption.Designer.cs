@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FilePocket.DataAccess.Migrations
 {
     [DbContext(typeof(FilePocketDbContext))]
-    [Migration("20250209203511_AddedAccountConsumption")]
+    [Migration("20250212152751_AddedAccountConsumption")]
     partial class AddedAccountConsumption
     {
         /// <inheritdoc />
@@ -158,6 +158,10 @@ namespace FilePocket.DataAccess.Migrations
 
                     b.Property<DateTime>("DateCreated")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
 
                     b.Property<string>("Name")
                         .IsRequired()
