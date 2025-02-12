@@ -8,7 +8,7 @@ public class FileResponseModel
 
     public string? OriginalName { get; set; }
 
-    public Guid ActualName { get; set; }
+    public string ActualName { get; set; }
 
     public FileTypes? FileType { get; set; }
 
