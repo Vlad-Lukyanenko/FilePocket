@@ -11,6 +11,9 @@ namespace FilePocket.DataAccess.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "AccountSettings");
+
             migrationBuilder.AlterColumn<string>(
                 name: "OriginalName",
                 table: "FilesMetadata",
@@ -143,6 +146,21 @@ namespace FilePocket.DataAccess.Migrations
                 oldClrType: typeof(string),
                 oldType: "character varying(255)",
                 oldMaxLength: 255);
+
+            migrationBuilder.CreateTable(
+                name: "AccountSettings",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    StorageCapacity = table.Column<int>(type: "integer", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AccountSettings", x => x.Id);
+                });
         }
     }
 }
