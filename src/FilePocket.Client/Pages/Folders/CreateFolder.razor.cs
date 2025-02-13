@@ -53,7 +53,7 @@ namespace FilePocket.Client.Pages.Folders
             {
                 folderId = Guid.Parse(FolderIdParam);
             }
-            _isDuplicate = await FolderExistsAsync(_folderName, pocketId, folderId);
+            _isDuplicate = await FolderExistsAsync(_folderName, pocketId,folderId);
             if (_isDuplicate)
             {
                 return;
@@ -79,12 +79,11 @@ namespace FilePocket.Client.Pages.Folders
         private void NameChanged()
         {
             _validName = !string.IsNullOrEmpty(_folderName);
-
         }
         private async Task<bool> FolderExistsAsync(string folderName, Guid? pocketId, Guid? parentFolderId)
         {
-            var existingFolders = await FolderRequests.GetAllAsync(pocketId, parentFolderId ?? Guid.Empty);
-            return existingFolders.Any(f => f.Name.Equals(folderName));
+            var existingFolders = await FolderRequests.GetAllAsync(pocketId);
+            return existingFolders.Any(f => f.Name.Equals(folderName) && f.ParentFolderId == parentFolderId);
         }
 
     }
