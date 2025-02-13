@@ -26,7 +26,12 @@
                         Please provide a valid folder name.
                     </div>
                 }
-
+                @if (_isDuplicate)
+                {
+                    <div class="text-danger">
+                        Folder with this name already exists. Please choose another name.
+                    </div>
+                }
                 <!-- Create Button -->
                 <div class="d-flex justify-content-end mt-3">
                     <button class="btn btn-success" @onclick="CreateFolderAsync">Create</button>

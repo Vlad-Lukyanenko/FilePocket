@@ -1,6 +1,7 @@
 ﻿using FilePocket.Client.Features.Folders.Models;
 using FilePocket.Client.Services.Folders.Requests;
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 
 namespace FilePocket.Client.Pages.Folders
 {
@@ -17,7 +18,7 @@ namespace FilePocket.Client.Pages.Folders
 
         private string _folderName = string.Empty;
         private bool _validName = true;
-
+        private bool _isDuplicate = false;
         private string GetGoBackUrl()
         {
             if (string.IsNullOrWhiteSpace(PocketIdParam) && string.IsNullOrWhiteSpace(FolderIdParam))
@@ -43,19 +44,20 @@ namespace FilePocket.Client.Pages.Folders
         private async Task CreateFolderAsync()
         {
             Guid? pocketId = null;
-
             if(!string.IsNullOrWhiteSpace(PocketIdParam) && PocketIdParam != Guid.Empty.ToString())
             {
                 pocketId = Guid.Parse(PocketIdParam);
             }
-
             Guid? folderId = null;
-
             if(!string.IsNullOrWhiteSpace(FolderIdParam) && FolderIdParam != Guid.Empty.ToString())
             {
                 folderId = Guid.Parse(FolderIdParam);
             }
-
+            _isDuplicate = await FolderExistsAsync(_folderName, pocketId, folderId);
+            if (_isDuplicate)
+            {
+                return;
+            }
             var folder = new FolderModel()
             {
                 CreatedAt = DateTime.UtcNow,
@@ -77,6 +79,13 @@ namespace FilePocket.Client.Pages.Folders
         private void NameChanged()
         {
             _validName = !string.IsNullOrEmpty(_folderName);
+
         }
+        private async Task<bool> FolderExistsAsync(string folderName, Guid? pocketId, Guid? parentFolderId)
+        {
+            var existingFolders = await FolderRequests.GetAllAsync(pocketId, parentFolderId ?? Guid.Empty);
+            return existingFolders.Any(f => f.Name.Equals(folderName));
+        }
+
     }
 }
