@@ -23,29 +23,13 @@ namespace FilePocket.Client.Pages
         protected override async Task OnInitializedAsync()
         {
             var files = await FileRequests.GetRecentFilesAsync();
-            _files = new ObservableCollection<FileInfoModel>(files);
+
+            if (files.Any())
+            {
+                _files = new ObservableCollection<FileInfoModel>(files);
+            }
 
             _sharedFiles = await SharedFilesRequests.GetLatestAsync();
-        }
-
-        private string GetFileUrl(Guid fileId, Guid? pocketId, Guid? folderId)
-        {
-            if (pocketId is null && folderId is null)
-            {
-                return $"/files/{fileId}";
-            }
-
-            if (pocketId is null)
-            {
-                return $"/folders/{folderId}/files/{fileId}";
-            }
-
-            if (folderId is null)
-            {
-                return $"/pockets/{pocketId}/files/{fileId}";
-            }
-
-            return $"/pockets/{pocketId}/folders/{folderId}/files/{fileId}";
         }
 
         public static FileTypes ParseEnum(string value)
