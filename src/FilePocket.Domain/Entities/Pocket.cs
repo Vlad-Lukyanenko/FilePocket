@@ -21,4 +21,15 @@ public class Pocket
     [MaxLength(500)]
     public string? Description { get; set; }
     public virtual ICollection<FileMetadata>? FileMetadata { get; set; }
+
+    public void UpdateDetails(FileMetadata fileMetadata)
+    {
+        NumberOfFiles = NumberOfFiles is null 
+            ? 1 
+            : NumberOfFiles + 1;
+
+        TotalSize = TotalSize is null 
+            ? fileMetadata.FileSize 
+            : TotalSize + fileMetadata.FileSize;
+    }
 }

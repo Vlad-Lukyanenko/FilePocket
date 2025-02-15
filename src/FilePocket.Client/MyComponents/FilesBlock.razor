@@ -31,9 +31,7 @@
 
 @code {
 
-    [Parameter]
-    public ObservableCollection<FileInfoModel>? Files { get; set; }
-
+    [Parameter] public ObservableCollection<FileInfoModel>? Files { get; set; }
     private string GetFileUrl(Guid fileId, Guid? pocketId, Guid? folderId)
     {
         if (pocketId is null && folderId is null)

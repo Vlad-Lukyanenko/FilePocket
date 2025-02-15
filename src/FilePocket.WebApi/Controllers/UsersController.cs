@@ -30,11 +30,11 @@ namespace FilePocket.WebApi.Controllers
         public async Task<IActionResult> Update([FromBody] UpdateUserRequest updateUserRequest)
         {
             var user = await _userManager.FindByNameAsync(updateUserRequest.UserName);
-            
+
             if (user is not null)
             {
-                user.FirstName = updateUserRequest.FirstName;
-                user.LastName = updateUserRequest.LastName;
+                user.WithFirstName(updateUserRequest.FirstName!)
+                    .WithLastName(updateUserRequest.LastName!);
 
                 await _userManager.UpdateAsync(user);
             }

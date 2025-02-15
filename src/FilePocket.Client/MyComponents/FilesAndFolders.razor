@@ -1,5 +1,5 @@
 ﻿@using FilePocket.Client.Helpers
-@using Features.Files.Models
+@using FilePocket.Client.Services.Files.Models
 
 @inject IJSRuntime JS
 @inject NavigationManager Navigation;
@@ -119,6 +119,25 @@
             <FoldersBlock Folders="_folders" PocketId="PocketId"></FoldersBlock>
             <FilesBlock Files="_files" />
         }
+
+        <!-- Error Block -->
+        @if (_fileUploadErrors.Any())
+        {
+            <div class="fixed-bottom p-3">
+                @foreach (var fileUploadError in _fileUploadErrors)
+                {
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <strong>Holy guacamole!</strong> Looks like file upload for @fileUploadError.OriginalName went wrong. @fileUploadError.ErrorMessage
+                        <button type="button"
+                                class="btn-close"
+                                aria-label="Close"
+                                @onclick="() => RemoveError(fileUploadError)">
+                        </button>
+                    </div>
+                }
+            </div>
+        }
+
         <br />
     </div>
 </div>
@@ -128,3 +147,7 @@
         document.getElementById(inputId).value = null;
     }
 </script>
+
+@code {
+    private void RemoveError(FileUploadError error) => _fileUploadErrors.Remove(error);
+}

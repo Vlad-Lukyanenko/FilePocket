@@ -8,6 +8,7 @@ using FilePocket.Client.Features.Folders.Models;
 using FilePocket.Client.Services.Files.Requests;
 using FilePocket.Client.Services.Pockets.Requests;
 using System.Collections.ObjectModel;
+using FilePocket.Client.Shared.Models;
 
 namespace FilePocket.Client.MyComponents
 {
@@ -31,6 +32,7 @@ namespace FilePocket.Client.MyComponents
         private string _goBackUrl = string.Empty;
 
         private ObservableCollection<FileInfoModel> _files = new();
+        private ObservableCollection<FileUploadError> _fileUploadErrors = [];
         private ObservableCollection<FolderModel> _folders = new();
 
         private int maxAllowedFiles = 15;
@@ -69,6 +71,7 @@ namespace FilePocket.Client.MyComponents
 
             _files = new ObservableCollection<FileInfoModel>(files);
             _folders = new ObservableCollection<FolderModel>(folders);
+            _fileUploadErrors = [];
 
             StateHasChanged();
             
@@ -148,8 +151,7 @@ namespace FilePocket.Client.MyComponents
                             content.Add(content: new StringContent(folderId), "FolderId");
 
                             var uploadedFile = await FileRequests.UploadFileAsync(content);
-
-                            if (uploadedFile != null)
+                            if (uploadedFile is not null)
                             {
                                 await InvokeAsync(() =>
                                 {
@@ -174,7 +176,18 @@ namespace FilePocket.Client.MyComponents
 
                     await InvokeAsync(() =>
                     {
-                        fileInfoModel.IsLoaded = false;
+                        _files.Remove(fileInfoModel);
+                        
+                        if (ex is RequestHandlingErrorException exception)
+                        {
+                            var error = exception.Error;
+                            _fileUploadErrors.Add(new FileUploadError { OriginalName = file.Name, ErrorMessage = error.Message! });
+                        }
+                        else
+                        {
+                            _fileUploadErrors.Add(new FileUploadError {OriginalName = file.Name, ErrorMessage = ex.Message});
+                        }
+
                         StateHasChanged();
                     });
                 }

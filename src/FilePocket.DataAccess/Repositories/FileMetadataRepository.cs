@@ -31,9 +31,9 @@ public class FileMetadataRepository : RepositoryBase<FileMetadata>, IFileMetadat
         return (await FindByCondition(e => e.PocketId.Equals(pocketId) && e.Id.Equals(fileId) && !e.IsDeleted, trackChanges).SingleOrDefaultAsync())!;
     }
     
-    public async Task<FileMetadata> GetByIdAsync(Guid fileId, bool trackChanges = false)
+    public async Task<FileMetadata> GetByIdAsync(Guid userId, Guid fileId, bool trackChanges = false)
     {
-        return (await FindByCondition(e => e.Id.Equals(fileId) && !e.IsDeleted, trackChanges).SingleOrDefaultAsync())!;
+        return (await FindByCondition(e => e.UserId.Equals(userId) && e.Id.Equals(fileId) && !e.IsDeleted, trackChanges).SingleOrDefaultAsync())!;
     }
 
     public void CreateFileMetadata(FileMetadata fileMetadataId)

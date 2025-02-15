@@ -18,12 +18,14 @@ namespace FilePocket.Application.Services
             _mapper = mapper;
         }
 
-        public async Task CreateAsync(FolderModel folder)
+        public async Task<FolderModel> CreateAsync(FolderModel folder)
         {
             var folderEntity = _mapper.Map<Folder>(folder);
 
             _repository.Folder.Create(folderEntity);
             await _repository.SaveChangesAsync();
+            
+            return _mapper.Map<FolderModel>(folderEntity);
         }
 
         public async Task<FolderModel?> GetAsync(Guid folderId)

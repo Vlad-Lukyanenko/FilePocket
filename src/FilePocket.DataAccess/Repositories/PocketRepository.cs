@@ -24,7 +24,7 @@ public class PocketRepository : RepositoryBase<Pocket>, IPocketRepository
 
     public async Task<Pocket> GetByIdAsync(Guid userId, Guid pocketId, bool trackChanges)
     {
-        return (await FindByCondition(c => c.Id.Equals(pocketId) && c.UserId.Equals(userId), trackChanges).SingleOrDefaultAsync())!;
+        return (await FindByCondition(c => c.Id.Equals(pocketId) && c.UserId.Equals(userId), trackChanges).FirstOrDefaultAsync())!;
     }
 
     public async Task<PocketDetailsModel> GetPocketDetailsAsync(Guid userId, Guid pocketId, bool trackChanges)

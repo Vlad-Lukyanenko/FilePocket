@@ -9,31 +9,23 @@ using Microsoft.Extensions.Options;
 
 namespace FilePocket.Application.Services;
 
-public class ServiceManager : IServiceManager
+public class ServiceManager(
+    IRepositoryManager repositoryManager,
+    IMapper mapper,
+    ILoggerService logger,
+    IConfiguration configuration,
+    UserManager<User> userManager,
+    IOptions<JwtConfigurationModel> options,
+    IOptions<AccountConsumptionConfigurationModel> consumptionOptions,
+    IUploadService uploadService,
+    IImageService imageService)
+    : IServiceManager
 {
-    private readonly Lazy<IPocketService> _pocketService;
-    private readonly Lazy<ISharedFileService> _sharedFileService;
-    private readonly Lazy<IFileService> _fileService;
-    private readonly Lazy<IFolderService> _folderService;
-    private readonly Lazy<IAuthenticationService> _authenticationService;
-
-
-    public ServiceManager(
-        IRepositoryManager repositoryManager,
-        IMapper mapper,
-        ILoggerService logger,
-        IConfiguration configuration,
-        UserManager<User> userManager,
-        IOptions<JwtConfigurationModel> options,
-        IUploadService uploadService,
-        IImageService imageService)
-    {
-        _pocketService = new Lazy<IPocketService>(() => new PocketService(repositoryManager, mapper, configuration));
-        _sharedFileService = new Lazy<ISharedFileService>(() => new SharedFileService(repositoryManager, mapper));
-        _fileService = new Lazy<IFileService>(() => new FileService(repositoryManager, configuration, uploadService, imageService, mapper));
-        _folderService = new Lazy<IFolderService>(() => new FolderService(repositoryManager, mapper));
-        _authenticationService = new Lazy<IAuthenticationService>(() => new AuthenticationService(logger, userManager, options, mapper));
-    }
+    private readonly Lazy<IPocketService> _pocketService = new(() => new PocketService(repositoryManager, mapper, configuration));
+    private readonly Lazy<ISharedFileService> _sharedFileService = new(() => new SharedFileService(repositoryManager, mapper));
+    private readonly Lazy<IFileService> _fileService = new(() => new FileService(repositoryManager, configuration, uploadService, imageService, mapper));
+    private readonly Lazy<IFolderService> _folderService = new(() => new FolderService(repositoryManager, mapper));
+    private readonly Lazy<IAuthenticationService> _authenticationService = new(() => new AuthenticationService(logger, userManager, options, consumptionOptions, mapper));
 
     public IPocketService PocketService => _pocketService.Value;
 
