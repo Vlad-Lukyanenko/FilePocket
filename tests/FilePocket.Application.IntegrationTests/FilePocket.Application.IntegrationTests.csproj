@@ -30,6 +30,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\src\FilePocket.Client\FilePocket.Client.csproj" />
       <ProjectReference Include="..\..\src\FilePocket.Host\FilePocket.Host.csproj" />
     </ItemGroup>
 
