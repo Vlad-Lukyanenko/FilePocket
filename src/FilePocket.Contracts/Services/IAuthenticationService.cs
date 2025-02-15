@@ -5,7 +5,7 @@ namespace FilePocket.Contracts.Services;
 
 public interface IAuthenticationService
 {
-    Task<IdentityResult> RegisterUser(UserRegistrationModel userForRegistration);
+    Task<RegisterUserResponse> RegisterUser(UserRegistrationModel userForRegistration);
 
     Task<bool> ValidateUser(UserLoginModel userLoginModel);
 

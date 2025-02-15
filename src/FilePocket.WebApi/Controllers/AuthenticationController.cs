@@ -1,4 +1,5 @@
 ﻿using FilePocket.Contracts.Services;
+using FilePocket.Domain.Entities;
 using FilePocket.Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,6 +10,7 @@ namespace FilePocket.WebApi.Controllers;
 public class AuthenticationController : ControllerBase
 {
     private readonly IServiceManager _service;
+
     public AuthenticationController(IServiceManager service)
     {
         _service = service;
@@ -24,15 +26,24 @@ public class AuthenticationController : ControllerBase
 
         var result = await _service.AuthenticationService.RegisterUser(userForRegistration);
 
-        if (!result.Succeeded)
+        if (!result.IdentityResult!.Succeeded)
         {
-            foreach (var error in result.Errors)
+            foreach (var error in result.IdentityResult!.Errors)
             {
                 ModelState.TryAddModelError(error.Code, error.Description);
             }
 
             return BadRequest(ModelState);
         }
+        
+        var defaultPocket = new PocketForManipulationsModel
+        {
+            UserId = result.User!.Id,
+            Name = string.Empty,
+            IsDefault = true
+        };
+
+        await _service.PocketService.CreatePocketAsync(defaultPocket);
 
         return StatusCode(201);
     }

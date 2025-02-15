@@ -17,13 +17,12 @@ public class ServiceManager(
     UserManager<User> userManager,
     IOptions<JwtConfigurationModel> options,
     IOptions<AccountConsumptionConfigurationModel> consumptionOptions,
-    IUploadService uploadService,
     IImageService imageService)
     : IServiceManager
 {
     private readonly Lazy<IPocketService> _pocketService = new(() => new PocketService(repositoryManager, mapper, configuration));
     private readonly Lazy<ISharedFileService> _sharedFileService = new(() => new SharedFileService(repositoryManager, mapper));
-    private readonly Lazy<IFileService> _fileService = new(() => new FileService(repositoryManager, configuration, uploadService, imageService, mapper));
+    private readonly Lazy<IFileService> _fileService = new(() => new FileService(repositoryManager, configuration, imageService, mapper));
     private readonly Lazy<IFolderService> _folderService = new(() => new FolderService(repositoryManager, mapper));
     private readonly Lazy<IAuthenticationService> _authenticationService = new(() => new AuthenticationService(logger, userManager, options, consumptionOptions, mapper));
 

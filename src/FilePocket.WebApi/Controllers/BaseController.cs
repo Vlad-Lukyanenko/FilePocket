@@ -1,7 +1,5 @@
-﻿using FilePocket.Domain.Entities;
-using FilePocket.Shared.Claims;
+﻿using FilePocket.Shared.Claims;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FilePocket.WebApi.Controllers

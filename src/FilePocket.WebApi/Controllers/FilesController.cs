@@ -47,10 +47,8 @@ public class FilesController : BaseController
 
     #region GET
     [HttpGet("pockets/{pocketId:guid}/folders/{folderId:guid}/files")]
-    [HttpGet("folders/{folderId:guid}/files")]
-    [HttpGet("pockets/{pocketId}/files")]
-    [HttpGet("files")]
-    public async Task<IActionResult> GetAll([FromRoute] Guid? pocketId, [FromRoute] Guid? folderId)
+    [HttpGet("pockets/{pocketId:guid}/files")]
+    public async Task<IActionResult> GetAll([FromRoute] Guid pocketId, [FromRoute] Guid? folderId)
     {
         var fileMetadata = await _service.FileService.GetAllFilesAsync(UserId, pocketId, folderId);
 
@@ -119,7 +117,7 @@ public class FilesController : BaseController
 
     public class FileInformation
     {
-        public Guid? PocketId { get; set; }
+        public Guid PocketId { get; set; }
         public Guid? FolderId { get; set; }
         public IFormFile? File { get; set; }
     }

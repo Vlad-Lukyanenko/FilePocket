@@ -39,8 +39,5 @@ public class FileMetadataConfiguration : IEntityTypeConfiguration<FileMetadata>
 
         builder.Property(f => f.UserId)
             .IsRequired();
-
-        builder.Property(f => f.IsDeleted)
-            .HasDefaultValue(false);
     }
 }

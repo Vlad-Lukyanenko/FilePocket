@@ -17,10 +17,18 @@ public class PocketsController : BaseController
         _service = service;
     }
 
-    [HttpGet("all/users/{userId:Guid}")]
-    public async Task<IActionResult> GetAll([FromRoute] Guid userId)
+    [HttpGet("default")]
+    public async Task<IActionResult> GetDefault()
     {
-        var pockets = await _service.PocketService.GetAllByUserIdAsync(userId, trackChanges: false);
+        var pockets = await _service.PocketService.GetDefaultByUserIdAsync(UserId, trackChanges: false);
+
+        return Ok(pockets);
+    }
+
+    [HttpGet("all")]
+    public async Task<IActionResult> GetAllCustom()
+    {
+        var pockets = await _service.PocketService.GetAllCustomByUserIdAsync(UserId, trackChanges: false);
 
         return Ok(pockets);
     }

@@ -6,7 +6,9 @@ public interface IPocketService
 {
     Task<PocketModel> GetByIdAsync(Guid userId, Guid pocketId, bool trackChanges);
 
-    Task<List<PocketModel>> GetAllByUserIdAsync(Guid userId, bool trackChanges);
+    Task<List<PocketModel>> GetAllCustomByUserIdAsync(Guid userId, bool trackChanges);
+
+    Task<PocketModel> GetDefaultByUserIdAsync(Guid userId, bool trackChanges);
 
     Task<PocketModel> CreatePocketAsync(PocketForManipulationsModel pocket);
 

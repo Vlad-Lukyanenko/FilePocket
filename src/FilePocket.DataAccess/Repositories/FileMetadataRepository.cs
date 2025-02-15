@@ -11,29 +11,29 @@ public class FileMetadataRepository : RepositoryBase<FileMetadata>, IFileMetadat
     {
     }
 
-    public async Task<List<FileMetadata>> GetAllAsync(Guid? pocketId, bool trackChanges)
+    public async Task<List<FileMetadata>> GetAllAsync(Guid pocketId, bool trackChanges)
     {
-        return await FindByCondition(e => e.PocketId.Equals(pocketId) && e.FolderId == null && !e.IsDeleted, trackChanges).ToListAsync();
+        return await FindByCondition(e => e.PocketId.Equals(pocketId) && e.FolderId == null, trackChanges).ToListAsync();
     }
 
     public async Task<List<FileMetadata>> GetRecentFilesAsync(Guid userId, int numberOfFiles)
     {
-        return await FindByCondition(e => e.UserId.Equals(userId) && !e.IsDeleted, false).OrderByDescending(c => c.DateCreated).Take(numberOfFiles).ToListAsync();
+        return await FindByCondition(e => e.UserId.Equals(userId), false).OrderByDescending(c => c.DateCreated).Take(numberOfFiles).ToListAsync();
     }
 
-    public async Task<List<FileMetadata>> GetAllAsync(Guid userId, Guid? pocketId, Guid? folderId, bool trackChanges)
+    public async Task<List<FileMetadata>> GetAllAsync(Guid userId, Guid pocketId, Guid? folderId, bool trackChanges)
     {
-        return await FindByCondition(e => e.UserId.Equals(userId) && e.PocketId.Equals(pocketId) && e.FolderId.Equals(folderId) && !e.IsDeleted, trackChanges).ToListAsync();
+        return await FindByCondition(e => e.UserId.Equals(userId) && e.PocketId.Equals(pocketId) && e.FolderId.Equals(folderId), trackChanges).ToListAsync();
     }
 
     public async Task<FileMetadata> GetByIdAsync(Guid? pocketId, Guid fileId, bool trackChanges)
     {
-        return (await FindByCondition(e => e.PocketId.Equals(pocketId) && e.Id.Equals(fileId) && !e.IsDeleted, trackChanges).SingleOrDefaultAsync())!;
+        return (await FindByCondition(e => e.PocketId.Equals(pocketId) && e.Id.Equals(fileId), trackChanges).SingleOrDefaultAsync())!;
     }
     
     public async Task<FileMetadata> GetByIdAsync(Guid userId, Guid fileId, bool trackChanges = false)
     {
-        return (await FindByCondition(e => e.UserId.Equals(userId) && e.Id.Equals(fileId) && !e.IsDeleted, trackChanges).SingleOrDefaultAsync())!;
+        return (await FindByCondition(e => e.UserId.Equals(userId) && e.Id.Equals(fileId), trackChanges).SingleOrDefaultAsync())!;
     }
 
     public void CreateFileMetadata(FileMetadata fileMetadataId)
@@ -44,5 +44,10 @@ public class FileMetadataRepository : RepositoryBase<FileMetadata>, IFileMetadat
     public void UpdateFileMetadata(FileMetadata fileMetadataId)
     {
         Update(fileMetadataId);
+    }
+
+    public void DeleteFileMetadata(FileMetadata fileMetadata)
+    {
+        Delete(fileMetadata);
     }
 }

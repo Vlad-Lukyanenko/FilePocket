@@ -17,14 +17,19 @@ public class PocketRepository : RepositoryBase<Pocket>, IPocketRepository
         return await FindByCondition(c => c.UserId == userId, trackChanges).OrderByDescending(c => c.DateCreated).ToListAsync();
     }
 
-    public async Task<List<Pocket>> GetAllByUserIdAsync(Guid userId, bool trackChanges)
+    public async Task<List<Pocket>> GetAllCustomByUserIdAsync(Guid userId, bool trackChanges)
     {
-        return await FindByCondition(e => e.UserId.Equals(userId), trackChanges).ToListAsync();
+        return await FindByCondition(e => e.UserId.Equals(userId) && !e.IsDefault, trackChanges).ToListAsync();
     }
 
     public async Task<Pocket> GetByIdAsync(Guid userId, Guid pocketId, bool trackChanges)
     {
         return (await FindByCondition(c => c.Id.Equals(pocketId) && c.UserId.Equals(userId), trackChanges).FirstOrDefaultAsync())!;
+    }
+
+    public async Task<Pocket> GetDefaultAsync(Guid userId, bool trackChanges = false)
+    {
+        return (await FindByCondition(c => c.UserId.Equals(userId) && c.IsDefault, trackChanges).FirstOrDefaultAsync())!;
     }
 
     public async Task<PocketDetailsModel> GetPocketDetailsAsync(Guid userId, Guid pocketId, bool trackChanges)

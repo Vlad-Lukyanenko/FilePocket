@@ -8,8 +8,10 @@ public interface IPocketRepository
     Task<List<Pocket>> GetAllAsync(Guid userId, bool trackChanges);
 
     Task<Pocket> GetByIdAsync(Guid userId, Guid pocketId, bool trackChanges = false);
+    
+    Task<Pocket> GetDefaultAsync(Guid userId, bool trackChanges = false);
 
-    Task<List<Pocket>> GetAllByUserIdAsync(Guid userId, bool trackChanges = false);
+    Task<List<Pocket>> GetAllCustomByUserIdAsync(Guid userId, bool trackChanges = false);
 
     void CreatePocket(Pocket pocket);
 

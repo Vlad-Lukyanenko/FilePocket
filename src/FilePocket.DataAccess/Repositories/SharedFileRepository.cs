@@ -24,7 +24,6 @@ namespace FilePocket.DataAccess.Repositories
                                   sf => sf.FileId,
                                   fl => fl.Id,
                                   (sf, fl) => new { sf, fl })
-                            .Where(c => !c.fl.IsDeleted)
                             .Join(_userManager.Users,
                                   x => x.sf.UserId,
                                   usr => usr.Id,
@@ -53,7 +52,6 @@ namespace FilePocket.DataAccess.Repositories
                                   sf => sf.FileId,
                                   fl => fl.Id,
                                   (sf, fl) => new { sf, fl })
-                            .Where(c => !c.fl.IsDeleted)
                             .Select(x => new
                             {
                                 x.fl.Path,
@@ -83,7 +81,7 @@ namespace FilePocket.DataAccess.Repositories
             var result = from sharedFile in DbContext.SharedFiles
                          join file in DbContext.FilesMetadata
                          on sharedFile.FileId equals file.Id
-                         where sharedFile.UserId == userId && !file.IsDeleted
+                         where sharedFile.UserId == userId
                          select new SharedFileView
                          {
                              SharedFileId = sharedFile.Id,
@@ -101,7 +99,7 @@ namespace FilePocket.DataAccess.Repositories
             var result = from sharedFile in DbContext.SharedFiles
                          join file in DbContext.FilesMetadata
                          on sharedFile.FileId equals file.Id
-                         where sharedFile.UserId == userId && !file.IsDeleted
+                         where sharedFile.UserId == userId
                          select new SharedFileView
                          {
                              SharedFileId = sharedFile.Id,

@@ -4,14 +4,14 @@ namespace FilePocket.Domain.Entities;
 
 public class FileMetadata
 {
-    public FileMetadata() {}
+    public FileMetadata() { }
+
     private FileMetadata(
         Guid id, Guid userId,
-        string originalName, string actualName, 
+        string originalName, string actualName,
         string path, FileTypes fileType, double fileSize,
-        Guid? pocketId, Guid? folderId, 
-        DateTime dateCreated,
-        bool isDeleted)
+        Guid? pocketId, Guid? folderId,
+        DateTime dateCreated)
     {
         Id = id;
         OriginalName = originalName;
@@ -23,7 +23,6 @@ public class FileMetadata
         PocketId = pocketId;
         FolderId = folderId;
         DateCreated = dateCreated;
-        IsDeleted = isDeleted;
     }
 
     public Guid Id { get; init; }
@@ -36,15 +35,9 @@ public class FileMetadata
     public Guid? PocketId { get; init; }
     public Guid? FolderId { get; init; }
     public DateTime DateCreated { get; init; }
-    public bool IsDeleted { get; private set; }
-
-    public void MarkAsDeleted()
-    {
-        IsDeleted = true;
-    }
 
     public static FileMetadata Create(
-        Guid userId, 
+        Guid userId,
         string originalFileName, string filePath, FileTypes fileType, double fileSizeInMbs,
         Guid? pocketId, Guid? folderId)
     {
@@ -56,7 +49,6 @@ public class FileMetadata
             originalFileName, actualName,
             filePath, fileType, fileSizeInMbs,
             pocketId, folderId,
-            DateTime.UtcNow,
-            isDeleted: false);
+            DateTime.UtcNow);
     }
 }

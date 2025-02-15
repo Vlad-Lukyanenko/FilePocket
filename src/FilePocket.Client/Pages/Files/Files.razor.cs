@@ -1,27 +1,20 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using FilePocket.Client.Services.Pockets.Requests;
+using Microsoft.AspNetCore.Components;
 
 namespace FilePocket.Client.Pages.Files
 {
     public partial class Files
     {
         [Parameter]
-        public string? PocketId { get; set; } = string.Empty;
+        public string PocketId { get; set; } = string.Empty;
 
         [Parameter]
         public string? FolderId { get; set; } = null;
 
-        public Guid? _pocketId
-        {
-            get
-            {
-                if (string.IsNullOrWhiteSpace(PocketId))
-                {
-                    return null;
-                }
+        [Inject] 
+        private IPocketRequests PocketRequests { get; set; } = default!;
 
-                return Guid.Parse(PocketId);
-            }
-        }
+        private Guid _pocketId;
 
         public Guid? _folderId
         {
@@ -33,6 +26,20 @@ namespace FilePocket.Client.Pages.Files
                 }
 
                 return Guid.Parse(FolderId);
+            }
+        }
+
+        protected override async Task OnInitializedAsync()
+        {
+            if (string.IsNullOrWhiteSpace(PocketId))
+            {
+                var defaultPocket = await PocketRequests.GetDefaultAsync();
+
+                _pocketId = defaultPocket.Id;
+            }
+            else
+            {
+                _pocketId = Guid.Parse(PocketId);
             }
         }
     }

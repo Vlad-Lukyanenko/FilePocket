@@ -8,7 +8,7 @@ public interface IFileProvider
 {
     Task<IEnumerable<FileResponseModel>> GetAllFilesAsync(
         Guid userId,
-        Guid? pocketId,
+        Guid pocketId,
         Guid? folderId);
 
     Task<FileResponseModel> GetFileByIdAsync(
@@ -40,7 +40,7 @@ public interface IFileService : IFileProvider
     Task<FileResponseModel?> UploadFileAsync(
         Guid userId,
         IFormFile file,
-        Guid? pocketId,
+        Guid pocketId,
         Guid? folderId,
         CancellationToken cancellationToken = default);
 

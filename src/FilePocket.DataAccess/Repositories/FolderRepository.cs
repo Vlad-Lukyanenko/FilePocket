@@ -87,7 +87,7 @@ namespace FilePocket.DataAccess.Repositories
                 {
                     foreach (var file in files)
                     {
-                        file.MarkAsDeleted();
+                        //file.MarkAsDeleted();
                     }
 
                     dbContext.Folders.Remove(folderToDelete);

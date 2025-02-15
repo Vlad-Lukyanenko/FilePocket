@@ -1,5 +1,4 @@
-﻿using Blazored.LocalStorage;
-using FilePocket.Client.Features;
+﻿using FilePocket.Client.Features;
 using FilePocket.Client.Services.Pockets.Models;
 using Newtonsoft.Json;
 using System.Text;
@@ -9,21 +8,24 @@ namespace FilePocket.Client.Services.Pockets.Requests
     public class PocketRequests : IPocketRequests
     {
         private readonly FilePocketApiClient _apiClient;
-        private readonly ILocalStorageService _localStorage;
 
-        public PocketRequests(
-            FilePocketApiClient apiClient,
-            ILocalStorageService localStorage)
+        public PocketRequests(FilePocketApiClient apiClient)
         {
             _apiClient = apiClient;
-            _localStorage = localStorage; 
         }
 
-        public async Task<IEnumerable<PocketModel>> GetAllAsync(Guid userId)
+        public async Task<IEnumerable<PocketModel>> GetAllCustomAsync()
         {
-            var content = await _apiClient.GetAsync(PocketUrl.GetAll(userId));
+            var content = await _apiClient.GetAsync(PocketUrl.GetAllCustom());
 
             return JsonConvert.DeserializeObject<IEnumerable<PocketModel>>(content)!;
+        }
+
+        public async Task<PocketModel> GetDefaultAsync()
+        {
+            var content = await _apiClient.GetAsync(PocketUrl.GetDefault());
+
+            return JsonConvert.DeserializeObject<PocketModel>(content)!;
         }
 
         public async Task<PocketModel> GetInfoAsync(Guid pocketId)

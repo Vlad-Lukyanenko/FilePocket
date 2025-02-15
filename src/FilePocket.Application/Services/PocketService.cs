@@ -44,11 +44,18 @@ public class PocketService : IPocketService
         return totalSizeWithNewFile <= defaultCapacityInBytes;
     }
 
-    public async Task<List<PocketModel>> GetAllByUserIdAsync(Guid userId, bool trackChanges)
+    public async Task<List<PocketModel>> GetAllCustomByUserIdAsync(Guid userId, bool trackChanges)
     {
-        var pockets = await _repository.Pocket.GetAllByUserIdAsync(userId, trackChanges);
+        var pockets = await _repository.Pocket.GetAllCustomByUserIdAsync(userId, trackChanges);
 
         return _mapper.Map<List<PocketModel>>(pockets);
+    }
+
+    public async Task<PocketModel> GetDefaultByUserIdAsync(Guid userId, bool trackChanges)
+    {
+         var pocket = await _repository.Pocket.GetDefaultAsync(userId, trackChanges);
+
+        return _mapper.Map<PocketModel>(pocket);
     }
 
     public async Task<PocketModel> CreatePocketAsync(PocketForManipulationsModel pocket)

@@ -15,14 +15,12 @@ namespace FilePocket.Application.Services;
 public class FileService(
     IRepositoryManager repository,
     IConfiguration configuration,
-    IUploadService uploadService, // TODO: resolve UploadService dependency [not used]
     IImageService imageService,
-    IMapper mapper)
-    : IFileService
+    IMapper mapper) : IFileService
 {
     private readonly string _rootFolder = configuration.GetValue<string>("AppRootFolder")!;
 
-    public async Task<IEnumerable<FileResponseModel>> GetAllFilesAsync(Guid userId, Guid? pocketId, Guid? folderId)
+    public async Task<IEnumerable<FileResponseModel>> GetAllFilesAsync(Guid userId, Guid pocketId, Guid? folderId)
     {
         var fileMetadata = await repository.FileMetadata.GetAllAsync(userId, pocketId, folderId);
 
@@ -95,8 +93,8 @@ public class FileService(
     public async Task<FileResponseModel?> UploadFileAsync(
         Guid userId,
         IFormFile file,
-        Guid? pocketId,
-        Guid? folderId, 
+        Guid pocketId,
+        Guid? folderId,
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(file);
@@ -113,7 +111,7 @@ public class FileService(
             var fileSizeInMbs = file.Length.ToMegabytes();
             if (storageConsumption.RemainingSizeMb < fileSizeInMbs)
                 throw new InsufficientStorageCapacityException(
-                    storageConsumption.Used, 
+                    storageConsumption.Used,
                     storageConsumption.Total,
                     additionalUsedMb: fileSizeInMbs);
 
@@ -124,13 +122,11 @@ public class FileService(
             var fileMetadata = FileMetadata.Create(
                 userId, file.FileName, filePath, fileType, fileSizeInMbs, pocketId, folderId);
 
-            var fileMetadataTask = pocketId is not null
-                ? AttachFileToPocketTask(fileMetadata)
-                : AttachFileToRootTask(fileMetadata);
+            var fileMetadataTask = AttachFileToPocketTask(fileMetadata);
 
             var storageConsumptionTask = IncreaseStorageConsumptionTask(
                 storageConsumption, fileMetadata);
-            
+
             var fileUploadTask = UploadFileToDisk(fileMetadata);
 
             await Task.WhenAll(
@@ -143,23 +139,23 @@ public class FileService(
 
             return CreateFileResponseModel(fileMetadata);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             await fileUploadTransaction.RollbackAsync(cancellationToken);
             throw;
         }
 
-
-        Task AttachFileToRootTask(FileMetadata fileMetadata)
-        {
-            repository.FileMetadata.CreateFileMetadata(fileMetadata);
-            return Task.CompletedTask;
-        }
-
         async Task AttachFileToPocketTask(FileMetadata fileMetadata)
         {
-            var pocket = await repository.Pocket.GetByIdAsync(userId, pocketId.Value, trackChanges: true);
-            if (pocket is null) throw new PocketNotFoundException(pocketId.Value);
+            Pocket? pocket = null;
+
+            pocket = await repository.Pocket.GetByIdAsync(userId, pocketId, trackChanges: true);
+
+            if (pocket is null)
+            {
+                throw new PocketNotFoundException(pocketId);
+            }
+
             pocket.UpdateDetails(fileMetadata);
             repository.FileMetadata.CreateFileMetadata(fileMetadata);
         }
@@ -216,11 +212,14 @@ public class FileService(
                 userId, lockChanges: true, trackChanges: true, cancellationToken);
 
             if (storageConsumption is null)
+            {
                 throw new AccountConsumptionNotFoundException(userId);
-
-            fileMetadata.MarkAsDeleted();
+            }
+            
             RemoveFromFileSystemSync(fileMetadata);
             DecreaseStorageConsumption(storageConsumption, fileMetadata.FileSize);
+
+            repository.FileMetadata.DeleteFileMetadata(fileMetadata);
 
             await repository.SaveChangesAsync(cancellationToken);
             await transaction.CommitAsync(cancellationToken);
@@ -249,7 +248,6 @@ public class FileService(
                 throw new FileDoesNotExistInFileSystemException(fileToRemove.Id);
 
             File.Delete(fullPath);
-            fileToRemove.MarkAsDeleted();
         }
     }
 
@@ -265,7 +263,7 @@ public class FileService(
         var fileDirectory = string.Empty;
 
 #if DEBUG
-        fileDirectory = pocketId is not null 
+        fileDirectory = pocketId is not null
             ? $"{_rootFolder}\\{userId}\\{pocketId}\\{now.Year}\\{now.Month}\\{Tools.DefineFileType(fileExtension)}s"
             : $"{_rootFolder}\\{userId}\\{now.Year}\\{now.Month}\\{Tools.DefineFileType(fileExtension)}s";
 #endif
@@ -346,20 +344,4 @@ public class FileService(
             FileSize = fileMetadata.FileSize,
         };
     }
-
-    private void RemoveFileFromPocketEvent(Pocket pocket, double fileSize)
-    {
-        if (pocket.NumberOfFiles is not null && pocket.NumberOfFiles > 0)
-        {
-            pocket.NumberOfFiles -= 1;
-        }
-
-        if (pocket.TotalSize is not null && pocket.TotalSize >= fileSize)
-        {
-            pocket.TotalSize -= fileSize;
-        }
-
-        repository.Pocket.UpdatePocket(pocket);
-    }
-
 }

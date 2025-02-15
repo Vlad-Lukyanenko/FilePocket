@@ -1,9 +1,6 @@
-﻿using FilePocket.Client.Features.Users.Models;
-using FilePocket.Client.Features.Users.Requests;
-using FilePocket.Client.Services.Pockets.Models;
+﻿using FilePocket.Client.Services.Pockets.Models;
 using FilePocket.Client.Services.Pockets.Requests;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Authorization;
 
 namespace FilePocket.Client.Pages.Pockets
 {
@@ -12,32 +9,20 @@ namespace FilePocket.Client.Pages.Pockets
         private List<PocketModel> _pockets = new List<PocketModel>();
         private Guid _pocketIdToBeChanged;
         private bool _removalProcessStarted = false;
-        private LoggedInUserModel? _user;
-        private string _userName = string.Empty;
         private bool _loading = true;
-        [Inject] IUserRequests UserRequests { get; set; } = default!;
-        [Inject] private AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
-        [Inject] private IPocketRequests PocketRequests { get; set; } = default!;
+        
+        [Inject] 
+        private IPocketRequests PocketRequests { get; set; } = default!;
 
         protected override async Task OnInitializedAsync()
         {
-            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-            var user = authState.User;
-
-            _userName = user.Identity?.Name!;
-            _user = await UserRequests.GetByUserNameAsync(_userName);
-
-            if (_user == null) return;
-
-            _pockets = await GetAllPockets();
+            _pockets = await GetAllCustomPockets();
             _loading = false;
         }
         
-        private async Task<List<PocketModel>> GetAllPockets()
+        private async Task<List<PocketModel>> GetAllCustomPockets()
         {
-            var userId = _user!.Id!.Value;
-
-            var pockets = await PocketRequests.GetAllAsync(userId);
+            var pockets = await PocketRequests.GetAllCustomAsync();
 
             return pockets.ToList();
         }

@@ -38,7 +38,7 @@ public class AuthenticationService : IAuthenticationService
         _mapper = mapper;
     }
 
-    public async Task<IdentityResult> RegisterUser(UserRegistrationModel userForRegistration)
+    public async Task<RegisterUserResponse> RegisterUser(UserRegistrationModel userForRegistration)
     {
         var user = _mapper.Map<User>(userForRegistration);
 
@@ -53,7 +53,11 @@ public class AuthenticationService : IAuthenticationService
             await _userManager.AddToRolesAsync(user, new List<string> { "Administrator" });
         }
 
-        return result;
+        return new RegisterUserResponse()
+        {
+            IdentityResult = result,
+            User = user
+        };
     }
 
     public async Task<bool> ValidateUser(UserLoginModel userLoginModel)

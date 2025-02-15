@@ -12,7 +12,7 @@ public static class FileUnderTestBuilder
         string fileName,
         string fileExtension,
         Guid userId,
-        Guid? pocketId = null,
+        Guid pocketId,
         Guid? folderId = null)
     {
         if (totalStorageCapacityInMegabytes <= 0)
@@ -45,7 +45,7 @@ public static class FileUnderTestBuilder
         string fileName,
         string fileExtension,
         Guid userId,
-        Guid? pocketId = null,
+        Guid pocketId,
         Guid? folderId = null)
     {
         var multipartContent = CreateMultipartFormDataContent(
@@ -58,7 +58,7 @@ public static class FileUnderTestBuilder
             FileExtension = fileExtension,
             FileSizeInBytes = (long )fileSizeInBytes,
             MultipartFormDataContent = multipartContent,
-            PocketId = pocketId.HasValue ? pocketId : new Guid?(), // backend returns null if not provided
+            PocketId = pocketId, // backend returns null if not provided
             FolderId = folderId.HasValue ? folderId : new Guid?() // backend returns null if not provided
         };
 
