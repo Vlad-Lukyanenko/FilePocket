@@ -21,9 +21,9 @@ namespace FilePocket.WebApi.Controllers
         public async Task<IActionResult> Create([FromBody] FolderModel folder)
         {
             folder.UserId = UserId;
-            await _service.FolderService.CreateAsync(folder);
+            var createdFolder = await _service.FolderService.CreateAsync(folder);
 
-            return Ok();
+            return Ok(createdFolder);
         }
 
         [HttpGet("folders/{folderId:guid}")]
