@@ -1,5 +1,5 @@
-﻿using System.Net.Http.Json;
-using FilePocket.Application.IntegrationTests.Api.Files.Models;
+﻿using FilePocket.Application.IntegrationTests.Api.Files.Models;
+using FilePocket.Application.IntegrationTests.Common.Utils;
 using FilePocket.Domain.Models;
 using FluentAssertions;
 
@@ -26,10 +26,17 @@ internal static class UploadFileEndpointTestsAssertions
         }, options => options.ExcludingMissingMembers());
     }
 
-    internal static async Task<T> ReadModelAsync<T>(this HttpResponseMessage response) where T: class
+    internal static void ShouldBeEquivalentTo(this PocketModel actualPocket, params FileInformationUnderTest[] filesUnderTest)
     {
-        var messageContent = await response.Content.ReadFromJsonAsync<T>();
-        messageContent.Should().NotBeNull();
-        return messageContent;
+        actualPocket.Should().NotBeNull();
+        actualPocket.NumberOfFiles.Should().Be(filesUnderTest.Length);
+        actualPocket.TotalSize.Should().Be(filesUnderTest.Sum(x => x.FileSizeInBytes));
+    }
+    
+    internal static void ShouldBeEquivalentTo(this PocketDetailsModel actualPocketDetails, params FileInformationUnderTest[] filesUnderTest)
+    {
+        actualPocketDetails.Should().NotBeNull();
+        actualPocketDetails.NumberOfFiles.Should().Be(filesUnderTest.Length);
+        actualPocketDetails.TotalFileSize.GetFileSizeInBytes().Should().Be(filesUnderTest.Sum(x => x.FileSizeInBytes));
     }
 }

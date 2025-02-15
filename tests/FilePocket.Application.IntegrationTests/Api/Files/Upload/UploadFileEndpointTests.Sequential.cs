@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using FilePocket.Application.IntegrationTests.Common;
+using FilePocket.Application.IntegrationTests.Common.Extensions;
 using FilePocket.Application.IntegrationTests.Common.Fixtures.Authentication;
 using FilePocket.Application.IntegrationTests.Common.Utils;
 using FilePocket.Domain.Models;
@@ -30,7 +31,7 @@ public class UploadFileEndpointSequentialTests(FilePocketWebAppFactory factory) 
             var response = await signUpApiClient.PostAsync(ApiFilesEndpointUri, t.MultipartFormDataContent);
             response.EnsureSuccessStatusCode();
 
-            var model = await response.ReadModelAsync<FileResponseModel>();
+            var model = await response.ReadResponseMessageAsync<FileResponseModel>();
             model.ShouldBeEquivalentTo(test);
         }
     }
@@ -57,7 +58,7 @@ public class UploadFileEndpointSequentialTests(FilePocketWebAppFactory factory) 
             var response = await signUpApiClient.PostAsync(ApiFilesEndpointUri, test.MultipartFormDataContent);
             response.EnsureSuccessStatusCode();
 
-            var model = await response.ReadModelAsync<FileResponseModel>();
+            var model = await response.ReadResponseMessageAsync<FileResponseModel>();
             model.ShouldBeEquivalentTo(test);
 
             fileIdentifiers.Add(model.Id);

@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Net;
 using FilePocket.Application.IntegrationTests.Common;
+using FilePocket.Application.IntegrationTests.Common.Extensions;
 using FilePocket.Application.IntegrationTests.Common.Fixtures.Authentication;
 using FilePocket.Application.IntegrationTests.Common.Utils;
 using FluentAssertions;
@@ -21,7 +22,7 @@ public class UploadFileEndpointValidationTests(FilePocketWebAppFactory factory) 
             fileSizeInBytes: 0, fileName: "file-empty-api-test", fileExtension: "txt", userId: signUpUser.JwtTokenUserId);
 
         var response = await signUpApiClient.PostAsync(ApiFilesEndpointUri, fileUnderTest.MultipartFormDataContent);
-        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        response.EnsureBadRequest();
     }
 
     [Fact]
@@ -35,6 +36,6 @@ public class UploadFileEndpointValidationTests(FilePocketWebAppFactory factory) 
             fileSizeInBytes: (long) fileSize, fileName: "file-exceeding-limit-api-test",  fileExtension: "txt", signUpUser.JwtTokenUserId);
 
         var response = await signUpApiClient.PostAsync(ApiFilesEndpointUri, fileUnderTest.MultipartFormDataContent);
-        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        response.EnsureBadRequest();
     }
 }
