@@ -158,8 +158,10 @@ public class FileService(
 
         async Task AttachFileToPocketTask(FileMetadata fileMetadata)
         {
-            var pocket = await repository.Pocket.GetByIdAsync(userId, pocketId.Value);
-            pocket.AddFile(fileMetadata);
+            var pocket = await repository.Pocket.GetByIdAsync(userId, pocketId.Value, trackChanges: true);
+            if (pocket is null) throw new PocketNotFoundException(pocketId.Value);
+            pocket.UpdateDetails(fileMetadata);
+            repository.FileMetadata.CreateFileMetadata(fileMetadata);
         }
 
         Task IncreaseStorageConsumptionTask(StorageConsumption storageConsumption, FileMetadata fileMetadata)

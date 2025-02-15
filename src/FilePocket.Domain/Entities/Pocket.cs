@@ -22,15 +22,8 @@ public class Pocket
     public string? Description { get; set; }
     public virtual ICollection<FileMetadata>? FileMetadata { get; set; }
 
-    public void AddFile(FileMetadata fileMetadata)
+    public void UpdateDetails(FileMetadata fileMetadata)
     {
-        FileMetadata ??= new List<FileMetadata>();
-
-        if (Contains(fileMetadata))
-            throw new ArgumentException($"File already exists in the pocket. File name: {fileMetadata.OriginalName}");
-
-        FileMetadata.Add(fileMetadata);
-
         NumberOfFiles = NumberOfFiles is null 
             ? 1 
             : NumberOfFiles + 1;
@@ -38,12 +31,5 @@ public class Pocket
         TotalSize = TotalSize is null 
             ? fileMetadata.FileSize 
             : TotalSize + fileMetadata.FileSize;
-    }
-
-    private bool Contains(FileMetadata fileMetadata)
-    {
-        return FileMetadata?.Any(fm => fm.OriginalName == fileMetadata.OriginalName &&
-                                      fm.FileSize.Equals(fileMetadata.FileSize) &&
-                                      fm.FileType == fileMetadata.FileType) ?? false;
     }
 }
