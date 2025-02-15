@@ -51,9 +51,11 @@ public class InitialRolesAndAdminSeeding : BackgroundService
             return;
         }
 
+        var userId = Guid.NewGuid();
+
         var admin = new User
         {
-            Id = Guid.NewGuid(),
+            Id = userId,
             Email = _adminSeedingData.Email,
             EmailConfirmed = true,
             UserName = _adminSeedingData.UserName,
@@ -69,7 +71,16 @@ public class InitialRolesAndAdminSeeding : BackgroundService
         var consumptionConfiguration = _serviceProvider.GetService<IOptions<AccountConsumptionConfigurationModel>>();
         admin.ConfigureAccountConsumptions(consumptionConfiguration?.Value);
 
+        var defaultPocket = new Pocket()
+        {
+            Id = Guid.NewGuid(),
+            UserId = userId,
+            IsDefault = true,
+            DateCreated = DateTime.UtcNow
+        };
+
         dbContext.Users.Add(admin);
+        dbContext.Pockets.Add(defaultPocket);
 
         var adminRole = await dbContext.Roles.FirstAsync(x => x.Name!.Equals("Administrator"), token);
 
