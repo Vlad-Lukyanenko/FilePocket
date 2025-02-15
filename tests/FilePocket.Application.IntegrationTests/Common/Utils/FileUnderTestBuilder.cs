@@ -6,10 +6,6 @@ namespace FilePocket.Application.IntegrationTests.Common.Utils;
 
 public static class FileUnderTestBuilder
 {
-    public const long OneMegabyte = 1 * 1024 * 1024;
-    public const long FiveMegabytes = 5 * 1024 * 1024;
-    public const long TenMegabytes = 10 * 1024 * 1024;
-
     public static FileInformationUnderTest[] CreateMany(
         long totalStorageCapacityInMegabytes,
         int filesAmount,
@@ -112,7 +108,7 @@ public static class FileUnderTestBuilder
 
         if (folderId.HasValue)
         {
-            multipartContent.Add(new StringContent(Guid.NewGuid().ToString()),
+            multipartContent.Add(new StringContent(folderId.ToString()!),
                 $"{nameof(FilesController.FileInformation.FolderId)}");
         }
 
@@ -122,6 +118,6 @@ public static class FileUnderTestBuilder
     internal static double GetFileSizeInBytes(this double fileSizeInMegabytes)
         => fileSizeInMegabytes * 1024f * 1024f;
 
-    internal static double GetFileSizeInBytes(this long fileSizeInMegabytes)
+    private static double GetFileSizeInBytes(this long fileSizeInMegabytes)
         => fileSizeInMegabytes * 1024f * 1024f;
 }
