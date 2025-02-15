@@ -19,7 +19,7 @@ public class UploadFileEndpointValidationTests(FilePocketWebAppFactory factory) 
         var signUpApiClient = signUpUser.JwtAuthenticatedClient;
 
         var fileUnderTest = FileUnderTestBuilder.CreateOne(
-            fileSizeInBytes: 0, fileName: "file-empty-api-test", fileExtension: "txt", userId: signUpUser.JwtTokenUserId, pocketId: Guid.NewGuid());
+            fileSizeInBytes: 0, fileName: "file-empty-api-test", fileExtension: "txt", userId: signUpUser.JwtTokenUserId, pocketId: signUpUser.DefaultPocketId);
 
         var response = await signUpApiClient.PostAsync(ApiFilesEndpointUri, fileUnderTest.MultipartFormDataContent);
         response.EnsureBadRequest();
@@ -33,7 +33,7 @@ public class UploadFileEndpointValidationTests(FilePocketWebAppFactory factory) 
 
         var fileSize = AccountConsumptionSettings.Storage.CapacityMb.GetFileSizeInBytes() + 1;
         var fileUnderTest = FileUnderTestBuilder.CreateOne(
-            fileSizeInBytes: (long) fileSize, fileName: "file-exceeding-limit-api-test",  fileExtension: "txt", signUpUser.JwtTokenUserId, pocketId: Guid.NewGuid());
+            fileSizeInBytes: (long) fileSize, fileName: "file-exceeding-limit-api-test",  fileExtension: "txt", signUpUser.JwtTokenUserId, pocketId: signUpUser.DefaultPocketId);
 
         var response = await signUpApiClient.PostAsync(ApiFilesEndpointUri, fileUnderTest.MultipartFormDataContent);
         response.EnsureBadRequest();

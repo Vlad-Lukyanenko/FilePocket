@@ -8,6 +8,7 @@ using FilePocket.Domain.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using Xunit;
 
 namespace FilePocket.Application.IntegrationTests.Common.Fixtures.Authentication;
@@ -24,7 +25,7 @@ public class ClientAuthenticationFixture : IAsyncLifetime
     private readonly IConfiguration _configuration;
     private readonly HttpClient _unauthenticatedClient;
     private readonly FilePocketWebAppFactory _filePocketWebAppFactory;
-    
+
     private ClientAuthenticationFixture(FilePocketWebAppFactory factory, bool useJwtAuthentication, bool useApiKeyAuthentication)
     {
         _filePocketWebAppFactory = factory;
@@ -46,7 +47,8 @@ public class ClientAuthenticationFixture : IAsyncLifetime
 
     // Extracted from JwtToken
     public Guid JwtTokenUserId { get; private set; }
-    
+    public Guid DefaultPocketId { get; private set; }
+
     public async Task InitializeAsync()
     {
         var userRegistrationModel = UserRegistrationFaker.Generate();
@@ -54,7 +56,7 @@ public class ClientAuthenticationFixture : IAsyncLifetime
 
         var userLoginModel = userRegistrationModel.ToUserLoginModel();
         await LoginUserAsync(userLoginModel);
-        
+
         if (UseJwtAuthentication)
             InitializeJwtAuthenticatedClient(JwtToken);
 
@@ -69,6 +71,18 @@ public class ClientAuthenticationFixture : IAsyncLifetime
 
             InitializeApiKeyAuthenticatedClient(apiKeyHeaderName, apiKeyHeaderValue);
         }
+    }
+
+    private async Task GetDefaultPocketIdAsync()
+    {
+        var pocketResponse = await JwtAuthenticatedClient.GetAsync("/api/pockets/default");
+        pocketResponse.EnsureSuccessStatusCode();
+
+        var content = await pocketResponse.Content.ReadAsStringAsync();
+
+        var pocket = JsonConvert.DeserializeObject<PocketModel>(content);
+
+        DefaultPocketId = pocket!.Id;
     }
 
     private async Task RegisterUserAsync(UserRegistrationModel userRegistrationRequest)
@@ -128,7 +142,7 @@ public class ClientAuthenticationFixture : IAsyncLifetime
 
         await authFixture.LoginUserAsync(adminUserLogin);
         authFixture.InitializeJwtAuthenticatedClient(authFixture.JwtToken);
-        
+
         return authFixture.JwtAuthenticatedClient;
     }
 
@@ -143,6 +157,8 @@ public class ClientAuthenticationFixture : IAsyncLifetime
         await authFixture.RegisterUserAsync(userRegistrationModel);
         await authFixture.LoginUserAsync(userRegistrationModel.ToUserLoginModel());
         authFixture.InitializeJwtAuthenticatedClient(authFixture.JwtToken);
+
+        await authFixture.GetDefaultPocketIdAsync();
 
         return authFixture;
     }

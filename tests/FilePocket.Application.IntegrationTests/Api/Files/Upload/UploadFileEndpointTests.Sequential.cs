@@ -24,7 +24,7 @@ public class UploadFileEndpointSequentialTests(FilePocketWebAppFactory factory) 
             fileName: "files-sequential-upload-without-exceeding-api-test",
             fileExtension: "txt",
             userId: signUpUser.JwtTokenUserId,
-            pocketId: Guid.NewGuid());
+            pocketId: signUpUser.DefaultPocketId);
 
         foreach (var test in filesUnderTest)
         {
@@ -51,7 +51,7 @@ public class UploadFileEndpointSequentialTests(FilePocketWebAppFactory factory) 
             fileName: "files-sequential-upload-without-exceeding-api-test",
             fileExtension: "txt",
             userId: signUpUser.JwtTokenUserId,
-            pocketId: Guid.NewGuid());
+            pocketId: signUpUser.DefaultPocketId);
 
         // so we keep track of all uploaded files
         var fileIdentifiers = new List<Guid>();
@@ -77,7 +77,7 @@ public class UploadFileEndpointSequentialTests(FilePocketWebAppFactory factory) 
             fileName: "file-sequential-upload-after-freeing-space-api-test",
             fileExtension: "txt",
             userId: signUpUser.JwtTokenUserId,
-            pocketId: Guid.NewGuid());
+            pocketId: signUpUser.DefaultPocketId);
 
         // it should fail
         var fileWhichExceedsSpaceLimitResponse = await signUpApiClient.PostAsync(ApiFilesEndpointUri, fileWhichExceedsSpaceLimit.MultipartFormDataContent);

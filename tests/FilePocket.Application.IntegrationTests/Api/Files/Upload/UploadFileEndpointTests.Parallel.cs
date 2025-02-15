@@ -24,7 +24,7 @@ public class UploadFileEndpointParallelTests(FilePocketWebAppFactory factory) : 
             fileName: "files-parallel-upload-with-exceeding-api-test",
             fileExtension: "txt",
             userId: signUpUser.JwtTokenUserId,
-            pocketId: Guid.NewGuid());
+            pocketId: signUpUser.DefaultPocketId);
 
         var uploadTasks = filesUnderTest.Select(test =>
             signUpApiClient.PostAsync(ApiFilesEndpointUri, test.MultipartFormDataContent)).ToArray();
@@ -51,7 +51,7 @@ public class UploadFileEndpointParallelTests(FilePocketWebAppFactory factory) : 
             fileName: "files-parallel-upload-without-exceeding-api-test",
             fileExtension: "txt",
             userId: signUpUser.JwtTokenUserId,
-            pocketId: Guid.NewGuid());
+            pocketId: signUpUser.DefaultPocketId);
 
         var uploadTasks = filesUnderTest.Select(test =>
             signUpApiClient.PostAsync(ApiFilesEndpointUri, test.MultipartFormDataContent)).ToArray();
