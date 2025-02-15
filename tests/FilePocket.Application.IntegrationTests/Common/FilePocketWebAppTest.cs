@@ -7,6 +7,9 @@ namespace FilePocket.Application.IntegrationTests.Common;
 
 public abstract class FilePocketWebAppTest(FilePocketWebAppFactory factory) : IClassFixture<FilePocketWebAppFactory>
 {
+    protected const string PocketApiEndpointUri = "/api/pockets";
+    protected const string ApiFilesEndpointUri = "/api/files";
+    
     protected readonly FilePocketWebAppFactory FilePocketWebAppFactory = factory;
 
     protected readonly AccountConsumptionConfigurationModel AccountConsumptionSettings =
