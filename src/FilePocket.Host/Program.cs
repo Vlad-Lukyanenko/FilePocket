@@ -58,16 +58,6 @@ builder.Services.Configure<KestrelServerOptions>(options =>
     options.Limits.MaxRequestBodySize = 1073741824; // 1 GB
 });
 
-//builder.Services.AddCors(options =>
-//{
-//    options.AddPolicy("AllowAll", policy =>
-//    {
-//        policy.AllowAnyOrigin()
-//              .AllowAnyMethod()
-//              .AllowAnyHeader();
-//    });
-//});
-
 builder.Services.Configure<ApiBehaviorOptions>(options =>
 {
     options.SuppressModelStateInvalidFilter = true;

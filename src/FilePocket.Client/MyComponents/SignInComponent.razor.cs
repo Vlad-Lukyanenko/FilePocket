@@ -1,11 +1,11 @@
 ﻿using FilePocket.Client.Services.Authentication.Models;
 using FilePocket.Client.Services.Authentication.Requests;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.AspNetCore.Components;
 
-namespace FilePocket.Client.Pages
+namespace FilePocket.Client.MyComponents
 {
-    public partial class SignIn
+    public partial class SignInComponent
     {
         [Inject] 
         NavigationManager Navigation { get; set; } = default!;

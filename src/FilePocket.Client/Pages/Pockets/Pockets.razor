@@ -148,17 +148,15 @@
                     <div class="my-card mb-3 shadow"
                          style="background-color: #ffffff; cursor: pointer; border: none; border-radius: 0.8em; overflow: hidden; transition: transform 0.3s ease, box-shadow 0.3s ease;">
 
-                        <!-- Заголовок карточки -->
                         <div @onclick="() => GoToPocket(pocket.Id)"
                              class="my-card-header"
                              style="background-color: #165887; color: #ffffff; text-align: center;">
                             <div class="fw-bold mt-0 d-flex align-items-center justify-content-center" style="font-size: 1.2em;">
-                                <i class="fs-4 bi-archive"></i> <!-- Иконка -->
-                                <span class="ms-2">@pocket.Name</span> <!-- Название -->
+                                <i class="fs-4 bi-archive"></i>
+                                <span class="ms-2">@pocket.Name</span>
                             </div>
                         </div>
 
-                        <!-- Тело карточки -->
                         <div @onclick="() => GoToPocket(pocket.Id)"
                              class="my-card-body p-3"
                              style="background-color: #ffffff;">
@@ -174,7 +172,6 @@
                             </p>
                         </div>
 
-                        <!-- Футер карточки -->
                         <div class="card-footer text-center p-3"
                              style="border-top: 1px solid #f0f0f0; background-color: #ffffff;">
 
