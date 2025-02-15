@@ -25,7 +25,11 @@ namespace FilePocket.Client.Pages.Folders
                 return $"/files";
             }
 
-            var folderId = Guid.Parse(FolderIdParam);
+            Guid? folderId = null;
+            if (!string.IsNullOrWhiteSpace(FolderIdParam))
+            {
+                folderId = Guid.Parse(FolderIdParam);
+            }
 
             if (string.IsNullOrWhiteSpace(PocketIdParam) && !string.IsNullOrWhiteSpace(FolderIdParam))
             {
