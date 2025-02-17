@@ -17,9 +17,12 @@ public class Pocket
     public double TotalSize { get; set; } = 0;
 
     public bool IsDefault { get; set; }
+    public bool IsDeleted { get; set; }
 
     [Required]
     public DateTime DateCreated { get; set; } = DateTime.UtcNow;
+    public DateTime? UpdatedAt { get; set; }
+    public DateTime? DeletedAt { get; set; }
 
     [MaxLength(500)]
     public string? Description { get; set; }

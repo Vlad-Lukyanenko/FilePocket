@@ -14,12 +14,12 @@ public class PocketRepository : RepositoryBase<Pocket>, IPocketRepository
 
     public async Task<List<Pocket>> GetAllAsync(Guid userId, bool trackChanges)
     {
-        return await FindByCondition(c => c.UserId == userId, trackChanges).OrderByDescending(c => c.DateCreated).ToListAsync();
+        return await FindByCondition(c => c.UserId == userId && !c.IsDeleted, trackChanges).OrderByDescending(c => c.DateCreated).ToListAsync();
     }
 
     public async Task<List<Pocket>> GetAllCustomByUserIdAsync(Guid userId, bool trackChanges)
     {
-        return await FindByCondition(e => e.UserId.Equals(userId) && !e.IsDefault, trackChanges).ToListAsync();
+        return await FindByCondition(e => e.UserId.Equals(userId) && !e.IsDefault && !e.IsDeleted, trackChanges).ToListAsync();
     }
 
     public async Task<Pocket> GetByIdAsync(Guid userId, Guid pocketId, bool trackChanges)
@@ -42,6 +42,7 @@ public class PocketRepository : RepositoryBase<Pocket>, IPocketRepository
 
         var totalFileSize = pocket.FileMetadata?.Sum(f => f.FileSize) ?? 0;
         var numberOfFiles = pocket.FileMetadata?.Count ?? 0;
+
         return new PocketDetailsModel
         {
             Name = pocket.Name,

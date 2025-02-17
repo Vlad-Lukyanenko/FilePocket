@@ -41,7 +41,7 @@ public class FileService(
         return new FileResponseModel
         {
             Id = fileMetadata.Id,
-            DateCreated = fileMetadata.DateCreated,
+            DateCreated = fileMetadata.CreatedAt,
             PocketId = fileMetadata.PocketId,
             FileSize = fileMetadata.FileSize,
             FileType = fileMetadata.FileType,
@@ -57,7 +57,7 @@ public class FileService(
         return new FileResponseModel
         {
             Id = fileMetadata.Id,
-            DateCreated = fileMetadata.DateCreated,
+            DateCreated = fileMetadata.CreatedAt,
             PocketId = fileMetadata.PocketId,
             FileSize = fileMetadata.FileSize,
             FileType = fileMetadata.FileType,
@@ -191,7 +191,7 @@ public class FileService(
                 FileType = fileMetadata.FileType,
                 ActualName = fileMetadata.ActualName,
                 OriginalName = fileMetadata.OriginalName,
-                DateCreated = fileMetadata.DateCreated,
+                DateCreated = fileMetadata.CreatedAt,
             };
         }
     }
@@ -215,7 +215,7 @@ public class FileService(
             {
                 throw new AccountConsumptionNotFoundException(userId);
             }
-            
+
             RemoveFromFileSystemSync(fileMetadata);
             DecreaseStorageConsumption(storageConsumption, fileMetadata.FileSize);
 
@@ -249,6 +249,22 @@ public class FileService(
 
             File.Delete(fullPath);
         }
+    }
+
+    public async Task<bool> MoveToTrash(Guid userId, Guid fileId, CancellationToken cancellationToken = default)
+    {
+        var fileMetadata = await repository.FileMetadata.GetByIdAsync(userId, fileId, trackChanges: true);
+        if (fileMetadata is null)
+        {
+            throw new FileMetadataNotFoundException(fileId);
+        }
+
+        fileMetadata.IsDeleted = true;
+        fileMetadata.DeletedAt = DateTime.UtcNow;
+
+        await repository.SaveChangesAsync(cancellationToken);
+
+        return true;
     }
 
     private Task<FileMetadata> GetFileByIdAndPocketIdAsync(Guid userId, Guid fileId)
@@ -339,7 +355,7 @@ public class FileService(
             FileByteArray = thumbnailByteArray,
             OriginalName = fileMetadata.OriginalName,
             FileType = fileMetadata.FileType,
-            DateCreated = fileMetadata.DateCreated,
+            DateCreated = fileMetadata.CreatedAt,
             PocketId = fileMetadata.PocketId,
             FileSize = fileMetadata.FileSize,
         };

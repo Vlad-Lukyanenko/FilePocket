@@ -19,4 +19,6 @@ public interface IPocketService
     Task<PocketDetailsModel> GetPocketDetailsAsync(Guid userId, Guid pocketId, bool trackChanges);
 
     Task<bool> GetComparingDefaultCapacityWithTotalFilesSizeInPocket(Guid userId, Guid pocketId, double newFileSize);
+
+    Task MoveToTrash(Guid userId, Guid pocketId);
 }

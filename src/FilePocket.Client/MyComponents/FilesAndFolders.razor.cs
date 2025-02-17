@@ -9,6 +9,7 @@ using FilePocket.Client.Services.Files.Requests;
 using FilePocket.Client.Services.Pockets.Requests;
 using System.Collections.ObjectModel;
 using FilePocket.Client.Shared.Models;
+using FilePocket.Client.Features.Trash;
 
 namespace FilePocket.Client.MyComponents
 {
@@ -28,6 +29,9 @@ namespace FilePocket.Client.MyComponents
 
         [Inject]
         private IPocketRequests PocketRequests { get; set; } = default!;
+
+        [Inject]
+        private ITrashRequests TrashRequests { get; set; } = default!;
 
         private string _goBackUrl = string.Empty;
 
@@ -82,7 +86,7 @@ namespace FilePocket.Client.MyComponents
         {
             if (FolderId is not null)
             {
-                await FolderRequests.DeleteAsync(FolderId.Value);
+                await TrashRequests.MoveFolderToTrash(FolderId.Value);
             }
 
             _removalProcessStarted = false;

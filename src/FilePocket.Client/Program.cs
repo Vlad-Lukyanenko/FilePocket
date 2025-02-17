@@ -2,6 +2,7 @@
 using FilePocket.Client.Features;
 using FilePocket.Client.Features.Authentication;
 using FilePocket.Client.Features.SharedFiles.Requests;
+using FilePocket.Client.Features.Trash;
 using FilePocket.Client.Features.Users.Requests;
 using FilePocket.Client.Services.Authentication.Requests;
 using FilePocket.Client.Services.Files.Requests;
@@ -88,6 +89,7 @@ namespace FilePocket.Client
             builder.Services.AddScoped<IFolderRequests, FolderRequests>();
             builder.Services.AddScoped<IUserRequests, UserRequests>();
             builder.Services.AddScoped<ISharedFilesRequests, SharedFilesRequests>();
+            builder.Services.AddScoped<ITrashRequests, TrashRequests>();
 
             builder.Services.AddBlazoredLocalStorage();
             builder.Services.AddAuthorizationCore();

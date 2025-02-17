@@ -13,27 +13,22 @@ public class FileMetadataRepository : RepositoryBase<FileMetadata>, IFileMetadat
 
     public async Task<List<FileMetadata>> GetAllAsync(Guid pocketId, bool trackChanges)
     {
-        return await FindByCondition(e => e.PocketId.Equals(pocketId) && e.FolderId == null, trackChanges).ToListAsync();
+        return await FindByCondition(f => f.PocketId.Equals(pocketId) && f.FolderId == null && !f.IsDeleted, trackChanges).ToListAsync();
     }
 
     public async Task<List<FileMetadata>> GetRecentFilesAsync(Guid userId, int numberOfFiles)
     {
-        return await FindByCondition(e => e.UserId.Equals(userId), false).OrderByDescending(c => c.DateCreated).Take(numberOfFiles).ToListAsync();
+        return await FindByCondition(f => f.UserId.Equals(userId) && !f.IsDeleted, false).OrderByDescending(c => c.CreatedAt).Take(numberOfFiles).ToListAsync();
     }
 
     public async Task<List<FileMetadata>> GetAllAsync(Guid userId, Guid pocketId, Guid? folderId, bool trackChanges)
     {
-        return await FindByCondition(e => e.UserId.Equals(userId) && e.PocketId.Equals(pocketId) && e.FolderId.Equals(folderId), trackChanges).ToListAsync();
-    }
-
-    public async Task<FileMetadata> GetByIdAsync(Guid? pocketId, Guid fileId, bool trackChanges)
-    {
-        return (await FindByCondition(e => e.PocketId.Equals(pocketId) && e.Id.Equals(fileId), trackChanges).SingleOrDefaultAsync())!;
+        return await FindByCondition(f => f.UserId.Equals(userId) && f.PocketId.Equals(pocketId) && f.FolderId.Equals(folderId) && !f.IsDeleted, trackChanges).ToListAsync();
     }
     
     public async Task<FileMetadata> GetByIdAsync(Guid userId, Guid fileId, bool trackChanges = false)
     {
-        return (await FindByCondition(e => e.UserId.Equals(userId) && e.Id.Equals(fileId), trackChanges).SingleOrDefaultAsync())!;
+        return (await FindByCondition(f => f.UserId.Equals(userId) && f.Id.Equals(fileId), trackChanges).SingleOrDefaultAsync())!;
     }
 
     public void CreateFileMetadata(FileMetadata fileMetadataId)

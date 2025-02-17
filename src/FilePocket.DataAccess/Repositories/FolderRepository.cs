@@ -55,7 +55,7 @@ namespace FilePocket.DataAccess.Repositories
 
         public async Task<List<Folder>> GetAllAsync(Guid userId, Guid? pocketId, Guid? parentFolderId)
         {
-            var result = DbContext.Set<Folder>().Where(c => c.UserId == userId && c.PocketId == pocketId && c.ParentFolderId == parentFolderId);
+            var result = DbContext.Set<Folder>().Where(c => c.UserId == userId && c.PocketId == pocketId && c.ParentFolderId == parentFolderId && !c.IsDeleted);
 
             return await result.ToListAsync();
         }

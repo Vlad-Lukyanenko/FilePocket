@@ -1,4 +1,5 @@
-﻿using FilePocket.Client.Services.Pockets.Models;
+﻿using FilePocket.Client.Features.Trash;
+using FilePocket.Client.Services.Pockets.Models;
 using FilePocket.Client.Services.Pockets.Requests;
 using Microsoft.AspNetCore.Components;
 
@@ -10,16 +11,19 @@ namespace FilePocket.Client.Pages.Pockets
         private Guid _pocketIdToBeChanged;
         private bool _removalProcessStarted = false;
         private bool _loading = true;
-        
-        [Inject] 
+
+        [Inject]
         private IPocketRequests PocketRequests { get; set; } = default!;
+
+        [Inject]
+        private ITrashRequests TrashRequests { get; set; } = default!;
 
         protected override async Task OnInitializedAsync()
         {
             _pockets = await GetAllCustomPockets();
             _loading = false;
         }
-        
+
         private async Task<List<PocketModel>> GetAllCustomPockets()
         {
             var pockets = await PocketRequests.GetAllCustomAsync();
@@ -37,7 +41,7 @@ namespace FilePocket.Client.Pages.Pockets
         {
             Navigation.NavigateTo($"/pockets/{pocketId}/files");
         }
-                
+
         private void ShowDetailsClicked(PocketModel pocket)
         {
             Navigation.NavigateTo($"/pockets/{pocket.Id}/info");
@@ -49,10 +53,10 @@ namespace FilePocket.Client.Pages.Pockets
 
             if (pocket is not null)
             {
-                 _pockets.Remove(pocket);
+                _pockets.Remove(pocket);
                 _removalProcessStarted = false;
 
-                await PocketRequests.DeleteAsync(_pocketIdToBeChanged);
+                await TrashRequests.MovePocketToTrash(_pocketIdToBeChanged);
                 _pocketIdToBeChanged = default;
             }
         }

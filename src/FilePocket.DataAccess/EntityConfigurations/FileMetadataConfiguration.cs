@@ -31,7 +31,7 @@ public class FileMetadataConfiguration : IEntityTypeConfiguration<FileMetadata>
         builder.Property(f => f.FileType)
             .IsRequired();
 
-        builder.Property(f => f.DateCreated)
+        builder.Property(f => f.CreatedAt)
             .IsRequired();
 
         builder.Property(f => f.FileSize)

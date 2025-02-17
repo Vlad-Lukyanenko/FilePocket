@@ -48,4 +48,9 @@ public interface IFileService : IFileProvider
         Guid userId,
         Guid fileId,
         CancellationToken cancellationToken = default);
+
+    Task<bool> MoveToTrash(
+        Guid userId,
+        Guid fileId,
+        CancellationToken cancellationToken = default);
 }

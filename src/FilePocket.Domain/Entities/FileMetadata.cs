@@ -10,8 +10,8 @@ public class FileMetadata
         Guid id, Guid userId,
         string originalName, string actualName,
         string path, FileTypes fileType, double fileSize,
-        Guid? pocketId, Guid? folderId,
-        DateTime dateCreated)
+        Guid pocketId, Guid? folderId,
+        DateTime createdAt)
     {
         Id = id;
         OriginalName = originalName;
@@ -22,7 +22,7 @@ public class FileMetadata
         UserId = userId;
         PocketId = pocketId;
         FolderId = folderId;
-        DateCreated = dateCreated;
+        CreatedAt = createdAt;
     }
 
     public Guid Id { get; init; }
@@ -32,14 +32,16 @@ public class FileMetadata
     public FileTypes FileType { get; init; }
     public double FileSize { get; init; }
     public Guid UserId { get; init; }
-    public Guid? PocketId { get; init; }
+    public Guid PocketId { get; init; }
     public Guid? FolderId { get; init; }
-    public DateTime DateCreated { get; init; }
+    public bool IsDeleted { get; set; }
+    public DateTime CreatedAt { get; init; }
+    public DateTime? DeletedAt { get; set; }
 
     public static FileMetadata Create(
-        Guid userId,
-        string originalFileName, string filePath, FileTypes fileType, double fileSizeInMbs,
-        Guid? pocketId, Guid? folderId)
+        Guid userId, string originalFileName,
+        string filePath, FileTypes fileType,
+        double fileSizeInMbs, Guid pocketId, Guid? folderId)
     {
         var fileId = Guid.NewGuid();
         var actualName = Guid.NewGuid().ToString();

@@ -24,7 +24,7 @@ namespace FilePocket.Application.Services
 
             _repository.Folder.Create(folderEntity);
             await _repository.SaveChangesAsync();
-            
+
             return _mapper.Map<FolderModel>(folderEntity);
         }
 
@@ -37,15 +37,26 @@ namespace FilePocket.Application.Services
 
         public async Task DeleteAsync(Guid folderId)
         {
-            _repository.Folder.Delete(folderId);
+            await _repository.Folder.Delete(folderId);
             await _repository.SaveChangesAsync();
         }
-
-       
 
         public async Task DeleteByPocketIdAsync(Guid pocketId)
         {
             _repository.Folder.DeleteByPocketId(pocketId);
+            await _repository.SaveChangesAsync();
+        }
+
+        public async Task MoveToTrash(Guid userId, Guid folderId)
+        {
+            var folder = await _repository.Folder.GetAsync(folderId);
+
+            if (folder is null)
+                return;
+
+            folder.IsDeleted = true;
+            folder.DeletedAt = DateTime.UtcNow;
+
             await _repository.SaveChangesAsync();
         }
 

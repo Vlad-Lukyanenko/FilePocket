@@ -61,21 +61,6 @@ namespace FilePocket.Client.Services.Files.Requests
 
         public async Task<FileModel> GetImageThumbnailAsync(Guid imageId, int size)
         {
-            //var cachedFile = await _thumbnailCacheService.GetThumbnailAsync(imageId.ToString());
-
-            //if (cachedFile != null)
-            //{
-            //    return new FileModel()
-            //    {
-            //        DateCreated = cachedFile.DateCreated,
-            //        FileData = cachedFile.DataUrl,
-            //        FileSize = size,
-            //        OriginalName = cachedFile.OriginalName,
-            //        PocketId = cachedFile.PocketId,
-            //        Id = cachedFile.Id
-            //    };
-            //}
-
             var content = await _apiClient.GetAsync(FileUrl.GetImageThumbnail(imageId, size));
             var result = JsonConvert.DeserializeObject<FileModel>(content)!;
             string base64 = Convert.ToBase64String(new ReadOnlySpan<byte>(result.FileByteArray!));
@@ -90,8 +75,6 @@ namespace FilePocket.Client.Services.Files.Requests
                 FileSize= result.FileSize,
                 DataUrl = result.FileData
             };
-
-            //await _thumbnailCacheService.AddThumbnailAsync(fileToCache);
 
             return result;
         }

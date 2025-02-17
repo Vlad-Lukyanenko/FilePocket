@@ -1,4 +1,5 @@
 ﻿using FilePocket.Client.Features.Files.Models;
+using FilePocket.Client.Features.Trash;
 using FilePocket.Client.Helpers;
 using FilePocket.Client.Services.Files.Models;
 using FilePocket.Client.Services.Files.Requests;
@@ -21,6 +22,9 @@ namespace FilePocket.Client.MyComponents
 
         [Inject]
         private IFileRequests FileRequests { get; set; } = default!;
+
+        [Inject]
+        private ITrashRequests TrashRequests { get; set; } = default!;
 
         [Inject]
         private IFolderRequests FolderRequests { get; set; } = default!;
@@ -98,10 +102,10 @@ namespace FilePocket.Client.MyComponents
             await JSRuntime.InvokeVoidAsync("saveFile", file.OriginalName, mimeType, base64);
         }
 
-        private async void DeleteFileClick()
+        private async void MoveToTrashClick()
         {
             _removalProcessStarted = true;
-            await FileRequests.DeleteFile(_fileId);
+            await TrashRequests.MoveFileToTrash(_fileId);
 
             Navigation.NavigateTo(_goBackUrl);
         }
