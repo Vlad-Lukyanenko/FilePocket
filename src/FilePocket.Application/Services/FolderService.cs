@@ -53,5 +53,9 @@ namespace FilePocket.Application.Services
 
             return _mapper.Map<List<FolderModel>>(result);
         }
+        public async Task<bool> FolderExistsAsync(string folderName, Guid? pocketId, Guid? parentFolderId)
+        {
+            return await _repository.Folder.ExistsAsync(folderName, pocketId, parentFolderId);
+        }
     }
 }

@@ -1,6 +1,8 @@
 ﻿using FilePocket.Client.Features;
 using FilePocket.Client.Features.Folders.Models;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using System.Net.Http;
 using System.Text;
 
 namespace FilePocket.Client.Services.Folders.Requests
@@ -73,6 +75,13 @@ namespace FilePocket.Client.Services.Folders.Requests
             var json = JsonConvert.SerializeObject(obj);
 
             return new StringContent(json, Encoding.UTF8, "application/json");
+        }
+        public async Task<bool> FolderExistsAsync(string folderName, Guid? pocketId, Guid? parentFolderId)
+        {
+            var query = $"api/folders/exists?folderName={folderName}&pocketId={pocketId}&parentFolderId={parentFolderId}";
+            var response = await _apiClient.GetAsync(query);
+            return bool.TryParse(response, out var exists) && exists;
+
         }
     }
 }

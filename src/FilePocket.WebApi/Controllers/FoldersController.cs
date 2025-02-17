@@ -1,4 +1,5 @@
-﻿using FilePocket.Contracts.Services;
+﻿using FilePocket.Application.Services;
+using FilePocket.Contracts.Services;
 using FilePocket.Domain.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -58,6 +59,12 @@ namespace FilePocket.WebApi.Controllers
             await _service.FolderService.DeleteAsync(folderId);
 
             return Ok();
+        }
+        [HttpGet("folders/exists")]
+        public async Task<IActionResult> FolderExists([FromQuery] string folderName, [FromQuery] Guid? pocketId, [FromQuery] Guid? parentFolderId)
+        {
+            var exists = await _service.FolderService.FolderExistsAsync(folderName, pocketId, parentFolderId);
+            return Ok(exists);
         }
     }
 }

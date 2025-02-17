@@ -1,5 +1,6 @@
 ﻿using FilePocket.Client.Features.Folders.Models;
 using FilePocket.Client.Services.Folders.Requests;
+using FilePocket.DataAccess;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 
@@ -9,7 +10,7 @@ namespace FilePocket.Client.Pages.Folders
     {
         [Inject] 
         private IFolderRequests FolderRequests { get; set; } = default!;
-
+      
         [Parameter]
         public string PocketIdParam { get; set; } = string.Empty;
 
@@ -53,11 +54,13 @@ namespace FilePocket.Client.Pages.Folders
             {
                 folderId = Guid.Parse(FolderIdParam);
             }
-            _isDuplicate = await FolderExistsAsync(_folderName, pocketId,folderId);
-            if (_isDuplicate)
+            var isDuplicate = await FolderRequests.FolderExistsAsync(_folderName, pocketId, folderId);
+            if (isDuplicate)
             {
+                _isDuplicate = true;
                 return;
             }
+
             var folder = new FolderModel()
             {
                 CreatedAt = DateTime.UtcNow,
@@ -80,11 +83,6 @@ namespace FilePocket.Client.Pages.Folders
         {
             _validName = !string.IsNullOrEmpty(_folderName);
         }
-        private async Task<bool> FolderExistsAsync(string folderName, Guid? pocketId, Guid? parentFolderId)
-        {
-            var existingFolders = await FolderRequests.GetAllAsync(pocketId);
-            return existingFolders.Any(f => f.Name.Equals(folderName) && f.ParentFolderId == parentFolderId);
-        }
-
+        
     }
 }

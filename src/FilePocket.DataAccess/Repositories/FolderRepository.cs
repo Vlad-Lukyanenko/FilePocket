@@ -101,5 +101,12 @@ namespace FilePocket.DataAccess.Repositories
         {
             return DbContext.Folders.Where(f => f.ParentFolderId == parentFolderId).ToListAsync();
         }
+        public async Task<bool> ExistsAsync(string folderName, Guid? pocketId, Guid? parentFolderId)
+        {
+            return await DbContext.Folders.AnyAsync(f =>
+                f.Name.Equals(folderName) &&
+                f.PocketId == pocketId &&
+                f.ParentFolderId == parentFolderId);
+        }
     }
 }
