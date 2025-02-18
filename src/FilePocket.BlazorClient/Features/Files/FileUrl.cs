@@ -10,7 +10,7 @@
         public static string GetAll(Guid pocketId) => $"api/pockets/{pocketId}/files";
         public static string GetAllFromFolder(Guid folderId) => $"api/folders/{folderId}/files";
         public static string GetAll() => $"api/files";
-        public static string GetRecentFiles() => $"api/home/recent-files";
+        public static string GetRecentFiles() => $"api/home/files/recent";
         public static string DeleteFile(Guid fileId) => $"api/files/{fileId}";
     }
 }

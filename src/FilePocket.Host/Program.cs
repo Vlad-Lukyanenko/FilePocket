@@ -17,6 +17,7 @@ using FilePocket.Persistence;
 using FilePocket.Persistence.Repositories;
 using FilePocket.Application.Interfaces.Repositories;
 using FastEndpoints;
+using Mapster;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -90,6 +91,8 @@ builder.Services.AddSingleton<ILoggerService, LoggerService>();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddAutoMapper(typeof(WebApiAssemblyReference));
+builder.Services.AddMapster();
+
 builder.Services.AddSwaggerGen(s =>
 {
     s.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme

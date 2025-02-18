@@ -1,21 +1,24 @@
 ﻿using FilePocket.Application.Interfaces.Services;
 using FilePocket.Contracts.Home;
 using FilePocket.WebApi.Endpoints.Base;
+using MapsterMapper;
 
 namespace FilePocket.WebApi.Endpoints.Home
 {
     public class GetRecentlyUploadedFilesEndpoint : BaseEndpointWithoutRequest<List<GetRecentlyUploadedFilesResponse>>
     {
         private readonly IServiceManager _service;
+        private readonly IMapper _mapper;
 
-        public GetRecentlyUploadedFilesEndpoint(IServiceManager service)
+        public GetRecentlyUploadedFilesEndpoint(IServiceManager service, IMapper mapper)
         {
             _service = service;
+            _mapper = mapper;
         }
 
         public override void Configure()
         {
-            Get("api/home/recent-files");
+            Get("api/home/files/recent");
             AuthSchemes("Bearer");
         }
 
@@ -23,19 +26,7 @@ namespace FilePocket.WebApi.Endpoints.Home
         {
             var recentFiles = await _service.FileService.GetRecentFiles(UserId, 10);
 
-            var response = new List<GetRecentlyUploadedFilesResponse>();
-
-            foreach (var f in recentFiles)
-            {
-                response.Add(new GetRecentlyUploadedFilesResponse()
-                {
-                    Id = f.Id,
-                    PocketId = f.PocketId!.Value,
-                    FolderId = f.FolderId,
-                    FileType = f.FileType!.Value,
-                    OriginalName = f.OriginalName!
-                });
-            }
+            var response = _mapper.Map<List<GetRecentlyUploadedFilesResponse>>(recentFiles);
 
             await SendOkAsync(response, cancellationToken);
         }

@@ -56,7 +56,7 @@ namespace FilePocket.BlazorClient.Features.SharedFiles.Requests
 
         public async Task<List<SharedFileView>> GetLatestAsync()
         {
-            var url = $"api/files/shared/latest";
+            var url = $"api/home/files/shared/recent";
             
             var content = await _apiClient.GetAsync(url);
 
