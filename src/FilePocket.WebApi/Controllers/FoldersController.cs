@@ -23,7 +23,6 @@ namespace FilePocket.WebApi.Controllers
         {
             folder.UserId = UserId;
             await _service.FolderService.CreateAsync(folder);
-
             return Ok();
         }
 
@@ -60,11 +59,6 @@ namespace FilePocket.WebApi.Controllers
 
             return Ok();
         }
-        [HttpGet("folders/exists")]
-        public async Task<IActionResult> FolderExists([FromQuery] string folderName, [FromQuery] Guid? pocketId, [FromQuery] Guid? parentFolderId)
-        {
-            var exists = await _service.FolderService.FolderExistsAsync(folderName, pocketId, parentFolderId);
-            return Ok(exists);
-        }
+       
     }
 }

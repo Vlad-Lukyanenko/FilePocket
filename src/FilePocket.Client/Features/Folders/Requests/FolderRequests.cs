@@ -20,7 +20,10 @@ namespace FilePocket.Client.Services.Folders.Requests
             var content = GetStringContent(folder);
 
             var response = await _apiClient.PostAsync("api/folders", content);
-
+            if (response.StatusCode == System.Net.HttpStatusCode.Conflict)
+            {
+                return false;
+            }
             return response.IsSuccessStatusCode;
         }
 
@@ -76,12 +79,6 @@ namespace FilePocket.Client.Services.Folders.Requests
 
             return new StringContent(json, Encoding.UTF8, "application/json");
         }
-        public async Task<bool> FolderExistsAsync(string folderName, Guid? pocketId, Guid? parentFolderId)
-        {
-            var query = $"api/folders/exists?folderName={folderName}&pocketId={pocketId}&parentFolderId={parentFolderId}";
-            var response = await _apiClient.GetAsync(query);
-            return bool.TryParse(response, out var exists) && exists;
-
-        }
+        
     }
 }

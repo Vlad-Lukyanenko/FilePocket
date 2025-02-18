@@ -20,6 +20,11 @@ namespace FilePocket.Application.Services
 
         public async Task CreateAsync(FolderModel folder)
         {
+            var folderExists = await _repository.Folder.ExistsAsync(folder.Name, folder.PocketId, folder.ParentFolderId);
+            if (folderExists)
+            {
+                throw new InvalidOperationException("A folder with the same name already exists.");
+            }
             var folderEntity = _mapper.Map<Folder>(folder);
 
             _repository.Folder.Create(folderEntity);
@@ -53,9 +58,6 @@ namespace FilePocket.Application.Services
 
             return _mapper.Map<List<FolderModel>>(result);
         }
-        public async Task<bool> FolderExistsAsync(string folderName, Guid? pocketId, Guid? parentFolderId)
-        {
-            return await _repository.Folder.ExistsAsync(folderName, pocketId, parentFolderId);
-        }
+       
     }
 }

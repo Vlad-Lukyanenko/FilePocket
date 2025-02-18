@@ -10,7 +10,6 @@ namespace FilePocket.Client.Services.Folders.Requests
         Task<bool> CreateAsync(FolderModel folder);
         Task<bool> DeleteAsync(Guid folderId);
         Task<bool> UpdateAsync(FolderModel folder);
-        Task<bool> FolderExistsAsync(string folderName, Guid? pocketId, Guid? parentFolderId);
 
 
     }

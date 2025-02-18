@@ -3,6 +3,7 @@ using FilePocket.Client.Services.Folders.Requests;
 using FilePocket.DataAccess;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
+using System.Net;
 
 namespace FilePocket.Client.Pages.Folders
 {
@@ -54,13 +55,6 @@ namespace FilePocket.Client.Pages.Folders
             {
                 folderId = Guid.Parse(FolderIdParam);
             }
-            var isDuplicate = await FolderRequests.FolderExistsAsync(_folderName, pocketId, folderId);
-            if (isDuplicate)
-            {
-                _isDuplicate = true;
-                return;
-            }
-
             var folder = new FolderModel()
             {
                 CreatedAt = DateTime.UtcNow,
@@ -69,14 +63,14 @@ namespace FilePocket.Client.Pages.Folders
                 ParentFolderId = folderId,
                 PocketId = pocketId
             };
-
             var result = await FolderRequests.CreateAsync(folder);
-
-            if (result)
+            if (!result)
             {
-                var url = GetGoBackUrl();
-                Navigation.NavigateTo(url);
+                _isDuplicate = true;
+                StateHasChanged();
+                return;
             }
+            Navigation.NavigateTo(GetGoBackUrl());
         }
 
         private void NameChanged()

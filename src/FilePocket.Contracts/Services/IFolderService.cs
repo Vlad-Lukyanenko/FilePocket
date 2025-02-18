@@ -9,7 +9,6 @@ namespace FilePocket.Contracts.Services
         Task<List<FolderModel>> GetAllAsync(Guid userId, Guid? pocketId, Guid? parentFolderId);
         Task DeleteAsync(Guid folderId);
         Task DeleteByPocketIdAsync(Guid pocketId);
-        Task<bool> FolderExistsAsync(string folderName, Guid? pocketId, Guid? parentFolderId);
 
     }
 }
