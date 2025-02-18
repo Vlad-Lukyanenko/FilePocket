@@ -1,8 +1,9 @@
-﻿using FilePocket.Domain.Models;
+﻿using FilePocket.Domain.Entities.Abstractions;
+using FilePocket.Domain.Models;
 
 namespace FilePocket.Domain.Entities;
 
-public class FileMetadata
+public class FileMetadata : IAmSoftDeletedEntity
 {
     public FileMetadata() { }
 
@@ -11,18 +12,26 @@ public class FileMetadata
         string originalName, string actualName,
         string path, FileTypes fileType, double fileSize,
         Guid pocketId, Guid? folderId,
-        DateTime createdAt)
+        bool isDeleted, 
+        DateTime createdAt, DateTime? deletedAt = null)
     {
         Id = id;
+        UserId = userId;
+
+        PocketId = pocketId;
+        FolderId = folderId;
+
         OriginalName = originalName;
         ActualName = actualName;
+
         Path = path;
         FileType = fileType;
         FileSize = fileSize;
-        UserId = userId;
-        PocketId = pocketId;
-        FolderId = folderId;
+
+        IsDeleted = isDeleted;
+        
         CreatedAt = createdAt;
+        DeletedAt = deletedAt;
     }
 
     public Guid Id { get; init; }
@@ -38,6 +47,12 @@ public class FileMetadata
     public DateTime CreatedAt { get; init; }
     public DateTime? DeletedAt { get; set; }
 
+    public void MarkAsDeleted(DateTime? deletedAt = null)
+    {
+        IsDeleted = true;
+        DeletedAt = deletedAt ?? DateTime.UtcNow;
+    }
+
     public static FileMetadata Create(
         Guid userId, string originalFileName,
         string filePath, FileTypes fileType,
@@ -47,10 +62,8 @@ public class FileMetadata
         var actualName = Guid.NewGuid().ToString();
 
         return new FileMetadata(
-            fileId, userId,
-            originalFileName, actualName,
-            filePath, fileType, fileSizeInMbs,
-            pocketId, folderId,
-            DateTime.UtcNow);
+            fileId, userId, originalFileName, actualName,
+            filePath, fileType, fileSizeInMbs, pocketId, folderId,
+            isDeleted: false, DateTime.UtcNow);
     }
 }

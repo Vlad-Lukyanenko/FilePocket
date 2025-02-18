@@ -1,37 +1,32 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using FilePocket.Domain.Entities.Abstractions;
+using FilePocket.Domain.Extensions;
 
 namespace FilePocket.Domain.Entities;
 
-public class Pocket
+public class Pocket : IAmSoftDeletedEntity
 {
-    public Guid Id { get; set; }
-
-    [Required]
-    public string Name { get; set; } = string.Empty;
-
-    [Required]
-    public Guid UserId { get; set; }
-
-    public int NumberOfFiles { get; set; } = 0;
-
-    public double TotalSize { get; set; } = 0;
-
-    public bool IsDefault { get; set; }
-    public bool IsDeleted { get; set; }
-
-    [Required]
-    public DateTime DateCreated { get; set; } = DateTime.UtcNow;
-    public DateTime? UpdatedAt { get; set; }
-    public DateTime? DeletedAt { get; set; }
-
-    [MaxLength(500)]
-    public string? Description { get; set; }
-
-    public virtual ICollection<FileMetadata>? FileMetadata { get; set; }
+    public Guid Id { get; init; }
+    public Guid UserId { get; init; }
+    public string Name { get; init; } = string.Empty;
+    public string Description { get; init; } = string.Empty;
+    public int NumberOfFiles { get; set; }
+    public double TotalSize { get; set; }
+    public bool IsDefault { get; init; }
+    public bool IsDeleted { get; private set; }
+    public DateTime DateCreated { get; init; } = DateTime.UtcNow;
+    public DateTime? DeletedAt { get; private set; }
+    public virtual ICollection<FileMetadata>? FileMetadata { get; init; }
 
     public void UpdateDetails(FileMetadata fileMetadata)
     {
         NumberOfFiles++;
-        TotalSize++;
+        TotalSize += fileMetadata.FileSize;
+    }
+
+    public void MarkAsDeleted()
+    {
+        IsDeleted = true;
+        DeletedAt = DateTime.UtcNow;
+        FileMetadata?.ForEach(f => f.MarkAsDeleted(DeletedAt));
     }
 }

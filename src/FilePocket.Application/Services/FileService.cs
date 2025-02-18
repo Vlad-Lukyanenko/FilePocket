@@ -259,8 +259,7 @@ public class FileService(
             throw new FileMetadataNotFoundException(fileId);
         }
 
-        fileMetadata.IsDeleted = true;
-        fileMetadata.DeletedAt = DateTime.UtcNow;
+        fileMetadata.MarkAsDeleted();
 
         await repository.SaveChangesAsync(cancellationToken);
 
