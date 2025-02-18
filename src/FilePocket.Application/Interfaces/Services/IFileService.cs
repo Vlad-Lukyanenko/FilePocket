@@ -19,7 +19,7 @@ public interface IFileProvider
         Guid userId,
         Guid fileId);
 
-    Task<List<FileResponseModel>> GetRecentFiles(
+    Task<List<FileResponseModel>> GetLatestAsync(
         Guid userId,
         int number);
 

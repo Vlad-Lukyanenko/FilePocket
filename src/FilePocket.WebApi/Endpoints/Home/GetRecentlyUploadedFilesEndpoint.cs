@@ -24,7 +24,7 @@ namespace FilePocket.WebApi.Endpoints.Home
 
         public override async Task HandleAsync(CancellationToken cancellationToken)
         {
-            var recentFiles = await _service.FileService.GetRecentFiles(UserId, 10);
+            var recentFiles = await _service.FileService.GetLatestAsync(UserId, 10);
 
             var response = _mapper.Map<List<GetRecentlyUploadedFilesResponse>>(recentFiles);
 

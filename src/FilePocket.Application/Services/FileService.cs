@@ -66,7 +66,7 @@ public class FileService(
         };
     }
 
-    public async Task<List<FileResponseModel>> GetRecentFiles(Guid userId, int number)
+    public async Task<List<FileResponseModel>> GetLatestAsync(Guid userId, int number)
     {
         var files = await repository.FileMetadata.GetRecentFilesAsync(userId, number);
 
