@@ -1,0 +1,46 @@
+﻿@page "/files/shared/{SharedFileId}/info"
+@using FilePocket.BlazorClient.Features.Files.Models
+
+<div class="container-fluid" style="min-height: 600px;">
+    <div class="container-fluid w-100 w-md-75 h-100 pb-4">
+        <TopSubMenu Url="/files/shared" Title="Shared File Info" ShowBackButton="true" />
+
+        @if (_sharedFile is not null)
+        {
+            <FileInfoBlock Name="@_sharedFile.FileName" Size="@_sharedFile!.FileSize" Type="@_sharedFile.FileType" CreatedAt="@_sharedFile.CreatedAt" />
+
+            <div class="container text-center shadow-sm mt-2" style="border: 1px solid #CCC; border-radius: 0.4em; font-size: 0.9em;">
+                <div class="row pt-2">
+                    <div class="col">
+                        <p class="fw-semibold mb-0">Share link:</p>
+                        <p class="mb-1">
+                            @GetLink()
+                            <button class="btn btn-sm btn-light ms-2" @onclick="() => CopyIdToClipboard()">
+                                <i class="bi bi-copy"></i>
+                            </button>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <br/>
+
+            @if (_file is not null)
+            {
+                <!-- Display Image if File Type is Image -->
+                @if (_file.FileType == FileTypes.Image)
+                {
+                    <div class="text-center">
+                        <img class="img-fluid border p-2 rounded" src="@_imageContent" style="max-width: 100%;" />
+                    </div>
+                }
+            }
+        }
+    </div>
+</div>
+
+<script>
+    function copyToClipboard(text) {
+        navigator.clipboard.writeText(text);
+    }
+</script>

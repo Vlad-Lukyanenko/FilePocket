@@ -1,11 +1,11 @@
-using FilePocket.Contracts.Services;
-using FilePocket.Shared.Exceptions;
 using FilePocket.WebApi.Attributes;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using System.Net;
 using FilePocket.Domain.Models;
+using FilePocket.Application.Interfaces.Services;
+using FilePocket.Application.Exceptions;
 
 namespace FilePocket.WebApi.Controllers;
 

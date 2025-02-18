@@ -1,4 +1,4 @@
-﻿using FilePocket.Contracts.Services;
+﻿using FilePocket.Application.Interfaces.Services;
 using Microsoft.Extensions.Logging;
 
 namespace FilePocket.Application.Services;

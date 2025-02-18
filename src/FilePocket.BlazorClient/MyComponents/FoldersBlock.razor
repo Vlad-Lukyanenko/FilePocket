@@ -1,0 +1,41 @@
+﻿@using System.Collections.ObjectModel
+@using FilePocket.BlazorClient.Features.Folders.Models
+@using FilePocket.BlazorClient.Helpers
+
+@if (Folders is not null && Folders.Any())
+{
+    <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4 text-center justify-content-center">
+        @foreach (var folder in Folders)
+        {
+            <div class="card h-100 shadow-sm me-2 pt-2" style="width: 8em;">
+                @{
+                    var url = GetFolderUrl(PocketId, folder.Id);
+                }
+                <a class="file-link text-decoration-none" title="@folder.Name" href="@url">
+                    <img src="./assets/img/folder.png" width="64" class="d-block mx-auto mb-1" alt="Folder icon" />
+                    <h6 class="card-title" style="font-size: 0.9em">@Tools.TruncateString(folder.Name)</h6>
+                </a>
+            </div>
+        }
+    </div>
+
+    <hr class="mt-4 mb-4" />
+}
+
+@code {
+    [Parameter]
+    public ObservableCollection<FolderModel>? Folders { get; set; }
+
+    [Parameter]
+    public Guid? PocketId { get; set; }
+
+    private string GetFolderUrl(Guid? pocketId, Guid? folderId)
+    {
+        if (pocketId is null)
+        {
+            return $"/folders/{folderId}/files";
+        }
+
+        return $"/pockets/{pocketId}/folders/{folderId}/files";
+    }
+}

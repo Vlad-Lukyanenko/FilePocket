@@ -1,4 +1,4 @@
-﻿using FilePocket.Domain.Models;
+﻿using FilePocket.Domain;
 
 namespace FilePocket.Application
 {

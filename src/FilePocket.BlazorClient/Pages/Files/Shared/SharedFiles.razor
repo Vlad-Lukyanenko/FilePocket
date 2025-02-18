@@ -1,0 +1,27 @@
+﻿@page "/files/shared"
+@using FilePocket.BlazorClient.Helpers
+
+<div class="container-fluid" style="min-height: 600px;">
+    <div class="container-fluid w-100 w-md-75 h-100 pb-4">
+        <TopSubMenu Url="#" Title="Shared Files" ShowBackButton="false" />
+
+        @if (_sharedFiles?.Any() == true)
+        {
+            <SharedFilesBlock SharedFiles="_sharedFiles" />
+        }
+        else
+        {
+            <div class="text-center no-content">
+                <h6>You don't have any shared files yet.</h6>
+            </div>
+        }
+
+    </div>
+</div>
+
+<script>
+    function copyToClipboard(text) {
+        navigator.clipboard.writeText(text);
+    }
+</script>
+

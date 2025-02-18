@@ -1,0 +1,103 @@
+﻿@page "/pockets/{PocketIdParam}/info"
+@using FilePocket.BlazorClient.Helpers
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
+
+@inject NavigationManager Navigation;
+
+<style>
+    .validation-error {
+        background-color: #ff8059;
+        border: solid 1px;
+    }
+</style>
+
+<div class="container-fluid" style="min-height: 600px;">
+    <div class="container-fluid w-100 w-md-75">
+
+        <!-- Top SubMenu -->
+        <TopSubMenu Url="/pockets" Title="About Pocket" />
+
+        <!-- Pocket Info Section -->
+        <div class="border p-3 mb-3">
+            @if (_pocketInfo is not null)
+            {
+                <!-- ID Section -->
+                <p class="fw-semibold mb-0">Id:</p>
+                <div class="d-flex align-items-center mb-2">
+                    <span>@_pocketInfo.Id</span>
+                    <button class="btn btn-sm btn-light ms-2" @onclick="CopyIdToClipboard"><i class="bi bi-copy"></i></button>
+                </div>
+
+                <!-- Name Section with Inline Editing -->
+                <p class="fw-semibold mb-0">Name:</p>
+                <div class="d-flex align-items-center mb-2">
+                    @if (!_updateProcessStarted)
+                    {
+                        <span class="me-2">@_pocketInfo.Name</span>
+                    }
+                    else
+                    {
+                        <input type="text" @bind="_newPocketName" class="form-control form-control-sm me-2 w-100 w-md-50 @(string.IsNullOrWhiteSpace(_newPocketName) && _updateProcessStarted ? "validation-error" : "")" />
+                    }
+
+                    @if (!_updateProcessStarted)
+                    {
+                        <button class="btn btn-sm btn-light" @onclick="UpdateClicked"><i class="bi bi-pencil-square"></i></button>
+                    }
+                    @if (_updateProcessStarted)
+                    {
+                        <button class="btn btn-sm btn-light me-1" title="Confirm" @onclick="ConfirmUpdateClicked"><i class="bi-check-square"></i></button>
+                        <button class="btn btn-sm btn-light" title="Cancel" @onclick="CancelUpdateClicked"><i class="bi bi-x-square"></i></button>
+                    }
+                </div>
+                <!-- Description Section -->
+                <p class="fw-semibold mb-0">Description:</p>
+                <div class="d-flex align-items-center mb-3">
+                    
+                    @if (!_updateDescriptionProcessStarted)
+                    {
+                        <span class="text-muted me-2">@_pocketInfo.Description</span>
+                        <button class="btn btn-sm btn-light" @onclick="UpdateDescriptionClicked">
+                            <i class="bi bi-pencil-square"></i>
+                        </button>
+                    }
+                    else
+                    {
+                        <input maxlength="MaxDescriptionLength" type="text" @bind="_newPocketDescription" class="form-control form-control-sm me-2 w-100 w-md-50 " />
+                        <button class="btn btn-sm btn-light me-1" title="Confirm" @onclick="ConfirmDescriptionUpdateClicked">
+                            <i class="bi-check-square"></i>
+                        </button>
+                        <button class="btn btn-sm btn-light" title="Cancel" @onclick="CancelDescriptionUpdateClicked">
+                            <i class="bi bi-x-square"></i>
+                        </button>
+                    }
+                </div>
+                @if (_newPocketDescription?.Length > Tools.MaxDescriptionLength && _newPocketDescription != _oldPocketDescription)
+                {
+                    <div class="text-danger">
+                        Description cannot exceed @Tools.MaxDescriptionLength characters.
+                    </div>
+                }
+                <!-- Number of Files Section -->
+                <p class="fw-semibold mb-0">Number of files:</p>
+                <p>@_pocketInfo.NumberOfFiles</p>
+
+                <!-- Total Size Section -->
+                <p class="fw-semibold mb-0">Total size:</p>
+                <p>@FileSizeConverter.ConvertMegabytes(_pocketInfo.TotalSize)</p>
+
+                <!-- Date Created Section -->
+                <p class="fw-semibold mb-0">Created at:</p>
+                <p>@_pocketInfo.DateCreated</p>
+            }
+        </div>
+    </div>
+</div>
+
+
+<script>
+    function copyToClipboard(text) {
+        navigator.clipboard.writeText(text);
+    }
+</script>

@@ -1,10 +1,11 @@
 ﻿using AutoMapper;
-using FilePocket.Contracts.Repositories;
-using FilePocket.Contracts.Services;
+using FilePocket.Application.Exceptions;
+using FilePocket.Application.Interfaces.Repositories;
+using FilePocket.Application.Interfaces.Services;
 using FilePocket.Domain.Entities;
 using FilePocket.Domain.Models;
-using FilePocket.Shared.Exceptions;
 using Microsoft.Extensions.Configuration;
+
 
 namespace FilePocket.Application.Services;
 

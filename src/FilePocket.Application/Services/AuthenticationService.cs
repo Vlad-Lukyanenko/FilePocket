@@ -1,17 +1,16 @@
 ﻿using AutoMapper;
-using FilePocket.Contracts.Services;
 using FilePocket.Domain.Entities;
 using FilePocket.Domain.Models;
-using FilePocket.Shared.Exceptions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using FilePocket.Shared.Claims;
 using FilePocket.Domain.Models.Configuration;
+using FilePocket.Application.Interfaces.Services;
+using System.IdentityModel.Tokens.Jwt;
+using Microsoft.IdentityModel.Tokens;
+using FilePocket.Application.Exceptions;
 
 namespace FilePocket.Application.Services;
 
@@ -128,7 +127,7 @@ public class AuthenticationService : IAuthenticationService
         var claims = new List<Claim>
         {
             new (ClaimTypes.Name, _user!.UserName!),
-            new (CustomClaimTypes.UserId, _user!.Id.ToString())
+            new ("uid", _user!.Id.ToString())
         };
 
         var roles = await _userManager.GetRolesAsync(_user);

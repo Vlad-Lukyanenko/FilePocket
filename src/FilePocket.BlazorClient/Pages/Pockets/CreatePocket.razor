@@ -1,0 +1,41 @@
+﻿@page "/pockets/new"
+@using Microsoft.AspNetCore.Authorization
+@using FilePocket.BlazorClient.Helpers
+@attribute [Authorize]
+
+<div class="container" style="min-height: 600px;">
+    <div class="container-fluid w-100 w-md-75">
+
+        <!-- Top SubMenu -->
+        <TopSubMenu Url="/pockets" Title="New Pocket" />
+
+        <!-- Form Container -->
+        <div class="border p-3 m-auto">
+            <div class="col-12 col-md-9 col-lg-6 mx-auto">
+                <label for="pocketName" class="form-label fw-semibold">Pocket name:</label>
+                <input type="text" @bind="_pocketName" @onblur="NameChanged" class="form-control" id="pocketName">
+                @if (!_validName)
+                {
+                    <div class="text-danger">
+                        Please provide a valid pocket name.
+                    </div>
+                }
+                <label for="pocketDescription" class="form-label fw-semibold mt-3">Description:</label>
+                <textarea @bind="_pocketDescription" @onblur="DescriptionChanged" class="form-control" id="pocketDescription" rows="4" maxlength="MaxDescriptionLength"></textarea>
+                @if (_pocketDescription?.Length > Tools.MaxDescriptionLength)
+                {
+                    <div class="text-danger">
+                        Description cannot exceed @Tools.MaxDescriptionLength characters.
+                    </div>
+                }
+                <!-- Submit Button -->
+                <div class="d-flex justify-content-end mt-3">
+                    <button class="btn btn-outline-success fw-semibold p-2 ps-5 pe-5" @onclick="CreatePocketAsync">Create</button>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+

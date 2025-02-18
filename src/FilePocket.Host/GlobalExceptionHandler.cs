@@ -1,10 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using FilePocket.Contracts.Services;
 using FilePocket.Domain.Models;
-using FilePocket.Shared.Exceptions;
 using Microsoft.AspNetCore.Diagnostics;
 using Serilog;
 using System.Net;
+using FilePocket.Application.Exceptions;
+using FilePocket.Application.Interfaces.Services;
 
 namespace FilePocket.Host;
 

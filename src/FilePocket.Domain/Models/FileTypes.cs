@@ -1,4 +1,4 @@
-﻿namespace FilePocket.Domain.Models
+﻿namespace FilePocket.Domain
 {
     public enum FileTypes
     {

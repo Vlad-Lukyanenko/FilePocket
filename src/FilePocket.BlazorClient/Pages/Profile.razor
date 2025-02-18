@@ -1,0 +1,48 @@
+﻿@page "/profile"
+@using FilePocket.BlazorClient.Features.Users.Requests
+
+<div class="container-fluid" style="min-height: 600px;">
+    <div class="container-fluid w-100 w-md-75">
+
+        <TopSubMenu Title="Profile" ShowBackButton="false"/>
+
+        @if (_isLoading)
+        {
+            <!-- Loading Spinner -->
+            <div class="container-fluid w-100 h-100 text-center p-4 d-flex justify-content-center align-items-center">
+                <div class="spinner-grow" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+        }
+        else
+        {
+            <!-- Form Container -->
+            <div class="border p-3 mt-3">
+                <div class="col-12 col-md-9 col-lg-6 mx-auto">
+                    <label for="email" class="form-label fw-semibold">Email:</label>
+                    <input type="text" class="form-control" value="@_userName" id="email" disabled>
+                    <br />
+                    <label for="firstName" class="form-label fw-semibold">First name:</label>
+                    <input type="text" class="form-control" @bind="_firstName" id="firstName">
+                    <br />
+                    <label for="lastName" class="form-label fw-semibold">Last name:</label>
+                    <input type="text" class="form-control" @bind="_lastName" id="lastName">
+
+                    <!-- Save Button -->
+                    <div class="d-flex justify-content-end mt-3">
+                        <button class="btn btn-success ps-4 pe-4" @onclick="SaveChangesAsync">Save</button>
+                    </div>
+                </div>
+            </div>
+        }
+
+        <br/>
+
+        <div class="alert alert-success alert-dismissible fade show" role="alert" style="@_alertStyle">
+            <strong>@_alertMessage</strong>
+            <button type="button" class="btn-close" aria-label="Close" @onclick="CloseAlert"></button>
+        </div>
+
+    </div>
+</div>
