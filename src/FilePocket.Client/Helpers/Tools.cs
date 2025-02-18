@@ -5,24 +5,6 @@ namespace FilePocket.Client.Helpers
     public static class Tools
     {
         public const int MaxDescriptionLength = 500;
-        public static string FormatFileSize(double? fileSizeInKilobytes)
-        {
-            if (fileSizeInKilobytes is null)
-            {
-                return "0";
-            }
-
-            double fileSizeInBytes = fileSizeInKilobytes.Value * 1024;
-
-            if (fileSizeInBytes >= 1024 * 1024 * 1024)
-                return $"{fileSizeInBytes / 1024.0 / 1024.0 / 1024.0:F2} GB";
-            else if (fileSizeInBytes >= 1024 * 1024)
-                return $"{fileSizeInBytes / 1024.0 / 1024.0:F2} MB";
-            else if (fileSizeInBytes >= 1024)
-                return $"{fileSizeInBytes / 1024.0:F2} KB";
-            else
-                return $"{Math.Round(fileSizeInBytes)} B";
-        }
 
         public static string TruncateString(string fullName, int maxLen = 15)
         {
