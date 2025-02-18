@@ -80,17 +80,18 @@ public class PocketService : IPocketService
     {
         var pocket = await GetPocketAndCheckIfItExists(userId, pocketId, true);
         
-        pocket.IsDeleted = true;
-        pocket.DeletedAt = DateTime.UtcNow;
+        pocket.MarkAsDeleted();
         
         await _repository.SaveChangesAsync();
     }
 
     public async Task DeletePocketAsync(Guid userId, Guid pocketId, bool trackChanges)
     {
-        var pocketToDelete = await GetPocketAndCheckIfItExists(userId, pocketId, trackChanges);
+        var pocketToDelete = await GetPocketAndCheckIfItExists(
+            userId, pocketId, trackChanges);
 
-        _repository.Pocket.DeletePocket(pocketToDelete);
+        pocketToDelete.MarkAsDeleted();
+
         await _repository.SaveChangesAsync();
     }
 
