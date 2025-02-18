@@ -16,6 +16,7 @@ using FilePocket.Application.Interfaces.Services;
 using FilePocket.Persistence;
 using FilePocket.Persistence.Repositories;
 using FilePocket.Application.Interfaces.Repositories;
+using FastEndpoints;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,6 +33,7 @@ builder.Services.AddDbContext<FilePocketDbContext>(options =>
 builder.Services.AddControllers()
     .AddApplicationPart(typeof(WebApiAssemblyReference).Assembly);
 
+builder.Services.AddFastEndpoints();
 
 var allowedOrigins = builder.Configuration.GetSection("AllowedOrigins").Get<string[]>();
 
@@ -140,6 +142,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.UseFastEndpoints();
 
 app.Run();
 

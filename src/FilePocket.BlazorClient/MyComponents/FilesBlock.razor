@@ -1,4 +1,5 @@
-﻿@using FilePocket.BlazorClient.Helpers
+﻿@using FilePocket.BlazorClient.Features.Files.Models
+@using FilePocket.BlazorClient.Helpers
 @using FilePocket.BlazorClient.Services.Files.Models
 @using System.Collections.Concurrent
 @using System.Collections.ObjectModel
@@ -31,7 +32,9 @@
 
 @code {
 
-    [Parameter] public ObservableCollection<FileInfoModel>? Files { get; set; }
+    [Parameter] 
+    public ObservableCollection<FileInfoModel>? Files { get; set; }
+
     private string GetFileUrl(Guid fileId, Guid? pocketId, Guid? folderId)
     {
         if (pocketId is null && folderId is null)

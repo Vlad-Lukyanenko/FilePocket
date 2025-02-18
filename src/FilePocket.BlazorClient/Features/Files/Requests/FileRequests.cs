@@ -5,6 +5,7 @@ using FilePocket.BlazorClient.Services.Files.Models;
 using Newtonsoft.Json;
 using System.Net.Http.Json;
 using FilePocket.BlazorClient.Shared.Models;
+using FilePocket.BlazorClient.Features.Files.Models;
 
 namespace FilePocket.BlazorClient.Services.Files.Requests
 {

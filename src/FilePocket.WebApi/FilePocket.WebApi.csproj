@@ -12,11 +12,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="FastEndpoints" Version="5.34.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\FilePocket.Application\FilePocket.Application.csproj" />
+    <ProjectReference Include="..\FilePocket.Contracts\FilePocket.Contracts.csproj" />
     <ProjectReference Include="..\FilePocket.Domain\FilePocket.Domain.csproj" />
   </ItemGroup>
 
