@@ -1,4 +1,4 @@
-﻿using FilePocket.Contracts.Services;
+﻿using FilePocket.Application.Interfaces.Services;
 using FilePocket.Domain.Models;
 using FilePocket.WebApi.Attributes;
 using Microsoft.AspNetCore.Mvc;

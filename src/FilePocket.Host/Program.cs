@@ -3,10 +3,6 @@ using FilePocket.Shared.Extensions;
 using Serilog;
 using FilePocket.Host;
 using FilePocket.Application.Services;
-using FilePocket.Contracts.Services;
-using FilePocket.DataAccess.Repositories;
-using FilePocket.DataAccess;
-using FilePocket.Contracts.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using FilePocket.Domain.Entities;
@@ -16,6 +12,10 @@ using Microsoft.OpenApi.Models;
 using FilePocket.Domain.Models.Configuration;
 using FilePocket.WebApi.Attributes;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
+using FilePocket.Application.Interfaces.Services;
+using FilePocket.Persistence;
+using FilePocket.Persistence.Repositories;
+using FilePocket.Application.Interfaces.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -142,6 +142,7 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
 
 // Used by FilePocket.Application.IntegrationTests project
 public partial class Program {}

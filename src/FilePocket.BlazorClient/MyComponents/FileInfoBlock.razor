@@ -1,0 +1,50 @@
+﻿@using FilePocket.BlazorClient.Features.Files.Models
+@using FilePocket.BlazorClient.Helpers
+
+<style>
+    .file-info-container {
+        width: 100%;
+        padding-right: var(--bs-gutter-x, 0.75rem);
+        padding-left: var(--bs-gutter-x, 0.75rem);
+        margin-right: auto;
+        margin-left: auto;
+        border: 1px solid #CCC;
+        border-radius: 0.4em;
+        font-size: 0.9em;
+    }
+</style>
+
+<div class="file-info-container text-center shadow-sm mt-2">
+    <div class="row p-2">
+        <div class="col">
+            <p class="fw-bold mb-1">name:</p>
+            <label>@Tools.TruncateString(Name)</label>
+        </div>
+        <div class="col">
+            <p class="fw-bold mb-1">size:</p>
+            <label>@FileSizeConverter.ConvertMegabytes(Size)</label>
+        </div>
+        <div class="col">
+            <p class="fw-bold mb-1">type:</p>
+            <label>@Type</label>
+        </div>
+        <div class="col">
+            <p class="fw-bold mb-1">created at:</p>
+            <label>@CreatedAt</label>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string Name { get; set; } = string.Empty;
+
+    [Parameter]
+    public double Size { get; set; }
+
+    [Parameter]
+    public FileTypes? Type{ get; set; }
+
+    [Parameter]
+    public DateTime CreatedAt { get; set; }
+}

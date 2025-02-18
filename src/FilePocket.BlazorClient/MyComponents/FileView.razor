@@ -1,0 +1,97 @@
+﻿@using FilePocket.BlazorClient.Features.Files.Models
+@using FilePocket.BlazorClient.Helpers
+
+<div class="container-fluid" style="min-height: 600px;">
+    <div class="container-fluid w-100 w-md-75 h-100 pb-4">
+        @if (_isLoading)
+        {
+            <div class="container-fluid w-100 h-100 text-center p-4 d-flex justify-content-center align-items-center">
+                <div class="spinner-grow" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+        }
+        else
+        {
+            <TopSubMenu Url="@_goBackUrl" Title="My File" />
+
+            <!-- Action Button Row -->
+            <div class="row mb-3">
+                <div class="col-12 d-flex justify-content-start align-items-center">
+                    <button class="btn btn-outline-success me-2 p-1 px-3" @onclick="DownloadFile">
+                        <i class="bi bi-download"></i>
+                    </button>
+
+                    <a href="@ShareFileUrl()" class="btn btn-outline-warning p-1 px-3">
+                        <i class="bi bi-share"></i>
+                    </a>
+
+                    <!-- Delete Button aligned to right -->
+                    <div style="display: flex; justify-content: flex-end; width: 100%; gap: 8px;">
+                        @if (!_removalProcessStarted)
+                        {
+                            <button class="btn btn-outline-danger p-1"
+                                    style="border-radius: 0.4em; min-width: 6em;"
+                                    @onclick="() => _removalProcessStarted = true">
+                                <i class="bi bi-trash fs-6"></i> Delete
+                            </button>
+                        }
+                        else
+                        {
+                            <button class="btn btn-sm btn-outline-danger p-1"
+                                    style="border-radius: 0.4em; min-width: 6em;"
+                                    title="Confirm"
+                                    @onclick="MoveToTrashClick">
+                                <i class="bi-check-square fs-6"></i> Confirm
+                            </button>
+                            <button class="btn btn-sm btn-outline-secondary p-1"
+                                    style="border-radius: 0.4em; min-width: 6em;"
+                                    title="Cancel"
+                                    @onclick="() => _removalProcessStarted = false">
+                                <i class="bi bi-x-square fs-6"></i> Cancel
+                            </button>
+                        }
+                    </div>
+                </div>
+
+
+            </div>
+
+            <div class="w-100 text-center">
+
+                <FileInfoBlock Name="@_file.OriginalName" Size="@_file.FileSize" Type="@_file.FileType" CreatedAt="@_file.DateCreated" />
+
+                <br />
+
+                @if (_file.FileByteArray is null && !_isPageLoaded)
+                {
+                    <div class="container-fluid w-100 h-100 text-center p-4 d-flex justify-content-center align-items-center">
+                        <div class="spinner-grow" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <!-- Display Image if File Type is Image -->
+                    @if (_file.FileType == FileTypes.Image)
+                    {
+                        <img class="img-fluid border p-2 rounded" src="@_imageContent" />
+                    }
+                }
+            </div>
+        }
+
+    </div>
+</div>
+
+<script>
+    function saveFile(filename, mimeType, bytesBase64) {
+        var link = document.createElement('a');
+        link.download = filename;
+        link.href = `data:${mimeType};base64,${bytesBase64}`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+</script>

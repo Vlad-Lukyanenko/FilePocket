@@ -1,13 +1,9 @@
-using FilePocket.Contracts.Services;
 using FilePocket.Domain.Models;
-using OpenCvSharp;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
-using FilePocket.Domain.Models;
-using OpenCvSharp;
-using SixLabors.ImageSharp.PixelFormats;
+using FilePocket.Application.Interfaces.Services;
 
 
 namespace FilePocket.Application.Services
