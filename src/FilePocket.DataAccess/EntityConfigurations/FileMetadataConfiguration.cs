@@ -1,4 +1,5 @@
-﻿using FilePocket.Domain.Entities;
+﻿using FilePocket.DataAccess.Extensions;
+using FilePocket.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -9,11 +10,11 @@ public class FileMetadataConfiguration : IEntityTypeConfiguration<FileMetadata>
     private const int MaxActualNameLength = 255;
     private const int MaxOriginalNameLength = 255;
 
-    // Not sure, but need to set the max path length to avoid varchar(max) in db level
-    public const int MaxPathLength = 255;
-
     public void Configure(EntityTypeBuilder<FileMetadata> builder)
     {
+        builder.Property(f => f.UserId)
+            .IsRequired();
+
         builder.HasIndex(f => f.ActualName)
             .IsUnique();
 
@@ -35,9 +36,8 @@ public class FileMetadataConfiguration : IEntityTypeConfiguration<FileMetadata>
             .IsRequired();
 
         builder.Property(f => f.FileSize)
-            .IsRequired();
-
-        builder.Property(f => f.UserId)
+            .HasDefaultPrecision()
+            .HasDefaultValue(0)
             .IsRequired();
     }
 }
