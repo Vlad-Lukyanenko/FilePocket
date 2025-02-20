@@ -10,6 +10,7 @@ using FilePocket.BlazorClient.Services.Pockets.Requests;
 using System.Collections.ObjectModel;
 using FilePocket.BlazorClient.Shared.Models;
 using FilePocket.BlazorClient.Features.Trash;
+using TusDotNetClient;
 
 namespace FilePocket.BlazorClient.MyComponents
 {
@@ -206,6 +207,19 @@ namespace FilePocket.BlazorClient.MyComponents
             await Task.WhenAll(uploadTasks);
 
             await ResetFileInput();
+        }
+
+        private async void UploadFileByTusDotnetClient(InputFileChangeEventArgs e)
+        {
+            var files = e.GetMultipleFiles(maxAllowedFiles);
+            if (!files.Any())
+            {
+                Console.WriteLine("No files to process.");
+                return;
+            }
+
+            var tusServerUrl = "https://your-tus-server.com/files/";
+            
         }
 
         private void GoBack()

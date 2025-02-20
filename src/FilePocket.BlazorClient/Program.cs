@@ -1,4 +1,5 @@
-﻿using Blazored.LocalStorage;
+﻿using BirdMessenger;
+using Blazored.LocalStorage;
 using FilePocket.BlazorClient;
 using FilePocket.BlazorClient.Features;
 using FilePocket.BlazorClient.Features.Authentication;
@@ -12,6 +13,8 @@ using FilePocket.BlazorClient.Services.Pockets.Requests;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using TusDotNetClient;
+using TusClient = BirdMessenger.TusClient;
 
 namespace FilePocket.Client
 {
@@ -31,6 +34,11 @@ namespace FilePocket.Client
             {
                 client.DefaultRequestHeaders.Add("Accept", "application/json");
             });
+
+            // builder.Services.AddScoped<FilePocketDotNetTusClient>();
+            builder.Services.AddHttpClient<ITusClient, TusClient>();
+            builder.Services.AddScoped<FilePocketBirdClient>();
+            // builder.Services.AddScoped<TusUploadService>();
 
             builder.Services.AddScoped<NavigationHistoryService>();
             builder.Services.AddScoped<AuthenticationStateProvider, AuthStateProvider>();

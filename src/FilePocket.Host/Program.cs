@@ -17,6 +17,7 @@ using FilePocket.Persistence;
 using FilePocket.Persistence.Repositories;
 using FilePocket.Application.Interfaces.Repositories;
 using FastEndpoints;
+using FilePocket.WebApi.Middlewares.Upload.Tus;
 using Mapster;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -47,7 +48,7 @@ builder.Services.AddCors(options =>
                .AllowAnyMethod()
                .AllowAnyHeader()
                .AllowCredentials() // If using cookies or authentication
-               .WithExposedHeaders("X-Pagination");
+               .WithExposedHeaders("X-Pagination", "Tus-Resumable", "Upload-Offset", "Location", "Upload-Length", "Upload-Expires", "Upload-Metadata");
     });
 });
 
@@ -82,6 +83,7 @@ builder.Services.ConfigureJWT(builder.Configuration);
 
 builder.Services.Configure<AdminSeedingDataModel>(builder.Configuration.GetSection("AdminSeedingData"));
 builder.Services.Configure<AccountConsumptionConfigurationModel>(builder.Configuration.GetSection(key: AccountConsumptionConfigurationModel.Section));
+builder.Services.Configure<TusConfigurationModel>(builder.Configuration.GetSection(key: TusConfigurationModel.Section));
 builder.Services.Configure<JwtConfigurationModel>(builder.Configuration.GetSection("JwtSettings"));
 builder.Services.Configure<ApiKeyConfigurationModel>(builder.Configuration.GetSection("ApiKeySettings"));
 builder.Services.AddHostedService<InitialRolesAndAdminSeeding>();
@@ -144,11 +146,11 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.UseTusDotNet();
 app.MapControllers();
 app.UseFastEndpoints();
 
-app.Run();
-
+await app.RunAsync();
 
 // Used by FilePocket.Application.IntegrationTests project
-public partial class Program {}
+public partial class Program;

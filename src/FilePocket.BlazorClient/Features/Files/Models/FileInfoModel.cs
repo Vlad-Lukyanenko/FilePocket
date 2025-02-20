@@ -28,6 +28,10 @@ namespace FilePocket.BlazorClient.Services.Files.Models
         {
             HasFailedUpload = true;
         }
+        
+        public long UploadedBytes { get; set; }
+        public long TotalBytes { get; set; }
+        public int ProgressPercentage => TotalBytes == 0 ? 0 : (int)((UploadedBytes * 100) / TotalBytes);
     }
     
     public class FileUploadError

@@ -58,6 +58,8 @@
                     <InputFile hidden id="fileInput" OnChange="UploadFiles" multiple />
                 </label>
 
+                <UploadComponent></UploadComponent>
+
                 @{
                     var folderId = FolderId is null ? "" : $"{FolderId}/";
 

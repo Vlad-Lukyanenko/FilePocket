@@ -1,0 +1,29 @@
+﻿@using FilePocket.BlazorClient.Services.Files.Models
+@inject FilePocketBirdClient UploadService
+
+<h3>Tus File Upload</h3>
+
+<!-- Upload Button -->
+<label class="btn btn-outline-success py-0 px-2 me-2">
+    <i class="ps-2 pe-2 bi-cloud-arrow-up fs-4"> Tusik</i>
+    <InputFile multiple OnChange="UploadFileAsync" />
+</label>
+
+@if (_files.Any())
+{
+    <ul>
+        @foreach (var file in _files)
+        {
+            <li>
+                <span>@file.OriginalName</span>
+                <progress value="@file.UploadedBytes" max="@file.TotalBytes"></progress>
+                <span>@($"{file.ProgressPercentage}%")</span>
+            </li>
+        }
+    </ul>
+}
+
+@code {
+    private List<FileInfoModel> _files = new();
+    private CancellationTokenSource _cts = new();
+}

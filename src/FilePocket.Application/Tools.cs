@@ -4,6 +4,19 @@ namespace FilePocket.Application
 {
     public static class Tools
     {
+        public static readonly HashSet<string> AllowedExtensions =
+        [
+            ".txt", ".csv", ".log", ".xml", ".html", ".htm", ".json",
+            ".pdf", ".doc", ".docx", ".xls", ".xlsx", ".ppt", ".pptx", ".rtf",
+            ".png", ".jpeg", ".jpg", ".gif", ".bmp", ".svg", ".ico", ".tiff", ".webp",
+            ".mp3", ".wav", ".ogg", ".m4a", ".flac", ".vma",
+            ".mp4", ".avi", ".mov", ".wmv", ".flv", ".mkv", ".webm",
+            ".epub", ".mobi", ".fb2",
+            ".zip", ".rar", ".7z", ".tar", ".gz",
+            ".js", ".css", ".java", ".c", ".cpp", ".py", ".php", ".sh", ".bat",
+            ".ttf", ".otf", ".woff", ".woff2"
+        ];
+        
         public static FileTypes DefineFileType(string fileExtension)
         {
             FileTypes fileType;
