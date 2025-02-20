@@ -23,14 +23,53 @@
                             <div class="row gy-3 gy-md-4 overflow-hidden">
                                 <!-- Email Input -->
                                 <div class="col-12">
-                                    <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
-                                    <InputText @bind-Value="_loginModel.Email" type="email" class="form-control" id="email" placeholder="name@example.com" required />
+                                    <label for="email" class="form-label">
+                                        Email
+                                        @if (showEmailError)
+                                        {
+                                            <span class="text-danger">*</span>
+                                        }
+                                    </label>
+                                    <InputText @bind-Value="_loginModel.Email" 
+                                        type="email"   
+                                        class="form-control" 
+                                        id="email" 
+                                        placeholder="name@example.com" required 
+                                        @onblur="ValidateEmail"
+                                    />
+                                    @if (showEmailError)
+                                    {
+                                        <div class="text-danger"
+                                          style="font-size: small; "
+                                        >
+                                        Please fill out this field!
+                                        </div>
+                                    }
                                 </div>
 
                                 <!-- Password Input -->
                                 <div class="col-12">
-                                    <label for="password" class="form-label">Password <span class="text-danger">*</span></label>
-                                    <InputText @bind-Value="_loginModel.Password" type="password" class="form-control" id="password" required />
+                                    <label for="password" class="form-label">
+                                        Password
+                                        @if (showPasswordError)
+                                        {
+                                            <span class="text-danger">*</span>
+                                        }
+                                    </label>
+                                    <InputText @bind-Value="_loginModel.Password" 
+                                    type="password" 
+                                    class="form-control" 
+                                    id="password" required 
+                                    @onblur="ValidatePassword"
+                                    />
+                                    @if (showPasswordError)
+                                    {
+                                        <div class="text-danger"
+                                          style="font-size: small; "
+                                        >
+                                        Please fill out this field!
+                                        </div>
+                                    }
                                 </div>
 
                                 <!-- Remember Me Checkbox -->
@@ -68,3 +107,18 @@
         </div>
     </div>
 </section>
+
+@code {
+    private bool showEmailError = false;
+    private bool showPasswordError = false;
+
+    private void ValidateEmail()
+    {
+        showEmailError = string.IsNullOrWhiteSpace(_loginModel.Email);
+    }
+
+    private void ValidatePassword()
+    {
+        showPasswordError = string.IsNullOrWhiteSpace(_loginModel.Password);
+    }
+}
