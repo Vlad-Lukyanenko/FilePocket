@@ -15,6 +15,8 @@ namespace FilePocket.BlazorClient.MyComponents
 
         private LoginModel _loginModel = new LoginModel();
 
+        private bool _wrongEmailOrPassword = false;
+
         private async void FormSubmitted(EditContext editContext)
         {
             var success = await AuthRequests.LoginAsync(_loginModel);
@@ -23,6 +25,8 @@ namespace FilePocket.BlazorClient.MyComponents
             {
                 Navigation.NavigateTo("/");
             }
+            _wrongEmailOrPassword = true;
+            StateHasChanged();
         }
     }
 }
