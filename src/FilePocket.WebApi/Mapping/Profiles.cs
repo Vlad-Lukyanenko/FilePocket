@@ -19,6 +19,8 @@ namespace FilePocket.WebApi.Mapping
             CreateMap<FolderModel?, Folder?>().ReverseMap();
 
             CreateMap<SharedFileModel?, SharedFile?>().ReverseMap();
+
+            CreateMap<Bookmark, BookmarkModel>().ReverseMap();
         }
     }
 }
