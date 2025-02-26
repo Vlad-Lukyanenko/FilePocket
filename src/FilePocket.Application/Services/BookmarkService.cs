@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using FilePocket.Application.Exceptions;
 using FilePocket.Application.Interfaces.Repositories;
 using FilePocket.Application.Interfaces.Services;
 using FilePocket.Domain.Entities;
@@ -19,11 +20,22 @@ public class BookmarkService : IBookmarkService
 
     public async Task<BookmarkModel> CreateBookmarkAsync(BookmarkModel bookmark)
     {
+        await AttachBookmarkToPocketAsync(bookmark);
         var bookmarkEntity = _mapper.Map<Bookmark>(bookmark);
 
         _repository.Bookmark.CreateBookmark(bookmarkEntity);
         await _repository.SaveChangesAsync();
 
         return _mapper.Map<BookmarkModel>(bookmarkEntity);
+    }
+
+    private async Task AttachBookmarkToPocketAsync(BookmarkModel bookmark)
+    {
+        var pocket = await _repository.Pocket.GetByIdAsync(bookmark.UserId, bookmark.PocketId, trackChanges: true);
+
+        if (pocket is null)
+        {
+            throw new PocketNotFoundException(bookmark.PocketId);
+        }
     }
 }
