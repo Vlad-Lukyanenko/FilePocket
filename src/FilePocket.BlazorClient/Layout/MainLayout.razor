@@ -5,50 +5,13 @@
 
 <PageTitle>File Pocket Application</PageTitle>
 
-<div class="container px-1 px-sm-3">
+<div class="container px-1 px-sm-3 d-flex">
     <AuthorizeView>
         <Authorized>
-            <!-- Navbar -->
-            <header class="row position-relative">
-                <nav class="card navbar navbar-expand-md rounded-bottom w-100 mb-2 mt-2 px-2">
-                    <div class="container-fluid">
-                        <!-- Brand Logo and Name -->
-                        <a class="navbar-brand fw-bold main-text-header d-flex align-items-center" href="#">
-                            <img src="./assets/img/cloud-upload.png" alt="Logo" width="28" height="28" class="d-inline-block align-text-top me-2">
-                            File Pocket
-                        </a>
-
-                        <!-- Mobile Toggle Button -->
-                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
-                            <span class="navbar-toggler-icon"></span>
-                        </button>
-
-                        <!-- Collapsible Content -->
-                        <div class="collapse navbar-collapse" id="navbarContent">
-                            <div class="d-flex flex-column flex-md-row align-items-center ms-auto gap-3">
-                                <!-- Search Form -->
-                                <form class="d-flex" role="search">
-                                    <div class="search-container">
-                                        <input class="search-box" type="text" placeholder="looking for something?" />
-                                        <button class="search-button">
-                                            <i class="fas fa-search"></i>
-                                        </button>
-                                    </div>
-                                </form>
-
-                                <!-- Logout Button -->
-                                <a href="/logout" class="btn btn-outline-danger px-3">
-                                    <strong>Logout</strong>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </nav>
-            </header>
-
-            <div class="row mt-0">
+            
+            <div class="col-3">
                 <!-- Sidebar Menu -->
-                <aside class="card shadow-sm col-12 col-md-2 mb-2 mb-md-0 me-md-2 p-0">
+                <aside class="card shadow-sm mb-2 mb-md-0 me-md-2 p-0">
                     <div class="d-md-none p-2 text-center fw-bold border-bottom">
                         Menu
                     </div>
@@ -112,11 +75,55 @@
                         </li>
                     </ul>
                 </aside>
+            </div>
+
+            <div class="col-9 container-fluid">
+                <!-- Navbar -->
+                <header class="row position-relative">
+                    <nav class="card navbar navbar-expand-md rounded-bottom w-100 mb-2">
+                        <div class="container-fluid">
+                            <!-- Brand Logo and Name -->
+                            <a class="navbar-brand fw-bold main-text-header d-flex align-items-center" href="#">
+                                <img src="./assets/img/logo.png" alt="Logo" width="28" height="28" class="d-inline-block align-text-top me-2">
+                                File Pocket
+                            </a>
+
+                            <!-- Mobile Toggle Button -->
+                            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+                                <span class="navbar-toggler-icon"></span>
+                            </button>
+
+                            <!-- Collapsible Content -->
+                            <div class="collapse navbar-collapse" id="navbarContent">
+                                <div class="d-flex flex-column flex-md-row align-items-center ms-auto gap-3">
+                                    <!-- Search Form -->
+                                    <form class="d-flex" role="search">
+                                        <div class="search-container">
+                                            <input class="search-box" type="text" placeholder="looking for something?" />
+                                            <button class="search-button">
+                                                <i class="fas fa-search"></i>
+                                            </button>
+                                        </div>
+                                    </form>
+
+                                    <!-- Logout Button -->
+                                    <a href="/logout" class="btn btn-outline-danger px-3">
+                                        <strong>Logout</strong>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </nav>
+                </header>
+
                 <!-- Main Content Area -->
-                <main class="card shadow-sm col-12 col-md-10 rounded p-2 p-sm-3" style="background-color: #fcfcfc;">
+                <main class="card shadow-sm w-100 rounded p-2" style="background-color: #fcfcfc;">
                     @Body
                 </main>
             </div>
+            
+
+            
         </Authorized>
         <NotAuthorized>
             <section class="col-12 mt-3 text-center pt-3 pb-4">
