@@ -29,6 +29,19 @@ public class BookmarkService : IBookmarkService
         return _mapper.Map<BookmarkModel>(bookmarkEntity);
     }
 
+    public async Task UpdateBookmarkAsync(BookmarkModel bookmark)
+    {
+        var bookmarkToUpdate = await _repository.Bookmark.GetByIdAsync(bookmark.Id);
+
+        if (bookmarkToUpdate is not null)
+        {
+            _mapper.Map(bookmark, bookmarkToUpdate);
+            bookmarkToUpdate.UpdatedAt = DateTime.UtcNow;
+
+            await _repository.SaveChangesAsync();
+        }
+    }
+
     public async Task DeleteBookmarkAsync(Guid id)
     {
         var bookmarkToDelete = await _repository.Bookmark.GetByIdAsync(id);
