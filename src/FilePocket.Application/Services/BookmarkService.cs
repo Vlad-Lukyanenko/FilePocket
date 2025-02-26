@@ -29,6 +29,17 @@ public class BookmarkService : IBookmarkService
         return _mapper.Map<BookmarkModel>(bookmarkEntity);
     }
 
+    public async Task DeleteBookmarkAsync(Guid id)
+    {
+        var bookmarkToDelete = await _repository.Bookmark.GetByIdAsync(id);
+
+        if (bookmarkToDelete is not null)
+        {
+            _repository.Bookmark.DeleteBookmark(bookmarkToDelete);
+            await _repository.SaveChangesAsync();
+        }
+    }
+
     private async Task AttachBookmarkToPocketAsync(BookmarkModel bookmark)
     {
         var pocket = await _repository.Pocket.GetByIdAsync(bookmark.UserId, bookmark.PocketId, trackChanges: true);

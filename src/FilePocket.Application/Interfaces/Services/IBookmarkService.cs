@@ -5,4 +5,5 @@ namespace FilePocket.Application.Interfaces.Services;
 public interface IBookmarkService
 {
     Task<BookmarkModel> CreateBookmarkAsync(BookmarkModel bookmark);
+    Task DeleteBookmarkAsync(Guid id);
 }

@@ -10,8 +10,18 @@ public class BookmarkRepository : RepositoryBase<Bookmark>, IBookmarkRepository
     {
     }
 
+    public async Task<Bookmark> GetByIdAsync(Guid id)
+    {
+        return await FindByCondition(b => b.Id.Equals(id));
+    }
+
     public void CreateBookmark(Bookmark bookmark)
     {
         Create(bookmark);
+    }
+
+    public void DeleteBookmark(Bookmark bookmark)
+    {
+        Delete(bookmark);
     }
 }
