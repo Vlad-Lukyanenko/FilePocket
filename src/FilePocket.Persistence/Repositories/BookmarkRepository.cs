@@ -10,6 +10,11 @@ public class BookmarkRepository : RepositoryBase<Bookmark>, IBookmarkRepository
     {
     }
 
+    public IEnumerable<Bookmark> GetAll(Guid userId, bool trackChanges)
+    {
+        return FindByCondition(b => b.UserId == userId, trackChanges).OrderByDescending(b => b.CreatedAt);
+    }
+
     public async Task<Bookmark> GetByIdAsync(Guid id)
     {
         return await FindByCondition(b => b.Id.Equals(id));

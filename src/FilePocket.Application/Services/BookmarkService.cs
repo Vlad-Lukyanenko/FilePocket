@@ -18,6 +18,13 @@ public class BookmarkService : IBookmarkService
         _mapper = mapper;
     }
 
+    public IEnumerable<BookmarkModel> GetAll(Guid userId, bool trackChanges)
+    {
+        var bookmarks = _repository.Bookmark.GetAll(userId, trackChanges);
+
+        return _mapper.Map<IEnumerable<BookmarkModel>>(bookmarks);
+    }
+
     public async Task<BookmarkModel> CreateBookmarkAsync(BookmarkModel bookmark)
     {
         await AttachBookmarkToPocketAsync(bookmark);
