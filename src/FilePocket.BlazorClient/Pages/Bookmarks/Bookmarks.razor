@@ -12,14 +12,85 @@
         <!-- Top SubMenu -->
         <TopSubMenu Title="My bookmarks" ShowBackButton="false" />
 
-        @if (false)
+        @if (_bookmarks.Any())
         {
-            
+            <!-- Action Button Row -->
+            <div class="row mx-auto">
+                <div class="col-12 d-flex align-items-center mb-3">
+                    <!-- New Bookmark Button -->
+                    <div>
+                        <a href="@(GetCreateBookmarkUrl())" class="btn btn-lg btn-outline-success p-1">
+                            <i class="ps-2 pe-2 bi bi-bookmark-plus my-fs-4"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-container">
+                @foreach (var bookmark in _bookmarks)
+                {
+                    <div class="my-card mb-3 shadow">
+
+                        <div class="my-card-header">
+                            <div class="fw-bold mt-0 d-flex align-items-center justify-content-center" style="font-size: 1.2em;">
+                                <i class="fs-4 bi-bookmark"></i>
+                                <span class="ms-2">@bookmark.Title</span>
+                            </div>
+                        </div>
+
+                        <div class="my-card-body p-3">
+                            <p class="mb-2 d-flex align-items-center">
+                                <i class="bi bi-link-45deg me-2 body-icon"></i>
+                                <strong class="body-main-text">Url:</strong>
+                                <a href="@(bookmark.Url)" class="body-text">@bookmark.Url</a>
+                            </p>
+                            <p class="mb-0 d-flex align-items-center">
+                                <i class="bi bi-calendar-week me-2 body-icon"></i>
+                                <strong class="body-main-text">Created at:</strong>
+                                <span class="body-text">@bookmark.CreatedAt</span>
+                            </p>
+                        </div>
+
+                        <div class="card-footer text-center p-3">
+
+                            @if (bookmark.Id != _bookmarkIdToBeDeleted)
+                            {
+                                <div class="d-flex justify-content-end gap-2">
+                                    <a class="btn btn-outline-primary btn-sm action-btn">
+                                        <i class="bi bi-arrow-repeat me-1"></i> Update
+                                    </a>
+                                    <a class="btn btn-outline-danger btn-sm action-btn">
+                                        <i class="bi bi-trash me-1"></i> Delete
+                                    </a>
+                                </div>
+                            }
+
+                            @if (bookmark.Id == _bookmarkIdToBeDeleted)
+                            {
+                                <div class="d-flex justify-content-center gap-2">
+                                    <button class="btn btn-sm btn-warning me-2"
+                                            style="border-radius: 10px;"
+                                            title="Confirm"
+                                            >
+                                        <i class="bi-check-square me-1"></i> Confirm
+                                    </button>
+                                    <button class="btn btn-sm"
+                                            style="border-radius: 10px;"
+                                            title="Cancel"
+                                            >
+                                        <i class="bi bi-x-square me-1"></i> Cancel
+                                    </button>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
            
         }
         else
         {
-            if (true)
+            if (!_loading)
             {                
                 <div class="mx-auto w-100 text-center fw-semibold mt-4">
                     <img src="./assets/img/oops.png" width="100" class="mb-3 opacity-75">
