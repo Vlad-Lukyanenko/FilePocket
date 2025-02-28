@@ -1,0 +1,48 @@
+﻿@page "/bookmarks"
+@page "/folders/{FolderId:guid}/bookmarks"
+@page "/pockets/{PocketId:guid}/bookmarks"
+@page "/pockets/{PocketId:guid}/folders/{FolderId:guid}/bookmarks"
+
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
+
+<div class="container-fluid" style="min-height: 600px;">
+    <div class="container-fluid w-100 my-w-md-75">
+
+        <!-- Top SubMenu -->
+        <TopSubMenu Title="My bookmarks" ShowBackButton="false" />
+
+        @if (false)
+        {
+            
+           
+        }
+        else
+        {
+            if (true)
+            {                
+                <div class="mx-auto w-100 text-center fw-semibold mt-4">
+                    <img src="./assets/img/oops.png" width="100" class="mb-3 opacity-75">
+
+                    <div class="text-center no-content">
+                        <h6>
+                            Looks like you do not have any bookmarks yet.<br /> 
+                            Let's create the first one.
+                        </h6>
+                    </div>
+
+                    <a href="@(GetCreateBookmarkUrl())" class="btn btn-outline-success fw-semibold p-2 ps-5 pe-5 mt-3">Create</a>
+                </div>
+            }
+            else
+            {
+                <!-- Loading Spinner -->
+                <div class="container-fluid w-100 h-100 text-center p-4 d-flex justify-content-center align-items-center">
+                    <div class="spinner-grow" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>
