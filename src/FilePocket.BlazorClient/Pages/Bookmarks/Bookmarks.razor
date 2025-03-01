@@ -59,7 +59,8 @@
                                     <a class="btn btn-outline-primary btn-sm action-btn">
                                         <i class="bi bi-arrow-repeat me-1"></i> Update
                                     </a>
-                                    <a class="btn btn-outline-danger btn-sm action-btn">
+                                    <a class="btn btn-outline-danger btn-sm action-btn"
+                                       @onclick="() => RemoveClicked(bookmark)">
                                         <i class="bi bi-trash me-1"></i> Delete
                                     </a>
                                 </div>
@@ -67,17 +68,15 @@
 
                             @if (bookmark.Id == _bookmarkIdToBeDeleted)
                             {
-                                <div class="d-flex justify-content-center gap-2">
-                                    <button class="btn btn-sm btn-warning me-2"
-                                            style="border-radius: 10px;"
+                                <div class="d-flex justify-content-end gap-2">
+                                    <button class="btn btn-sm btn-warning confirmation-btn me-2"
                                             title="Confirm"
-                                            >
+                                            @onclick="ConfirmDeletionClickedAsync">
                                         <i class="bi-check-square me-1"></i> Confirm
                                     </button>
-                                    <button class="btn btn-sm"
-                                            style="border-radius: 10px;"
+                                    <button class="btn btn-sm confirmation-btn"
                                             title="Cancel"
-                                            >
+                                            @onclick="CancelDeletionClicked">
                                         <i class="bi bi-x-square me-1"></i> Cancel
                                     </button>
                                 </div>

@@ -38,4 +38,30 @@ public partial class Bookmarks
 
         return $"/pockets/{PocketId}/folders/{FolderId}/bookmarks/new";
     }
+
+    private void RemoveClicked(BookmarkModel bookmark)
+    {
+        _bookmarkIdToBeDeleted = bookmark.Id;
+    }
+
+    private async Task ConfirmDeletionClickedAsync()
+    {
+        var bookmark = _bookmarks.FirstOrDefault(b => b.Id == _bookmarkIdToBeDeleted);
+
+        if (bookmark is not null)
+        {
+            var isDeleted = await BookmarkRequests.DeleteAsync(bookmark.Id);
+
+            if (isDeleted)
+            {
+                _bookmarks.Remove(bookmark);
+                _bookmarkIdToBeDeleted = default;
+            }
+        }
+    }
+
+    private void CancelDeletionClicked()
+    {
+        _bookmarkIdToBeDeleted = default;
+    }
 }
