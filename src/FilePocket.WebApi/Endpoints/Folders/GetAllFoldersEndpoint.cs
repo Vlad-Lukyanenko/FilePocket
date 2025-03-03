@@ -2,17 +2,16 @@
 using FilePocket.Application.Interfaces.Services;
 using FilePocket.WebApi.Endpoints.Base;
 using FilePocket.Domain.Models;
-using Microsoft.AspNetCore.Routing;
+using static System.Net.WebRequestMethods;
 
 namespace FilePocket.WebApi.Endpoints.Folders
 {
-    public class GetEndpoint : BaseEndpointWithoutRequest<FolderModel>
+    public class GetAllFoldersEndpoint : BaseEndpointWithoutRequest<List<FolderModel>>
     {
         private readonly IServiceManager _service;
         private readonly IMapper _mapper;
-        private Guid FolderId => Guid.Parse(HttpContext.GetRouteValue("folderId").ToString() ?? Guid.Empty.ToString());
 
-        public GetEndpoint(IServiceManager service, IMapper mapper)
+        public GetAllFoldersEndpoint(IServiceManager service, IMapper mapper)
         {
             _service = service;
             _mapper = mapper;
@@ -20,14 +19,15 @@ namespace FilePocket.WebApi.Endpoints.Folders
 
         public override void Configure()
         {
-            Get("folders/{folderId:guid}");
+            Verbs(Http.Get);
+            Routes("api/pockets/{pocketId:guid}/folders");
         }
 
         public override async Task HandleAsync(CancellationToken cancellationToken)
         {
-            var folder = await _service.FolderService.GetAsync(FolderId);
+            var folders = await _service.FolderService.GetAllAsync(UserId, PocketId, null);
 
-            var response = _mapper.Map<FolderModel>(folder);
+            var response = _mapper.Map<List<FolderModel>>(folders);
 
             await SendOkAsync(response, cancellationToken);
         }

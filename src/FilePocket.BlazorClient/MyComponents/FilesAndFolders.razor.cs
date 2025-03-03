@@ -16,7 +16,7 @@ namespace FilePocket.BlazorClient.MyComponents
     public partial class FilesAndFolders
     {
         [Parameter]
-        public Guid PocketId { get; set; }
+        public Guid? PocketId { get; set; }
 
         [Parameter]
         public Guid? FolderId { get; set; } = null;
@@ -57,6 +57,13 @@ namespace FilePocket.BlazorClient.MyComponents
 
         protected override async Task OnInitializedAsync()
         {
+            if (PocketId is null)
+            {
+                var defaultPocket = await PocketRequests.GetDefaultAsync();
+
+                PocketId = defaultPocket.Id;
+            }
+
             await InitPage();
             StateHasChanged();
         }
