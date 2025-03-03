@@ -55,6 +55,8 @@ namespace FilePocket.BlazorClient.MyComponents
 
         private static SemaphoreSlim semaphore = new SemaphoreSlim(10);
 
+        private bool _firstRender = true;
+
         protected override async Task OnInitializedAsync()
         {
             if (PocketId is null)
@@ -66,6 +68,18 @@ namespace FilePocket.BlazorClient.MyComponents
 
             await InitPage();
             StateHasChanged();
+        }
+
+        protected override async Task OnParametersSetAsync()
+        {
+            if (!_firstRender)
+            {
+                await OnInitializedAsync();
+            }
+            else
+            {
+                _firstRender = false;
+            }
         }
 
         private async Task InitPage()
