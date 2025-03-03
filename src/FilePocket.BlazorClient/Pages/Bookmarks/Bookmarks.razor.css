@@ -51,3 +51,8 @@
 .confirmation-btn {
     border-radius: 10px;
 }
+
+.validation-error {
+    background-color: #ff8059;
+    border: solid 1px;
+}
