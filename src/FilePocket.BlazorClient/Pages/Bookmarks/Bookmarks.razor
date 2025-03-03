@@ -10,17 +10,25 @@
     <div class="container-fluid w-100 my-w-md-75">
 
         <!-- Top SubMenu -->
-        <TopSubMenu Title="My bookmarks" ShowBackButton="false" />
+        <TopSubMenu Title="@_pageTitle" ShowBackButton="@(FolderId is not null)" />
+
+        <FoldersBlock ContentType="Shared.Enums.FolderContentType.Bookmarks" Folders="_folders" PocketId="PocketId"></FoldersBlock>
 
         @if (_bookmarks.Any())
         {
             <!-- Action Button Row -->
             <div class="row mx-auto">
-                <div class="col-12 d-flex align-items-center mb-3">
+                <div class="col-12 d-flex align-items-center mb-3 gap-2">
                     <!-- New Bookmark Button -->
                     <div>
                         <a href="@(GetCreateBookmarkUrl())" class="btn btn-lg btn-outline-success p-1">
                             <i class="ps-2 pe-2 bi bi-bookmark-plus my-fs-4"></i>
+                        </a>
+                    </div>
+                    <!-- New Folder Button -->
+                    <div>
+                        <a href="@_createFolderUrl" class="btn btn-lg btn-outline-warning p-1">
+                            <i class="ps-2 pe-2 bi bi-folder-plus my-fs-4"></i>
                         </a>
                     </div>
                 </div>
