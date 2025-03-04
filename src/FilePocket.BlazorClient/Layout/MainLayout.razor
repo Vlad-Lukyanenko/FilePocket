@@ -2,53 +2,17 @@
 @inherits LayoutComponentBase
 @inject NavigationManager Navigation
 @inject NavigationHistoryService NavigationHistory
+@inject IJSRuntime JS
 
 <PageTitle>File Pocket Application</PageTitle>
 
-<div class="container px-1 px-sm-3">
+<div class="container px-1 px-sm-3 d-flex p-2">
     <AuthorizeView>
         <Authorized>
-            <!-- Navbar -->
-            <header class="row position-relative">
-                <nav class="card navbar navbar-expand-md rounded-bottom w-100 mb-2 mt-2 px-2">
-                    <div class="container-fluid">
-                        <!-- Brand Logo and Name -->
-                        <a class="navbar-brand fw-bold main-text-header d-flex align-items-center" href="#">
-                            <img src="./assets/img/cloud-upload.png" alt="Logo" width="28" height="28" class="d-inline-block align-text-top me-2">
-                            File Pocket
-                        </a>
-
-                        <!-- Mobile Toggle Button -->
-                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
-                            <span class="navbar-toggler-icon"></span>
-                        </button>
-
-                        <!-- Collapsible Content -->
-                        <div class="collapse navbar-collapse" id="navbarContent">
-                            <div class="d-flex flex-column flex-md-row align-items-center ms-auto gap-3">
-                                <!-- Search Form -->
-                                <form class="d-flex" role="search">
-                                    <div class="search-container">
-                                        <input class="search-box" type="text" placeholder="looking for something?" />
-                                        <button class="search-button">
-                                            <i class="fas fa-search"></i>
-                                        </button>
-                                    </div>
-                                </form>
-
-                                <!-- Logout Button -->
-                                <a href="/logout" class="btn btn-outline-danger px-3">
-                                    <strong>Logout</strong>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </nav>
-            </header>
-
-            <div class="row mt-0">
-                <!-- Sidebar Menu -->
-                <aside class="card shadow-sm col-12 col-md-2 mb-2 mb-md-0 me-md-2 p-0">
+            
+            <div class="col-2 card shadow-sm mb-2 mb-md-0 me-md-2 p-0 d-none d-md-block">
+                <!-- Sidebar Menu Desktop-->
+                <aside class="">
                     <div class="d-md-none p-2 text-center fw-bold border-bottom">
                         Menu
                     </div>
@@ -112,11 +76,115 @@
                         </li>
                     </ul>
                 </aside>
+            </div>
+
+             <!-- Offcanvas menu for Mobile -->
+            <div class="offcanvas offcanvas-start d-md-none" tabindex="-1" id="offcanvasMenu">
+                <div class="offcanvas-header">
+                    @* <h5 class="offcanvas-title fw-bold">Menu</h5> *@
+                    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"></button>
+                </div>
+                <div class="offcanvas-body">
+                    <!--  Search Form for Mobile -->
+                    <form class="d-flex mb-3" role="search">
+                        <input class="form-control me-2" type="text" placeholder="Looking for something?">
+                        <button class="btn btn-outline-secondary">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </form>
+                    <!-- Menu for Mobile-->
+                    <ul class="nav nav-pills d-flex flex-column gap-2">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link text-dark @(IsActive("#"))" @onclick='() => CloseOffcanvasAndNavigate("#")'>
+                                <i class="fs-4 bi-house"></i> <span class="ms-2">Home</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/files" class="nav-link text-dark @(IsActive("/files"))" @onclick='() => CloseOffcanvasAndNavigate("/files")'>
+                                <i class="fs-4 bi-file-earmark-medical"></i> <span class="ms-2">Files</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/pockets" class="nav-link text-dark @(IsActive("/pockets"))" @onclick='() => CloseOffcanvasAndNavigate("/pockets")'>
+                                <i class="fs-4 bi-archive"></i> <span class="ms-2">Pockets</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/files/shared" class="nav-link text-dark @(IsActive("/files/shared"))" @onclick='() => CloseOffcanvasAndNavigate("/files/shared")'>
+                                <i class="fs-4 bi-share"></i> <span class="ms-2">Shared</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/profile" class="nav-link text-dark @(IsActive("/profile"))" @onclick='() => CloseOffcanvasAndNavigate("/profile")'>
+                                <i class="fs-4 bi-person-badge"></i> <span class="ms-2">Profile</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/settings" class="nav-link text-dark @(IsActive("/settings"))" @onclick='() => CloseOffcanvasAndNavigate("/settings")'>
+                                <i class="fs-4 bi-gear"></i> <span class="ms-2">Settings</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/trash" class="nav-link text-dark @(IsActive("/trash"))" @onclick='() => CloseOffcanvasAndNavigate("/trash")'>
+                                <i class="fs-4 bi-trash"></i> <span class="ms-2">Trash</span>
+                            </a>
+                        </li>
+                    </ul>
+
+                     <!-- Logout Button -->
+                     <a href="/logout" class="btn btn-outline-danger px-3 mt-3">
+                        <strong>Logout</strong>
+                     </a>
+                </div>
+            </div>
+
+            <div class="col container-fluid">
+                <!-- Navbar -->
+                <header class="position-relative mb-2 navbar navbar-expand-md w-100 p-2 card">
+                    @* <nav class="card navbar navbar-expand-md w-100 p-2"> *@
+                        <div class="container-fluid">
+                            <!-- Brand Logo and Name -->
+                            <a class="navbar-brand fw-bold main-text-header d-flex align-items-center" href="#">
+                                <img src="./assets/img/logo.png" alt="Logo" width="28" height="28" class="d-inline-block align-text-top me-2">
+                                File Pocket
+                            </a>
+
+                            <!-- Mobile Toggle Button -->
+                            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu">
+                                <span class="navbar-toggler-icon"></span>
+                            </button>
+
+                            <!-- Collapsible Content -->
+                            <div class="collapse navbar-collapse">
+                                <div class="d-flex flex-column flex-md-row align-items-center ms-auto gap-3">
+                                    <!-- Search Form -->
+                                    <form class="d-flex" role="search">
+                                        <div class="search-container">
+                                            <input class="search-box" type="text" placeholder="looking for something?" />
+                                            <button class="search-button">
+                                                <i class="fas fa-search"></i>
+                                            </button>
+                                        </div>
+                                    </form>
+
+                                    <!-- Logout Button -->
+                                    <a href="/logout" class="btn btn-outline-danger px-3">
+                                        <strong>Logout</strong>
+                                    </a>
+                                </div>
+                                
+                            </div>
+                        </div>
+                    @* </nav> *@
+                </header>
+
                 <!-- Main Content Area -->
-                <main class="card shadow-sm col-12 col-md-10 rounded p-2 p-sm-3" style="background-color: #fcfcfc;">
+                <main class="card shadow-sm w-100 rounded p-2" style="background-color: #fcfcfc; height: calc(100vh - 100px);">
                     @Body
                 </main>
             </div>
+        
+            
         </Authorized>
         <NotAuthorized>
             <section class="col-12 mt-3 text-center pt-3 pb-4">
@@ -172,18 +240,15 @@
 
         .nav-link {
             padding: 0.5rem !important;
-            border-radius: 50% !important;
-            width: 48px;
             height: 48px;
             display: flex;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start;
             color: #000 !important; /* Darker text color */
-            background-color: rgba(0,0,0,0.05); /* Subtle background */
         }
 
             .nav-link.active {
-                background-color: rgba(0,0,0,0.1);
+                @* background-color: rgba(0,0,0,0.1); *@
                 color: #000 !important;
             }
 
@@ -214,4 +279,22 @@
     {
         return Navigation.Uri.EndsWith(href, StringComparison.OrdinalIgnoreCase) ? "active" : "";
     }
+
+
+    private async Task CloseOffcanvasAndNavigate(string url)
+    {
+        await JS.InvokeVoidAsync("closeOffcanvasMenu");
+        Navigation.NavigateTo(url); 
+    }
+
 }
+
+<Script>
+    window.closeOffcanvasMenu = () => {
+        let offcanvas = document.getElementById('offcanvasMenu'); 
+        let bsOffcanvas = bootstrap.Offcanvas.getInstance(offcanvas);
+        if (bsOffcanvas) {
+            bsOffcanvas.hide();
+        }
+    };
+</Script>
