@@ -81,7 +81,7 @@
              <!-- Offcanvas menu for Mobile -->
             <div class="offcanvas offcanvas-start d-md-none" tabindex="-1" id="offcanvasMenu">
                 <div class="offcanvas-header">
-                    <h5 class="offcanvas-title fw-bold">Menu</h5>
+                    @* <h5 class="offcanvas-title fw-bold">Menu</h5> *@
                     <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"></button>
                 </div>
                 <div class="offcanvas-body">
@@ -130,6 +130,11 @@
                             </a>
                         </li>
                     </ul>
+
+                     <!-- Logout Button -->
+                     <a href="/logout" class="btn btn-outline-danger px-3 mt-3">
+                        <strong>Logout</strong>
+                     </a>
                 </div>
             </div>
 
@@ -143,11 +148,6 @@
                                 <img src="./assets/img/logo.png" alt="Logo" width="28" height="28" class="d-inline-block align-text-top me-2">
                                 File Pocket
                             </a>
-
-                            <!-- Mobile Toggle Button -->
-                            @* <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
-                                <span class="navbar-toggler-icon"></span>
-                            </button> *@
 
                             <!-- Mobile Toggle Button -->
                             <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu">
@@ -240,18 +240,15 @@
 
         .nav-link {
             padding: 0.5rem !important;
-            border-radius: 50% !important;
-            width: 48px;
             height: 48px;
             display: flex;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start;
             color: #000 !important; /* Darker text color */
-            background-color: rgba(0,0,0,0.05); /* Subtle background */
         }
 
             .nav-link.active {
-                background-color: rgba(0,0,0,0.1);
+                @* background-color: rgba(0,0,0,0.1); *@
                 color: #000 !important;
             }
 
