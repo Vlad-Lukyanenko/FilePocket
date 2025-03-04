@@ -60,7 +60,8 @@ public partial class CreateBookmark
 
         if (result)
         {
-            Navigation.NavigateTo("/bookmarks");
+            var redirectionUri = Navigation.Uri.Replace("/new", string.Empty);
+            Navigation.NavigateTo(redirectionUri);
         }
     }
 

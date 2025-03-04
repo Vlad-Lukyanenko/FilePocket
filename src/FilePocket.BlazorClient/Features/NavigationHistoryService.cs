@@ -28,6 +28,6 @@ public class NavigationHistoryService
             return previousUrl;
         }
 
-        return null;
+        return _history[0];
     }
 }

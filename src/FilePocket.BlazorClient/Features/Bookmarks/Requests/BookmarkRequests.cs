@@ -1,4 +1,6 @@
 ﻿using FilePocket.BlazorClient.Features.Bookmarks.Models;
+using FilePocket.BlazorClient.Features.Files;
+using FilePocket.BlazorClient.Services.Files.Models;
 using Newtonsoft.Json;
 using System.Text;
 
@@ -14,11 +16,26 @@ public class BookmarkRequests : IBookmarkRequests
         _apiClient = apiClient;
     }
 
-    public async Task<IEnumerable<BookmarkModel>> GetAllAsync()
+    public async Task<List<BookmarkModel>> GetAllAsync(Guid? pocketId, Guid? folderId)
     {
-        var content = await _apiClient.GetAsync($"{BaseUrl}/all");
+        var url = string.Empty;
 
-        return JsonConvert.DeserializeObject<IEnumerable<BookmarkModel>>(content)!;
+        if (pocketId is not null && folderId is not null)
+        {
+            url = $"api/pockets/{pocketId}/folders/{folderId}/bookmarks";
+        }        
+        else if (pocketId is not null && folderId is null)
+        {
+            url = $"api/pockets/{pocketId}/bookmarks";
+        }
+        else
+        {
+            url = $"{BaseUrl}/all";
+        }
+
+        var content = await _apiClient.GetAsync(url);
+
+        return JsonConvert.DeserializeObject<List<BookmarkModel>>(content)!;
     }
 
     public async Task<bool> CreateAsync(CreateBookmarkModel bookmark)

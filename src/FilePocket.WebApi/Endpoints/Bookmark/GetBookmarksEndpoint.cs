@@ -5,26 +5,31 @@ using FilePocket.WebApi.Endpoints.Base;
 
 namespace FilePocket.WebApi.Endpoints.Bookmark;
 
-public class GetAllBookmarksEndpoint : BaseEndpointWithoutRequest<List<GetAllBookmarksResponse>>
+public class GetBookmarksEndpoint : BaseEndpointWithoutRequest<List<GetAllBookmarksResponse>>
 {
     private readonly IServiceManager _service;
     private readonly IMapper _mapper;
 
-    public GetAllBookmarksEndpoint(IServiceManager service, IMapper mapper)
+    public GetBookmarksEndpoint(IServiceManager service, IMapper mapper)
     {
         _service = service;
         _mapper = mapper;
     }
 
     public override void Configure()
-    {
-        Get("api/bookmark/all");
+    {       
+        Get("api/pockets/{pocketId:guid}/bookmarks", 
+            "api/pockets/{pocketId:guid}/folders/{folderId:guid?}/bookmarks");
+
         AuthSchemes("Bearer");
     }
 
     public override async Task HandleAsync(CancellationToken cancellationToken)
     {
-        var bookmarks = _service.BookmarkService.GetAll(UserId, trackChanges: false);
+        var pocketId = Route<Guid>("pocketId");
+        var folderId = Route<Guid?>("folderId", false);
+
+        var bookmarks = await _service.BookmarkService.GetAllAsync(UserId, pocketId, folderId, trackChanges: false);
 
         var response = _mapper.Map<List<GetAllBookmarksResponse>>(bookmarks);
 

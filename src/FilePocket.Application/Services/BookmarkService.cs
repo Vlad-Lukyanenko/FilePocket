@@ -25,6 +25,13 @@ public class BookmarkService : IBookmarkService
         return _mapper.Map<IEnumerable<BookmarkModel>>(bookmarks);
     }
 
+    public async Task<IEnumerable<BookmarkModel>> GetAllAsync(Guid userId, Guid pocketId, Guid? folderId, bool trackChanges)
+    {
+        var bookmarks = await _repository.Bookmark.GetAllAsync(userId, pocketId, folderId, trackChanges);        
+
+        return _mapper.Map<List<BookmarkModel>>(bookmarks);
+    }
+
     public async Task<BookmarkModel> CreateBookmarkAsync(BookmarkModel bookmark)
     {
         await AttachBookmarkToPocketAsync(bookmark);

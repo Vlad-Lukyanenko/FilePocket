@@ -27,12 +27,6 @@ public partial class Bookmarks
     [Inject] private IBookmarkRequests BookmarkRequests { get; set; } = default!;
     [Inject] private IFolderRequests FolderRequests { get; set; } = default!;
 
-    protected override async Task OnInitializedAsync()
-    {        
-        _bookmarks = (await BookmarkRequests.GetAllAsync()).ToList();
-        _loading = false;
-    }
-
     protected override async Task OnParametersSetAsync()
     {
         List<FolderModel> folders;
@@ -53,14 +47,16 @@ public partial class Bookmarks
 
         if (FolderId is null)
         {
-            folders = (await FolderRequests.GetAllAsync(PocketId)).ToList();
+            folders = (await FolderRequests.GetAllAsync(PocketId)).ToList();            
         }
         else
         {
             folders = (await FolderRequests.GetAllAsync(PocketId, FolderId.Value)).ToList();
         }
-        
+
         _folders = new ObservableCollection<FolderModel>(folders);
+        _bookmarks = await BookmarkRequests.GetAllAsync(PocketId, FolderId);
+        _loading = false;
     }
 
     private string GetCreateBookmarkUrl()

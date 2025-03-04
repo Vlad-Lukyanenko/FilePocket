@@ -1,5 +1,6 @@
 ﻿using FilePocket.Application.Interfaces.Repositories;
 using FilePocket.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace FilePocket.Persistence.Repositories;
 
@@ -17,7 +18,12 @@ public class BookmarkRepository : RepositoryBase<Bookmark>, IBookmarkRepository
 
     public async Task<Bookmark> GetByIdAsync(Guid id)
     {
-        return await FindByCondition(b => b.Id.Equals(id));
+        return (await FindByCondition(b => b.Id.Equals(id)))!;
+    }
+
+    public async Task<List<Bookmark>> GetAllAsync(Guid userId, Guid pocketId, Guid? folderId, bool trackChanges)
+    {
+        return await FindByCondition(b => b.UserId.Equals(userId) && b.PocketId.Equals(pocketId) && b.FolderId.Equals(folderId), trackChanges).ToListAsync();
     }
 
     public void CreateBookmark(Bookmark bookmark)
