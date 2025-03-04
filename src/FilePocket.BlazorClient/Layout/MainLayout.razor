@@ -95,37 +95,37 @@
                     <!-- Menu for Mobile-->
                     <ul class="nav nav-pills d-flex flex-column gap-2">
                         <li class="nav-item">
-                            <a href="#" class="nav-link text-dark @(IsActive("#"))">
+                            <a href="#" class="nav-link text-dark @(IsActive("#"))" @onclick='() => CloseOffcanvasAndNavigate("#")'>
                                 <i class="fs-4 bi-house"></i> <span class="ms-2">Home</span>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="/files" class="nav-link text-dark @(IsActive("/files"))">
+                            <a href="/files" class="nav-link text-dark @(IsActive("/files"))" @onclick='() => CloseOffcanvasAndNavigate("/files")'>
                                 <i class="fs-4 bi-file-earmark-medical"></i> <span class="ms-2">Files</span>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="/pockets" class="nav-link text-dark @(IsActive("/pockets"))">
+                            <a href="/pockets" class="nav-link text-dark @(IsActive("/pockets"))" @onclick='() => CloseOffcanvasAndNavigate("/pockets")'>
                                 <i class="fs-4 bi-archive"></i> <span class="ms-2">Pockets</span>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="/files/shared" class="nav-link text-dark @(IsActive("/files/shared"))">
+                            <a href="/files/shared" class="nav-link text-dark @(IsActive("/files/shared"))" @onclick='() => CloseOffcanvasAndNavigate("/files/shared")'>
                                 <i class="fs-4 bi-share"></i> <span class="ms-2">Shared</span>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="/profile" class="nav-link text-dark @(IsActive("/profile"))">
+                            <a href="/profile" class="nav-link text-dark @(IsActive("/profile"))" @onclick='() => CloseOffcanvasAndNavigate("/profile")'>
                                 <i class="fs-4 bi-person-badge"></i> <span class="ms-2">Profile</span>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="/settings" class="nav-link text-dark @(IsActive("/settings"))">
+                            <a href="/settings" class="nav-link text-dark @(IsActive("/settings"))" @onclick='() => CloseOffcanvasAndNavigate("/settings")'>
                                 <i class="fs-4 bi-gear"></i> <span class="ms-2">Settings</span>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="/trash" class="nav-link text-dark @(IsActive("/trash"))">
+                            <a href="/trash" class="nav-link text-dark @(IsActive("/trash"))" @onclick='() => CloseOffcanvasAndNavigate("/trash")'>
                                 <i class="fs-4 bi-trash"></i> <span class="ms-2">Trash</span>
                             </a>
                         </li>
@@ -283,4 +283,21 @@
         return Navigation.Uri.EndsWith(href, StringComparison.OrdinalIgnoreCase) ? "active" : "";
     }
 
+
+    private async Task CloseOffcanvasAndNavigate(string url)
+    {
+        await JS.InvokeVoidAsync("closeOffcanvasMenu");
+        Navigation.NavigateTo(url); 
+    }
+
 }
+
+<Script>
+    window.closeOffcanvasMenu = () => {
+        let offcanvas = document.getElementById('offcanvasMenu'); 
+        let bsOffcanvas = bootstrap.Offcanvas.getInstance(offcanvas);
+        if (bsOffcanvas) {
+            bsOffcanvas.hide();
+        }
+    };
+</Script>
