@@ -25,6 +25,7 @@ public class ServiceManager(
     private readonly Lazy<IFileService> _fileService = new(() => new FileService(repositoryManager, configuration, imageService, mapper));
     private readonly Lazy<IFolderService> _folderService = new(() => new FolderService(repositoryManager, mapper));
     private readonly Lazy<IAuthenticationService> _authenticationService = new(() => new AuthenticationService(logger, userManager, options, consumptionOptions, mapper));
+    private readonly Lazy<IBookmarkService> _bookmarkService = new(() => new BookmarkService(repositoryManager, mapper));
 
     public IPocketService PocketService => _pocketService.Value;
 
@@ -35,4 +36,6 @@ public class ServiceManager(
     public IFolderService FolderService => _folderService.Value;
 
     public IAuthenticationService AuthenticationService => _authenticationService.Value;
+
+    public IBookmarkService BookmarkService => _bookmarkService.Value;
 }

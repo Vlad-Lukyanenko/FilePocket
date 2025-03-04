@@ -7,5 +7,4 @@ namespace FilePocket.WebApi.Endpoints.Base
     {
         protected Guid UserId => Guid.Parse(HttpContext.User.FindFirst("uid")?.Value ?? Guid.Empty.ToString());
     }
-
 }
