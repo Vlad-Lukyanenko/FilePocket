@@ -3,16 +3,19 @@ using FilePocket.Application.Interfaces.Services;
 using FilePocket.WebApi.Endpoints.Base;
 using FilePocket.Domain.Models;
 using static System.Net.WebRequestMethods;
+using FilePocket.Contracts.Folders.Responses;
 
 namespace FilePocket.WebApi.Endpoints.Folders
 {
-    public class GetAllFoldersByParentFolderIdEndpoint : BaseEndpointWithoutRequest<List<FolderModel>>
+    public class GetAllFoldersByParentFolderIdEndpoint : BaseEndpointWithoutRequest<List<GetAllFoldersByParentFolderIdResponse>>
     {
         private readonly IServiceManager _service;
+        private readonly IMapper _mapper;
       
         public GetAllFoldersByParentFolderIdEndpoint(IServiceManager service, IMapper mapper)
         {
             _service = service;
+            _mapper = mapper;
         }
 
         public override void Configure()
@@ -25,7 +28,13 @@ namespace FilePocket.WebApi.Endpoints.Folders
         {
             var folders = await _service.FolderService.GetAllAsync(UserId, PocketId, ParentFolderId);
 
-            await SendOkAsync(folders, cancellationToken);
+            var response = new List<GetAllFoldersByParentFolderIdResponse>();
+            foreach(var folder in folders)
+            {
+                response.Add(_mapper.Map<GetAllFoldersByParentFolderIdResponse>(folder));
+            }
+
+            await SendOkAsync(response, cancellationToken);
         }
     }
 }

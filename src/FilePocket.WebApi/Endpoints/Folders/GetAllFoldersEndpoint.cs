@@ -3,10 +3,11 @@ using FilePocket.Application.Interfaces.Services;
 using FilePocket.WebApi.Endpoints.Base;
 using FilePocket.Domain.Models;
 using static System.Net.WebRequestMethods;
+using FilePocket.Contracts.Folders.Responses;
 
 namespace FilePocket.WebApi.Endpoints.Folders
 {
-    public class GetAllFoldersEndpoint : BaseEndpointWithoutRequest<List<FolderModel>>
+    public class GetAllFoldersEndpoint : BaseEndpointWithoutRequest<List<GetAllFoldersResponse>>
     {
         private readonly IServiceManager _service;
         private readonly IMapper _mapper;
@@ -27,7 +28,11 @@ namespace FilePocket.WebApi.Endpoints.Folders
         {
             var folders = await _service.FolderService.GetAllAsync(UserId, PocketId, null);
 
-            var response = _mapper.Map<List<FolderModel>>(folders);
+            var response = new List<GetAllFoldersResponse>();
+            foreach (var folder in folders)
+            {
+                response.Add(_mapper.Map<GetAllFoldersResponse>(folder));
+            }
 
             await SendOkAsync(response, cancellationToken);
         }

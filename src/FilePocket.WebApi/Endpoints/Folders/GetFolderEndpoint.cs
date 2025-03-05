@@ -3,10 +3,11 @@ using FilePocket.Application.Interfaces.Services;
 using FilePocket.WebApi.Endpoints.Base;
 using FilePocket.Domain.Models;
 using static System.Net.WebRequestMethods;
+using FilePocket.Contracts.Folders.Responses;
 
 namespace FilePocket.WebApi.Endpoints.Folders
 {
-    public class GetFolderEndpoint : BaseEndpointWithoutRequest<FolderModel>
+    public class GetFolderEndpoint : BaseEndpointWithoutRequest<GetFolderResponse>
     {
         private readonly IServiceManager _service;
         private readonly IMapper _mapper;
@@ -26,8 +27,7 @@ namespace FilePocket.WebApi.Endpoints.Folders
         public override async Task HandleAsync(CancellationToken cancellationToken)
         {
             var folder = await _service.FolderService.GetAsync(FolderId!.Value);
-
-            var response = _mapper.Map<FolderModel>(folder);
+            var response = _mapper.Map<GetFolderResponse>(folder);
 
             await SendOkAsync(response, cancellationToken);
         }
