@@ -23,6 +23,14 @@
     padding: 1rem;
 }
 
+.card-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    justify-content: center; /* Center cards vertically */
+    padding: 1rem;
+}
+
 .body-icon {
     color: #2c638f;
     font-size: 1.2em;
@@ -55,4 +63,24 @@
 .validation-error {
     background-color: #ff8059;
     border: solid 1px;
+}
+
+@media (max-width: 575.98px) {
+    .card-footer .btn {
+        width: auto; /* Remove fixed width */
+        padding: 0.25rem 0.5rem; /* Reduce padding */
+    }
+}
+
+@media (max-width: 897px) {
+    .my-card {
+        width: 90%; /* Wider cards on mobile */
+        flex: 1 1 100%; /* Ensure cards take full width on mobile */
+    }
+}
+
+@media (max-width: 480px) {
+    .my-card {
+        width: 100%; /* Full width on very small screens */
+    }
 }

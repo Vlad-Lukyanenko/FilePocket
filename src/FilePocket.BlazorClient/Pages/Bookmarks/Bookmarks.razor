@@ -3,6 +3,7 @@
 @page "/pockets/{PocketId:guid}/bookmarks"
 @page "/pockets/{PocketId:guid}/folders/{FolderId:guid}/bookmarks"
 
+@using FilePocket.BlazorClient.Helpers
 @using Microsoft.AspNetCore.Authorization
 @attribute [Authorize]
 
@@ -44,7 +45,7 @@
                                 <i class="fs-4 bi-bookmark"></i>
                                 @if (bookmark.Id != _bookmarkIdToBeUpdated)
                                 {
-                                    <span class="me-2">@bookmark.Title</span>
+                                    <span class="me-2">@Tools.TruncateString(bookmark.Title)</span>
                                 }
                                 else
                                 {
@@ -59,7 +60,7 @@
                                 <strong class="body-main-text">Url:</strong>
                                 @if (bookmark.Id != _bookmarkIdToBeUpdated)
                                 {
-                                    <a href="@(bookmark.Url)" class="body-text">@bookmark.Url</a>
+                                    <a href="@(bookmark.Url)" class="body-text">@Tools.TruncateString(bookmark.Url)</a>
                                 } 
                                 else
                                 {
@@ -77,7 +78,7 @@
 
                             @if (bookmark.Id != _bookmarkIdToBeDeleted && bookmark.Id != _bookmarkIdToBeUpdated)
                             {
-                                <div class="d-flex justify-content-end gap-2">
+                                <div class="d-flex justify-content-center gap-2">
                                     <a class="btn btn-outline-primary btn-sm action-btn"
                                        @onclick="() => UpdateClicked(bookmark)">
                                         <i class="bi bi-arrow-repeat me-1"></i> Update
