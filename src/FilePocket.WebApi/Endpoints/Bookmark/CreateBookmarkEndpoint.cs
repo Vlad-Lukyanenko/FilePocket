@@ -2,16 +2,19 @@
 using FilePocket.Contracts.Bookmark;
 using FilePocket.Domain.Models;
 using FilePocket.WebApi.Endpoints.Base;
+using MapsterMapper;
 
 namespace FilePocket.WebApi.Endpoints.Bookmark;
 
-public class CreateBookmarkEndpoint : BaseEndpoint<BookmarkModel, BookmarkCreatedResponse>
+public class CreateBookmarkEndpoint : BaseEndpoint<CreateBookmarkRequest, CreateBookmarkResponse>
 {
     private readonly IServiceManager _service;
+    private readonly IMapper _mapper;
 
-    public CreateBookmarkEndpoint(IServiceManager service)
+    public CreateBookmarkEndpoint(IServiceManager service, IMapper mapper)
     {
         _service = service;
+        _mapper = mapper;
     }
 
     public override void Configure()
@@ -20,12 +23,13 @@ public class CreateBookmarkEndpoint : BaseEndpoint<BookmarkModel, BookmarkCreate
         AuthSchemes("Bearer");
     }
 
-    public override async Task HandleAsync(BookmarkModel bookmark, CancellationToken cancellationToken)
+    public override async Task HandleAsync(CreateBookmarkRequest bookmark, CancellationToken cancellationToken)
     {
-        bookmark.UserId = UserId;
+        var bookmarkToCreate = _mapper.Map<BookmarkModel>(bookmark);
+        bookmarkToCreate.UserId = UserId;
 
-        var createdBookmark = await _service.BookmarkService.CreateBookmarkAsync(bookmark);
-        var response = new BookmarkCreatedResponse() { Id = createdBookmark.Id, Title = createdBookmark.Title, Url = createdBookmark.Url };
+        var createdBookmark = await _service.BookmarkService.CreateBookmarkAsync(bookmarkToCreate);
+        var response = new CreateBookmarkResponse() { Id = createdBookmark.Id, Title = createdBookmark.Title, Url = createdBookmark.Url };
 
         await SendOkAsync(response, cancellationToken);
     }

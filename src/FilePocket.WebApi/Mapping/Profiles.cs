@@ -22,6 +22,6 @@ public class Profiles : Profile
         CreateMap<SharedFileModel?, SharedFile?>().ReverseMap();
 
         CreateMap<Bookmark, BookmarkModel>().ReverseMap();
-        CreateMap<BookmarkModel, GetAllBookmarksResponse>();
+        CreateMap<BookmarkModel, GetBookmarksResponse>();
     }
 }

@@ -1,11 +1,12 @@
-﻿using AutoMapper;
-using FilePocket.Application.Interfaces.Services;
+﻿using FilePocket.Application.Interfaces.Services;
+using FilePocket.Contracts.Bookmark;
 using FilePocket.Domain.Models;
 using FilePocket.WebApi.Endpoints.Base;
+using MapsterMapper;
 
 namespace FilePocket.WebApi.Endpoints.Bookmark;
 
-public class UpdateBookmarkEndpoint : BaseEndpointWithoutResponse<BookmarkModel>
+public class UpdateBookmarkEndpoint : BaseEndpointWithoutResponse<UpdateBookmarkRequest>
 {
     private readonly IServiceManager _service;
     private readonly IMapper _mapper;
@@ -22,9 +23,11 @@ public class UpdateBookmarkEndpoint : BaseEndpointWithoutResponse<BookmarkModel>
         AuthSchemes("Bearer");
     }
 
-    public override async Task HandleAsync(BookmarkModel bookmark, CancellationToken cancellationToken)
+    public override async Task HandleAsync(UpdateBookmarkRequest bookmark, CancellationToken cancellationToken)
     {
-        await _service.BookmarkService.UpdateBookmarkAsync(bookmark);
+        var bookmarkToUpdate = _mapper.Map<BookmarkModel>(bookmark);
+
+        await _service.BookmarkService.UpdateBookmarkAsync(bookmarkToUpdate);
 
         await SendNoContentAsync();
     }

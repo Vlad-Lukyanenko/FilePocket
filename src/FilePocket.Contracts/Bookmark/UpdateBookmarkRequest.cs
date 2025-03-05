@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace FilePocket.Domain.Models;
+namespace FilePocket.Contracts.Bookmark;
 
-public class BookmarkModel
+public class UpdateBookmarkRequest
 {
     public Guid Id { get; set; }
 
@@ -16,6 +16,5 @@ public class BookmarkModel
 
     [Required]
     public string Url { get; set; } = string.Empty;
-    public DateTime CreatedAt { get; set; }
-    public DateTime UpdatedAt { get; set; }
+    public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 }
