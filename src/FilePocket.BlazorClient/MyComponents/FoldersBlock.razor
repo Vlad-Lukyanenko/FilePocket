@@ -1,6 +1,7 @@
 ﻿@using System.Collections.ObjectModel
 @using FilePocket.BlazorClient.Features.Folders.Models
 @using FilePocket.BlazorClient.Helpers
+@using FilePocket.BlazorClient.Shared.Enums
 
 @if (Folders is not null && Folders.Any())
 {
@@ -29,13 +30,16 @@
     [Parameter]
     public Guid? PocketId { get; set; }
 
+    [Parameter]
+    public FolderContentType ContentType { get; set; }
+
     private string GetFolderUrl(Guid? pocketId, Guid? folderId)
     {
         if (pocketId is null)
         {
-            return $"/folders/{folderId}/files";
+            return ContentType == FolderContentType.Files ? $"/folders/{folderId}/files" : $"/folders/{folderId}/bookmarks";
         }
 
-        return $"/pockets/{pocketId}/folders/{folderId}/files";
+        return ContentType == FolderContentType.Files ? $"/pockets/{pocketId}/folders/{folderId}/files" : $"/pockets/{pocketId}/folders/{folderId}/bookmarks";
     }
 }

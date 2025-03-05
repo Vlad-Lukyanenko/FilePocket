@@ -1,8 +1,8 @@
-﻿using AutoMapper;
-using FilePocket.Application.Interfaces.Repositories;
+﻿using FilePocket.Application.Interfaces.Repositories;
 using FilePocket.Application.Interfaces.Services;
 using FilePocket.Domain.Entities;
 using FilePocket.Domain.Models;
+using MapsterMapper;
 
 namespace FilePocket.Application.Services
 {
