@@ -9,12 +9,10 @@ namespace FilePocket.WebApi.Endpoints.Bookmark;
 public class UpdateBookmarkEndpoint : BaseEndpointWithoutResponse<UpdateBookmarkRequest>
 {
     private readonly IServiceManager _service;
-    private readonly IMapper _mapper;
 
-    public UpdateBookmarkEndpoint(IServiceManager service, IMapper mapper)
+    public UpdateBookmarkEndpoint(IServiceManager service)
     {
         _service = service;
-        _mapper = mapper;
     }
 
     public override void Configure()
@@ -25,9 +23,7 @@ public class UpdateBookmarkEndpoint : BaseEndpointWithoutResponse<UpdateBookmark
 
     public override async Task HandleAsync(UpdateBookmarkRequest bookmark, CancellationToken cancellationToken)
     {
-        var bookmarkToUpdate = _mapper.Map<BookmarkModel>(bookmark);
-
-        await _service.BookmarkService.UpdateBookmarkAsync(bookmarkToUpdate);
+        await _service.BookmarkService.UpdateBookmarkAsync(bookmark);
 
         await SendNoContentAsync();
     }

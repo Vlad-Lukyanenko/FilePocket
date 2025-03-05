@@ -1,9 +1,10 @@
-﻿using AutoMapper;
-using FilePocket.Application.Exceptions;
+﻿using FilePocket.Application.Exceptions;
 using FilePocket.Application.Interfaces.Repositories;
 using FilePocket.Application.Interfaces.Services;
+using FilePocket.Contracts.Bookmark;
 using FilePocket.Domain.Entities;
 using FilePocket.Domain.Models;
+using MapsterMapper;
 
 namespace FilePocket.Application.Services;
 
@@ -27,7 +28,7 @@ public class BookmarkService : IBookmarkService
 
     public async Task<IEnumerable<BookmarkModel>> GetAllAsync(Guid userId, Guid pocketId, Guid? folderId, bool trackChanges)
     {
-        var bookmarks = await _repository.Bookmark.GetAllAsync(userId, pocketId, folderId, trackChanges);        
+        var bookmarks = await _repository.Bookmark.GetAllAsync(userId, pocketId, folderId, trackChanges);
 
         return _mapper.Map<List<BookmarkModel>>(bookmarks);
     }
@@ -43,14 +44,13 @@ public class BookmarkService : IBookmarkService
         return _mapper.Map<BookmarkModel>(bookmarkEntity);
     }
 
-    public async Task UpdateBookmarkAsync(BookmarkModel bookmark)
+    public async Task UpdateBookmarkAsync(UpdateBookmarkRequest bookmark)
     {
         var bookmarkToUpdate = await _repository.Bookmark.GetByIdAsync(bookmark.Id);
 
         if (bookmarkToUpdate is not null)
         {
             _mapper.Map(bookmark, bookmarkToUpdate);
-            bookmarkToUpdate.UpdatedAt = DateTime.UtcNow;
 
             await _repository.SaveChangesAsync();
         }
