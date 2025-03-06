@@ -16,6 +16,7 @@ namespace FilePocket.BlazorClient.Pages.Folders
         public string FolderIdParam { get; set; } = string.Empty;
 
         private string _folderName = string.Empty;
+        private bool _isDuplicate = false;
         private bool _validName = true;
 
         private string GetGoBackUrl()
@@ -71,11 +72,13 @@ namespace FilePocket.BlazorClient.Pages.Folders
 
             var result = await FolderRequests.CreateAsync(folder);
 
-            if (result)
+            if (!result)
             {
-                var url = GetGoBackUrl();
-                Navigation.NavigateTo(url);
+                _isDuplicate = true;
+                StateHasChanged();
+                return;
             }
+            Navigation.NavigateTo(GetGoBackUrl());
         }
 
         private void NameChanged()
