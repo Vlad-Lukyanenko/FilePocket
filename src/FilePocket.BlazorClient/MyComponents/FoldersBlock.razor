@@ -31,15 +31,15 @@
     public Guid? PocketId { get; set; }
 
     [Parameter]
-    public FolderContentType ContentType { get; set; }
+    public FolderType ContentType { get; set; }
 
     private string GetFolderUrl(Guid? pocketId, Guid? folderId)
     {
         if (pocketId is null)
         {
-            return ContentType == FolderContentType.Files ? $"/folders/{folderId}/files" : $"/folders/{folderId}/bookmarks";
+            return ContentType == FolderType.Files ? $"/folders/{folderId}/files" : $"/folders/{folderId}/bookmarks";
         }
 
-        return ContentType == FolderContentType.Files ? $"/pockets/{pocketId}/folders/{folderId}/files" : $"/pockets/{pocketId}/folders/{folderId}/bookmarks";
+        return ContentType == FolderType.Files ? $"/pockets/{pocketId}/folders/{folderId}/files" : $"/pockets/{pocketId}/folders/{folderId}/bookmarks";
     }
 }

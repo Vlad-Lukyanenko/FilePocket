@@ -13,7 +13,7 @@
         <!-- Top SubMenu -->
         <TopSubMenu Title="@_pageTitle" ShowBackButton="@(FolderId is not null)" />
 
-        <FoldersBlock ContentType="Shared.Enums.FolderContentType.Bookmarks" Folders="_folders" PocketId="PocketId"></FoldersBlock>
+        <FoldersBlock ContentType="Shared.Enums.FolderType.Bookmarks" Folders="_folders" PocketId="PocketId"></FoldersBlock>
 
         @if (_bookmarks.Any())
         {
