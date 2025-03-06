@@ -10,7 +10,7 @@
         {
             <div class="card h-100 shadow-sm me-2 pt-2" style="width: 8em;">
                 @{
-                    var url = GetFolderUrl(PocketId, folder.Id);
+                    var url = GetFolderUrl(PocketId, folder.Id, folder.FolderType);
                 }
                 <a class="file-link text-decoration-none" title="@folder.Name" href="@url">
                     <img src="./assets/img/folder.png" width="64" class="d-block mx-auto mb-1" alt="Folder icon" />
@@ -30,16 +30,13 @@
     [Parameter]
     public Guid? PocketId { get; set; }
 
-    [Parameter]
-    public FolderType ContentType { get; set; }
-
-    private string GetFolderUrl(Guid? pocketId, Guid? folderId)
+    private string GetFolderUrl(Guid? pocketId, Guid? folderId, FolderType folderType)
     {
         if (pocketId is null)
         {
-            return ContentType == FolderType.Files ? $"/folders/{folderId}/files" : $"/folders/{folderId}/bookmarks";
+            return folderType == FolderType.Files ? $"/folders/{folderId}/files" : $"/folders/{folderId}/bookmarks";
         }
 
-        return ContentType == FolderType.Files ? $"/pockets/{pocketId}/folders/{folderId}/files" : $"/pockets/{pocketId}/folders/{folderId}/bookmarks";
+        return folderType == FolderType.Files ? $"/pockets/{pocketId}/folders/{folderId}/files" : $"/pockets/{pocketId}/folders/{folderId}/bookmarks";
     }
 }
