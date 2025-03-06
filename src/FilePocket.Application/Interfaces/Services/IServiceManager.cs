@@ -11,6 +11,4 @@ public interface IServiceManager
     IFolderService FolderService { get; }
 
     IAuthenticationService AuthenticationService { get; }
-
-    IBookmarkService BookmarkService { get; }
 }

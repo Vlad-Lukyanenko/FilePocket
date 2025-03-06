@@ -1,7 +1,6 @@
 ﻿using FilePocket.BlazorClient.Features.Folders.Models;
 using FilePocket.BlazorClient.Services.Folders.Requests;
 using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
 
 namespace FilePocket.BlazorClient.Pages.Folders
 {
@@ -9,9 +8,6 @@ namespace FilePocket.BlazorClient.Pages.Folders
     {
         [Inject] 
         private IFolderRequests FolderRequests { get; set; } = default!;
-
-        [Inject]
-        private IJSRuntime JSRuntime { get; set; } = default!;
 
         [Parameter]
         public string PocketIdParam { get; set; } = string.Empty;
@@ -21,6 +17,32 @@ namespace FilePocket.BlazorClient.Pages.Folders
 
         private string _folderName = string.Empty;
         private bool _validName = true;
+
+        private string GetGoBackUrl()
+        {
+            if (string.IsNullOrWhiteSpace(PocketIdParam) && string.IsNullOrWhiteSpace(FolderIdParam))
+            {
+                return $"/files";
+            }
+
+            Guid? folderId = null;
+            if (!string.IsNullOrWhiteSpace(FolderIdParam))
+            {
+                folderId = Guid.Parse(FolderIdParam);
+            }
+
+            if (string.IsNullOrWhiteSpace(PocketIdParam) && !string.IsNullOrWhiteSpace(FolderIdParam))
+            {
+                return $"/folders/{folderId}/files";
+            }
+
+            if (!string.IsNullOrWhiteSpace(PocketIdParam) && string.IsNullOrWhiteSpace(FolderIdParam))
+            {
+                return $"/pockets/{PocketIdParam}/files";
+            }
+
+            return $"/pockets/{PocketIdParam}/folders/{folderId}/files";
+        }
 
         private async Task CreateFolderAsync()
         {
@@ -51,7 +73,8 @@ namespace FilePocket.BlazorClient.Pages.Folders
 
             if (result)
             {
-                await JSRuntime.InvokeVoidAsync("history.back");
+                var url = GetGoBackUrl();
+                Navigation.NavigateTo(url);
             }
         }
 

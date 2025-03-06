@@ -1,4 +1,5 @@
-﻿using FilePocket.Domain.Entities;
+﻿using AutoMapper;
+using FilePocket.Domain.Entities;
 using FilePocket.Domain.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
@@ -10,7 +11,6 @@ using FilePocket.Application.Interfaces.Services;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using FilePocket.Application.Exceptions;
-using MapsterMapper;
 
 namespace FilePocket.Application.Services;
 

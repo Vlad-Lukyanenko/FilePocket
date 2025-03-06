@@ -1,3 +1,4 @@
+using AutoMapper;
 using FilePocket.Application.Exceptions;
 using FilePocket.Application.Extensions;
 using FilePocket.Application.Interfaces.Repositories;
@@ -6,7 +7,6 @@ using FilePocket.Domain;
 using FilePocket.Domain.Entities;
 using FilePocket.Domain.Entities.Consumption.Errors;
 using FilePocket.Domain.Models;
-using MapsterMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using StorageConsumption = FilePocket.Domain.Entities.Consumption.StorageConsumption;

@@ -1,33 +1,22 @@
-﻿namespace FilePocket.BlazorClient.Features;
-
-public class NavigationHistoryService
+﻿namespace FilePocket.BlazorClient.Features
 {
-    private readonly List<string> _history = new();
-    private bool _getPreviousWasCalled = false;
-
-    public void AddToHistory(string url)
+    public class NavigationHistoryService
     {
-        if (_getPreviousWasCalled)
-        {
-            _getPreviousWasCalled = false;
+        private readonly List<string> _history = new();
 
-            return;
+        public void AddToHistory(string url)
+        {
+            _history.Add(url);
         }
 
-        _history.Add(url);
-    }
-
-    public string? GetPreviousUrl()
-    {
-        if (_history.Count > 1)
+        public string? GetPreviousUrl()
         {
-            var previousUrl = _history[^2];
-            _history.RemoveAt(_history.Count - 1);
-            _getPreviousWasCalled = true;
+            if (_history.Count > 1)
+            {
+                return _history[^2];
+            }
 
-            return previousUrl;
+            return null;
         }
-
-        return _history[0];
     }
 }
