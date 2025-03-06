@@ -16,7 +16,7 @@ namespace FilePocket.BlazorClient.MyComponents
     public partial class FilesAndFolders
     {
         [Parameter]
-        public Guid PocketId { get; set; }
+        public Guid? PocketId { get; set; }
 
         [Parameter]
         public Guid? FolderId { get; set; } = null;
@@ -55,10 +55,31 @@ namespace FilePocket.BlazorClient.MyComponents
 
         private static SemaphoreSlim semaphore = new SemaphoreSlim(10);
 
+        private bool _firstRender = true;
+
         protected override async Task OnInitializedAsync()
         {
+            if (PocketId is null)
+            {
+                var defaultPocket = await PocketRequests.GetDefaultAsync();
+
+                PocketId = defaultPocket.Id;
+            }
+
             await InitPage();
             StateHasChanged();
+        }
+
+        protected override async Task OnParametersSetAsync()
+        {
+            if (!_firstRender)
+            {
+                await OnInitializedAsync();
+            }
+            else
+            {
+                _firstRender = false;
+            }
         }
 
         private async Task InitPage()

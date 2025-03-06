@@ -11,10 +11,21 @@ namespace FilePocket.BlazorClient.Pages.Files
         [Parameter]
         public string? FolderId { get; set; } = null;
 
-        [Inject] 
+        [Inject]
         private IPocketRequests PocketRequests { get; set; } = default!;
 
-        private Guid _pocketId;
+        private Guid? _pocketId
+        {
+            get
+            {
+                if (string.IsNullOrWhiteSpace(PocketId))
+                {
+                    return null;
+                }
+
+                return Guid.Parse(PocketId);
+            }
+        }
 
         public Guid? _folderId
         {
@@ -26,20 +37,6 @@ namespace FilePocket.BlazorClient.Pages.Files
                 }
 
                 return Guid.Parse(FolderId);
-            }
-        }
-
-        protected override async Task OnInitializedAsync()
-        {
-            if (string.IsNullOrWhiteSpace(PocketId))
-            {
-                var defaultPocket = await PocketRequests.GetDefaultAsync();
-
-                _pocketId = defaultPocket.Id;
-            }
-            else
-            {
-                _pocketId = Guid.Parse(PocketId);
             }
         }
     }

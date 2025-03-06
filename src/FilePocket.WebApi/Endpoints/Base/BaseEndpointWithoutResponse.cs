@@ -1,10 +1,9 @@
 ﻿using FastEndpoints;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 
 namespace FilePocket.WebApi.Endpoints.Base
 {
-    public abstract class BaseEndpointWithoutRequest<TResponse> : EndpointWithoutRequest<TResponse>
+    public class BaseEndpointWithoutResponse<TRequest> : Endpoint<TRequest> where TRequest : notnull
     {
         protected Guid UserId => Guid.Parse(HttpContext.User.FindFirst("uid")?.Value ?? Guid.Empty.ToString());
 
