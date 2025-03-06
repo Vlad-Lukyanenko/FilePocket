@@ -14,5 +14,6 @@ namespace FilePocket.Domain.Entities
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
         public DateTime? DeletedAt { get; set; }
+        public virtual ICollection<Bookmark>? Bookmarks { get; set; }
     }
 }

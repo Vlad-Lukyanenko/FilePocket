@@ -1,6 +1,7 @@
 ﻿using FilePocket.Application.Interfaces.Repositories;
 using FilePocket.Application.Interfaces.Services;
 using FilePocket.Domain.Entities;
+using FilePocket.Domain.Enums;
 using FilePocket.Domain.Models;
 using MapsterMapper;
 
@@ -59,9 +60,9 @@ namespace FilePocket.Application.Services
             await _repository.SaveChangesAsync();
         }
 
-        public async Task<List<FolderModel>> GetAllAsync(Guid userId, Guid? pocketId, Guid? parentFolderId)
+        public async Task<List<FolderModel>> GetAllAsync(Guid userId, Guid? pocketId, Guid? parentFolderId, FolderType folderType)
         {
-            var result = await _repository.Folder.GetAllAsync(userId, pocketId, parentFolderId);
+            var result = await _repository.Folder.GetAllAsync(userId, pocketId, parentFolderId, folderType);
 
             return _mapper.Map<List<FolderModel>>(result);
         }

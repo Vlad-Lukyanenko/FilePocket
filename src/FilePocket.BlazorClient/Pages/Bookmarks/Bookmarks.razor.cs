@@ -3,6 +3,7 @@ using FilePocket.BlazorClient.Features.Bookmarks.Requests;
 using FilePocket.BlazorClient.Features.Folders.Models;
 using FilePocket.BlazorClient.Services.Folders.Requests;
 using FilePocket.BlazorClient.Services.Pockets.Requests;
+using FilePocket.BlazorClient.Shared.Enums;
 using Microsoft.AspNetCore.Components;
 using System.Collections.ObjectModel;
 
@@ -34,7 +35,7 @@ public partial class Bookmarks
         _currentFolder = FolderId is null ? null : await FolderRequests.GetAsync(FolderId.Value);
         var currentFolderName = _currentFolder is null ? string.Empty : $" - {_currentFolder.Name}";
         var currentFolderUrl = FolderId is null ? "" : $"{FolderId}/";
-        
+
         _pageTitle = $"My bookmarks{currentFolderName}";
 
         if (PocketId == Guid.Empty)
@@ -43,15 +44,15 @@ public partial class Bookmarks
             PocketId = defaultPocket.Id;
         }
 
-        _createFolderUrl = $"/pockets/{PocketId}/folders/{currentFolderUrl}new";
+        _createFolderUrl = $"/pockets/{PocketId}/folders/{currentFolderUrl}{(int)FolderType.Bookmarks}/new";
 
         if (FolderId is null)
         {
-            folders = (await FolderRequests.GetAllAsync(PocketId)).ToList();            
+            folders = (await FolderRequests.GetAllAsync(PocketId, FolderType.Bookmarks)).ToList();
         }
         else
         {
-            folders = (await FolderRequests.GetAllAsync(PocketId, FolderId.Value)).ToList();
+            folders = (await FolderRequests.GetAllAsync(PocketId, FolderId.Value, FolderType.Bookmarks)).ToList();
         }
 
         _folders = new ObservableCollection<FolderModel>(folders);
