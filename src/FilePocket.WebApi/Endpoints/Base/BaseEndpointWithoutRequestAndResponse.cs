@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Routing;
 
 namespace FilePocket.WebApi.Endpoints.Base
 {
-    public abstract class BaseEndpointWithoutRequest<TResponse> : EndpointWithoutRequest<TResponse>
+    public abstract class BaseEndpointWithoutRequestAndResponse : EndpointWithoutRequest
     {
         protected Guid UserId => Guid.Parse(HttpContext.User.FindFirst("uid")?.Value ?? Guid.Empty.ToString());
 
@@ -44,4 +44,5 @@ namespace FilePocket.WebApi.Endpoints.Base
             }
         }
     }
+
 }
