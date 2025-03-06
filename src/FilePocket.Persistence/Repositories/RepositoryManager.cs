@@ -16,7 +16,6 @@ public class RepositoryManager : IRepositoryManager
     private readonly Lazy<IFolderRepository> _folderRepository;
     private readonly Lazy<IFileMetadataRepository> _fileMetadataRepository;
     private readonly Lazy<IAccountConsumptionRepository> _accountConsumptionRepository;
-    private readonly Lazy<IBookmarkRepository> _bookmarkRepository;
 
     public RepositoryManager(FilePocketDbContext dbContext, UserManager<User> userManager, IServiceScopeFactory scopeFactory)
     {
@@ -26,7 +25,6 @@ public class RepositoryManager : IRepositoryManager
         _folderRepository = new Lazy<IFolderRepository>(() => new FolderRepository(dbContext, scopeFactory));
         _fileMetadataRepository = new Lazy<IFileMetadataRepository>(() => new FileMetadataRepository(dbContext));
         _accountConsumptionRepository = new Lazy<IAccountConsumptionRepository>(() => new AccountConsumptionRepository(dbContext));
-        _bookmarkRepository = new Lazy<IBookmarkRepository>(() => new BookmarkRepository(dbContext));
     }
 
     public IPocketRepository Pocket => _pocketRepository.Value;
@@ -34,7 +32,6 @@ public class RepositoryManager : IRepositoryManager
     public IFolderRepository Folder => _folderRepository.Value;
     public IFileMetadataRepository FileMetadata => _fileMetadataRepository.Value;
     public IAccountConsumptionRepository AccountConsumption => _accountConsumptionRepository.Value;
-    public IBookmarkRepository Bookmark => _bookmarkRepository.Value;
 
     public Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken cancellationToken = default)
     {

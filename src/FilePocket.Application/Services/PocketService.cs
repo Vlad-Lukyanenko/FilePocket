@@ -1,9 +1,9 @@
-﻿using FilePocket.Application.Exceptions;
+﻿using AutoMapper;
+using FilePocket.Application.Exceptions;
 using FilePocket.Application.Interfaces.Repositories;
 using FilePocket.Application.Interfaces.Services;
 using FilePocket.Domain.Entities;
 using FilePocket.Domain.Models;
-using MapsterMapper;
 using Microsoft.Extensions.Configuration;
 
 

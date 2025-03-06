@@ -25,44 +25,6 @@ namespace FilePocket.DataAccess.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("FilePocket.Domain.Entities.Bookmark", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid?>("FolderId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("PocketId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Url")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FolderId");
-
-                    b.HasIndex("PocketId");
-
-                    b.ToTable("Bookmarks");
-                });
-
             modelBuilder.Entity("FilePocket.Domain.Entities.Consumption.AccountConsumption", b =>
                 {
                     b.Property<Guid>("Id")
@@ -492,23 +454,6 @@ namespace FilePocket.DataAccess.Migrations
                         .HasDefaultValue(0.0);
 
                     b.HasDiscriminator().HasValue("StorageCapacity");
-                });
-
-            modelBuilder.Entity("FilePocket.Domain.Entities.Bookmark", b =>
-                {
-                    b.HasOne("FilePocket.Domain.Entities.Folder", "Folder")
-                        .WithMany()
-                        .HasForeignKey("FolderId");
-
-                    b.HasOne("FilePocket.Domain.Entities.Pocket", "Pocket")
-                        .WithMany()
-                        .HasForeignKey("PocketId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Folder");
-
-                    b.Navigation("Pocket");
                 });
 
             modelBuilder.Entity("FilePocket.Domain.Entities.Consumption.AccountConsumption", b =>

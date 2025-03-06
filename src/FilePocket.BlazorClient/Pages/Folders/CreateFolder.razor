@@ -6,10 +6,13 @@
 @using Microsoft.AspNetCore.Authorization
 @attribute [Authorize]
 
+@inject IJSRuntime JS
+@inject NavigationManager Navigation;
+
 <div class="container-fluid" style="min-height: 600px;">
     <div class="container-fluid w-100 w-md-75 pt-3">
 
-        <TopSubMenu Title="New Folder" />
+        <TopSubMenu Url="@GetGoBackUrl()" Title="New Folder" />
 
         <!-- Form Container -->
         <div class="border p-3 mt-3">
