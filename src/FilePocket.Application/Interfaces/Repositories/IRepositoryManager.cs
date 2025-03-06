@@ -11,6 +11,7 @@ public interface IRepositoryManager
     IFolderRepository Folder { get; }
     IFileMetadataRepository FileMetadata { get; }
     IAccountConsumptionRepository AccountConsumption { get; }
+    IBookmarkRepository Bookmark { get; }
 
     Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken cancellationToken = default);
     Task CommitTransactionAsync(IDbTransaction transaction, CancellationToken cancellationToken = default);
