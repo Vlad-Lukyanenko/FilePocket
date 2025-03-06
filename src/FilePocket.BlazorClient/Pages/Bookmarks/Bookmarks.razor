@@ -15,26 +15,52 @@
 
         <FoldersBlock Folders="_folders" PocketId="PocketId"></FoldersBlock>
 
-        @if (_bookmarks.Any())
-        {
-            <!-- Action Button Row -->
-            <div class="row mx-auto">
-                <div class="col-12 d-flex align-items-center mb-3 gap-2">
-                    <!-- New Bookmark Button -->
-                    <div>
-                        <a href="@(GetCreateBookmarkUrl())" class="btn btn-lg btn-outline-success p-1">
-                            <i class="ps-2 pe-2 bi bi-bookmark-plus my-fs-4"></i>
-                        </a>
-                    </div>
-                    <!-- New Folder Button -->
-                    <div>
-                        <a href="@_createFolderUrl" class="btn btn-lg btn-outline-warning p-1">
-                            <i class="ps-2 pe-2 bi bi-folder-plus my-fs-4"></i>
-                        </a>
-                    </div>
+        <!-- Action Button Row -->
+        <div class="row mx-auto">
+            <div class="col-12 d-flex align-items-center mb-3 gap-2">
+                <!-- New Bookmark Button -->
+                <div>
+                    <a href="@(GetCreateBookmarkUrl())" class="btn btn-lg btn-outline-success p-1">
+                        <i class="ps-2 pe-2 bi bi-bookmark-plus my-fs-4"></i>
+                    </a>
+                </div>
+                <!-- New Folder Button -->
+                <div>
+                    <a href="@_createFolderUrl" class="btn btn-lg btn-outline-warning p-1">
+                        <i class="ps-2 pe-2 bi bi-folder-plus my-fs-4"></i>
+                    </a>
+                </div>
+                <!-- Delete Folder Button -->
+                <div style="margin-left: auto;">
+                    @if (FolderId is not null)
+                    {
+                        @if (_deleteFolderStarted)
+                        {
+                            <button class="btn btn-sm btn-outline-danger p-1 folder-action-btn"
+                                    title="Confirm"
+                                    @onclick="DeleteFolderClickAsync">
+                                <i class="bi-check-square fs-6"></i> Confirm
+                            </button>
+                            <button class="btn btn-sm btn-outline-secondary p-1 folder-action-btn"
+                                    title="Cancel"
+                                    @onclick="() => _deleteFolderStarted = false">
+                                <i class="bi bi-x-square fs-6"></i> Cancel
+                            </button>
+                        }
+                        else
+                        {
+                            <button class="btn btn-outline-danger p-1 folder-action-btn"
+                                    @onclick="() => _deleteFolderStarted = true">
+                                <i class="bi bi-trash fs-6"></i> Delete
+                            </button>
+                        }
+                    }
                 </div>
             </div>
+        </div>
 
+        @if (_bookmarks.Any())
+        {
             <div class="card-container">
                 @foreach (var bookmark in _bookmarks)
                 {
