@@ -1,4 +1,6 @@
-﻿namespace FilePocket.Domain.Entities
+﻿using FilePocket.Domain.Enums;
+
+namespace FilePocket.Domain.Entities
 {
     public class Folder
     {
@@ -8,6 +10,7 @@
         public Guid? ParentFolderId { get; set; }
         public string Name { get; set; } = string.Empty;
         public bool IsDeleted { get; set; }
+        public FolderType FolderType { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
         public DateTime? DeletedAt { get; set; }
