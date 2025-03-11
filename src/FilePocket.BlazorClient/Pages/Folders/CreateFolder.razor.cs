@@ -1,5 +1,6 @@
 ﻿using FilePocket.BlazorClient.Features.Folders.Models;
 using FilePocket.BlazorClient.Services.Folders.Requests;
+using FilePocket.BlazorClient.Shared.Enums;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 
@@ -18,6 +19,8 @@ namespace FilePocket.BlazorClient.Pages.Folders
 
         [Parameter]
         public string FolderIdParam { get; set; } = string.Empty;
+
+        [Parameter] public int FolderType { get; set; }
 
         private string _folderName = string.Empty;
         private bool _validName = true;
@@ -44,7 +47,8 @@ namespace FilePocket.BlazorClient.Pages.Folders
                 UpdatedAt = DateTime.UtcNow,
                 Name = _folderName,
                 ParentFolderId = folderId,
-                PocketId = pocketId
+                PocketId = pocketId,
+                FolderType = (FolderType)FolderType
             };
 
             var result = await FolderRequests.CreateAsync(folder);

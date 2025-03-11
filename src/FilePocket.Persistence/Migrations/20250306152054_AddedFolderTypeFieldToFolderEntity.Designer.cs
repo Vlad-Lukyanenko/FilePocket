@@ -3,6 +3,7 @@ using System;
 using FilePocket.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FilePocket.DataAccess.Migrations
 {
     [DbContext(typeof(FilePocketDbContext))]
-    partial class FilePocketDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250306152054_AddedFolderTypeFieldToFolderEntity")]
+    partial class AddedFolderTypeFieldToFolderEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -500,9 +503,8 @@ namespace FilePocket.DataAccess.Migrations
             modelBuilder.Entity("FilePocket.Domain.Entities.Bookmark", b =>
                 {
                     b.HasOne("FilePocket.Domain.Entities.Folder", "Folder")
-                        .WithMany("Bookmarks")
-                        .HasForeignKey("FolderId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .WithMany()
+                        .HasForeignKey("FolderId");
 
                     b.HasOne("FilePocket.Domain.Entities.Pocket", "Pocket")
                         .WithMany()
@@ -597,11 +599,6 @@ namespace FilePocket.DataAccess.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("FilePocket.Domain.Entities.Folder", b =>
-                {
-                    b.Navigation("Bookmarks");
                 });
 
             modelBuilder.Entity("FilePocket.Domain.Entities.Pocket", b =>

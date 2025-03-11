@@ -1,4 +1,6 @@
-﻿namespace FilePocket.Contracts.Folders.Requests
+﻿using FilePocket.Domain.Enums;
+
+namespace FilePocket.Contracts.Folders.Requests
 {
     public class CreateEndpointRequest
     {
@@ -9,6 +11,8 @@
         public Guid? ParentFolderId { get; set; }
 
         public string Name { get; set; } = string.Empty;
+
+        public FolderType FolderType { get; set; }
 
         public DateTime CreatedAt { get; set; }
 

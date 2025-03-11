@@ -1,7 +1,8 @@
 ﻿namespace FilePocket.BlazorClient.Shared.Enums;
 
-public enum FolderContentType
+public enum FolderType
 {
     Files = 1,
-    Bookmarks
+    Bookmarks,
+    Documents
 }

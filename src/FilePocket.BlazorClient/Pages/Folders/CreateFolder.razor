@@ -1,7 +1,7 @@
-﻿@page "/pockets/{PocketIdParam}/folders/{FolderIdParam}/new"
-@page "/pockets/{PocketIdParam}/folders/new"
-@page "/folders/{FolderIdParam}/new"
-@page "/folders/new"
+﻿@page "/pockets/{PocketIdParam}/folders/{FolderIdParam}/{FolderType:int}/new"
+@page "/pockets/{PocketIdParam}/folders/{FolderType:int}/new"
+@page "/folders/{FolderIdParam}/{FolderType:int}/new"
+@page "/folders/{FolderType:int}/new"
 
 @using Microsoft.AspNetCore.Authorization
 @attribute [Authorize]

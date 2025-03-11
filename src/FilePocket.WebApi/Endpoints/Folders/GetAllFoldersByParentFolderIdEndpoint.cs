@@ -4,6 +4,7 @@ using FilePocket.WebApi.Endpoints.Base;
 using FilePocket.Domain.Models;
 using static System.Net.WebRequestMethods;
 using FilePocket.Contracts.Folders.Responses;
+using FilePocket.Domain.Enums;
 
 namespace FilePocket.WebApi.Endpoints.Folders
 {
@@ -21,12 +22,13 @@ namespace FilePocket.WebApi.Endpoints.Folders
         public override void Configure()
         {
             Verbs(Http.Get);
-            Routes("api/pockets/{pocketId:guid}/parent-folder/{parentFolderId:guid}/folders");
+            Routes("api/pockets/{pocketId:guid}/parent-folder/{parentFolderId:guid}/{folderType}/folders");
         }
 
         public override async Task HandleAsync(CancellationToken cancellationToken)
         {
-            var folders = await _service.FolderService.GetAllAsync(UserId, PocketId, ParentFolderId);
+            var folderType = Route<FolderType>("folderType");
+            var folders = await _service.FolderService.GetAllAsync(UserId, PocketId, ParentFolderId, folderType);
 
             var response = new List<GetAllFoldersByParentFolderIdResponse>();
             foreach(var folder in folders)

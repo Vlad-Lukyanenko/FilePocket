@@ -6,7 +6,7 @@ namespace FilePocket.BlazorClient.Helpers
     {
         public const int MaxDescriptionLength = 500;
 
-        public static string TruncateString(string fullName, int maxLen = 15)
+        public static string TruncateFileName(string fullName, int maxLen = 15)
         {
             var ext = Path.GetExtension(fullName);
             var name = Path.GetFileNameWithoutExtension(fullName);
@@ -17,6 +17,16 @@ namespace FilePocket.BlazorClient.Helpers
             }
 
             return name + ext;
+        }
+
+        public static string TruncateString(string input, int maxLen = 15)
+        {
+            if (input.Length > maxLen)
+            {
+                input = input.Substring(0, maxLen) + "...";
+            }
+
+            return input;
         }
 
         public static string GetIconName(FileTypes? fileType)

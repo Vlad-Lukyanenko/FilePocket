@@ -1,4 +1,6 @@
-﻿namespace FilePocket.BlazorClient.Features.Folders.Models
+﻿using FilePocket.BlazorClient.Shared.Enums;
+
+namespace FilePocket.BlazorClient.Features.Folders.Models
 {
     public class FolderModel
     {
@@ -9,6 +11,8 @@
         public Guid? ParentFolderId { get; set; }
         
         public string Name { get; set; } = string.Empty;
+
+        public FolderType FolderType { get; set; }
 
         public DateTime CreatedAt { get; set; }
 

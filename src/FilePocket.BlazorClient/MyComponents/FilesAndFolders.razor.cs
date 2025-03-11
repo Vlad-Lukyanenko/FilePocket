@@ -10,6 +10,7 @@ using FilePocket.BlazorClient.Services.Pockets.Requests;
 using System.Collections.ObjectModel;
 using FilePocket.BlazorClient.Shared.Models;
 using FilePocket.BlazorClient.Features.Trash;
+using FilePocket.BlazorClient.Shared.Enums;
 
 namespace FilePocket.BlazorClient.MyComponents
 {
@@ -91,12 +92,12 @@ namespace FilePocket.BlazorClient.MyComponents
 
             if (FolderId == null)
             {
-                folders = (await FolderRequests.GetAllAsync(PocketId)).ToList();
+                folders = (await FolderRequests.GetAllAsync(PocketId, FolderType.Files)).ToList();
                 files = await FileRequests.GetFilesAsync(PocketId, null);
             }
             else
             {
-                folders = (await FolderRequests.GetAllAsync(PocketId, FolderId.Value)).ToList();
+                folders = (await FolderRequests.GetAllAsync(PocketId, FolderId.Value, FolderType.Files)).ToList();
                 files = await FileRequests.GetFilesAsync(PocketId, FolderId.Value);
             }
 
