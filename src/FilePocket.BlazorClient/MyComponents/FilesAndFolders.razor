@@ -47,7 +47,7 @@
             var title = $"{files} {parentFolder}{folder}";
         }
         <!-- Top SubMenu -->
-        <TopSubMenu Url="_goBackUrl" Title="@title" ShowBackButton="showGoBackBtn" />
+        <TopSubMenu Title="@title" ShowBackButton="showGoBackBtn" />
 
         <!-- Action Buttons Row -->
         <div class="row">
@@ -113,7 +113,7 @@
         }
         else
         {
-            <FoldersBlock ContentType="Shared.Enums.FolderContentType.Files" Folders="_folders" PocketId="PocketId"></FoldersBlock>
+            <FoldersBlock Folders="_folders" PocketId="PocketId"></FoldersBlock>
             <FilesBlock Files="_files" />
         }
 
