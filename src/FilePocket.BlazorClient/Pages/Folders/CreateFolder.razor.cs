@@ -14,13 +14,17 @@ namespace FilePocket.BlazorClient.Pages.Folders
         [Inject]
         private IJSRuntime JSRuntime { get; set; } = default!;
 
+        [Inject]
+        private NavigationManager Navigation { get; set; } = default!;
+
         [Parameter]
         public string PocketIdParam { get; set; } = string.Empty;
 
         [Parameter]
         public string FolderIdParam { get; set; } = string.Empty;
 
-        [Parameter] public int FolderType { get; set; }
+        [Parameter] 
+        public int FolderType { get; set; }
 
         private string _folderName = string.Empty;
         private bool _isDuplicate = false;
@@ -60,7 +64,34 @@ namespace FilePocket.BlazorClient.Pages.Folders
                 StateHasChanged();
                 return;
             }
+
             Navigation.NavigateTo(GetGoBackUrl());
+        }
+
+        private string GetGoBackUrl()
+        {
+            if (string.IsNullOrWhiteSpace(PocketIdParam) && string.IsNullOrWhiteSpace(FolderIdParam))
+            {
+                return $"/files";
+            }
+
+            Guid? folderId = null;
+            if (!string.IsNullOrWhiteSpace(FolderIdParam))
+            {
+                folderId = Guid.Parse(FolderIdParam);
+            }
+
+            if (string.IsNullOrWhiteSpace(PocketIdParam) && !string.IsNullOrWhiteSpace(FolderIdParam))
+            {
+                return $"/folders/{folderId}/files";
+            }
+
+            if (!string.IsNullOrWhiteSpace(PocketIdParam) && string.IsNullOrWhiteSpace(FolderIdParam))
+            {
+                return $"/pockets/{PocketIdParam}/files";
+            }
+
+            return $"/pockets/{PocketIdParam}/folders/{folderId}/files";
         }
 
         private void NameChanged()

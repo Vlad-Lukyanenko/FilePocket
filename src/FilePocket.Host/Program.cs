@@ -13,11 +13,11 @@ using FilePocket.Domain.Models.Configuration;
 using FilePocket.WebApi.Attributes;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using FilePocket.Application.Interfaces.Services;
-using FilePocket.Persistence;
-using FilePocket.Persistence.Repositories;
 using FilePocket.Application.Interfaces.Repositories;
 using FastEndpoints;
 using Mapster;
+using FilePocket.Infrastructure.Persistence.Repositories;
+using FilePocket.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
