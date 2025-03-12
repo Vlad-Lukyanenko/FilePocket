@@ -23,6 +23,7 @@ namespace FilePocket.BlazorClient.Pages.Folders
         [Parameter] public int FolderType { get; set; }
 
         private string _folderName = string.Empty;
+        private bool _isDuplicate = false;
         private bool _validName = true;
 
         private async Task CreateFolderAsync()
@@ -53,10 +54,13 @@ namespace FilePocket.BlazorClient.Pages.Folders
 
             var result = await FolderRequests.CreateAsync(folder);
 
-            if (result)
+            if (!result)
             {
-                await JSRuntime.InvokeVoidAsync("history.back");
+                _isDuplicate = true;
+                StateHasChanged();
+                return;
             }
+            Navigation.NavigateTo(GetGoBackUrl());
         }
 
         private void NameChanged()

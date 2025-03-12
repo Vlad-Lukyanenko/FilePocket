@@ -19,7 +19,10 @@ namespace FilePocket.BlazorClient.Services.Folders.Requests
             var content = GetStringContent(folder);
 
             var response = await _apiClient.PostAsync("api/folders", content);
-
+            if (response.StatusCode == System.Net.HttpStatusCode.Conflict)
+            {
+                return false;
+            }
             return response.IsSuccessStatusCode;
         }
 

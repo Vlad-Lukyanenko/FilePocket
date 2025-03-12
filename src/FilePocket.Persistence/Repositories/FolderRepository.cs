@@ -3,6 +3,7 @@ using FilePocket.Domain.Entities;
 using FilePocket.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using System.Xml.Linq;
 
 namespace FilePocket.Persistence.Repositories
 {
@@ -99,6 +100,10 @@ namespace FilePocket.Persistence.Repositories
                     await dbContext.SaveChangesAsync();
                 }
             }
+        }
+        public async Task<bool> ExistsAsync(string folderName, Guid? pocketId, Guid? parentFolderId)
+        {
+            return await DbContext.Folders.AsNoTracking().AnyAsync(f => f.Name == folderName && f.PocketId == pocketId && f.ParentFolderId == parentFolderId);
         }
     }
 }
