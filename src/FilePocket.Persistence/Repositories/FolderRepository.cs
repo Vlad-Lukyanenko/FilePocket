@@ -1,5 +1,6 @@
 ﻿using FilePocket.Application.Interfaces.Repositories;
 using FilePocket.Domain.Entities;
+using FilePocket.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System.Xml.Linq;
@@ -54,9 +55,13 @@ namespace FilePocket.Persistence.Repositories
             }
         }
 
-        public async Task<List<Folder>> GetAllAsync(Guid userId, Guid? pocketId, Guid? parentFolderId)
+        public async Task<List<Folder>> GetAllAsync(Guid userId, Guid? pocketId, Guid? parentFolderId, FolderType folderType)
         {
-            var result = DbContext.Set<Folder>().Where(c => c.UserId == userId && c.PocketId == pocketId && c.ParentFolderId == parentFolderId && !c.IsDeleted);
+            var result = DbContext.Set<Folder>().Where(c => c.UserId == userId 
+                                                            && c.PocketId == pocketId 
+                                                            && c.ParentFolderId == parentFolderId 
+                                                            && c.FolderType == folderType
+                                                            && !c.IsDeleted);
 
             return await result.ToListAsync();
         }

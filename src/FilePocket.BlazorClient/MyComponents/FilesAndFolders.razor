@@ -1,5 +1,6 @@
 ﻿@using FilePocket.BlazorClient.Helpers
 @using FilePocket.BlazorClient.Services.Files.Models
+@using FilePocket.BlazorClient.Shared.Enums
 
 <style>
     @@media (max-width: 768px) {
@@ -46,7 +47,7 @@
             var title = $"{files} {parentFolder}{folder}";
         }
         <!-- Top SubMenu -->
-        <TopSubMenu Url="_goBackUrl" Title="@title" ShowBackButton="showGoBackBtn" />
+        <TopSubMenu Title="@title" ShowBackButton="showGoBackBtn" />
 
         <!-- Action Buttons Row -->
         <div class="row">
@@ -61,7 +62,7 @@
                 @{
                     var folderId = FolderId is null ? "" : $"{FolderId}/";
 
-                    var url = $"/pockets/{PocketId}/folders/{folderId}new";
+                    var url = $"/pockets/{PocketId}/folders/{folderId}{(int)FolderType.Files}/new";
                 }
 
                 <a href="@url" class="btn btn-outline-warning py-0 px-3">

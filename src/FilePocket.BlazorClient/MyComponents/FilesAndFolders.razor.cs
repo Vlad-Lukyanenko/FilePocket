@@ -10,13 +10,14 @@ using FilePocket.BlazorClient.Services.Pockets.Requests;
 using System.Collections.ObjectModel;
 using FilePocket.BlazorClient.Shared.Models;
 using FilePocket.BlazorClient.Features.Trash;
+using FilePocket.BlazorClient.Shared.Enums;
 
 namespace FilePocket.BlazorClient.MyComponents
 {
     public partial class FilesAndFolders
     {
         [Parameter]
-        public Guid PocketId { get; set; }
+        public Guid? PocketId { get; set; }
 
         [Parameter]
         public Guid? FolderId { get; set; } = null;
@@ -55,10 +56,31 @@ namespace FilePocket.BlazorClient.MyComponents
 
         private static SemaphoreSlim semaphore = new SemaphoreSlim(10);
 
+        private bool _firstRender = true;
+
         protected override async Task OnInitializedAsync()
         {
+            if (PocketId is null)
+            {
+                var defaultPocket = await PocketRequests.GetDefaultAsync();
+
+                PocketId = defaultPocket.Id;
+            }
+
             await InitPage();
             StateHasChanged();
+        }
+
+        protected override async Task OnParametersSetAsync()
+        {
+            if (!_firstRender)
+            {
+                await OnInitializedAsync();
+            }
+            else
+            {
+                _firstRender = false;
+            }
         }
 
         private async Task InitPage()
@@ -70,12 +92,12 @@ namespace FilePocket.BlazorClient.MyComponents
 
             if (FolderId == null)
             {
-                folders = (await FolderRequests.GetAllAsync(PocketId)).ToList();
+                folders = (await FolderRequests.GetAllAsync(PocketId, FolderType.Files)).ToList();
                 files = await FileRequests.GetFilesAsync(PocketId, null);
             }
             else
             {
-                folders = (await FolderRequests.GetAllAsync(PocketId, FolderId.Value)).ToList();
+                folders = (await FolderRequests.GetAllAsync(PocketId, FolderId.Value, FolderType.Files)).ToList();
                 files = await FileRequests.GetFilesAsync(PocketId, FolderId.Value);
             }
 

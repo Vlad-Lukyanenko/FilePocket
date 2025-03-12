@@ -1,0 +1,91 @@
+﻿.my-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background-color: #ffffff;
+    border: none;
+    border-radius: 0.8em;
+    overflow: hidden;
+}
+
+    .my-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+
+.my-card-header {
+    background-color: #165887;
+    color: #ffffff;
+    text-align: center;
+    padding: 0.5rem;
+}
+
+.my-card-body {
+    background-color: #ffffff;
+    padding: 1rem;
+}
+
+.card-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    justify-content: center; /* Center cards vertically */
+    padding: 1rem;
+}
+
+.body-icon {
+    color: #2c638f;
+    font-size: 1.2em;
+}
+
+.body-main-text {
+    color: #333;
+}
+
+.body-text {
+    color: #555;
+    margin-left: 0.5em;
+}
+
+.card-footer {
+    border-top: 1px solid #f0f0f0;
+    background-color: #ffffff;
+    padding: 1rem;
+}
+
+.action-btn {
+    width: 7em;
+    border-radius: 10px;
+}
+
+.folder-action-btn {
+    border-radius: 10px;
+    min-width: 6em;
+}
+
+.confirmation-btn {
+    border-radius: 10px;
+}
+
+.validation-error {
+    background-color: #ff8059;
+    border: solid 1px;
+}
+
+@media (max-width: 575.98px) {
+    .card-footer .btn {
+        width: auto; /* Remove fixed width */
+        padding: 0.25rem 0.5rem; /* Reduce padding */
+    }
+}
+
+@media (max-width: 897px) {
+    .my-card {
+        width: 90%; /* Wider cards on mobile */
+        flex: 1 1 100%; /* Ensure cards take full width on mobile */
+    }
+}
+
+@media (max-width: 480px) {
+    .my-card {
+        width: 100%; /* Full width on very small screens */
+    }
+}

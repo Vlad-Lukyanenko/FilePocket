@@ -1,4 +1,6 @@
-﻿namespace FilePocket.Domain.Models
+﻿using FilePocket.Domain.Enums;
+
+namespace FilePocket.Domain.Models
 {
     public class FolderModel
     {
@@ -8,8 +10,10 @@
         public Guid? PocketId { get; set; }
 
         public Guid? ParentFolderId { get; set; }
-        
+
         public string Name { get; set; } = string.Empty;
+
+        public FolderType FolderType { get; set; }
 
         public DateTime CreatedAt { get; set; }
 

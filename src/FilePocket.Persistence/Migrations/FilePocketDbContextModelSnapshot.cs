@@ -25,6 +25,44 @@ namespace FilePocket.DataAccess.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("FilePocket.Domain.Entities.Bookmark", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("FolderId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("PocketId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FolderId");
+
+                    b.HasIndex("PocketId");
+
+                    b.ToTable("Bookmarks");
+                });
+
             modelBuilder.Entity("FilePocket.Domain.Entities.Consumption.AccountConsumption", b =>
                 {
                     b.Property<Guid>("Id")
@@ -132,6 +170,9 @@ namespace FilePocket.DataAccess.Migrations
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("FolderType")
+                        .HasColumnType("integer");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
@@ -456,6 +497,24 @@ namespace FilePocket.DataAccess.Migrations
                     b.HasDiscriminator().HasValue("StorageCapacity");
                 });
 
+            modelBuilder.Entity("FilePocket.Domain.Entities.Bookmark", b =>
+                {
+                    b.HasOne("FilePocket.Domain.Entities.Folder", "Folder")
+                        .WithMany("Bookmarks")
+                        .HasForeignKey("FolderId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("FilePocket.Domain.Entities.Pocket", "Pocket")
+                        .WithMany()
+                        .HasForeignKey("PocketId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Folder");
+
+                    b.Navigation("Pocket");
+                });
+
             modelBuilder.Entity("FilePocket.Domain.Entities.Consumption.AccountConsumption", b =>
                 {
                     b.HasOne("FilePocket.Domain.Entities.User", null)
@@ -538,6 +597,11 @@ namespace FilePocket.DataAccess.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("FilePocket.Domain.Entities.Folder", b =>
+                {
+                    b.Navigation("Bookmarks");
                 });
 
             modelBuilder.Entity("FilePocket.Domain.Entities.Pocket", b =>
