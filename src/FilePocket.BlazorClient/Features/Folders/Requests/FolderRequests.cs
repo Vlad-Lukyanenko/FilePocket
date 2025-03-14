@@ -1,5 +1,6 @@
 ﻿using FilePocket.BlazorClient.Features;
 using FilePocket.BlazorClient.Features.Folders.Models;
+using FilePocket.BlazorClient.Shared.Enums;
 using Newtonsoft.Json;
 using System.Text;
 
@@ -18,16 +19,19 @@ namespace FilePocket.BlazorClient.Services.Folders.Requests
             var content = GetStringContent(folder);
 
             var response = await _apiClient.PostAsync("api/folders", content);
-
+            if (response.StatusCode == System.Net.HttpStatusCode.Conflict)
+            {
+                return false;
+            }
             return response.IsSuccessStatusCode;
         }
 
-        public async Task<IEnumerable<FolderModel>> GetAllAsync(Guid? pocketId, Guid parentFolderId)
+        public async Task<IEnumerable<FolderModel>> GetAllAsync(Guid? pocketId, Guid parentFolderId, FolderType folderType)
         {
 
             var url = pocketId is null 
-                ? $"api/parent-folder/{parentFolderId}/folders"
-                : $"api/pockets/{pocketId}/parent-folder/{parentFolderId}/folders";
+                ? $"api/parent-folder/{parentFolderId}/{folderType}/folders"
+                : $"api/pockets/{pocketId}/parent-folder/{parentFolderId}/{folderType}/folders";
             
             var content = await _apiClient.GetAsync(url);
 
@@ -43,11 +47,11 @@ namespace FilePocket.BlazorClient.Services.Folders.Requests
             return JsonConvert.DeserializeObject<FolderModel>(content)!;
         }
 
-        public async Task<IEnumerable<FolderModel>> GetAllAsync(Guid? pocketId)
+        public async Task<IEnumerable<FolderModel>> GetAllAsync(Guid? pocketId, FolderType folderType)
         {
             var url = pocketId is null 
-                ? $"api/folders"
-                : $"api/pockets/{pocketId}/folders";
+                ? $"api/folders/{folderType}"
+                : $"api/pockets/{pocketId}/{folderType}/folders";
             
             var content = await _apiClient.GetAsync(url);
 

@@ -1,9 +1,9 @@
-﻿using MapsterMapper;
-using FilePocket.Application.Interfaces.Services;
-using FilePocket.WebApi.Endpoints.Base;
-using FilePocket.Domain.Models;
-using static System.Net.WebRequestMethods;
+﻿using FilePocket.Application.Interfaces.Services;
 using FilePocket.Contracts.Folders.Responses;
+using FilePocket.Domain.Enums;
+using FilePocket.WebApi.Endpoints.Base;
+using MapsterMapper;
+using static System.Net.WebRequestMethods;
 
 namespace FilePocket.WebApi.Endpoints.Folders
 {
@@ -21,12 +21,13 @@ namespace FilePocket.WebApi.Endpoints.Folders
         public override void Configure()
         {
             Verbs(Http.Get);
-            Routes("api/pockets/{pocketId:guid}/folders");
+            Routes("api/pockets/{pocketId:guid}/{folderType}/folders");
         }
 
         public override async Task HandleAsync(CancellationToken cancellationToken)
         {
-            var folders = await _service.FolderService.GetAllAsync(UserId, PocketId, null);
+            var folderType = Route<FolderType>("folderType");
+            var folders = await _service.FolderService.GetAllAsync(UserId, PocketId, null, folderType);
 
             var response = new List<GetAllFoldersResponse>();
             foreach (var folder in folders)

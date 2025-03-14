@@ -1,5 +1,6 @@
 ﻿using FilePocket.BlazorClient.Features.Folders.Models;
 using FilePocket.BlazorClient.Services.Folders.Requests;
+using FilePocket.BlazorClient.Shared.Enums;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 
@@ -13,13 +14,20 @@ namespace FilePocket.BlazorClient.Pages.Folders
         [Inject]
         private IJSRuntime JSRuntime { get; set; } = default!;
 
+        [Inject]
+        private NavigationManager Navigation { get; set; } = default!;
+
         [Parameter]
         public string PocketIdParam { get; set; } = string.Empty;
 
         [Parameter]
         public string FolderIdParam { get; set; } = string.Empty;
 
+        [Parameter] 
+        public int FolderType { get; set; }
+
         private string _folderName = string.Empty;
+        private bool _isDuplicate = false;
         private bool _validName = true;
 
         private async Task CreateFolderAsync()
@@ -44,15 +52,46 @@ namespace FilePocket.BlazorClient.Pages.Folders
                 UpdatedAt = DateTime.UtcNow,
                 Name = _folderName,
                 ParentFolderId = folderId,
-                PocketId = pocketId
+                PocketId = pocketId,
+                FolderType = (FolderType)FolderType
             };
 
             var result = await FolderRequests.CreateAsync(folder);
 
-            if (result)
+            if (!result)
             {
-                await JSRuntime.InvokeVoidAsync("history.back");
+                _isDuplicate = true;
+                StateHasChanged();
+                return;
             }
+
+            Navigation.NavigateTo(GetGoBackUrl());
+        }
+
+        private string GetGoBackUrl()
+        {
+            if (string.IsNullOrWhiteSpace(PocketIdParam) && string.IsNullOrWhiteSpace(FolderIdParam))
+            {
+                return $"/files";
+            }
+
+            Guid? folderId = null;
+            if (!string.IsNullOrWhiteSpace(FolderIdParam))
+            {
+                folderId = Guid.Parse(FolderIdParam);
+            }
+
+            if (string.IsNullOrWhiteSpace(PocketIdParam) && !string.IsNullOrWhiteSpace(FolderIdParam))
+            {
+                return $"/folders/{folderId}/files";
+            }
+
+            if (!string.IsNullOrWhiteSpace(PocketIdParam) && string.IsNullOrWhiteSpace(FolderIdParam))
+            {
+                return $"/pockets/{PocketIdParam}/files";
+            }
+
+            return $"/pockets/{PocketIdParam}/folders/{folderId}/files";
         }
 
         private void NameChanged()

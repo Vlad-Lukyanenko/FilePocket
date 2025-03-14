@@ -1,9 +1,9 @@
-﻿@page "/pockets/{PocketIdParam}/folders/{FolderIdParam}/new"
-@page "/pockets/{PocketIdParam}/folders/new"
-@page "/folders/{FolderIdParam}/new"
-@page "/folders/new"
-
+﻿@page "/pockets/{PocketIdParam}/folders/{FolderIdParam}/{FolderType:int}/new"
+@page "/pockets/{PocketIdParam}/folders/{FolderType:int}/new"
+@page "/folders/{FolderIdParam}/{FolderType:int}/new"
+@page "/folders/{FolderType:int}/new"
 @using Microsoft.AspNetCore.Authorization
+
 @attribute [Authorize]
 
 <div class="container-fluid" style="min-height: 600px;">
@@ -23,7 +23,12 @@
                         Please provide a valid folder name.
                     </div>
                 }
-
+                @if (_isDuplicate)
+                {
+                    <div class="text-danger">
+                        A folder with the name "@_folderName" already exists. Please enter a different name.
+                    </div>
+                }
                 <!-- Create Button -->
                 <div class="d-flex justify-content-end mt-3">
                     <button class="btn btn-success" @onclick="CreateFolderAsync">Create</button>

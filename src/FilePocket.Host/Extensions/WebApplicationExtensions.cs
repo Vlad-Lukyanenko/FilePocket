@@ -1,4 +1,4 @@
-﻿using FilePocket.Persistence;
+﻿using FilePocket.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
 namespace FilePocket.Shared.Extensions;
