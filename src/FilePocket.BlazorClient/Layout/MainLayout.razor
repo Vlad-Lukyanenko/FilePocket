@@ -9,7 +9,7 @@
 <div class="px-1 px-sm-3 d-flex p-2">
     <AuthorizeView>
         <Authorized>
-            
+
             <div class="col-2 card shadow-sm mb-2 mb-md-0 me-md-2 p-0 d-none d-md-block">
                 <!-- Sidebar Menu Desktop-->
                 <aside class="">
@@ -86,7 +86,7 @@
                 </aside>
             </div>
 
-             <!-- Offcanvas menu for Mobile -->
+            <!-- Offcanvas menu for Mobile -->
             <div class="offcanvas offcanvas-start d-md-none" tabindex="-1" id="offcanvasMenu">
                 <div class="offcanvas-header">
                     @* <h5 class="offcanvas-title fw-bold">Menu</h5> *@
@@ -139,10 +139,6 @@
                         </li>
                     </ul>
 
-                     <!-- Logout Button -->
-                     <a href="/logout" class="btn btn-outline-danger px-3 mt-3">
-                        <strong>Logout</strong>
-                     </a>
                 </div>
             </div>
 
@@ -150,39 +146,127 @@
                 <!-- Navbar -->
                 <header class="position-relative mb-2 navbar navbar-expand-md w-100 p-2 card">
                     @* <nav class="card navbar navbar-expand-md w-100 p-2"> *@
-                        <div class="container-fluid">
-                            <!-- Brand Logo and Name -->
-                            <a class="navbar-brand fw-bold main-text-header d-flex align-items-center" href="#">
-                                <img src="./assets/img/logo.png" alt="Logo" width="28" height="28" class="d-inline-block align-text-top me-2">
-                                File Pocket
-                            </a>
+                    <div class="container-fluid">
+                        <!-- Brand Logo and Name -->
+                        <a class="navbar-brand fw-bold main-text-header d-flex align-items-center" href="#">
+                            <img src="./assets/img/logo.png" alt="Logo" width="28" height="28" class="d-inline-block align-text-top me-2">
+                            File Pocket
+                        </a>
+
+                        <div style="width: 112px; display: flex; justify-content: space-between">
 
                             <!-- Mobile Toggle Button -->
                             <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu">
                                 <span class="navbar-toggler-icon"></span>
                             </button>
 
-                            <!-- Collapsible Content -->
-                            <div class="collapse navbar-collapse">
-                                <div class="d-flex flex-column flex-md-row align-items-center ms-auto gap-3">
-                                    <!-- Search Form -->
-                                    <form class="d-flex" role="search">
-                                        <div class="search-container">
-                                            <input class="search-box" type="text" placeholder="looking for something?" />
-                                            <button class="search-button">
-                                                <i class="fas fa-search"></i>
-                                            </button>
-                                        </div>
-                                    </form>
+                            <div class="narrow-display">
+                                <div class="icon-btn-container ">
+                                    <button class="icon icon-btn" @onclick="SwitchUserInfoDialog">
+                                        @(_iconName ?? "...")
+                                    </button>
+                                    @if (_menuOpen)
+                                    {
+                                        <div class="user-info-dialog fade-in">
+                                            <div class="card shadow-sm">
+                                                <div class="card-img-top top">
+                                                    <button type="button" class="btn-close" @onclick="SwitchUserInfoDialog" />
+                                                    <span>@_user?.Email</span>
+                                                    <div class="icon profile-icon">
+                                                        @(_iconName ?? "...")
+                                                    </div>
+                                                    @if (!string.IsNullOrEmpty(_user?.FirstName))
+                                                    {
+                                                        <h5 class="card-title">
+                                                            @(_user?.FirstName + " " + _user?.LastName)
+                                                        </h5>
+                                                    }
 
-                                    <!-- Logout Button -->
-                                    <a href="/logout" class="btn btn-outline-danger px-3">
-                                        <strong>Logout</strong>
-                                    </a>
+                                                    <!-- Link To Profie -->
+                                                    <div>
+                                                        <span><a href="/profile" class="link-primary">Edit Profile</a></span>
+                                                    </div>
+
+                                                </div>
+                                                <div class="card-body">
+
+                                                    <!-- Logout Button -->
+                                                    <div>
+                                                        <a href="/logout" class="btn btn-outline-danger px-3">
+                                                            <strong>Logout</strong>
+                                                        </a>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
                                 </div>
-                                
                             </div>
                         </div>
+
+
+                        <!-- Collapsible Content -->
+                        <div class="collapse navbar-collapse">
+                            <div class="d-flex flex-column flex-md-row align-items-center ms-auto gap-3">
+                                <!-- Search Form -->
+                                <form class="d-flex" role="search">
+                                    <div class="search-container">
+                                        <input class="search-box" type="text" placeholder="looking for something?" />
+                                        <button class="search-button">
+                                            <i class="fas fa-search"></i>
+                                        </button>
+                                    </div>
+                                </form>
+
+                                <!-- Signing In User Icon -->
+                                <div class="wide-display">
+                                    <div class="icon-btn-container ">
+                                        <button class="icon icon-btn" @onclick="SwitchUserInfoDialog">
+                                            @(_iconName ?? "...")
+                                        </button>
+                                        @if (_menuOpen)
+                                        {
+                                            <div class="user-info-dialog fade-in">
+                                                <div class="card shadow-sm">
+                                                    <div class="card-img-top top">
+                                                        <button type="button" class="btn-close" @onclick="SwitchUserInfoDialog" />
+                                                        <span>@_user?.Email</span>
+                                                        <div class="icon profile-icon">
+                                                            @(_iconName ?? "...")
+                                                        </div>
+                                                        @if (!string.IsNullOrEmpty(_user?.FirstName))
+                                                        {
+                                                            <h5 class="card-title">
+                                                                @(_user?.FirstName + " " + _user?.LastName)
+                                                            </h5>
+                                                        }
+
+                                                        <!-- Link To Profie -->
+                                                        <div>
+                                                            <span><a href="/profile" class="link-primary">Edit Profile</a></span>
+                                                        </div>
+
+                                                    </div>
+                                                    <div class="card-body">
+
+                                                        <!-- Logout Button -->
+                                                        <div>
+                                                            <a href="/logout" class="btn btn-outline-danger px-3">
+                                                                <strong>Logout</strong>
+                                                            </a>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
                     @* </nav> *@
                 </header>
 
@@ -191,8 +275,7 @@
                     @Body
                 </main>
             </div>
-        
-            
+
         </Authorized>
         <NotAuthorized>
             <section class="col-12 mt-3 text-center pt-3 pb-4">
@@ -215,7 +298,7 @@
 
     .nav-link {
         display: flex;
-        align-items: left;
+        align-items: start;
         justify-content: left;
         color: #000 !important; /* Darker text color */
         background-color: rgba(0,0,0,0.05); /* Subtle background */
@@ -256,7 +339,7 @@
         }
 
             .nav-link.active {
-                @* background-color: rgba(0,0,0,0.1); *@
+    @* background-color: rgba(0,0,0,0.1); *@
                 color: #000 !important;
             }
 
@@ -266,43 +349,12 @@
     }
 </style>
 
-@code {
-    protected override void OnInitialized()
-    {
-        Navigation.LocationChanged += OnLocationChanged;
-        NavigationHistory.AddToHistory(Navigation.Uri);
-    }
-
-    private void OnLocationChanged(object sender, LocationChangedEventArgs e)
-    {
-        NavigationHistory.AddToHistory(e.Location);
-    }
-
-    public void Dispose()
-    {
-        Navigation.LocationChanged -= OnLocationChanged;
-    }
-
-    private string IsActive(string href)
-    {
-        return Navigation.Uri.EndsWith(href, StringComparison.OrdinalIgnoreCase) ? "active" : "";
-    }
-
-
-    private async Task CloseOffcanvasAndNavigate(string url)
-    {
-        await JS.InvokeVoidAsync("closeOffcanvasMenu");
-        Navigation.NavigateTo(url); 
-    }
-
-}
-
-<Script>
+<script>
     window.closeOffcanvasMenu = () => {
-        let offcanvas = document.getElementById('offcanvasMenu'); 
+        let offcanvas = document.getElementById('offcanvasMenu');
         let bsOffcanvas = bootstrap.Offcanvas.getInstance(offcanvas);
         if (bsOffcanvas) {
             bsOffcanvas.hide();
         }
     };
-</Script>
+</script>
