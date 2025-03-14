@@ -1,4 +1,5 @@
 ﻿using FilePocket.Domain.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace FilePocket.Domain.Models
 {
@@ -10,7 +11,7 @@ namespace FilePocket.Domain.Models
         public Guid? PocketId { get; set; }
 
         public Guid? ParentFolderId { get; set; }
-
+        [Required(ErrorMessage = "Folder name is required.")]
         public string Name { get; set; } = string.Empty;
 
         public FolderType FolderType { get; set; }
