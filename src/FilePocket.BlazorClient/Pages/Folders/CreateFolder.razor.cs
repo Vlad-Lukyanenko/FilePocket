@@ -32,6 +32,11 @@ namespace FilePocket.BlazorClient.Pages.Folders
 
         private async Task CreateFolderAsync()
         {
+            if (string.IsNullOrWhiteSpace(_folderName))
+            {
+                _validName = false;
+                return;
+            }
             Guid? pocketId = null;
 
             if(!string.IsNullOrWhiteSpace(PocketIdParam) && PocketIdParam != Guid.Empty.ToString())
@@ -61,7 +66,6 @@ namespace FilePocket.BlazorClient.Pages.Folders
             if (!result)
             {
                 _isDuplicate = true;
-                StateHasChanged();
                 return;
             }
 
@@ -74,7 +78,6 @@ namespace FilePocket.BlazorClient.Pages.Folders
             {
                 return $"/files";
             }
-
             Guid? folderId = null;
             if (!string.IsNullOrWhiteSpace(FolderIdParam))
             {
