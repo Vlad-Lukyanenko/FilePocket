@@ -29,7 +29,7 @@
   <ItemGroup>
     <ProjectReference Include="..\FilePocket.Application\FilePocket.Application.csproj" />
     <ProjectReference Include="..\FilePocket.Contracts\FilePocket.Contracts.csproj" />
-    <ProjectReference Include="..\FilePocket.Infrastructure.Persistence\FilePocket.Infrastructure.Persistence.csproj" />
+    <ProjectReference Include="..\FilePocket.Persistence\FilePocket.Persistence.csproj" />
     <ProjectReference Include="..\FilePocket.WebApi\FilePocket.WebApi.csproj" />
   </ItemGroup>
 
