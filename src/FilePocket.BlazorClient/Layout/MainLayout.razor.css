@@ -8,6 +8,16 @@ main {
     flex: 1;
 }
 
+aside{
+    background-color: rgba(32, 38, 86, 1);
+    padding-top: 45px;
+}
+
+#offcanvasMenuRight, #offcanvasMenu{
+    background-color: rgba(32, 38, 86, 1);
+    color: rgba(251, 251, 255, 1) !important;
+}
+
 .sidebar {
     background-image: linear-gradient(180deg, rgb(5, 39, 103) 0%, #3a0647 70%);
 }
@@ -21,20 +31,86 @@ main {
     align-items: center;
 }
 
-    .top-row ::deep a, .top-row ::deep .btn-link {
-        white-space: nowrap;
-        margin-left: 1.5rem;
-        text-decoration: none;
+.top-row ::deep a, .top-row ::deep .btn-link {
+    white-space: nowrap;
+    margin-left: 1.5rem;
+    text-decoration: none;
+}
+
+.top-row ::deep a:hover, .top-row ::deep .btn-link:hover {
+    text-decoration: underline;
+}
+
+.top-row ::deep a:first-child {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
+
+
+#menu::-webkit-scrollbar {
+    display: none;
+}
+
+.nav-link {
+    display: flex;
+    align-items: left;
+    justify-content: left;
+    color: rgba(251, 251, 255, 1) !important; /* Darker text color */
+    /* background-color: rgba(0,0,0,0.05); Subtle background */
+}
+
+.nav-link.active {
+    background-color: rgba(146, 118, 173, 1)!important;
+    color: rgba(251, 251, 255, 1) !important;
+}
+
+
+
+
+
+
+/* Custom styles for mobile optimization */
+@media (max-width: 768px) {
+    .search-container {
+        width: 100%;
+        max-width: none;
     }
 
-    .top-row ::deep a:hover, .top-row ::deep .btn-link:hover {
-        text-decoration: underline;
+    .search-box {
+        width: 100%;
     }
 
-    .top-row ::deep a:first-child {
-        overflow: hidden;
-        text-overflow: ellipsis;
+    .navbar-collapse {
+        padding: 1rem 0;
     }
+
+    #menu {
+        -ms-overflow-style: none; /* IE and Edge */
+        scrollbar-width: none; /* Firefox */
+    }
+
+    .nav-link {
+        padding: 0.5rem !important;
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        
+    }
+
+        .nav-link.active {
+            background-color: rgba(146, 118, 173, 1)!important;
+        }
+
+        .nav-link i {
+            font-size: 1.25rem !important;
+        }
+}
+
+
+
 
 @media (max-width: 640.98px) {
     .top-row {
@@ -45,6 +121,7 @@ main {
         margin-left: 0;
     }
 }
+
 
 @media (min-width: 641px) {
     .page {
