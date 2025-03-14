@@ -146,80 +146,81 @@
                 <!-- Navbar -->
                 <header class="position-relative mb-2 navbar navbar-expand-md w-100 p-2 card">
 
-                    <!-- Signing In User Info Menu -->
-                    @if (_menuOpen)
-                    {
-                        <div class="user-info-dialog fade-in">
-                            <div class="card shadow-sm">
-                                <div class="card-img-top top">
-                                    <button type="button" class="btn-close" @onclick="SwitchUserInfoDialog" />
-                                    <span>@_user?.Email</span>
-                                    <div class="icon profile-icon">
+                    <nav class="card navbar navbar-expand-md w-100 p-2">
+                        <!-- Signing In User Info Menu -->
+                        @if (_menuOpen)
+                        {
+                            <div class="user-info-dialog fade-in">
+                                <div class="card shadow-sm">
+                                    <div class="card-img-top top">
+                                        <button type="button" class="btn-close" @onclick="SwitchUserInfoDialog" />
+                                        <span>@_user?.Email</span>
+                                        <div class="icon profile-icon">
+                                            <img src="../assets/img/man.png" alt="userPicture">
+                                        </div>
+                                        @if (!string.IsNullOrEmpty(_user?.FirstName))
+                                        {
+                                            <h5 class="card-title">
+                                                @GetDisplayedName()
+                                            </h5>
+                                        }
+                                        <div>
+                                            <span>
+                                                <a href="/profile" class="link-primary">Edit Profile</a>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="card-body">
+                                        <div>
+                                            <a href="/logout" class="btn btn-outline-danger px-3">
+                                                <strong>Logout</strong>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="user-info-dialog-back fade-in" @onclick="SwitchUserInfoDialog"></div>
+                        }
+
+                        <div class="container-fluid">
+                            <!-- Brand Logo and Name -->
+                            <a class="navbar-brand fw-bold main-text-header d-flex align-items-right" href="#">
+                                <img src="./assets/img/logo.png" alt="Logo" width="28" height="28" class="d-inline-block align-text-top me-2">
+                                File Pocket
+                            </a>
+
+                            <!-- Collapsible Content -->
+                            <div class="collapse navbar-collapse">
+                                <div class="d-flex flex-column flex-md-row align-items-center ms-auto gap-3">
+                                    <!-- Search Form -->
+                                    <form class="d-flex" role="search">
+                                        <div class="search-container">
+                                            <input class="search-box" type="text" placeholder="looking for something?" />
+                                            <button class="search-button">
+                                                <i class="fas fa-search"></i>
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            <!-- End of Collapsible Content -->
+
+                            <div class="controls-container">
+                                <!-- Signing In User Info Button -->
+                                <div class="icon-btn-container ">
+                                    <button class="icon icon-btn" @onclick="SwitchUserInfoDialog">
                                         @(_iconName ?? "...")
-                                    </div>
-                                    @if (!string.IsNullOrEmpty(_user?.FirstName))
-                                    {
-                                        <h5 class="card-title">
-                                            @(_user?.FirstName + " " + _user?.LastName)
-                                        </h5>
-                                    }
-                                    <div>
-                                        <span>
-                                            <a href="/profile" class="link-primary">Edit Profile</a>
-                                        </span>
-                                    </div>
+                                    </button>
                                 </div>
-                                <div class="card-body">
-                                    <div>
-                                        <a href="/logout" class="btn btn-outline-danger px-3">
-                                            <strong>Logout</strong>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    }
 
-
-                    @* <nav class="card navbar navbar-expand-md w-100 p-2"> *@
-                    <div class="container-fluid">
-                        <!-- Brand Logo and Name -->
-                        <a class="navbar-brand fw-bold main-text-header d-flex align-items-right" href="#">
-                            <img src="./assets/img/logo.png" alt="Logo" width="28" height="28" class="d-inline-block align-text-top me-2">
-                            File Pocket
-                        </a>
-
-                        <!-- Collapsible Content -->
-                        <div class="collapse navbar-collapse">
-                            <div class="d-flex flex-column flex-md-row align-items-center ms-auto gap-3">
-                                <!-- Search Form -->
-                                <form class="d-flex" role="search">
-                                    <div class="search-container">
-                                        <input class="search-box" type="text" placeholder="looking for something?" />
-                                        <button class="search-button">
-                                            <i class="fas fa-search"></i>
-                                        </button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                        <!-- End of Collapsible Content -->
-
-                        <div class="controls-container">
-                            <!-- Signing In User Info Button -->
-                            <div class="icon-btn-container ">
-                                <button class="icon icon-btn" @onclick="SwitchUserInfoDialog">
-                                    @(_iconName ?? "...")
+                                <!-- Mobile Toggle Button -->
+                                <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu">
+                                    <span class="navbar-toggler-icon"></span>
                                 </button>
                             </div>
-
-                            <!-- Mobile Toggle Button -->
-                            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu">
-                                <span class="navbar-toggler-icon"></span>
-                            </button>
                         </div>
-                    </div>
-                    @* </nav> *@
+                    </nav>
                 </header>
 
                 <!-- Main Content Area -->

@@ -7,19 +7,19 @@
 
 
 .icon {
-    background-color: #407093;
     color: white;
     font-weight: bold;
     border: 0px solid;
     border-radius: 50%;
+    object-fit: cover;
 }
 
 .icon-btn {
+    background-color: #407093;
     width: 42px;
     height: 42px;
     top: -2px;
     right: -2px;
-    font-size: 1.125rem;
     position: absolute;
 }
 
@@ -44,13 +44,23 @@
         position: relative;
     }
 
-.profile-icon {
-    width: 4rem;
-    height: 4rem;
-    margin: 0.75rem auto;
-    line-height: 4rem;
-    font-size: 2rem;
+.user-info-dialog-back {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 6;
+    background-color: rgba(0,0,0,0.5);
 }
+
+    .profile-icon {
+        width: 4rem;
+        height: 4rem;
+        margin: 0.75rem auto;
+        line-height: 4rem;
+        font-size: 2rem;
+    }
 
 .card-img-top.top {
     background-color: #F2F2F2;
@@ -96,13 +106,6 @@
         justify-content: space-between;
     }
 }
-
-/*@media (max-width: 308px) {
-
-    .user-info-dialog {
-        top: calc(50vh - 7.5rem);
-    }
-}*/
 
 @media (min-width: 769px) {
     .narrow-display {

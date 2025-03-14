@@ -25,14 +25,11 @@ namespace FilePocket.BlazorClient.Layout
 
             if (_user is not null)
             {
-                var firstName = _user.FirstName ?? string.Empty;
-                var lastName = _user.LastName ?? string.Empty;
-  
-                if (!String.IsNullOrEmpty(firstName) || !String.IsNullOrEmpty(lastName))
-                {
-                    _iconName = string.Concat(firstName.AsSpan(0, 1), lastName.AsSpan(0, 1)).ToUpper();
-                }
-                else
+                _user.FirstName ??= string.Empty;
+                _user.LastName ??= string.Empty;
+                _iconName = string.Concat(_user.FirstName.AsSpan(0, 1), _user.LastName.AsSpan(0, 1)).ToUpper();
+
+                if (_iconName.Length == 0)
                 {
                     _iconName = _user!.UserName![..1].ToUpper();
                 }
@@ -68,6 +65,18 @@ namespace FilePocket.BlazorClient.Layout
         private void SwitchUserInfoDialog()
         {
             _menuOpen = !_menuOpen;
+        }
+
+        private string GetDisplayedName()
+        {
+            if (_user == null) return string.Empty;
+
+            if (_user.FirstName!.Length > 0 && _user.LastName!.Length > 0)
+            {
+                return $"{_user.FirstName} {_user.LastName}";
+            }
+
+            return _user.FirstName!.Length > 0 ? _user.FirstName! : _user.LastName!;
         }
     }
 }
