@@ -14,11 +14,11 @@
     border-radius: 50%;
 }
 
-
 .icon-btn {
     width: 42px;
     height: 42px;
     top: -2px;
+    right: -2px;
     font-size: 1.125rem;
     position: absolute;
 }
@@ -29,13 +29,14 @@
 
 .user-info-dialog {
     position: absolute;
-    top: 4rem;
-    right: 0;
+    bottom: -260px;
+    right: -1px;
     z-index: 8;
 }
 
     .user-info-dialog > .card {
         width: 15rem;
+        height: 260px;
         background-color: white;
     }
 
@@ -75,33 +76,33 @@
     text-align: center;
 }
 
-.wide-display {
-}
-
-
-.narrow-display {
-}
-
-
 /* Custom styles for mobile optimization */
 @media (max-width: 768px) {
-    .wide-display {
-        display: none;
-    }
 
     .user-info-dialog {
-        position: fixed;
         right: calc(50% - 7.5rem);
-        top: 78px;
+    }
+
+    .controls-container{
+        width: calc(50% + 19px);
+        display: flex;
+        justify-content:space-between;
+    }
+}
+@media (max-width: 400px){
+    .controls-container {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
     }
 }
 
-@media (max-width: 308px) {
+/*@media (max-width: 308px) {
 
     .user-info-dialog {
         top: calc(50vh - 7.5rem);
     }
-}
+}*/
 
 @media (min-width: 769px) {
     .narrow-display {
