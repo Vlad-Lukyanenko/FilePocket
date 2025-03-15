@@ -158,12 +158,9 @@
                                         <div class="icon profile-icon">
                                             <img src="../assets/img/man.png" alt="userPicture">
                                         </div>
-                                        @if (!string.IsNullOrEmpty(_user?.FirstName))
-                                        {
-                                            <h5 class="card-title">
-                                                @GetDisplayedName()
-                                            </h5>
-                                        }
+                                        <h5 class="card-title">
+                                            @GetDisplayedName()
+                                        </h5>
                                         <div>
                                             <span>
                                                 <a href="/profile" class="link-primary">Edit Profile</a>
@@ -171,11 +168,9 @@
                                         </div>
                                     </div>
                                     <div class="card-body">
-                                        <div>
-                                            <a href="/logout" class="btn btn-outline-danger px-3">
-                                                <strong>Logout</strong>
-                                            </a>
-                                        </div>
+                                        <a href="/logout" class="btn-fixed btn-outline-danger">
+                                            <strong>Logout</strong>
+                                        </a>
                                     </div>
                                 </div>
                             </div>
