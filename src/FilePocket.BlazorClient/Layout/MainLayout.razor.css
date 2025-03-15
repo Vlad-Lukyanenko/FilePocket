@@ -13,9 +13,13 @@ aside{
     padding-top: 45px;
 }
 
-#offcanvasMenuRight, #offcanvasMenu{
+#offcanvasMenuRight, .offcanvasMenuRight, #offcanvasMenu{
     background-color: rgba(32, 38, 86, 1);
     color: rgba(251, 251, 255, 1) !important;
+}
+
+.profile-photo{
+    margin-right: 10px;
 }
 
 .sidebar {

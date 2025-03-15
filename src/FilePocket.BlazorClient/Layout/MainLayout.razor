@@ -1,8 +1,13 @@
 ﻿@using FilePocket.BlazorClient.Features
+@using FilePocket.BlazorClient.Features.Users.Requests
+@using FilePocket.BlazorClient.Features.Users.Models
+@using Microsoft.AspNetCore.Components.Authorization
 @inherits LayoutComponentBase
 @inject NavigationManager Navigation
 @inject NavigationHistoryService NavigationHistory
 @inject IJSRuntime JS
+@inject FilePocketApiClient ApiClient
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <PageTitle>File Pocket Application</PageTitle>
 
@@ -25,6 +30,7 @@
                                     <i class="fs-4 bi-house"></i>
                                     <span class="ms-2 d-none d-md-inline">Home</span>
                                 </div>
+                                <!-- Removed the extra closing div -->
                             </a>
                         </li>
                         <li class="nav-item flex-fill flex-md-grow-0">
@@ -158,7 +164,6 @@
             </div>
 
 
-            <!-- Main Content Aria -->
             <div class="col container-fluid">
                 <!-- Navbar -->
                 <header class="position-relative mb-2 navbar navbar-expand-md w-100 p-2">
@@ -181,11 +186,7 @@
                                         </div>
                                     </form>
 
-                                    <!-- Open the Right offcanvas Menu -->
-                                    <button class="btn" @onclick="OnShowOffcanvasClickRight">
-                                        <span class="navbar-toggler-icon"></span>
-                                    </button>
-
+                                   
                                 </div>
 
                                 
@@ -193,40 +194,60 @@
                         </div>
                 </header>
 
-                <!-- Right Offcanvas Menu -->
-                <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasMenuRight">
-                    <div class="offcanvas-header">
-                        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"></button>
-                    </div>
-                    <div class="offcanvas-body">
-                        <ul class="nav nav-pills d-flex flex-column gap-2">
-                            <li class="nav-item">
-                                <a href="/profile" class="nav-link text-dark @(IsActive("/profile"))" @onclick='() => CloseOffcanvasAndNavigate("/profile")'>
-                                    <i class="fs-4 bi-person-badge"></i> <span class="ms-2">Profile</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="/settings" class="nav-link text-dark @(IsActive("/settings"))" @onclick='() => CloseOffcanvasAndNavigate("/settings")'>
-                                    <i class="fs-4 bi-gear"></i> <span class="ms-2">Settings</span>
-                                </a>
-                            </li>
-                        </ul>
-
-                        <!-- Logout Button -->
-                        <a href="/logout" class="btn btn-outline-danger px-3 mt-3">
-                            <strong>Logout</strong>
-                        </a>
-                    </div>
-                </div>
-
                 <!-- Main Content Area -->
                 <main class="shadow-sm w-100 rounded p-2" style="background-color: #fcfcfc;">
                     @Body
                 </main>
+
             </div>
-            
-            
-        </Authorized>
+
+            <!-- Right Offcanvas Menu -->
+            <div class="offcanvasMenuRight d-flex align-items-center p-3">
+              <!-- Open the Right offcanvas Menu -->
+               <button class="navbar-toggler" @onclick="OnShowOffcanvasClickRight" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenuRight" aria-controls="offcanvasMenuRight">
+                    <img src="./assets/img/menu.svg" alt="menu" width="20" height="20" class="d-inline-block">
+                </button>
+
+                    
+                <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasMenuRight">
+                        <div class="offcanvas-header">
+                            <button type="button" class="btn-close btn-close-white text-reset" data-bs-dismiss="offcanvas"></button>
+                        </div>
+                        <div class="offcanvas-body">
+                            
+                            <!-- User Profile Information (после того как Profile можно будет заполнить)--> 
+                            <div class="profile-info d-flex align-items-center">
+                                <img src="@_profilePicture" alt="User" class="profile-photo" />
+                                <div>
+                                    <h3>@_firstName @(_lastName ?? "") _firstName _lastName</h3>
+                                    <p>@_userName userName</p>
+                                </div>
+                                
+                            </div> 
+                                
+
+                            @* <ul class="nav nav-pills d-flex flex-column gap-2">
+                                <li class="nav-item">
+                                    <a href="/profile" class="nav-link text-dark @(IsActive("/profile"))" @onclick='() => CloseOffcanvasAndNavigate("/profile")'>
+                                        <i class="fs-4 bi-person-badge"></i> <span class="ms-2">Profile</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="/settings" class="nav-link text-dark @(IsActive("/settings"))" @onclick='() => CloseOffcanvasAndNavigate("/settings")'>
+                                        <i class="fs-4 bi-gear"></i> <span class="ms-2">Settings</span>
+                                    </a>
+                                </li>
+                            </ul> *@
+
+                            <!-- Logout Button -->
+                            <a href="/logout" class="btn btn-outline-danger px-3 mt-3">
+                                <strong>Logout</strong>
+                            </a>
+                        </div>
+                </div>
+            </div>   
+            </Authorized>
+
         <NotAuthorized>
             <section class="col-12 mt-3 text-center pt-3 pb-4">
                 <div class="mx-auto d-block">
@@ -242,6 +263,31 @@
 
 
 @code {
+    private string? _firstName;
+    private string? _lastName;
+    private string? _userName;
+    private string? _profilePicture;  // Здесь будет храниться фото пользователя
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Получаем данные о текущем пользователе
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var userName = authState.User.Identity?.Name;
+
+        if (!string.IsNullOrEmpty(userName))
+        {
+            var userRequests = new UserRequests(ApiClient);
+            var user = await userRequests.GetByUserNameAsync(userName);
+            if (user != null)
+            {
+                _firstName = user.FirstName;
+                _lastName = user.LastName;
+                _userName = user.UserName;
+                _profilePicture = "defaultPhoto.jpg"; // Тут можно указать путь к фото пользователя, если оно есть
+            }
+        }
+    }
+
     protected override void OnInitialized()
     {
         Navigation.LocationChanged += OnLocationChanged;
