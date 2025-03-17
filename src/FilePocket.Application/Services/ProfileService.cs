@@ -17,6 +17,20 @@ public class ProfileService : IProfileService
         _mapper = mapper;
     }
 
+    public async Task<ProfileModel> GetByIdAsync(Guid id)
+    {
+        var profile = await _repository.Profile.GetByIdAsync(id);
+
+        return _mapper.Map<ProfileModel>(profile);
+    }
+
+    public async Task<ProfileModel> GetByUserIdAsync(Guid userId)
+    {
+        var profile = await _repository.Profile.GetByUserIdAsync(userId);
+
+        return _mapper.Map<ProfileModel>(profile);
+    }
+
     public async Task<ProfileModel> CreateProfileAsync(ProfileModel profile)
     {
         var profileEntity = _mapper.Map<Profile>(profile);

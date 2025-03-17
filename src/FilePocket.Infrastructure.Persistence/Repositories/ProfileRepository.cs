@@ -10,6 +10,16 @@ public class ProfileRepository : RepositoryBase<Profile>, IProfileRepository
     {
     }
 
+    public async Task<Profile> GetByIdAsync(Guid id)
+    {
+        return (await FindByCondition(p => p.Id.Equals(id)))!;
+    }
+
+    public async Task<Profile> GetByUserIdAsync(Guid userId)
+    {
+        return (await FindByCondition(p => p.UserId.Equals(userId)))!;
+    }
+
     public void CreateProfile(Profile profile)
     {
         Create(profile);
