@@ -1,5 +1,7 @@
 ﻿using FilePocket.Application.Interfaces.Repositories;
 using FilePocket.Application.Interfaces.Services;
+using FilePocket.Contracts.Bookmark;
+using FilePocket.Contracts.Profile;
 using FilePocket.Domain.Entities;
 using FilePocket.Domain.Models;
 using MapsterMapper;
@@ -39,5 +41,17 @@ public class ProfileService : IProfileService
         await _repository.SaveChangesAsync();
 
         return _mapper.Map<ProfileModel>(profileEntity);
+    }
+
+    public async Task UpdateProfileAsync(UpdateProfileRequest profile)
+    {
+        var profileToUpdate = await _repository.Profile.GetByIdAsync(profile.Id);
+
+        if (profileToUpdate is not null)
+        {
+            _mapper.Map(profile, profileToUpdate);
+
+            await _repository.SaveChangesAsync();
+        }
     }
 }
