@@ -18,8 +18,14 @@
         else
         {
             <!-- Form Container -->
-            <div class="border p-3 mt-3">
-                <div class="col-12 col-md-9 col-lg-6 mx-auto">
+            <div class="d-flex justify-content-center align-items-center border p-3 mt-3 gap-5">
+                <div class="img-container" title="Change avatar">
+                    <img class="rounded-circle image" src="../assets/img/man.png" alt="userPicture">
+                    <div class="d-flex align-items-end justify-content-center overlay">
+                        <i class="bi bi-camera"></i>
+                    </div>
+                </div>
+                <div class="col-12 col-md-9 col-lg-6">
                     <label for="email" class="form-label fw-semibold">Email:</label>
                     <input type="text" class="form-control" value="@_profile.Email" id="email" disabled>
                     <br />
