@@ -9,7 +9,7 @@
 <div class="px-1 px-sm-3 d-flex p-2">
     <AuthorizeView>
         <Authorized>
-            
+
             <div class="col-2 card shadow-sm mb-2 mb-md-0 me-md-2 p-0 d-none d-md-block">
                 <!-- Sidebar Menu Desktop-->
                 <aside class="">
@@ -86,7 +86,7 @@
                 </aside>
             </div>
 
-             <!-- Offcanvas menu for Mobile -->
+            <!-- Offcanvas menu for Mobile -->
             <div class="offcanvas offcanvas-start d-md-none" tabindex="-1" id="offcanvasMenu">
                 <div class="offcanvas-header">
                     @* <h5 class="offcanvas-title fw-bold">Menu</h5> *@
@@ -139,28 +139,51 @@
                         </li>
                     </ul>
 
-                     <!-- Logout Button -->
-                     <a href="/logout" class="btn btn-outline-danger px-3 mt-3">
-                        <strong>Logout</strong>
-                     </a>
                 </div>
             </div>
 
             <div class="col container-fluid">
                 <!-- Navbar -->
                 <header class="position-relative mb-2 navbar navbar-expand-md w-100 p-2 card">
-                    @* <nav class="card navbar navbar-expand-md w-100 p-2"> *@
+
+                    <nav class="card navbar navbar-expand-md w-100 p-2">
+                        <!-- Signing In User Info Menu -->
+                        @if (_menuOpen)
+                        {
+                            <div class="user-info-dialog fade-in">
+                                <div class="card shadow-sm">
+                                    <div class="card-img-top top">
+                                        <button type="button" class="btn-close" @onclick="SwitchUserInfoDialog" />
+                                        <span>@_user?.Email</span>
+                                        <div class="icon profile-icon">
+                                            <img src="../assets/img/man.png" alt="userPicture">
+                                        </div>
+                                        <h5 class="card-title">
+                                            @GetDisplayedName()
+                                        </h5>
+                                        <div>
+                                            <span>
+                                                <a href="/profile" class="link-primary">Edit Profile</a>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="card-body">
+                                        <a href="/logout" class="btn-fixed btn-outline-danger">
+                                            <strong>Logout</strong>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="user-info-dialog-back fade-in" @onclick="SwitchUserInfoDialog"></div>
+                        }
+
                         <div class="container-fluid">
                             <!-- Brand Logo and Name -->
-                            <a class="navbar-brand fw-bold main-text-header d-flex align-items-center" href="#">
+                            <a class="navbar-brand fw-bold main-text-header d-flex align-items-right" href="#">
                                 <img src="./assets/img/logo.png" alt="Logo" width="28" height="28" class="d-inline-block align-text-top me-2">
                                 File Pocket
                             </a>
-
-                            <!-- Mobile Toggle Button -->
-                            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu">
-                                <span class="navbar-toggler-icon"></span>
-                            </button>
 
                             <!-- Collapsible Content -->
                             <div class="collapse navbar-collapse">
@@ -174,16 +197,25 @@
                                             </button>
                                         </div>
                                     </form>
-
-                                    <!-- Logout Button -->
-                                    <a href="/logout" class="btn btn-outline-danger px-3">
-                                        <strong>Logout</strong>
-                                    </a>
                                 </div>
-                                
+                            </div>
+                            <!-- End of Collapsible Content -->
+
+                            <div class="controls-container">
+                                <!-- Signing In User Info Button -->
+                                <div class="icon-btn-container ">
+                                    <button class="icon icon-btn" @onclick="SwitchUserInfoDialog">
+                                        @(_iconName ?? "...")
+                                    </button>
+                                </div>
+
+                                <!-- Mobile Toggle Button -->
+                                <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu">
+                                    <span class="navbar-toggler-icon"></span>
+                                </button>
                             </div>
                         </div>
-                    @* </nav> *@
+                    </nav>
                 </header>
 
                 <!-- Main Content Area -->
@@ -191,8 +223,7 @@
                     @Body
                 </main>
             </div>
-        
-            
+
         </Authorized>
         <NotAuthorized>
             <section class="col-12 mt-3 text-center pt-3 pb-4">
@@ -207,102 +238,12 @@
     </AuthorizeView>
 </div>
 
-<style>
-    /* Hide scrollbar for Chrome, Safari and Opera */
-    #menu::-webkit-scrollbar {
-        display: none;
-    }
-
-    .nav-link {
-        display: flex;
-        align-items: left;
-        justify-content: left;
-        color: #000 !important; /* Darker text color */
-        background-color: rgba(0,0,0,0.05); /* Subtle background */
-    }
-
-        .nav-link.active {
-            background-color: rgba(0,0,0,0.1);
-            color: #000 !important;
-        }
-
-    /* Custom styles for mobile optimization */
-    @@media (max-width: 768px) {
-        .search-container {
-            width: 100%;
-            max-width: none;
-        }
-
-        .search-box {
-            width: 100%;
-        }
-
-        .navbar-collapse {
-            padding: 1rem 0;
-        }
-
-        #menu {
-            -ms-overflow-style: none; /* IE and Edge */
-            scrollbar-width: none; /* Firefox */
-        }
-
-        .nav-link {
-            padding: 0.5rem !important;
-            height: 48px;
-            display: flex;
-            align-items: center;
-            justify-content: flex-start;
-            color: #000 !important; /* Darker text color */
-        }
-
-            .nav-link.active {
-                @* background-color: rgba(0,0,0,0.1); *@
-                color: #000 !important;
-            }
-
-            .nav-link i {
-                font-size: 1.25rem !important;
-            }
-    }
-</style>
-
-@code {
-    protected override void OnInitialized()
-    {
-        Navigation.LocationChanged += OnLocationChanged;
-        NavigationHistory.AddToHistory(Navigation.Uri);
-    }
-
-    private void OnLocationChanged(object sender, LocationChangedEventArgs e)
-    {
-        NavigationHistory.AddToHistory(e.Location);
-    }
-
-    public void Dispose()
-    {
-        Navigation.LocationChanged -= OnLocationChanged;
-    }
-
-    private string IsActive(string href)
-    {
-        return Navigation.Uri.EndsWith(href, StringComparison.OrdinalIgnoreCase) ? "active" : "";
-    }
-
-
-    private async Task CloseOffcanvasAndNavigate(string url)
-    {
-        await JS.InvokeVoidAsync("closeOffcanvasMenu");
-        Navigation.NavigateTo(url); 
-    }
-
-}
-
-<Script>
+<script>
     window.closeOffcanvasMenu = () => {
-        let offcanvas = document.getElementById('offcanvasMenu'); 
+        let offcanvas = document.getElementById('offcanvasMenu');
         let bsOffcanvas = bootstrap.Offcanvas.getInstance(offcanvas);
         if (bsOffcanvas) {
             bsOffcanvas.hide();
         }
     };
-</Script>
+</script>
