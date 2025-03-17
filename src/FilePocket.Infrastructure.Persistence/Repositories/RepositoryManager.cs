@@ -1,10 +1,10 @@
-﻿using System.Data;
-using System.Data.Common;
-using FilePocket.Application.Interfaces.Repositories;
+﻿using FilePocket.Application.Interfaces.Repositories;
 using FilePocket.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.DependencyInjection;
+using System.Data;
+using System.Data.Common;
 
 namespace FilePocket.Infrastructure.Persistence.Repositories;
 
@@ -17,6 +17,7 @@ public class RepositoryManager : IRepositoryManager
     private readonly Lazy<IFileMetadataRepository> _fileMetadataRepository;
     private readonly Lazy<IAccountConsumptionRepository> _accountConsumptionRepository;
     private readonly Lazy<IBookmarkRepository> _bookmarkRepository;
+    private readonly Lazy<IProfileRepository> _profileRepository;
 
     public RepositoryManager(FilePocketDbContext dbContext, UserManager<User> userManager, IServiceScopeFactory scopeFactory)
     {
@@ -27,6 +28,7 @@ public class RepositoryManager : IRepositoryManager
         _fileMetadataRepository = new Lazy<IFileMetadataRepository>(() => new FileMetadataRepository(dbContext));
         _accountConsumptionRepository = new Lazy<IAccountConsumptionRepository>(() => new AccountConsumptionRepository(dbContext));
         _bookmarkRepository = new Lazy<IBookmarkRepository>(() => new BookmarkRepository(dbContext));
+        _profileRepository = new Lazy<IProfileRepository>(() => new ProfileRepository(dbContext));
     }
 
     public IPocketRepository Pocket => _pocketRepository.Value;
@@ -35,6 +37,7 @@ public class RepositoryManager : IRepositoryManager
     public IFileMetadataRepository FileMetadata => _fileMetadataRepository.Value;
     public IAccountConsumptionRepository AccountConsumption => _accountConsumptionRepository.Value;
     public IBookmarkRepository Bookmark => _bookmarkRepository.Value;
+    public IProfileRepository Profile => _profileRepository.Value;
 
     public Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken cancellationToken = default)
     {

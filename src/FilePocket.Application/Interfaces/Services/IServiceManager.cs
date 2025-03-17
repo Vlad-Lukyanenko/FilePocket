@@ -13,4 +13,6 @@ public interface IServiceManager
     IAuthenticationService AuthenticationService { get; }
 
     IBookmarkService BookmarkService { get; }
+
+    IProfileService ProfileService { get; }
 }
