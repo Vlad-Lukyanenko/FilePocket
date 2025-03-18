@@ -19,12 +19,13 @@
         {
             <!-- Form Container -->
             <div class="d-flex justify-content-center align-items-center border p-3 mt-3 gap-5">
-                <div class="img-container" title="Change avatar">
-                    <img class="rounded-circle image" src="../assets/img/man.png" alt="userPicture">
+                <label class="img-container" title="Change avatar">
+                    <img class="rounded-circle image" src="@GetProfileIcon()" alt="userPicture">
                     <div class="d-flex align-items-end justify-content-center overlay">
-                        <i class="bi bi-camera"></i>
+                        <i class="bi bi-camera"></i>                        
                     </div>
-                </div>
+                    <InputFile hidden id="fileInput" OnChange="UploadFilesAsync" accept=".png, .jpg, .jpeg" />
+                </label>
                 <div class="col-12 col-md-9 col-lg-6">
                     <label for="email" class="form-label fw-semibold">Email:</label>
                     <input type="text" class="form-control" value="@_profile.Email" id="email" disabled>
@@ -44,6 +45,24 @@
         }
 
         <br/>
+
+        <!-- Error Block -->
+        @if (_fileUploadErrors.Any())
+        {
+            <div class="fixed-bottom p-3">
+                @foreach (var fileUploadError in _fileUploadErrors)
+                {
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <strong>Holy guacamole!</strong> Looks like file upload for @fileUploadError.OriginalName went wrong. @fileUploadError.ErrorMessage
+                        <button type="button"
+                                class="btn-close"
+                                aria-label="Close"
+                                @onclick="() => RemoveError(fileUploadError)">
+                        </button>
+                    </div>
+                }
+            </div>
+        }
 
         <div class="alert alert-success alert-dismissible fade show" role="alert" style="@_alertStyle">
             <strong>@_alertMessage</strong>
