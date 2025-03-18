@@ -3,6 +3,22 @@
 
 <AuthorizeView>
     <Authorized>
+        @if (_areParametrsReady)
+        {
+        <div class="row text-center" style="align-self:center">
+                <div class="col-sm-4">
+                    <div class="progressbar">
+                        <div class="second circle" data-percent="@_storageCapacity">
+                            <strong></strong>
+                            <span>Storage <br> capacity</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <script src="./js/progressBar.js"></script>
+            <script src="https://rawgit.com/kottenator/jquery-circle-progress/1.2.2/dist/circle-progress.js"></script>
+        }
+
         <div class="container-fluid" style="min-height: 600px;">
             <div class="container-fluid w-100 w-md-75">
                 <div class="d-flex justify-content-center align-items-center mt-0">
