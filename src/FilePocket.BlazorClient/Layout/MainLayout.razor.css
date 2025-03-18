@@ -1,4 +1,11 @@
 
+canvas {
+    width: 120px !important;
+    height: 120px !important;
+    margin: 0 auto;
+}
+
+
 .page {
     position: relative;
     display: flex;
