@@ -1,0 +1,14 @@
+﻿@page "/notes"
+@using TinyMCE.Blazor
+@using FilePocket.BlazorClient.Helpers
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
+
+<div>
+    <h3>Notes</h3>
+    <Editor />
+</div>
+
+@code {
+
+}
