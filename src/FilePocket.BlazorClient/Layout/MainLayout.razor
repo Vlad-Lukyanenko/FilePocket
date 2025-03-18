@@ -9,9 +9,17 @@
 @inject FilePocketApiClient ApiClient
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
+
+@* @using Radzen.Blazor *@
+
+@* @page "/storage" *@
+
+
+
 <PageTitle>File Pocket Application</PageTitle>
 
 <div class="d-flex">
+
     <AuthorizeView>
         <Authorized>
              <!-- Sidebar Menu Desktop-->
@@ -98,7 +106,6 @@
              <!-- Menu for Mobile -->
             <div class="offcanvas offcanvas-start d-md-none" tabindex="-1" id="offcanvasMenu">
                 <div class="offcanvas-header">
-                    @* <h5 class="offcanvas-title fw-bold">Menu</h5> *@
                     <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"></button>
                 </div>
                 <div class="offcanvas-body">
@@ -112,12 +119,12 @@
                     <!-- Menu for Mobile-->
                     <ul class="nav nav-pills d-flex flex-column gap-2">
                         <li class="nav-item">
-                            <a href="#" class="nav-link @(IsActive("#"))" @onclick='() => CloseOffcanvasAndNavigate("#")'>
+                            <a href="#" class="nav-link @(IsActive("#"))" @onclick='async () => await CloseOffcanvasAndNavigate("#")'>
                                 <i class="fs-4 bi-house"></i> <span class="ms-2">Home</span>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="/files" class="nav-link @(IsActive("/files"))" @onclick='() => CloseOffcanvasAndNavigate("/files")'>
+                            <a href="/files" class="nav-link @(IsActive("/files"))" @onclick='async () => await CloseOffcanvasAndNavigate("/files")'>
                                 <i class="fs-4 bi-file-earmark-medical"></i> <span class="ms-2">Files</span>
                             </a>
                         </li>
@@ -163,6 +170,9 @@
                 </div>
             </div>
 
+            @* <a href="/logout" class="btn btn-outline-danger px-3 mt-3">
+                        <strong>Logout</strong>
+            </a> *@
 
             <div class="col container-fluid">
                 <!-- Navbar -->
@@ -202,7 +212,7 @@
             </div>
 
             <!-- Right Offcanvas Menu -->
-            <div class="offcanvasMenuRight d-flex align-items-center p-3">
+            <div class="offcanvasMenuRight p-3">
               <!-- Open the Right offcanvas Menu -->
                <button class="navbar-toggler" @onclick="OnShowOffcanvasClickRight" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenuRight" aria-controls="offcanvasMenuRight">
                     <img src="./assets/img/menu.svg" alt="menu" width="20" height="20" class="d-inline-block">
@@ -214,37 +224,86 @@
                             <button type="button" class="btn-close btn-close-white text-reset" data-bs-dismiss="offcanvas"></button>
                         </div>
                         <div class="offcanvas-body">
-                            
-                            <!-- User Profile Information (после того как Profile можно будет заполнить)--> 
-                            <div class="profile-info d-flex align-items-center">
-                                <img src="@_profilePicture" alt="User" class="profile-photo" />
-                                <div>
-                                    <h3>@_firstName @(_lastName ?? "") _firstName _lastName</h3>
-                                    <p>@_userName userName</p>
+                            <div class="controls-container">
+                                <!-- Signing In User Info Button -->
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="d-flex align-items-center">
+                                            @* <span>@_user?.Email</span> *@
+                                            <img src="../assets/img/man.png" alt="userPicture" class="profile-icon">
+                                            <div>
+                                                <span>@_user?.Email</span>
+                                                <h5 class="card-title">
+                                                    @GetDisplayedName()
+                                                </h5>
+                                            </div>
+                                    </div>
+                                    <div class="icon" @onclick="SwitchUserInfoDialog">
+                                        @(_iconName ?? "...")
+                                    </div>
                                 </div>
+                            </div>
                                 
-                            </div> 
-                                
+                            @if (_menuOpen)
+                            {
+                                <div class="user-info-dialog fade-in">
+                                    <div class="card shadow-sm p-2">
+                                        <div class="card-img-top top">
+                                            <button type="button" class="btn-close" @onclick="SwitchUserInfoDialog" />
+                                            <div>
 
-                            @* <ul class="nav nav-pills d-flex flex-column gap-2">
-                                <li class="nav-item">
-                                    <a href="/profile" class="nav-link text-dark @(IsActive("/profile"))" @onclick='() => CloseOffcanvasAndNavigate("/profile")'>
-                                        <i class="fs-4 bi-person-badge"></i> <span class="ms-2">Profile</span>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="/settings" class="nav-link text-dark @(IsActive("/settings"))" @onclick='() => CloseOffcanvasAndNavigate("/settings")'>
-                                        <i class="fs-4 bi-gear"></i> <span class="ms-2">Settings</span>
-                                    </a>
-                                </li>
-                            </ul> *@
+                                                <h3>Hello @_user.FirstName!</h3>
+                                       
+                                                <div class="d-flex flex-column p-3">
+                                                    <a href="/profile" class="link-dark">
+                                                        <i class="bi bi-pencil-square"></i><span class="ms-2">Edit Profile</span>
+                                                    </a>
+                                                
+                                                    <a href="/support" class="link-dark @(IsActive("/support"))" @onclick='() => CloseOffcanvasAndNavigate("/support")'>
+                                                        <i class="bi bi-question-circle"></i><span class="ms-2">Help &amp; Support</span>
+                                                    </a>
+                                                
+                                                    <a href="/logout" class="link-dark">
+                                                        <i class="bi bi-box-arrow-right"></i> <span class="ms-2">Logout</span>
+                                                    </a>
+                                                </div>
+                                                
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
 
-                            <!-- Logout Button -->
-                            <a href="/logout" class="btn btn-outline-danger px-3 mt-3">
-                                <strong>Logout</strong>
-                            </a>
+                                <div class="user-info-dialog-back fade-in" @onclick="SwitchUserInfoDialog"></div>
+
+                            }
+
+                    
+
+                            @* <div class="card text-white p-4 rounded-4" style="width: 250px;">
+                                <!-- Круговой прогресс (Donut Chart) -->
+                                <canvas id="storageChart" width="120" height="120"></canvas>
+
+                                <h5 class="text-center mt-2">150 GB</h5>
+                                <p class="text-center text-muted">50% of 100%</p>
+
+                                <div class="mt-3">
+                                    @foreach (var item in StorageItems)
+                                    {
+                                        <div class="d-flex align-items-center mb-2">
+                                            <div class="icon-box" style="background-color:@item.Color">
+                                                <i class="@item.Icon"></i>
+                                            </div>
+                                            <span class="ms-2 flex-grow-1">@item.Name</span>
+                                            <span class="text-muted">@item.Size GB</span>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                             *@
                         </div>
                 </div>
+
+                
+                
             </div>   
             </Authorized>
 
@@ -262,80 +321,67 @@
 </div>
 
 
+
 @code {
-    private string? _firstName;
-    private string? _lastName;
-    private string? _userName;
-    private string? _profilePicture;  // Здесь будет храниться фото пользователя
-
-    protected override async Task OnInitializedAsync()
-    {
-        // Получаем данные о текущем пользователе
-        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        var userName = authState.User.Identity?.Name;
-
-        if (!string.IsNullOrEmpty(userName))
-        {
-            var userRequests = new UserRequests(ApiClient);
-            var user = await userRequests.GetByUserNameAsync(userName);
-            if (user != null)
-            {
-                _firstName = user.FirstName;
-                _lastName = user.LastName;
-                _userName = user.UserName;
-                _profilePicture = "defaultPhoto.jpg"; // Тут можно указать путь к фото пользователя, если оно есть
-            }
-        }
-    }
-
-    protected override void OnInitialized()
-    {
-        Navigation.LocationChanged += OnLocationChanged;
-        NavigationHistory.AddToHistory(Navigation.Uri);
-    }
-
-    private void OnLocationChanged(object sender, LocationChangedEventArgs e)
-    {
-        NavigationHistory.AddToHistory(e.Location);
-    }
-
-    public void Dispose()
-    {
-        Navigation.LocationChanged -= OnLocationChanged;
-    }
-
-    private string IsActive(string href)
-    {
-        return Navigation.Uri.EndsWith(href, StringComparison.OrdinalIgnoreCase) ? "active" : "";
-    }
-
-
-    private async Task CloseOffcanvasAndNavigate(string url)
-    {
-        await JS.InvokeVoidAsync("closeOffcanvasMenu");
-        Navigation.NavigateTo(url); 
-    }
 
     private async Task OnShowOffcanvasClickRight()
     {
         await JS.InvokeVoidAsync("openRightOffcanvasMenu");
     }
-    
 
-}
+
+
+    @* private List<StorageItem> StorageItems = new()
+    {
+        new StorageItem("Documents", 5, "#f4c542", "bi bi-folder"),
+        new StorageItem("Books", 5, "#4287f5", "bi bi-book"),
+        new StorageItem("Images", 5, "#f4a261", "bi bi-image"),
+        new StorageItem("Videos", 5, "#ff4d4d", "bi bi-play-btn"),
+    };
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("renderStorageChart");
+        }
+    }
+
+    private class StorageItem
+    {
+        public string Name { get; }
+        public int Size { get; }
+        public string Color { get; }
+        public string Icon { get; }
+
+        public StorageItem(string name, int size, string color, string icon)
+        {
+            Name = name;
+            Size = size;
+            Color = color;
+            Icon = icon;
+        }
+    }
+      *@
+
+} 
 
 <Script>
-    window.closeOffcanvasMenu = () => {
-        let offcanvas = document.getElementById('offcanvasMenu'); 
-        let bsOffcanvas = bootstrap.Offcanvas.getInstance(offcanvas);
-        if (bsOffcanvas) {
-            bsOffcanvas.hide();
-        }
+   (function () {
+    const offcanvasMenu = document.getElementById('offcanvasMenu');
+    const offcanvasMenuRight = document.getElementById('offcanvasMenuRight');
+
+    const closeOffcanvasMenu = () => {
+        const bsOffcanvas = bootstrap.Offcanvas.getInstance(offcanvasMenu);
+        bsOffcanvas?.hide();
     };
 
-    window.openRightOffcanvasMenu = () => {
-        let offcanvas = document.getElementById('offcanvasMenuRight'); 
-        let bsOffcanvas = new bootstrap.Offcanvas(offcanvas);
-        bsOffcanvas.show();
+    const openRightOffcanvasMenu = () => {
+        const bsOffcanvas = new bootstrap.Offcanvas(offcanvasMenuRight);
+        bsOffcanvas?.show();
     };
+
+    window.closeOffcanvasMenu = closeOffcanvasMenu;
+    window.openRightOffcanvasMenu = openRightOffcanvasMenu;
+})()
 </Script>

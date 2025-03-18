@@ -1,3 +1,4 @@
+
 .page {
     position: relative;
     display: flex;
@@ -18,7 +19,8 @@ aside{
     color: rgba(251, 251, 255, 1) !important;
 }
 
-.profile-photo{
+
+.profile-icon{
     margin-right: 10px;
 }
 
@@ -50,7 +52,92 @@ aside{
     text-overflow: ellipsis;
 }
 
+.user-info-dialog {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    width: 260px;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    animation: fadeIn 0.3s ease-in-out;
+    z-index: 10;
+}
 
+.user-info-dialog .card {
+    border: none;
+    text-align: center;
+}
+
+.user-info-dialog .card-img-top {
+    position: relative;
+}
+
+.user-info-dialog .btn-close {
+    position: absolute;
+    top: 0px;
+    left: 5px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.user-info-dialog h3 {
+    font-size: 18px;
+    color: #6c3fad;
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+.user-info-dialog .d-flex {
+    margin-top: 15px;
+}
+
+.link-dark{
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: black important!;
+    font-size: 14px;
+    margin: 8px 0;
+    transition: 0.3s;
+}
+
+.link-dark:hover{
+    color: #4a2b8a important!;
+    border-bottom: #4a2b8a 2px solid;
+}
+
+.user-info-dialog i {
+    font-size: 16px;
+}
+
+.user-info-dialog .user-avatar {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 10px;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.icon{
+    cursor: pointer;
+}
+.icon:hover{
+    color: rgba(146, 118, 173, 1);
+}
 
 
 #menu::-webkit-scrollbar {
