@@ -1,4 +1,4 @@
-﻿using FilePocket.BlazorClient.Features.Users.Models;
+using FilePocket.BlazorClient.Features.Users.Models;
 using FilePocket.BlazorClient.Features.Users.Requests;
 using FilePocket.BlazorClient.Services.Files.Requests;
 using Microsoft.AspNetCore.Components;
@@ -25,7 +25,6 @@ public partial class MainLayout : IDisposable
         var userName = authState.User.Identity?.Name!;
 
         _user = await UserRequests.GetByUserNameAsync(userName);
-
 
         if (_user is not null)
         {
@@ -89,3 +88,4 @@ public partial class MainLayout : IDisposable
         return _user.FirstName!.Length > 0 ? _user.FirstName! : _user.LastName!;
     }
 }
+
