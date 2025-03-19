@@ -156,7 +156,7 @@
                                         <button type="button" class="btn-close" @onclick="SwitchUserInfoDialog" />
                                         <span>@_user?.Email</span>
                                         <div class="icon profile-icon">
-                                            <img src="../assets/img/man.png" alt="userPicture">
+                                            <img class="rounded-circle image" src="@(_icon is null ? "../assets/img/man.png" : $"data:image/jpeg;base64,{_icon}")" alt="userPicture">
                                         </div>
                                         <h5 class="card-title">
                                             @GetDisplayedName()

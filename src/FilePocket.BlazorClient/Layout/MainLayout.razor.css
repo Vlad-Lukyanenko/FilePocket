@@ -91,6 +91,11 @@
         background-color: #335D7C;
     }
 
+.image {
+    width: 70px;
+    height: 70px;
+}
+
 .user-info-dialog {
     position: absolute;
     bottom: -256px;
