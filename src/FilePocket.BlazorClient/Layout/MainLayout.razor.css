@@ -15,18 +15,18 @@ main {
     flex: 1;
 }
 
-aside {
+aside{
     background-color: rgba(32, 38, 86, 1);
     padding-top: 45px;
 }
 
-#offcanvasMenuRight, .offcanvasMenuRight, #offcanvasMenu, #rightOffcanvasMenu {
+#offcanvasMenuRight, .offcanvasMenuRight, #offcanvasMenu, #rightOffcanvasMenu{
     background-color: rgba(32, 38, 86, 1);
     color: rgba(251, 251, 255, 1) !important;
 }
 
 
-.profile-icon {
+.profile-icon{
     margin-right: 10px;
 }
 
@@ -43,20 +43,20 @@ aside {
     align-items: center;
 }
 
-    .top-row ::deep a, .top-row ::deep .btn-link {
-        white-space: nowrap;
-        margin-left: 1.5rem;
-        text-decoration: none;
-    }
+.top-row ::deep a, .top-row ::deep .btn-link {
+    white-space: nowrap;
+    margin-left: 1.5rem;
+    text-decoration: none;
+}
 
-        .top-row ::deep a:hover, .top-row ::deep .btn-link:hover {
-            text-decoration: underline;
-        }
+.top-row ::deep a:hover, .top-row ::deep .btn-link:hover {
+    text-decoration: underline;
+}
 
-        .top-row ::deep a:first-child {
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
+.top-row ::deep a:first-child {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
 
 
 /* User Info Dialog Right Menu*/
@@ -74,48 +74,48 @@ aside {
     z-index: 10;
 }
 
-    .user-info-dialog .card {
-        border: none;
-        text-align: center;
-    }
+.user-info-dialog .card {
+    border: none;
+    text-align: center;
+}
 
-    .user-info-dialog .card-img-top {
-        position: relative;
-    }
+.user-info-dialog .card-img-top {
+    position: relative;
+}
 
-    .user-info-dialog .btn-close {
-        position: absolute;
-        top: 0px;
-        left: 5px;
-        font-size: 16px;
-        cursor: pointer;
-    }
+.user-info-dialog .btn-close {
+    position: absolute;
+    top: 0px;
+    left: 5px;
+    font-size: 16px;
+    cursor: pointer;
+}
 
-    .user-info-dialog h3 {
-        font-size: 18px;
-        color: #6c3fad;
-        margin-top: 10px;
-        font-weight: bold;
-    }
+.user-info-dialog h3 {
+    font-size: 18px;
+    color: #6c3fad;
+    margin-top: 10px;
+    font-weight: bold;
+}
 
-    .user-info-dialog .d-flex {
-        margin-top: 15px;
-    }
+.user-info-dialog .d-flex {
+    margin-top: 15px;
+}
 
-.link-dark {
+.link-dark{
     display: flex;
     align-items: center;
     text-decoration: none;
-    color: black important !;
+    color: black important!;
     font-size: 14px;
     margin: 8px 0;
     transition: 0.3s;
 }
 
-    .link-dark:hover {
-        color: #4a2b8a important !;
-        border-bottom: #4a2b8a 2px solid;
-    }
+.link-dark:hover{
+    color: #4a2b8a important!;
+    border-bottom: #4a2b8a 2px solid;
+}
 
 .user-info-dialog i {
     font-size: 16px;
@@ -134,20 +134,18 @@ aside {
         opacity: 0;
         transform: translateY(-10px);
     }
-
     to {
         opacity: 1;
         transform: translateY(0);
     }
 }
 
-.icon {
+.icon{
     cursor: pointer;
 }
-
-    .icon:hover {
-        color: rgba(146, 118, 173, 1);
-    }
+.icon:hover{
+    color: rgba(146, 118, 173, 1);
+}
 
 
 #menu::-webkit-scrollbar {
@@ -162,11 +160,10 @@ aside {
     /* background-color: rgba(0,0,0,0.05); Subtle background */
 }
 
-    .nav-link.active {
-        background-color: rgba(146, 118, 173, 1) !important;
-        color: rgba(251, 251, 255, 1) !important;
-    }
-
+.nav-link.active {
+    background-color: rgba(146, 118, 173, 1)!important;
+    color: rgba(251, 251, 255, 1) !important;
+}
 
 .avatar-image {
     width: 70px;
@@ -199,10 +196,11 @@ aside {
         display: flex;
         align-items: center;
         justify-content: flex-start;
+
     }
 
         .nav-link.active {
-            background-color: rgba(146, 118, 173, 1) !important;
+            background-color: rgba(146, 118, 173, 1)!important;
         }
 
         .nav-link i {
