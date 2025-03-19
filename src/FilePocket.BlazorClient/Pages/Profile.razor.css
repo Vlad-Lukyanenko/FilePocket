@@ -1,0 +1,28 @@
+﻿.image {
+    width: 200px;
+    height: 200px;
+}
+
+.img-container {
+    position: relative;
+    cursor: pointer;
+}
+
+.overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 200px;
+    width: 200px;
+    opacity: 0;
+    background: -webkit-linear-gradient(rgba(255, 255, 255, 0) 70%, rgba(165, 165, 165, 0.62) 30%);
+    transition: .3s ease;
+    color: white;
+    font-size: 40px;
+    border-radius: 200px;    
+}
+
+.img-container:hover .overlay {
+    opacity: 1;    
+}

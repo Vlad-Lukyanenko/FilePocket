@@ -165,10 +165,10 @@ aside{
     color: rgba(251, 251, 255, 1) !important;
 }
 
-
-
-
-
+.avatar-image {
+    width: 70px;
+    height: 70px;
+}
 
 /* Custom styles for mobile optimization */
 @media (max-width: 768px) {

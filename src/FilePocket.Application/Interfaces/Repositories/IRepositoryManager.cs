@@ -1,6 +1,5 @@
-﻿using System.Data;
-using FilePocket.Application.Interfaces.Repositories;
-using Microsoft.EntityFrameworkCore.Storage;
+﻿using Microsoft.EntityFrameworkCore.Storage;
+using System.Data;
 
 namespace FilePocket.Application.Interfaces.Repositories;
 
@@ -12,6 +11,7 @@ public interface IRepositoryManager
     IFileMetadataRepository FileMetadata { get; }
     IAccountConsumptionRepository AccountConsumption { get; }
     IBookmarkRepository Bookmark { get; }
+    IProfileRepository Profile { get; }
 
     Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken cancellationToken = default);
     Task CommitTransactionAsync(IDbTransaction transaction, CancellationToken cancellationToken = default);
