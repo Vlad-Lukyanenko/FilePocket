@@ -16,7 +16,7 @@
 
 <PageTitle>File Pocket Application</PageTitle>
 
-<div class="d-flex">
+<div class="d-flex vh-100">
 
     <AuthorizeView>
         <Authorized>
@@ -115,24 +115,22 @@
                             <i class="fas fa-search"></i>
                         </button>
                     </form>
-                    <!-- Menu for Mobile-->
+                    <!-- Menu-item for Mobile-->
                     <ul class="nav nav-pills d-flex flex-column gap-2">
                         <li class="nav-item">
-                            <a href="#" class="nav-link @(IsActive("#"))" @onclick='async () => await CloseOffcanvasAndNavigate("#")'>
+                            <a href="#" class="nav-link @(IsActive("#"))" @onclick='async () => await CloseOffcanvasAndNavigate("#")' data-bs-dismiss="offcanvas">
                                 <i class="fs-4 bi-house"></i> <span class="ms-2">Home</span>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="/files" class="nav-link @(IsActive("/files"))" @onclick='async () => await CloseOffcanvasAndNavigate("/files")'>
+                            <a href="/files" class="nav-link @(IsActive("/files"))" @onclick='async () => await CloseOffcanvasAndNavigate("/files")' data-bs-dismiss="offcanvas">
                                 <i class="fs-4 bi-file-earmark-medical"></i> <span class="ms-2">Files</span>
                             </a>
                         </li>
 
-                        <li class="nav-item flex-fill flex-md-grow-0">
-                            <a href="/bookmarks" class="nav-link @(IsActive("/bookmarks"))" @onclick='() => CloseOffcanvasAndNavigate("/bookmarks")'>
-                                <div class="d-flex align-items-center justify-content-center justify-content-md-start">
-                                    <i class="fs-4 bi-bookmarks"></i><span class="ms-2 d-none d-md-inline">Bookmarks</span>
-                                </div>
+                        <li class="nav-item">
+                            <a href="/bookmarks" class="nav-link @(IsActive("/bookmarks"))" @onclick='() => CloseOffcanvasAndNavigate("/bookmarks")' data-bs-dismiss="offcanvas">
+                                <i class="fs-4 bi-bookmarks"></i><span class="ms-2">Bookmarks</span>
                             </a>
                         </li>
                         @* <li class="nav-item">
@@ -141,22 +139,22 @@
                             </a>
                         </li> *@
                         <li class="nav-item">
-                            <a href="/files/shared" class="nav-link @(IsActive("/files/shared"))" @onclick='() => CloseOffcanvasAndNavigate("/files/shared")'>
+                            <a href="/files/shared" class="nav-link @(IsActive("/files/shared"))" @onclick='() => CloseOffcanvasAndNavigate("/files/shared")' data-bs-dismiss="offcanvas">
                                 <i class="fs-4 bi-share"></i> <span class="ms-2">Shared</span>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="/notes" class="nav-link @(IsActive("/notes"))" @onclick='() => CloseOffcanvasAndNavigate("/notes")'>
+                            <a href="/notes" class="nav-link @(IsActive("/notes"))" @onclick='() => CloseOffcanvasAndNavigate("/notes")' data-bs-dismiss="offcanvas">
                                 <i class="fs-4 bi-gear"></i> <span class="ms-2">Notes</span>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="/settings" class="nav-link @(IsActive("/settings"))" @onclick='() => CloseOffcanvasAndNavigate("/settings")'>
+                            <a href="/settings" class="nav-link @(IsActive("/settings"))" @onclick='() => CloseOffcanvasAndNavigate("/settings")' data-bs-dismiss="offcanvas">
                                 <i class="fs-4 bi-gear"></i> <span class="ms-2">Settings</span>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="/trash" class="nav-link @(IsActive("/trash"))" @onclick='() => CloseOffcanvasAndNavigate("/trash")'>
+                            <a href="/trash" class="nav-link @(IsActive("/trash"))" @onclick='() => CloseOffcanvasAndNavigate("/trash")' data-bs-dismiss="offcanvas">
                                 <i class="fs-4 bi-trash"></i> <span class="ms-2">Delete</span>
                             </a>
                         </li>
@@ -172,45 +170,7 @@
 
             <div class="col container-fluid">
                 <!-- Navbar -->
-@* <<<<<<< HEAD *@
-                <header class="position-relative mb-2 navbar navbar-expand-md w-100 p-2 card">
-
-                    <nav class="card navbar navbar-expand-md w-100 p-2">
-                        <!-- Signing In User Info Menu -->
-                        @if (_menuOpen)
-                        {
-                            <div class="user-info-dialog fade-in">
-                                <div class="card shadow-sm">
-                                    <div class="card-img-top top">
-                                        <button type="button" class="btn-close" @onclick="SwitchUserInfoDialog" />
-                                        <span>@_user?.Email</span>
-                                        <div class="icon profile-icon">
-                                            <img class="rounded-circle image" src="@(_icon is null ? "../assets/img/man.png" : $"data:image/jpeg;base64,{_icon}")" alt="userPicture">
-                                        </div>
-                                        <h5 class="card-title">
-                                            @GetDisplayedName()
-                                        </h5>
-                                        <div>
-                                            <span>
-                                                <a href="/profile" class="link-primary">Edit Profile</a>
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <div class="card-body">
-                                        <a href="/logout" class="btn-fixed btn-outline-danger">
-                                            <strong>Logout</strong>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="user-info-dialog-back fade-in" @onclick="SwitchUserInfoDialog"></div>
-                        }
-                        </nav>
-
-@* =======
                 <header class="position-relative mb-2 navbar navbar-expand-md w-100 p-2">
->>>>>>> main
                         <div class="container-fluid">
                             <!-- Mobile Toggle Button -->
                             <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu">
@@ -233,11 +193,11 @@
                                 </div>
                                 
                             </div>
-                        </div> *@
+                        </div>
                 </header>
 
                 <!-- Main Content Area -->
-                <main class="shadow-sm w-100 rounded p-2" style="background-color: #fcfcfc;">
+                <main class="w-100 p-2">
                     @Body
                 </main>
 
@@ -247,12 +207,12 @@
             <!-- Right Offcanvas Menu -->
             <div class="offcanvasMenuRight p-3">
               <!-- Open the Right offcanvas Menu -->
-               <button class="navbar-toggler" @onclick="OnShowOffcanvasClickRight" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenuRight" aria-controls="offcanvasMenuRight">
+               <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#rightOffcanvasMenu">
                     <img src="./assets/img/menu.svg" alt="menu" width="20" height="20" class="d-inline-block">
                 </button>
 
                     
-                <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasMenuRight">
+                <div class="offcanvas offcanvas-end" tabindex="-1" id="rightOffcanvasMenu">
                         <div class="offcanvas-header">
                             <button type="button" class="btn-close btn-close-white text-reset" data-bs-dismiss="offcanvas"></button>
                         </div>
@@ -262,7 +222,7 @@
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div class="d-flex align-items-center">
                                             @* <span>@_user?.Email</span> *@
-                                            <img src="@(_icon is null ? "../assets/img/man.png" : $"data:image/jpeg;base64,{_icon}")" alt="userPicture" class="rounded-circle profile-icon">
+                                            <img class="rounded-circle avatar-image" src="@(_icon is null ? "../assets/img/man.png" : $"data:image/jpeg;base64,{_icon}")" alt="userPicture">
                                             <div>
                                                 <span>@_user?.Email</span>
                                                 <h5 class="card-title">
@@ -271,7 +231,8 @@
                                             </div>
                                     </div>
                                     <div class="icon" @onclick="SwitchUserInfoDialog">
-                                        @(_iconName ?? "...")
+                                        @* @(_iconName ?? "...") *@
+                                        <i class="bi bi-chevron-double-right"></i>
                                     </div>
                                 </div>
                             </div>
@@ -284,7 +245,7 @@
                                             <button type="button" class="btn-close" @onclick="SwitchUserInfoDialog" />
                                             <div>
 
-                                                <h3>Hello @_user.FirstName!</h3>
+                                                <h3>Hello @(_user?.FirstName ?? "Guest")!</h3>
                                        
                                                 <div class="d-flex flex-column p-3">
                                                     <a href="/profile" class="link-dark">
@@ -362,7 +323,7 @@
 
 @code {
 
-    private async Task OnShowOffcanvasClickRight()
+    private async Task ShowRightOffcanvas()
     {
         await JS.InvokeVoidAsync("openRightOffcanvasMenu");
     }
@@ -404,31 +365,40 @@
 
 } 
 
-<Script>
-   (function () {
-    const offcanvasMenu = document.getElementById('offcanvasMenu');
-    const offcanvasMenuRight = document.getElementById('offcanvasMenuRight');
+<script>
 
-    const closeOffcanvasMenu = () => {
-        const bsOffcanvas = bootstrap.Offcanvas.getInstance(offcanvasMenu);
-        bsOffcanvas?.hide();
-    };
+    function closeOffcanvasMenu() {
+        const offcanvasMenu = document.getElementById('offcanvasMenu');
+        if (offcanvasMenu) {
+            const bsOffcanvas = bootstrap.Offcanvas.getInstance(offcanvasMenu);
+            if (bsOffcanvas) {
+                bsOffcanvas.hide();
+            }
+        }
+    }
 
-    const openRightOffcanvasMenu = () => {
-        const bsOffcanvas = new bootstrap.Offcanvas(offcanvasMenuRight);
-        bsOffcanvas?.show();
-    };
+    function openRightOffcanvasMenu() {
+    const offcanvasMenu = document.getElementById('rightOffcanvasMenu');
 
+    if (!offcanvasMenu) {
+        @* console.error("Элемент #rightOffcanvasMenu не найден!"); *@
+        return;
+    }
+
+    const bsOffcanvas = new bootstrap.Offcanvas(offcanvasMenu);
+    bsOffcanvas.show();
+    }
+    
     window.closeOffcanvasMenu = closeOffcanvasMenu;
     window.openRightOffcanvasMenu = openRightOffcanvasMenu;
-})()
+
 
 function renderStorageChart() {
-    console.log("renderStorageChart() вызван!");
+    @* console.log("renderStorageChart() вызван!"); *@
 
     var ctx = document.getElementById("storageChart");
     if (!ctx) {
-        console.error("Canvas не найден!");
+        @* console.error("Canvas не найден!"); *@
         return;
     }
 
