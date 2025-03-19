@@ -1,4 +1,4 @@
-
+﻿
 using FilePocket.BlazorClient.Features.Users.Models;
 
 using FilePocket.BlazorClient.Features.Users.Requests;
@@ -29,12 +29,12 @@ namespace FilePocket.BlazorClient.Layout
             {
                 _user.FirstName ??= string.Empty;
                 _user.LastName ??= string.Empty;
-                _iconName = string.Concat(_user.FirstName.AsSpan(0, 1), _user.LastName.AsSpan(0, 1)).ToUpper();
+                // _iconName = string.Concat(_user.FirstName.AsSpan(0, 1), _user.LastName.AsSpan(0, 1)).ToUpper();
 
-                if (_iconName.Length == 0)
-                {
-                    _iconName = _user!.UserName![..1].ToUpper();
-                }
+                // if (_iconName.Length == 0)
+                // {
+                //     _iconName = _user!.UserName![..1].ToUpper();
+                // }
             }
 
             Navigation.LocationChanged += OnLocationChanged;
