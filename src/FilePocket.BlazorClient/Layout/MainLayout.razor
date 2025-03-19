@@ -262,7 +262,7 @@
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div class="d-flex align-items-center">
                                             @* <span>@_user?.Email</span> *@
-                                            <img src="../assets/img/man.png" alt="userPicture" class="profile-icon">
+                                            <img src="@(_icon is null ? "../assets/img/man.png" : $"data:image/jpeg;base64,{_icon}")" alt="userPicture" class="rounded-circle profile-icon">
                                             <div>
                                                 <span>@_user?.Email</span>
                                                 <h5 class="card-title">
