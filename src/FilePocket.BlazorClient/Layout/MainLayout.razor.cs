@@ -14,6 +14,7 @@ public partial class MainLayout : IDisposable
     LoggedInUserModel? _user;
     private bool _menuOpen;
     private string? _icon;
+    private bool _render;
 
     [Inject] AuthenticationStateProvider AuthStateProvider { get; set; } = default!;
     [Inject] IUserRequests UserRequests { get; set; } = default!;
@@ -28,9 +29,9 @@ public partial class MainLayout : IDisposable
 
         if (_user is not null)
         {
-            _user.FirstName ??= string.Empty;
-            _user.LastName ??= string.Empty;
-            _iconName = string.Concat(_user.FirstName.AsSpan(0, 1), _user.LastName.AsSpan(0, 1)).ToUpper();               
+            var fisrtName = _user.FirstName is null ? string.Empty : _user.FirstName.AsSpan(0, 1);
+            var lastName = _user.LastName is null ? string.Empty : _user.LastName.AsSpan(0, 1);
+            _iconName = string.Concat(fisrtName, lastName).ToUpper();
 
             if (_iconName.Length == 0)
             {
@@ -78,14 +79,17 @@ public partial class MainLayout : IDisposable
 
     private string GetDisplayedName()
     {
-        if (_user == null) return string.Empty;
+        if (_user is null || (string.IsNullOrEmpty(_user.FirstName) && string.IsNullOrEmpty(_user.LastName)))
+        {
+            return string.Empty;
+        }
 
-        if (_user.FirstName!.Length > 0 && _user.LastName!.Length > 0)
+        if (!string.IsNullOrEmpty(_user.FirstName) && !string.IsNullOrEmpty(_user.LastName))
         {
             return $"{_user.FirstName} {_user.LastName}";
         }
 
-        return _user.FirstName!.Length > 0 ? _user.FirstName! : _user.LastName!;
+        return string.IsNullOrEmpty(_user.FirstName) ? _user.LastName! : _user.FirstName;
     }
 }
 
