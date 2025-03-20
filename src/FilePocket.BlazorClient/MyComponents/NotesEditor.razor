@@ -1,0 +1,32 @@
+﻿
+<div>
+    <textarea id="@_editorId" />
+    @*     <EditForm Model="@_noteContent" OnSubmit="GetContentAsync">
+        <button type="submit" name="submit-btn">Submit</button>
+    </EditForm> *@
+</div>
+
+<script>
+    function getTinyMceContent(editorId) {
+        var editor = tinymce.get(`${editorId}`);
+        console.log(editor);
+        return editor.getContent();
+    }
+
+    function initializeTinyMCE(editorId, saveCallBackReference) {
+        console.log('*************INITIALIZE**************');
+        tinymce.init({
+            license_key: 'gpl',
+            selector: editorId,
+            height: 500,
+            plugins: 'link image code save',
+            toolbar: 'save | undo redo | bold italic | alignleft aligncenter alignright | code',
+            menubar: "file edit view",
+            save_enablewhendirty: true,
+            save_onsavecallback: function () {
+                const content = tinymce.activeEditor.getContent();
+                saveCallBackReference.invokeMethodAsync('OnSave', content);
+            }
+        });
+    }
+</script>
