@@ -3,8 +3,8 @@ using FilePocket.BlazorClient;
 using FilePocket.BlazorClient.Features;
 using FilePocket.BlazorClient.Features.Authentication;
 using FilePocket.BlazorClient.Features.Bookmarks.Requests;
-using FilePocket.BlazorClient.Features.Profiles.Requests;
 using FilePocket.BlazorClient.Features.SharedFiles.Requests;
+using FilePocket.BlazorClient.Features.Storage.Requests;
 using FilePocket.BlazorClient.Features.Trash;
 using FilePocket.BlazorClient.Features.Users.Requests;
 using FilePocket.BlazorClient.Services.Authentication.Requests;
@@ -46,7 +46,7 @@ namespace FilePocket.Client
             builder.Services.AddScoped<ISharedFilesRequests, SharedFilesRequests>();
             builder.Services.AddScoped<ITrashRequests, TrashRequests>();
             builder.Services.AddScoped<IBookmarkRequests, BookmarkRequests>();
-            builder.Services.AddScoped<IProfileRequests, ProfileRequests>();
+            builder.Services.AddScoped<IStorageRequests, StorageRequests> ();
 
             builder.Services.AddBlazoredLocalStorage();
             builder.Services.AddAuthorizationCore();
