@@ -1,0 +1,20 @@
+.progressBar-body {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    -webkit-flex-flow: row;
+    flex-flow: row;
+    height: .25rem;
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+.progressBar-occupied {
+    background-color: var(--dt-primary,rgb(26,115,232))
+}
+
+.progressBar-free-space {
+    background-color: var(--dt-surface-variant,rgb(241,243,244));
+    border-radius: 3px
+}

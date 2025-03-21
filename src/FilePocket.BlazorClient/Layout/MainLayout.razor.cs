@@ -25,8 +25,8 @@ public partial class MainLayout : IDisposable
 
     private StorageConsumptionModel _storageConsumption = new();
 
-    private string _unoccupiedStorageSpace = "0";
-    private string _storageCapacity = "0";
+    private string _unoccupiedStorageSpacePercentage = "100";
+    private string _occupiedStorageSpacePercentage = "0";
     protected override async Task OnInitializedAsync()
     {
         var authState = await AuthStateProvider.GetAuthenticationStateAsync();
@@ -39,8 +39,7 @@ public partial class MainLayout : IDisposable
             _user.FirstName ??= string.Empty;
             _user.LastName ??= string.Empty;
             _storageConsumption = await StorageRequests.GetStorageConsumption();
-            GetUnoccupiedStorageSpace();
-            GetStorageCapacity();
+            GetStorageConsumptionInPercantage();
             StateHasChanged();
             _iconName = string.Concat(_user.FirstName.AsSpan(0, 1), _user.LastName.AsSpan(0, 1)).ToUpper();
 
@@ -105,16 +104,11 @@ public partial class MainLayout : IDisposable
 
         return _user.FirstName!.Length > 0 ? _user.FirstName! : _user.LastName!;
     }
-    private void GetUnoccupiedStorageSpace()
+    private void GetStorageConsumptionInPercantage()
     {
-        _unoccupiedStorageSpace = Math.Round(((1 - (_storageConsumption.Used / _storageConsumption.Total)) * 100), 1)
-            .ToString()
-            .Replace(',', '.');
-    }
-
-    private void GetStorageCapacity()
-    {
-        _storageCapacity = Math.Round((_storageConsumption.Total / 1000), 1).ToString();
+        double proportionOfOccupiedSpace = Math.Round(((_storageConsumption.Used / _storageConsumption.Total) * 100), 2);
+        _unoccupiedStorageSpacePercentage = proportionOfOccupiedSpace.ToString().Replace(',', '.');
+        _occupiedStorageSpacePercentage = (100 - proportionOfOccupiedSpace).ToString().Replace(',', '.');
     }
 }
 

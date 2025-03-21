@@ -271,12 +271,25 @@
                             }
 
                     
-                            <!--  doughnut chart -->
-                            <div class="card text-white p-4 rounded-4" style="width: 250px; margin: 20px auto;">
-                                <canvas id="storageChart" width="120" height="120"></canvas>
+                        <!--  doughnut chart -->
+                        <div class="card text-white p-4 rounded-4" style="width: 250px; margin: 20px auto;">
+                            <canvas id="storageChart" width="120" height="120"></canvas>
 
-                                <h5 class="text-center mt-2">@_storageCapacity GB</h5>
-                                <p class="text-center text-muted">@(_unoccupiedStorageSpace)% of 100%</p>
+                            <h5 class="text-center mt-2">@(Math.Round(_storageConsumption.Total/1000)) GB</h5>
+                            <p class="text-center text-muted" style="margin-bottom: 0px">@(_occupiedStorageSpacePercentage)% of 100%</p>
+
+                            <div class="progressBar-body">
+                                <div class="progressBar-occupied" style="width:@(_occupiedStorageSpacePercentage)%"></div>
+                                <div class="progressBar-free-space" style="width:@(_unoccupiedStorageSpacePercentage)%"></div>
+                            </div>
+                            @if (_storageConsumption.Used<100)
+                            {
+                                <p class="text-center text-muted">Использовано @(Math.Round((_storageConsumption.Used), 0)) MБ из @(Math.Round((_storageConsumption.Total/1000), 2)) ГБ</p>
+                            }
+                            else
+                            {
+                                <p class="text-center text-muted">Использовано @(Math.Round((_storageConsumption.Used/1000), 2)) ГБ из @(Math.Round((_storageConsumption.Total/1000), 2)) ГБ</p>
+                            }
 
                                 <div class="mt-3">
                                     @foreach (var item in StorageItems)
