@@ -1,5 +1,4 @@
 ﻿using FilePocket.BlazorClient.Features.Users.Requests;
-using FilePocket.BlazorClient.MyComponents;
 using FilePocket.BlazorClient.Services.Files.Requests;
 using FilePocket.BlazorClient.Services.Folders.Requests;
 using FilePocket.BlazorClient.Services.Pockets.Models;
@@ -11,7 +10,7 @@ namespace FilePocket.BlazorClient.Pages.Notes
 {
     public partial class Notes
     {
-        private const string DefaultNotesPocketName = "MyNotes";
+        private string? _defaultNotesPocketName;
         private Guid? _pocketId;
         private Guid? _folderId;
 
@@ -20,6 +19,9 @@ namespace FilePocket.BlazorClient.Pages.Notes
 
         [Inject]
         IUserRequests UserRequests { get; set; } = default!;
+
+        [Inject]
+        IConfiguration Configuration { get; set; } = default!;
 
         [Inject]
         private IFileRequests FileRequests { get; set; } = default!;
@@ -41,13 +43,19 @@ namespace FilePocket.BlazorClient.Pages.Notes
                 return;
             }
 
+            _defaultNotesPocketName = Configuration.GetSection("DefaultNotesPocketName")?.Value;
+            if (_defaultNotesPocketName == null)
+            {
+                return;
+            }
+
             var pockets = await PocketRequests.GetAllCustomAsync();
-            var notesPocket = pockets.FirstOrDefault(p => p.Name == DefaultNotesPocketName);
+            var notesPocket = pockets.FirstOrDefault(p => p.Name == _defaultNotesPocketName);
             if (notesPocket == null)
             {
                 var newPocket = new CreatePocketModel
                 {
-                    Name = DefaultNotesPocketName,
+                    Name = _defaultNotesPocketName,
                     UserId = user.Id!.Value,
                     Description = "Default place to store my notes"
                 };
@@ -59,7 +67,7 @@ namespace FilePocket.BlazorClient.Pages.Notes
                 }
 
                 notesPocket = (await PocketRequests.GetAllCustomAsync())
-                    .FirstOrDefault(p => p.Name == DefaultNotesPocketName);
+                    .FirstOrDefault(p => p.Name == _defaultNotesPocketName);
             }
 
             _pocketId = notesPocket?.Id;

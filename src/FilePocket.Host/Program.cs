@@ -18,6 +18,10 @@ using FastEndpoints;
 using Mapster;
 using FilePocket.Infrastructure.Persistence.Repositories;
 using FilePocket.Infrastructure.Persistence;
+using FilePocket.Infrastructure.Persistence.Repositories.MongoDbRepositories;
+using MongoDB.Bson.Serialization.Serializers;
+using MongoDB.Bson.Serialization;
+using MongoDB.Bson;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -86,6 +90,13 @@ builder.Services.Configure<JwtConfigurationModel>(builder.Configuration.GetSecti
 builder.Services.Configure<ApiKeyConfigurationModel>(builder.Configuration.GetSection("ApiKeySettings"));
 builder.Services.AddHostedService<InitialRolesAndAdminSeeding>();
 
+builder.Services.Configure<MongoDbSettings>(
+    builder.Configuration.GetSection(nameof(MongoDbSettings)));
+
+BsonSerializer.RegisterSerializer(new GuidSerializer(BsonType.String));
+BsonSerializer.RegisterSerializer(new DateTimeSerializer(BsonType.String));
+BsonSerializer.RegisterSerializer(new DateTimeOffsetSerializer(BsonType.String));
+
 // Add services to the container.
 builder.Services.AddSingleton<ILoggerService, LoggerService>();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
@@ -123,6 +134,9 @@ builder.Services.AddScoped<IFolderService, FolderService>();
 builder.Services.AddSingleton<IUploadService, UploadService>();
 builder.Services.AddScoped<IServiceManager, ServiceManager>();
 builder.Services.AddScoped<JwtOrApiKeyAuthorizeAttribute>();
+
+builder.Services.AddSingleton<INotesRepository, NotesRepository>();
+builder.Services.AddScoped<INoteService, NoteService>();
 
 var app = builder.Build();
 

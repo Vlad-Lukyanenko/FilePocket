@@ -13,12 +13,12 @@ namespace FilePocket.WebApi.MapProfiles
                 .Map(dest => dest.FileType, src => src.FileType)
                 .Map(dest => dest.OriginalName, src => src.OriginalName);
 
-             config.NewConfig<FileResponseModel, GetRecentlyUploadedFilesResponse>()
-                .Map(dest => dest.Id, src => src.Id)
-                .Map(dest => dest.PocketId, src => src.PocketId)
-                .Map(dest => dest.FolderId, src => src.FolderId)
-                .Map(dest => dest.FileType, src => src.FileType)
-                .Map(dest => dest.OriginalName, src => src.OriginalName);
+            config.NewConfig<FileResponseModel, GetRecentlyUploadedFilesResponse>()
+               .Map(dest => dest.Id, src => src.Id)
+               .Map(dest => dest.PocketId, src => src.PocketId)
+               .Map(dest => dest.FolderId, src => src.FolderId)
+               .Map(dest => dest.FileType, src => src.FileType)
+               .Map(dest => dest.OriginalName, src => src.OriginalName);
         }
     }
 }

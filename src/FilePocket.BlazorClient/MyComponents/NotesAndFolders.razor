@@ -1,0 +1,154 @@
+﻿@using FilePocket.BlazorClient.Helpers
+@using FilePocket.BlazorClient.Services.Files.Models
+@using FilePocket.BlazorClient.Shared.Enums
+
+<style>
+    @@media (max-width: 768px) {
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        .table th, .table td {
+            padding: 0.5rem;
+        }
+
+        .btn-outline-success, .btn-outline-warning, .btn-outline-danger {
+            padding: 0.25rem 0.5rem;
+        }
+
+        .fs-4 {
+            font-size: 1.5rem;
+        }
+
+        .w-md-75 {
+            width: 100% !important;
+        }
+
+        .form-check-input {
+            margin-right: 0.5rem;
+        }
+
+        .link-dark {
+            font-size: 0.9rem;
+        }
+    }
+</style>
+
+<div class="container-fluid" style="min-height: 600px;">
+    <div class="container-fluid w-100 w-md-75">
+
+        @{
+            var showGoBackBtn = FolderId is not null;
+
+            var notes = "Notes";
+            var folder = _currentFolder is null ? "" : $"/ {Tools.TruncateString(_currentFolder.Name)}";
+            var parentFolder = _currentFolder?.ParentFolderId is null ? "" : " /... ";
+
+            var title = $"{notes} {parentFolder}{folder}";
+        }
+        <!-- Top SubMenu -->
+        <TopSubMenu Title="@title" ShowBackButton="showGoBackBtn" />
+
+        <!-- Action Buttons Row -->
+        <div class="row">
+            <div class="col-12 d-flex align-items-center mb-3">
+
+                <!-- Upload Button -->
+                <label class="btn btn-outline-success py-0 px-2 me-2">
+                    <i class="ps-2 pe-2 bi-cloud-arrow-up fs-4"></i>
+                    <InputFile hidden id="fileInput" OnChange="UploadFiles" multiple />
+                </label>
+
+                @{
+                    var folderId = FolderId is null ? "" : $"{FolderId}/";
+
+                    var url = $"/pockets/{PocketId}/folders/{folderId}{(int)FolderType.Files}/new";
+                }
+
+                <a href="@url" class="btn btn-outline-warning py-0 px-3 me-2">
+                    <i class="bi bi-folder-plus fs-4"></i>
+                </a>
+
+                <a href="#" class="btn btn-outline-warning py-0 px-3">
+                    <i class="bi bi-file-earmark-plus fs-4"></i>
+                </a>
+
+                @* <button class="btn @(_rmBtnDisabled ? "btn-outline-secondary" : "btn-outline-danger") ms-auto p-0 ps-2 pe-2" disabled="@_rmBtnDisabled" @onclick="DeleteSelectedFiles">
+                    <i class="bi bi-trash fs-4"></i>
+                </button> *@
+                <div style="display: flex; justify-content: flex-end; width: 100%; gap: 8px;">
+                    @if (FolderId is not null)
+                    {
+                        @if (_removalProcessStarted)
+                        {
+                            <button class="btn btn-sm btn-outline-danger p-1"
+                                    style="border-radius: 10px; min-width: 6em;"
+                                    title="Confirm"
+                                    @onclick="DeleteFolderClick">
+                                <i class="bi-check-square fs-6"></i> Confirm
+                            </button>
+                            <button class="btn btn-sm btn-outline-secondary p-1"
+                                    style="border-radius: 10px; min-width: 6em;"
+                                    title="Cancel"
+                                    @onclick="() => _removalProcessStarted = false">
+                                <i class="bi bi-x-square fs-6"></i> Cancel
+                            </button>
+                        }
+                        else
+                        {
+                            <button class="btn btn-outline-danger p-1"
+                                    style="border-radius: 10px; min-width: 6em;"
+                                    @onclick="() => _removalProcessStarted = true">
+                                <i class="bi bi-trash fs-6"></i> Delete
+                            </button>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+
+        <br />
+
+        @if (!_folders.Any() && !_files.Any())
+        {
+            <div class="text-center no-content">
+                <h6>It looks like you haven't uploaded or created any notes yet. <br /> Would you like to upload or create one now?</h6>
+            </div>
+        }
+        else
+        {
+            <FoldersBlock Folders="_folders" PocketId="PocketId"></FoldersBlock>
+            <FilesBlock Files="_files" />
+        }
+
+        <!-- Error Block -->
+        @if (_fileUploadErrors.Any())
+        {
+            <div class="fixed-bottom p-3">
+                @foreach (var fileUploadError in _fileUploadErrors)
+                {
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <strong>Holy guacamole!</strong> Looks like file upload for @fileUploadError.OriginalName went wrong. @fileUploadError.ErrorMessage
+                        <button type="button"
+                                class="btn-close"
+                                aria-label="Close"
+                                @onclick="() => RemoveError(fileUploadError)">
+                        </button>
+                    </div>
+                }
+            </div>
+        }
+
+        <br />
+    </div>
+</div>
+
+<script>
+    function resetFileInput(inputId) {
+        document.getElementById(inputId).value = null;
+    }
+</script>
+
+@code {
+    private void RemoveError(FileUploadError error) => _fileUploadErrors.Remove(error);
+}
