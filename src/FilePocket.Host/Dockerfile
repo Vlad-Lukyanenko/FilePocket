@@ -16,7 +16,7 @@ COPY ["FilePocket.Host/FilePocket.Host.csproj", "src/FilePocket.Host/"]
 COPY ["FilePocket.Application/FilePocket.Application.csproj", "src/FilePocket.Application/"]
 COPY ["FilePocket.Contracts/FilePocket.Contracts.csproj", "src/FilePocket.Contracts/"]
 COPY ["FilePocket.Domain/FilePocket.Domain.csproj", "src/FilePocket.Domain/"]
-COPY ["FilePocket.Persistence/FilePocket.Persistence.csproj", "src/FilePocket.Persistence/"]
+COPY ["FilePocket.Infrastructure.Persistence/FilePocket.Infrastructure.Persistence.csproj", "src/FilePocket.Infrastructure.Persistence/"]
 COPY ["FilePocket.WebApi/FilePocket.WebApi.csproj", "src/FilePocket.WebApi/"]
 RUN dotnet restore "./src/FilePocket.Host/FilePocket.Host.csproj"
 COPY . .

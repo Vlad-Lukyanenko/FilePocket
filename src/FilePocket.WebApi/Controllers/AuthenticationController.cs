@@ -35,7 +35,7 @@ public class AuthenticationController : ControllerBase
 
             return BadRequest(ModelState);
         }
-        
+
         var defaultPocket = new PocketForManipulationsModel
         {
             UserId = result.User!.Id,
@@ -44,6 +44,7 @@ public class AuthenticationController : ControllerBase
         };
 
         await _service.PocketService.CreatePocketAsync(defaultPocket);
+        await CreateProfileAsync(result.User);
 
         return StatusCode(201);
     }
@@ -69,5 +70,17 @@ public class AuthenticationController : ControllerBase
         var tokenModel = await _service.AuthenticationService.CreateToken(populateExp: true);
 
         return Ok(tokenModel);
+    }
+
+    private async Task CreateProfileAsync(User registeredUser)
+    {
+        var newProfile = new ProfileModel
+        {
+            Email = registeredUser.Email,
+            CreatedAt = DateTime.UtcNow,
+            UserId = registeredUser.Id
+        };
+
+        await _service.ProfileService.CreateProfileAsync(newProfile);
     }
 }

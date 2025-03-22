@@ -1,29 +1,43 @@
 ﻿@using FilePocket.BlazorClient.Features
+@using FilePocket.BlazorClient.Features.Users.Requests
+@using FilePocket.BlazorClient.Features.Users.Models
+@using Microsoft.AspNetCore.Components.Authorization
 @inherits LayoutComponentBase
 @inject NavigationManager Navigation
 @inject NavigationHistoryService NavigationHistory
 @inject IJSRuntime JS
+@inject FilePocketApiClient ApiClient
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+
+@page "/storage"
+
+
 
 <PageTitle>File Pocket Application</PageTitle>
 
-<div class="px-1 px-sm-3 d-flex p-2">
+<div class="d-flex vh-100">
+
     <AuthorizeView>
         <Authorized>
+          
+             <!-- Sidebar Menu Desktop-->
+            <aside class="col-2 d-none d-md-block p-4">
 
-            <div class="col-2 card shadow-sm mb-2 mb-md-0 me-md-2 p-0 d-none d-md-block">
-                <!-- Sidebar Menu Desktop-->
-                <aside class="">
-                    <div class="d-md-none p-2 text-center fw-bold border-bottom">
-                        Menu
-                    </div>
-                    <ul class="nav nav-pills d-flex flex-row flex-md-column justify-content-start overflow-auto py-2 gap-2 px-2"
-                        style="scrollbar-width: none;" id="menu">
+                <!-- Brand Logo and Name -->
+                <a class="fw-bold main-text-header d-flex align-items-center text-white text-decoration-none" href="#">
+                    <img src="./assets/img/logo.png" alt="Logo" width="50" height="50" class="d-inline-block align-text-top me-2">
+                    File Pocket
+                </a>
+
+                <ul class="nav nav-pills d-flex flex-row flex-md-column justify-content-start overflow-auto mt-4" id="menu">
                         <li class="nav-item flex-fill flex-md-grow-0">
                             <a href="#" class="nav-link text-dark px-2 @(IsActive("#"))">
                                 <div class="d-flex align-items-center justify-content-center justify-content-md-start">
                                     <i class="fs-4 bi-house"></i>
                                     <span class="ms-2 d-none d-md-inline">Home</span>
                                 </div>
+                                <!-- Removed the extra closing div -->
                             </a>
                         </li>
                         <li class="nav-item flex-fill flex-md-grow-0">
@@ -34,22 +48,14 @@
                                 </div>
                             </a>
                         </li>
-                        <li class="nav-item flex-fill flex-md-grow-0">
+                        @* <li class="nav-item flex-fill flex-md-grow-0">
                             <a href="/pockets" class="nav-link text-dark px-2 @(IsActive("/pockets"))">
                                 <div class="d-flex align-items-center justify-content-center justify-content-md-start">
                                     <i class="fs-4 bi-archive"></i>
                                     <span class="ms-2 d-none d-md-inline">Pockets</span>
                                 </div>
                             </a>
-                        </li>
-                        <li class="nav-item flex-fill flex-md-grow-0">
-                            <a href="/files/shared" class="nav-link text-dark px-2 @(IsActive("/files/shared"))">
-                                <div class="d-flex align-items-center justify-content-center justify-content-md-start">
-                                    <i class="fs-4 bi-share"></i>
-                                    <span class="ms-2 d-none d-md-inline">Shared</span>
-                                </div>
-                            </a>
-                        </li>
+                        </li> *@
                         <li class="nav-item flex-fill flex-md-grow-0">
                             <a href="/bookmarks" class="nav-link text-dark px-2 @(IsActive("/bookmarks"))">
                                 <div class="d-flex align-items-center justify-content-center justify-content-md-start">
@@ -58,22 +64,25 @@
                                 </div>
                             </a>
                         </li>
+
+                        <li class="nav-item flex-fill flex-md-grow-0">
+                            <a href="/files/shared" class="nav-link text-dark px-2 @(IsActive("/files/shared"))">
+                                <div class="d-flex align-items-center justify-content-center justify-content-md-start">
+                                    <i class="fs-4 bi-share"></i>
+                                    <span class="ms-2 d-none d-md-inline">Shared</span>
+                                </div>
+                            </a>
+                        </li>
+                        
                         <li class="nav-item flex-fill flex-md-grow-0">
                             <a href="/notes" class="nav-link text-dark px-2 @(IsActive("/notes"))">
                                 <div class="d-flex align-items-center justify-content-center justify-content-md-start">
-                                    <i class="fs-4 bi-file-text-fill"></i>
+                                    <i class="bi bi-pencil-square"></i>
                                     <span class="ms-2 d-none d-md-inline">Notes</span>
                                 </div>
                             </a>
                         </li>
-                        <li class="nav-item flex-fill flex-md-grow-0">
-                            <a href="/profile" class="nav-link text-dark px-2 @(IsActive("/profile"))">
-                                <div class="d-flex align-items-center justify-content-center justify-content-md-start">
-                                    <i class="fs-4 bi-person-badge"></i>
-                                    <span class="ms-2 d-none d-md-inline">Profile</span>
-                                </div>
-                            </a>
-                        </li>
+                        
                         <li class="nav-item flex-fill flex-md-grow-0">
                             <a href="/settings" class="nav-link text-dark px-2 @(IsActive("/settings"))">
                                 <div class="d-flex align-items-center justify-content-center justify-content-md-start">
@@ -86,18 +95,16 @@
                             <a href="/trash" class="nav-link text-dark px-2 @(IsActive("/trash"))">
                                 <div class="d-flex align-items-center justify-content-center justify-content-md-start">
                                     <i class="fs-4 bi bi-trash"></i>
-                                    <span class="ms-2 d-none d-md-inline">Trash</span>
+                                    <span class="ms-2 d-none d-md-inline">Delete</span>
                                 </div>
                             </a>
                         </li>
-                    </ul>
-                </aside>
-            </div>
+                </ul>
+            </aside>
 
-            <!-- Offcanvas menu for Mobile -->
+            <!-- Menu for Mobile -->
             <div class="offcanvas offcanvas-start d-md-none" tabindex="-1" id="offcanvasMenu">
                 <div class="offcanvas-header">
-                    @* <h5 class="offcanvas-title fw-bold">Menu</h5> *@
                     <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"></button>
                 </div>
                 <div class="offcanvas-body">
@@ -108,95 +115,67 @@
                             <i class="fas fa-search"></i>
                         </button>
                     </form>
-                    <!-- Menu for Mobile-->
+                    <!-- Menu-item for Mobile-->
                     <ul class="nav nav-pills d-flex flex-column gap-2">
                         <li class="nav-item">
-                            <a href="#" class="nav-link text-dark @(IsActive("#"))" @onclick='() => CloseOffcanvasAndNavigate("#")'>
+                            <a href="#" class="nav-link @(IsActive("#"))" @onclick='async () => await CloseOffcanvasAndNavigate("#")' data-bs-dismiss="offcanvas">
                                 <i class="fs-4 bi-house"></i> <span class="ms-2">Home</span>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="/files" class="nav-link text-dark @(IsActive("/files"))" @onclick='() => CloseOffcanvasAndNavigate("/files")'>
+                            <a href="/files" class="nav-link @(IsActive("/files"))" @onclick='async () => await CloseOffcanvasAndNavigate("/files")' data-bs-dismiss="offcanvas">
                                 <i class="fs-4 bi-file-earmark-medical"></i> <span class="ms-2">Files</span>
                             </a>
                         </li>
+
                         <li class="nav-item">
+                            <a href="/bookmarks" class="nav-link @(IsActive("/bookmarks"))" @onclick='() => CloseOffcanvasAndNavigate("/bookmarks")' data-bs-dismiss="offcanvas">
+                                <i class="fs-4 bi-bookmarks"></i><span class="ms-2">Bookmarks</span>
+                            </a>
+                        </li>
+                        @* <li class="nav-item">
                             <a href="/pockets" class="nav-link text-dark @(IsActive("/pockets"))" @onclick='() => CloseOffcanvasAndNavigate("/pockets")'>
                                 <i class="fs-4 bi-archive"></i> <span class="ms-2">Pockets</span>
                             </a>
-                        </li>
+                        </li> *@
                         <li class="nav-item">
-                            <a href="/files/shared" class="nav-link text-dark @(IsActive("/files/shared"))" @onclick='() => CloseOffcanvasAndNavigate("/files/shared")'>
+                            <a href="/files/shared" class="nav-link @(IsActive("/files/shared"))" @onclick='() => CloseOffcanvasAndNavigate("/files/shared")' data-bs-dismiss="offcanvas">
                                 <i class="fs-4 bi-share"></i> <span class="ms-2">Shared</span>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="/notes" class="nav-link text-dark @(IsActive("/notes"))" @onclick='() => CloseOffcanvasAndNavigate("/notes")'>
-                                <i class="fs-4 bi-file-text-fill"></i> <span class="ms-2">Notes</span>
+                            <a href="/notes" class="nav-link @(IsActive("/notes"))" @onclick='() => CloseOffcanvasAndNavigate("/notes")' data-bs-dismiss="offcanvas">
+                                <i class="fs-4 bi-gear"></i> <span class="ms-2">Notes</span>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="/profile" class="nav-link text-dark @(IsActive("/profile"))" @onclick='() => CloseOffcanvasAndNavigate("/profile")'>
-                                <i class="fs-4 bi-person-badge"></i> <span class="ms-2">Profile</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="/settings" class="nav-link text-dark @(IsActive("/settings"))" @onclick='() => CloseOffcanvasAndNavigate("/settings")'>
+                            <a href="/settings" class="nav-link @(IsActive("/settings"))" @onclick='() => CloseOffcanvasAndNavigate("/settings")' data-bs-dismiss="offcanvas">
                                 <i class="fs-4 bi-gear"></i> <span class="ms-2">Settings</span>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="/trash" class="nav-link text-dark @(IsActive("/trash"))" @onclick='() => CloseOffcanvasAndNavigate("/trash")'>
-                                <i class="fs-4 bi-trash"></i> <span class="ms-2">Trash</span>
+                            <a href="/trash" class="nav-link @(IsActive("/trash"))" @onclick='() => CloseOffcanvasAndNavigate("/trash")' data-bs-dismiss="offcanvas">
+                                <i class="fs-4 bi-trash"></i> <span class="ms-2">Delete</span>
                             </a>
                         </li>
                     </ul>
 
+               
+              <!-- Logout Button -->
+                     <a href="/logout" class="btn btn-outline-danger px-3 mt-3">
+                        <strong>Logout</strong>
+                     </a>
                 </div>
             </div>
 
             <div class="col container-fluid">
                 <!-- Navbar -->
-                <header class="position-relative mb-2 navbar navbar-expand-md w-100 p-2 card">
-
-                    <nav class="card navbar navbar-expand-md w-100 p-2">
-                        <!-- Signing In User Info Menu -->
-                        @if (_menuOpen)
-                        {
-                            <div class="user-info-dialog fade-in">
-                                <div class="card shadow-sm">
-                                    <div class="card-img-top top">
-                                        <button type="button" class="btn-close" @onclick="SwitchUserInfoDialog" />
-                                        <span>@_user?.Email</span>
-                                        <div class="icon profile-icon">
-                                            <img src="../assets/img/man.png" alt="userPicture">
-                                        </div>
-                                        <h5 class="card-title">
-                                            @GetDisplayedName()
-                                        </h5>
-                                        <div>
-                                            <span>
-                                                <a href="/profile" class="link-primary">Edit Profile</a>
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <div class="card-body">
-                                        <a href="/logout" class="btn-fixed btn-outline-danger">
-                                            <strong>Logout</strong>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="user-info-dialog-back fade-in" @onclick="SwitchUserInfoDialog"></div>
-                        }
-
+                <header class="position-relative mb-2 navbar navbar-expand-md w-100 p-2">
                         <div class="container-fluid">
-                            <!-- Brand Logo and Name -->
-                            <a class="navbar-brand fw-bold main-text-header d-flex align-items-right" href="#">
-                                <img src="./assets/img/logo.png" alt="Logo" width="28" height="28" class="d-inline-block align-text-top me-2">
-                                File Pocket
-                            </a>
+                            <!-- Mobile Toggle Button -->
+                            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu">
+                                <span class="navbar-toggler-icon"></span>
+                            </button>
 
                             <!-- Collapsible Content -->
                             <div class="collapse navbar-collapse">
@@ -206,38 +185,127 @@
                                         <div class="search-container">
                                             <input class="search-box" type="text" placeholder="looking for something?" />
                                             <button class="search-button">
-                                                <i class="fas fa-search"></i>
+                                                <i class="fas fa-search" style="color:rgba(65, 44, 168, 1)"></i>
                                             </button>
                                         </div>
                                     </form>
+                                   
                                 </div>
-                            </div>
-                            <!-- End of Collapsible Content -->
-
-                            <div class="controls-container">
-                                <!-- Signing In User Info Button -->
-                                <div class="icon-btn-container ">
-                                    <button class="icon icon-btn" @onclick="SwitchUserInfoDialog">
-                                        @(_iconName ?? "...")
-                                    </button>
-                                </div>
-
-                                <!-- Mobile Toggle Button -->
-                                <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu">
-                                    <span class="navbar-toggler-icon"></span>
-                                </button>
+                                
                             </div>
                         </div>
-                    </nav>
                 </header>
 
                 <!-- Main Content Area -->
-                <main class="card shadow-sm w-100 rounded p-2" style="background-color: #fcfcfc; height: calc(100vh - 100px);">
+                <main class="w-100 p-2">
                     @Body
                 </main>
+
             </div>
 
-        </Authorized>
+
+            <!-- Right Offcanvas Menu -->
+            <div class="offcanvasMenuRight p-3">
+              <!-- Open the Right offcanvas Menu -->
+               <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#rightOffcanvasMenu">
+                    <img src="./assets/img/menu.svg" alt="menu" width="20" height="20" class="d-inline-block">
+                </button>
+
+                    
+                <div class="offcanvas offcanvas-end" tabindex="-1" id="rightOffcanvasMenu">
+                        <div class="offcanvas-header">
+                            <button type="button" class="btn-close btn-close-white text-reset" data-bs-dismiss="offcanvas"></button>
+                        </div>
+                        <div class="offcanvas-body">
+                            <div class="controls-container">
+                                <!-- Signing In User Info Button -->
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="d-flex align-items-center">
+                                            @* <span>@_user?.Email</span> *@
+                                            <img class="rounded-circle avatar-image" src="@(_icon is null ? "../assets/img/man.png" : $"data:image/jpeg;base64,{_icon}")" alt="userPicture">
+                                            <div>
+                                                <span>@_user?.Email</span>
+                                                <h5 class="card-title">
+                                                    @GetDisplayedName()
+                                                </h5>
+                                            </div>
+                                    </div>
+                                    <div class="icon" @onclick="SwitchUserInfoDialog">
+                                        @* @(_iconName ?? "...") *@
+                                        <i class="bi bi-chevron-double-right"></i>
+                                    </div>
+                                </div>
+                            </div>
+                                
+                            @if (_menuOpen)
+                            {
+                                <div class="user-info-dialog fade-in">
+                                    <div class="card shadow-sm p-2">
+                                        <div class="card-img-top top">
+                                            <button type="button" class="btn-close" @onclick="SwitchUserInfoDialog" />
+                                            <div>
+
+                                                <h3>Hello @(_user?.FirstName ?? "Guest")!</h3>
+                                       
+                                                <div class="d-flex flex-column p-3">
+                                                    <a href="/profile" class="link-dark">
+                                                        <i class="bi bi-pencil-square"></i><span class="ms-2">Edit Profile</span>
+                                                    </a>
+                                                
+                                                    <a href="/support" class="link-dark @(IsActive("/support"))" @onclick='() => CloseOffcanvasAndNavigate("/support")'>
+                                                        <i class="bi bi-question-circle"></i><span class="ms-2">Help &amp; Support</span>
+                                                    </a>
+                                                
+                                                    <a href="/logout" class="link-dark">
+                                                        <i class="bi bi-box-arrow-right"></i> <span class="ms-2">Logout</span>
+                                                    </a>
+                                                </div>
+                                                
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="user-info-dialog-back fade-in" @onclick="SwitchUserInfoDialog"></div>
+
+                            }
+
+                    
+                            <!--  doughnut chart -->
+                            <div class="card text-white p-4 rounded-4" style="width: 250px; margin: 20px auto;">
+                                <canvas id="storageChart" width="120" height="120"></canvas>
+
+                                <h5 class="text-center mt-2">150 GB</h5>
+                                <p class="text-center text-muted">50% of 100%</p>
+
+                                <div class="mt-3">
+                                    @foreach (var item in StorageItems)
+                                    {
+                                        <div class="d-flex align-items-center mb-2">
+                                            <div class="icon-box" style="background-color:@item.Color">
+                                                <i class="@item.Icon"></i>
+                                            </div>
+                                            <span class="ms-2 flex-grow-1">@item.Name</span>
+                                            <span class="text-muted">@item.Size GB</span>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                    
+                        </div>
+
+                        <!-- Logout Button -->
+                     @* <a href="/logout" class="btn btn-outline-danger px-3 mt-3">
+                        <strong>Logout</strong>
+                     </a> *@
+                </div>
+
+                
+                
+            </div>   
+            </Authorized>
+
+
         <NotAuthorized>
             <section class="col-12 mt-3 text-center pt-3 pb-4">
                 <div class="mx-auto d-block">
@@ -251,12 +319,109 @@
     </AuthorizeView>
 </div>
 
-<script>
-    window.closeOffcanvasMenu = () => {
-        let offcanvas = document.getElementById('offcanvasMenu');
-        let bsOffcanvas = bootstrap.Offcanvas.getInstance(offcanvas);
-        if (bsOffcanvas) {
-            bsOffcanvas.hide();
-        }
+
+
+@code {
+
+    private async Task ShowRightOffcanvas()
+    {
+        await JS.InvokeVoidAsync("openRightOffcanvasMenu");
+    }
+
+
+
+    private List<StorageItem> StorageItems = new()
+    {
+        new StorageItem("Documents", 5, "#f4c542", "bi bi-folder"),
+        new StorageItem("Books", 5, "#4287f5", "bi bi-book"),
+        new StorageItem("Images", 5, "#f4a261", "bi bi-image"),
+        new StorageItem("Videos", 5, "#ff4d4d", "bi bi-play-btn"),
     };
-</script>
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await Task.Delay(500); // Даем Blazor время отрендерить canvas
+            await JS.InvokeVoidAsync("renderStorageChart");
+        }
+    }
+
+    private class StorageItem
+    {
+        public string Name { get; }
+        public int Size { get; }
+        public string Color { get; }
+        public string Icon { get; }
+
+        public StorageItem(string name, int size, string color, string icon)
+        {
+            Name = name;
+            Size = size;
+            Color = color;
+            Icon = icon;
+        }
+    }
+
+} 
+
+<script>
+
+    function closeOffcanvasMenu() {
+        const offcanvasMenu = document.getElementById('offcanvasMenu');
+        if (offcanvasMenu) {
+            const bsOffcanvas = bootstrap.Offcanvas.getInstance(offcanvasMenu);
+            if (bsOffcanvas) {
+                bsOffcanvas.hide();
+            }
+        }
+    }
+
+    function openRightOffcanvasMenu() {
+    const offcanvasMenu = document.getElementById('rightOffcanvasMenu');
+
+    if (!offcanvasMenu) {
+        @* console.error("Элемент #rightOffcanvasMenu не найден!"); *@
+        return;
+    }
+
+    const bsOffcanvas = new bootstrap.Offcanvas(offcanvasMenu);
+    bsOffcanvas.show();
+    }
+    
+    window.closeOffcanvasMenu = closeOffcanvasMenu;
+    window.openRightOffcanvasMenu = openRightOffcanvasMenu;
+
+
+function renderStorageChart() {
+    @* console.log("renderStorageChart() вызван!"); *@
+
+    var ctx = document.getElementById("storageChart");
+    if (!ctx) {
+        @* console.error("Canvas не найден!"); *@
+        return;
+    }
+
+    ctx = ctx.getContext("2d");
+
+    new Chart(ctx, {
+        type: "doughnut",
+        data: {
+            labels: ["Documents", "Books", "Images", "Videos"],
+            datasets: [{
+                data: [5, 5, 5, 5],
+                backgroundColor: ["#f4c542", "#4287f5", "#f4a261", "#ff4d4d"],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: false,
+            cutout: "70%",
+            plugins: {
+                legend: { display: false }
+            }
+        }
+    });
+}
+
+</Script>

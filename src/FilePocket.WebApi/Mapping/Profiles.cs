@@ -1,7 +1,7 @@
-﻿using AutoMapper;
-using FilePocket.Contracts.Bookmark;
+﻿using FilePocket.Contracts.Bookmark;
 using FilePocket.Domain.Entities;
 using FilePocket.Domain.Models;
+using Profile = AutoMapper.Profile;
 
 namespace FilePocket.WebApi.Mapping;
 

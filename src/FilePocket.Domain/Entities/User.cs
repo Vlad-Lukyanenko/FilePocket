@@ -15,6 +15,7 @@ public class User : IdentityUser<Guid>
     public DateTime RefreshTokenExpiryTime { get; set; }
 
     // Account specific data
+    public virtual Profile Profile { get; set; } = null!;
     public virtual ICollection<Pocket> Pockets { get; private set; } = [];
     public virtual ICollection<FileMetadata> FilesMetadata { get; private set; } = [];// will be gone after default pocket is implemented
     public virtual ICollection<AccountConsumption> AccountConsumptions { get; private set; } = [];
