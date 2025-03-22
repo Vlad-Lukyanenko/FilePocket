@@ -107,8 +107,8 @@ public partial class MainLayout : IDisposable
     private void GetStorageConsumptionInPercantage()
     {
         double proportionOfOccupiedSpace = Math.Round(((_storageConsumption.Used / _storageConsumption.Total) * 100), 2);
-        _unoccupiedStorageSpacePercentage = proportionOfOccupiedSpace.ToString().Replace(',', '.');
-        _occupiedStorageSpacePercentage = (100 - proportionOfOccupiedSpace).ToString().Replace(',', '.');
+        _occupiedStorageSpacePercentage = proportionOfOccupiedSpace.ToString().Replace(',', '.');
+        _unoccupiedStorageSpacePercentage = (100 - proportionOfOccupiedSpace).ToString().Replace(',', '.');
     }
 }
 

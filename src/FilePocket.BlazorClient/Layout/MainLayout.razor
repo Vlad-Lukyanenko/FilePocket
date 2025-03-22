@@ -276,7 +276,7 @@
                             <canvas id="storageChart" width="120" height="120"></canvas>
 
                             <h5 class="text-center mt-2">@(Math.Round(_storageConsumption.Total/1000)) GB</h5>
-                            <p class="text-center text-muted" style="margin-bottom: 0px">@(_occupiedStorageSpacePercentage)% of 100%</p>
+                            <p class="text-center text-muted" style="margin-bottom: 0px">@(_occupiedStorageSpacePercentage)%</p>
 
                             <div class="progressBar-body">
                                 <div class="progressBar-occupied" style="width:@(_occupiedStorageSpacePercentage)%"></div>
@@ -284,11 +284,11 @@
                             </div>
                             @if (_storageConsumption.Used<100)
                             {
-                                <p class="text-center text-muted">Использовано @(Math.Round((_storageConsumption.Used), 0)) MБ из @(Math.Round((_storageConsumption.Total/1000), 2)) ГБ</p>
+                                <p class="text-center text-muted">@(Math.Round((_storageConsumption.Used), 0)) MB of @(Math.Round((_storageConsumption.Total/1000), 2)) GB used</p>
                             }
                             else
                             {
-                                <p class="text-center text-muted">Использовано @(Math.Round((_storageConsumption.Used/1000), 2)) ГБ из @(Math.Round((_storageConsumption.Total/1000), 2)) ГБ</p>
+                                <p class="text-center text-muted">@(Math.Round((_storageConsumption.Used/1000), 2)) GB of @(Math.Round((_storageConsumption.Total/1000), 2)) GB used</p>
                             }
 
                                 <div class="mt-3">
