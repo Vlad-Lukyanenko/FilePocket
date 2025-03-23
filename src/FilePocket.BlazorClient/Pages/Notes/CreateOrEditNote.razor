@@ -4,6 +4,7 @@
 @using FilePocket.BlazorClient.Features.Notes.Models
 @using FilePocket.BlazorClient.Features.Notes.Requests
 @using FilePocket.BlazorClient.Features.Users.Requests
+@using FilePocket.BlazorClient.Helpers
 @using Microsoft.AspNetCore.Authorization
 
 
@@ -28,7 +29,7 @@
                 else
                 {
                     <div class="title-text-container" @onclick="EditTile">
-                        <span class="align-middle">@_note?.Title</span>
+                        <span class="align-middle">@(Tools.TruncateString(_note?.Title!, 39))</span>
                     </div>
                 }
             </div>

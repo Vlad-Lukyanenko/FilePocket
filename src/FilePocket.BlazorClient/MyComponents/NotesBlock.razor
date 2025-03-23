@@ -16,7 +16,7 @@
                 <a class="file-link text-decoration-none" title="@note.Title" href="@GetFolderUrl(note.Id)">
                     <h6 class="card-title" style="font-size: 0.8em">@Tools.TruncateString(note.Title!)</h6>
                 </a>
-                <button @onclick="@(async()=> await DeleteNote(note))">Rel</button>
+                <button class="btn-close btn-close" aria-label="Delete" @onclick="@(async()=> await DeleteNote(note))"/>
             </div>
         }
     }
