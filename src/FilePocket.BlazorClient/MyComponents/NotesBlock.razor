@@ -1,0 +1,47 @@
+﻿@using FilePocket.BlazorClient.Features.Files.Models
+@using FilePocket.BlazorClient.Features.Notes.Models
+@using FilePocket.BlazorClient.Features.Notes.Requests
+@using FilePocket.BlazorClient.Helpers
+@using FilePocket.BlazorClient.Services.Files.Models
+@using System.Collections.Concurrent
+@using System.Collections.ObjectModel
+
+<div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4 text-center justify-content-center">
+    @if (Notes != null)
+    {
+        @foreach (var note in Notes)
+        {
+            <div class="card h-100 shadow-sm me-2 pt-2" style="width: 8em;">
+
+                <a class="file-link text-decoration-none" title="@note.Title" href="@GetFolderUrl(note.Id)">
+                    <h6 class="card-title" style="font-size: 0.8em">@Tools.TruncateString(note.Title!)</h6>
+                </a>
+                <button @onclick="@(async()=> await DeleteNote(note))">Rel</button>
+            </div>
+        }
+    }
+</div>
+
+
+@code {
+    [Parameter]
+    public ObservableCollection<NoteModel>? Notes { get; set; }
+
+    [Parameter]
+    public INoteRequests NoteRequests { get; set; } = default!;
+
+    private string GetFolderUrl(Guid id)
+    {
+        return $"notes/{id}";
+    }
+
+    private async Task DeleteNote(NoteModel note)
+    {
+        var result = await NoteRequests.DeleteAsync(note.Id);
+
+        if (result)
+        {
+            Notes?.Remove(note);
+        }
+    }
+}

@@ -46,22 +46,22 @@ namespace FilePocket.WebApi.Controllers
                 return UnprocessableEntity(ModelState);
             }
 
-            var response = await _service.CreateAsync(note);
+            var result = await _service.CreateAsync(note);
 
-            return Ok(response);
+            return Ok(result);
         }
 
-        [HttpPost("{id:guid}")]
-        public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] NoteModel note)
+        [HttpPut]
+        public async Task<IActionResult> Update([FromBody] NoteModel note)
         {
             if (!ModelState.IsValid)
             {
                 return UnprocessableEntity(ModelState);
             }
 
-            await _service.UpdateAsync(note);
+            var result = await _service.UpdateAsync(note);
 
-            return NoContent();
+            return Ok(result);
         }
 
         [HttpDelete("{id:guid}")]

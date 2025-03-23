@@ -1,10 +1,10 @@
 ﻿@page "/notes"
-@using TinyMCE.Blazor
+
 @using FilePocket.BlazorClient.Helpers
 @using Microsoft.AspNetCore.Authorization
+
 @attribute [Authorize]
 
 <div>
-    <NotesAndFolders PocketId="@_pocketId" FolderId="@_folderId" />
-    <NotesEditor />
+    <NotesView UserId="@_userId" />
 </div>

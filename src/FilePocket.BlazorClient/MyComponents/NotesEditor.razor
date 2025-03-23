@@ -1,6 +1,8 @@
 ﻿
 <div>
-    <textarea id="@_editorId" />
+    <textarea id="@_editorId" >
+        @Content
+    </textarea>
 </div>
 
 <script>
@@ -11,7 +13,6 @@
     }
 
     function initializeTinyMCE(editorId, saveCallBackReference) {
-        console.log('*************INITIALIZE**************');
         tinymce.init({
             license_key: 'gpl',
             selector: editorId,
