@@ -1,5 +1,6 @@
 using FilePocket.BlazorClient.Features.Users.Models;
 using FilePocket.BlazorClient.Features.Users.Requests;
+using FilePocket.BlazorClient.Helpers;
 using FilePocket.BlazorClient.Services.Files.Requests;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -19,6 +20,7 @@ public partial class MainLayout : IDisposable
     [Inject] AuthenticationStateProvider AuthStateProvider { get; set; } = default!;
     [Inject] IUserRequests UserRequests { get; set; } = default!;
     [Inject] private IFileRequests FileRequests { get; set; } = default!;
+    [Inject] private StateContainer<LoggedInUserModel> UserStateContainer { get; set; } = default!;
 
     protected override async Task OnInitializedAsync()
     {
@@ -40,12 +42,13 @@ public partial class MainLayout : IDisposable
 
             if (_user.Profile!.IconId is not null && _user.Profile!.IconId != Guid.Empty)
             {
-                var avatar = await FileRequests.GetImageThumbnailAsync((Guid)_user.Profile!.IconId, 500);
+                var avatar = await FileRequests.GetImageThumbnailAsync((Guid)_user.Profile.IconId, 500);
                 _icon = Convert.ToBase64String(avatar.FileByteArray!);
             }
         }
 
         Navigation.LocationChanged += OnLocationChanged;
+        UserStateContainer.OnStateChange += async () => await UpdateUserStateAsync();
         NavigationHistory.AddToHistory(Navigation.Uri);
     }
 
@@ -58,6 +61,7 @@ public partial class MainLayout : IDisposable
     public void Dispose()
     {
         Navigation.LocationChanged -= OnLocationChanged;
+        UserStateContainer.OnStateChange -= async () => await UpdateUserStateAsync();
         GC.SuppressFinalize(this);
     }
 
@@ -90,6 +94,19 @@ public partial class MainLayout : IDisposable
         }
 
         return string.IsNullOrEmpty(_user.FirstName) ? _user.LastName! : _user.FirstName;
+    }
+
+    private async Task UpdateUserStateAsync()
+    {
+        _user = UserStateContainer.Value;
+
+        if (_user!.Profile!.IconId is not null && _user.Profile!.IconId != Guid.Empty)
+        {
+            var avatar = await FileRequests.GetImageThumbnailAsync((Guid)_user.Profile.IconId, 500);
+            _icon = Convert.ToBase64String(avatar.FileByteArray!);
+        }
+
+        await InvokeAsync(StateHasChanged);
     }
 }
 
