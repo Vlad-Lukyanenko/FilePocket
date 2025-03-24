@@ -4,42 +4,41 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FilePocket.WebApi.Controllers
+namespace FilePocket.WebApi.Controllers;
+
+[Route("api/users")]
+[ApiController]
+[Authorize]
+public class UsersController : ControllerBase
 {
-    [Route("api/users")]
-    [ApiController]
-    [Authorize]
-    public class UsersController : ControllerBase
+    private readonly UserManager<User> _userManager;
+
+    public UsersController(UserManager<User> userManager)
     {
-        private readonly UserManager<User> _userManager;
+        _userManager = userManager;
+    }
 
-        public UsersController(UserManager<User> userManager)
+    [HttpGet("{name}")]
+    public async Task<IActionResult> GetUserByName(string name)
+    {
+        var user = await _userManager.FindByNameAsync(name);
+
+        return Ok(user);
+    }
+
+    [HttpPut]
+    public async Task<IActionResult> Update([FromBody] UpdateUserRequest updateUserRequest)
+    {
+        var user = await _userManager.FindByNameAsync(updateUserRequest.UserName);
+
+        if (user is not null)
         {
-            _userManager = userManager;
+            user.FirstName = updateUserRequest.FirstName;
+            user.LastName = updateUserRequest.LastName;
+
+            await _userManager.UpdateAsync(user);
         }
-
-        [HttpGet("{name}")]
-        public async Task<IActionResult> GetUserByName(string name)
-        {
-            var user = await _userManager.FindByNameAsync(name);
-
-            return Ok(user);
-        }
-
-        [HttpPut]
-        public async Task<IActionResult> Update([FromBody] UpdateUserRequest updateUserRequest)
-        {
-            var user = await _userManager.FindByNameAsync(updateUserRequest.UserName);
-
-            if (user is not null)
-            {
-                user.WithFirstName(updateUserRequest.FirstName!)
-                    .WithLastName(updateUserRequest.LastName!);
-
-                await _userManager.UpdateAsync(user);
-            }
-            
-            return Ok();
-        }
+        
+        return Ok();
     }
 }

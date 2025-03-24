@@ -59,11 +59,6 @@ public partial class Profile : ComponentBase
 
     private async Task SaveChangesAsync(MouseEventArgs e)
     {
-        if (string.IsNullOrEmpty(_profile.FirstName) || string.IsNullOrEmpty(_profile.LastName))
-        {
-            return;
-        }
-
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
 
         var request = new UpdateUserRequest
