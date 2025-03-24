@@ -14,6 +14,7 @@ using Microsoft.JSInterop;
 using System.Collections.ObjectModel;
 using System.Net.Http.Headers;
 
+
 namespace FilePocket.BlazorClient.Pages;
 
 public partial class Profile : ComponentBase
@@ -33,9 +34,18 @@ public partial class Profile : ComponentBase
     [Inject] private IPocketRequests PocketRequests { get; set; } = default!;
     [Inject] private IFileRequests FileRequests { get; set; } = default!;
     [Inject] private IJSRuntime JS { get; set; } = default!;
+    [Inject] private NavigationManager? Navigation { get; set; }
+
 
     protected override async Task OnInitializedAsync()
     {
+
+        var query = Navigation?.ToAbsoluteUri(Navigation.Uri).Query ?? string.Empty;
+        if (query.Contains("openModal=true"))
+        {
+            isModalOpen = true; // Если параметр есть, показываем модальное окно
+        }
+
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var userAuth = authState.User;
         var userStringId = userAuth.FindFirst(c => c.Type == "uid")?.Value;
@@ -224,5 +234,19 @@ public partial class Profile : ComponentBase
         await file!.OpenReadStream(maxAllowedSize: 1024 * 1024 * 1024).CopyToAsync(memoryStream);
 
         return memoryStream.ToArray();
+    }
+
+     private bool isModalOpen = false;
+
+    private void OpenModal()
+    {
+        isModalOpen = true;
+        StateHasChanged(); // обновление UI
+    }
+
+    private void CloseModal()
+    {
+        isModalOpen = false;
+        StateHasChanged();
     }
 }

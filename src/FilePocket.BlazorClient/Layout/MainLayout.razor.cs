@@ -1,4 +1,4 @@
-using FilePocket.BlazorClient.Features.Users.Models;
+﻿using FilePocket.BlazorClient.Features.Users.Models;
 using FilePocket.BlazorClient.Features.Users.Requests;
 using FilePocket.BlazorClient.Services.Files.Requests;
 using Microsoft.AspNetCore.Components;
@@ -18,6 +18,8 @@ public partial class MainLayout : IDisposable
     [Inject] AuthenticationStateProvider AuthStateProvider { get; set; } = default!;
     [Inject] IUserRequests UserRequests { get; set; } = default!;
     [Inject] private IFileRequests FileRequests { get; set; } = default!;
+
+    [Inject] private NavigationManager? NavigationManager { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -71,10 +73,11 @@ public partial class MainLayout : IDisposable
         Navigation.NavigateTo(url);
     }
 
-    private void SwitchUserInfoDialog()
+    private void NavigateToProfile()
     {
-        _menuOpen = !_menuOpen;
+        Navigation.NavigateTo("/profile?openModal=true");
     }
+
 
     private string GetDisplayedName()
     {

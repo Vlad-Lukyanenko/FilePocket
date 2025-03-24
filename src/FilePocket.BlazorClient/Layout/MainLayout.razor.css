@@ -1,6 +1,6 @@
 canvas {
-    width: 120px !important;
-    height: 120px !important;
+    width: 250px;
+    height: 250px;
     margin: 0 auto;
 }
 
@@ -74,7 +74,7 @@ aside{
     z-index: 10;
 }
 
-.user-info-dialog .card {
+.user-inkfo-dialog .card {
     border: none;
     text-align: center;
 }
@@ -102,19 +102,21 @@ aside{
     margin-top: 15px;
 }
 
-.link-dark{
+.link{
     display: flex;
     align-items: center;
     text-decoration: none;
-    color: black important!;
+    color: white important!;
     font-size: 14px;
     margin: 8px 0;
     transition: 0.3s;
+    padding-left: 24px;
 }
 
-.link-dark:hover{
-    color: #4a2b8a important!;
-    border-bottom: #4a2b8a 2px solid;
+.link:hover{
+    color: rgba(146, 118, 173, 1);
+    cursor: pointer;
+    /* border-bottom: #4a2b8a 2px solid; */
 }
 
 .user-info-dialog i {
@@ -168,6 +170,7 @@ aside{
 .avatar-image {
     width: 70px;
     height: 70px;
+    margin-right: 10px;
 }
 
 /* Custom styles for mobile optimization */

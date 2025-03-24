@@ -1,5 +1,6 @@
 ﻿@page "/profile"
 @using FilePocket.BlazorClient.Features.Users.Requests
+@using Microsoft.AspNetCore.Components.Routing
 
 <div class="container-fluid" style="min-height: 600px;">
     <div class="container-fluid w-100 w-md-75">
@@ -17,30 +18,49 @@
         }
         else
         {
-            <!-- Form Container -->
-            <div class="d-flex justify-content-center align-items-center border p-3 mt-3 gap-5">
-                <label class="img-container" title="Change avatar">
-                    <img class="rounded-circle image" src="@GetProfileIcon()" alt="userPicture">
-                    <div class="d-flex align-items-end justify-content-center overlay">
-                        <i class="bi bi-camera"></i>                        
-                    </div>
-                    <InputFile hidden id="fileInput" OnChange="UploadFilesAsync" accept=".png, .jpg, .jpeg" />
-                </label>
-                <div class="col-12 col-md-9 col-lg-6">
-                    <label for="email" class="form-label fw-semibold">Email:</label>
-                    <input type="text" class="form-control" value="@_profile.Email" id="email" disabled>
-                    <br />
-                    <label for="firstName" class="form-label fw-semibold">First name:</label>
-                    <input type="text" class="form-control" @bind="_profile.FirstName" id="firstName">
-                    <br />
-                    <label for="lastName" class="form-label fw-semibold">Last name:</label>
-                    <input type="text" class="form-control" @bind="_profile.LastName" id="lastName">
+            <div>
 
-                    <!-- Save Button -->
-                    <div class="d-flex justify-content-end mt-3">
-                        <button class="btn btn-success ps-4 pe-4" @onclick="SaveChangesAsync">Save</button>
+                @if (isModalOpen)
+                {
+                    <div class="modal fade show" id="profileModal" tabindex="-1" aria-labelledby="profileModalLabel" aria-hidden="true" style="display: block;">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <button type="button" class="btn-close" @onclick="CloseModal"></button>
+                                <div class="d-flex justify-content-center align-items-center border p-3 mt-3 gap-5">
+                                    <label class="img-container" title="Change avatar">
+                                        <img class="rounded-circle image" src="@GetProfileIcon()" alt="userPicture">
+                                        <div class="d-flex align-items-end justify-content-center overlay">
+                                            <i class="bi bi-camera"></i>
+                                        </div>
+                                        <InputFile hidden id="fileInput" OnChange="UploadFilesAsync" accept=".png, .jpg, .jpeg" />
+                                    </label>
+                                    <div class="col-12 col-md-9 col-lg-6">
+                                        <label for="email" class="form-label fw-semibold">Email:</label>
+                                        <input type="text" class="form-control" value="@_profile.Email" id="email" disabled>
+                                        <br />
+                                        <label for="firstName" class="form-label fw-semibold">First name:</label>
+                                        <input type="text" class="form-control" @bind="_profile.FirstName" id="firstName">
+                                        <br />
+                                        <label for="lastName" class="form-label fw-semibold">Last name:</label>
+                                        <input type="text" class="form-control" @bind="_profile.LastName" id="lastName">
+
+                                        <!-- Save Button -->
+                                        <div class="d-flex justify-content-end mt-3">
+                                            <button class="btn btn-success ps-4 pe-4" @onclick="SaveChangesAsync">Save</button>
+                                        </div>
+                                    </div>
+
+                                    <div class="modal-footer">
+                                        @* <button type="button" class="btn btn-secondary" @onclick="CloseModal">Close</button> *@
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                </div>
+                    <!-- Backdrop -->
+                    <div class="modal-backdrop fade show" @onclick="CloseModal"></div>
+                }
             </div>
         }
 

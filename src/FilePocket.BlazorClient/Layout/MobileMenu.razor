@@ -1,0 +1,83 @@
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JS
+
+
+<!-- Menu for Mobile -->
+            <div class="offcanvas offcanvas-start d-md-none" tabindex="-1" id="offcanvasMenu">
+                <div class="offcanvas-header">
+                    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"></button>
+                </div>
+                <div class="offcanvas-body">
+                    <!--  Search Form for Mobile -->
+                    <form class="d-flex mb-3" role="search">
+                        <input class="form-control me-2" type="text" placeholder="Looking for something?">
+                        <button class="btn btn-outline-secondary">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </form>
+                    <!-- Menu-item for Mobile-->
+                    <ul class="nav nav-pills d-flex flex-column gap-2">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link @(IsActive("#"))" @onclick='async () => await CloseOffcanvasAndNavigate("#")' data-bs-dismiss="offcanvas">
+                                <i class="fs-4 bi-house"></i> <span class="ms-2">Home</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/files" class="nav-link @(IsActive("/files"))" @onclick='async () => await CloseOffcanvasAndNavigate("/files")' data-bs-dismiss="offcanvas">
+                                <i class="fs-4 bi-file-earmark-medical"></i> <span class="ms-2">Files</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a href="/bookmarks" class="nav-link @(IsActive("/bookmarks"))" @onclick='() => CloseOffcanvasAndNavigate("/bookmarks")' data-bs-dismiss="offcanvas">
+                                <i class="fs-4 bi-bookmarks"></i><span class="ms-2">Bookmarks</span>
+                            </a>
+                        </li>
+                        @* <li class="nav-item">
+                            <a href="/pockets" class="nav-link text-dark @(IsActive("/pockets"))" @onclick='() => CloseOffcanvasAndNavigate("/pockets")'>
+                                <i class="fs-4 bi-archive"></i> <span class="ms-2">Pockets</span>
+                            </a>
+                        </li> *@
+                        <li class="nav-item">
+                            <a href="/files/shared" class="nav-link @(IsActive("/files/shared"))" @onclick='() => CloseOffcanvasAndNavigate("/files/shared")' data-bs-dismiss="offcanvas">
+                                <i class="fs-4 bi-share"></i> <span class="ms-2">Shared</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/notes" class="nav-link @(IsActive("/notes"))" @onclick='() => CloseOffcanvasAndNavigate("/notes")' data-bs-dismiss="offcanvas">
+                                <i class="fs-4 bi-gear"></i> <span class="ms-2">Notes</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/settings" class="nav-link @(IsActive("/settings"))" @onclick='() => CloseOffcanvasAndNavigate("/settings")' data-bs-dismiss="offcanvas">
+                                <i class="fs-4 bi-gear"></i> <span class="ms-2">Settings</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/trash" class="nav-link @(IsActive("/trash"))" @onclick='() => CloseOffcanvasAndNavigate("/trash")' data-bs-dismiss="offcanvas">
+                                <i class="fs-4 bi-trash"></i> <span class="ms-2">Delete</span>
+                            </a>
+                        </li>
+                    </ul>
+
+               
+              <!-- Logout Button -->
+                     <a href="/logout" class="btn btn-outline-danger px-3 mt-3">
+                        <strong>Logout</strong>
+                     </a>
+                </div>
+            </div>
+
+
+@code {
+    private string IsActive(string href)
+    {
+        return NavigationManager.Uri.EndsWith(href, StringComparison.OrdinalIgnoreCase) ? "active" : "";
+    }
+
+    private async Task CloseOffcanvasAndNavigate(string url)
+    {
+        await JS.InvokeVoidAsync("closeOffcanvasMenu");
+        NavigationManager.NavigateTo(url);
+    }
+}
