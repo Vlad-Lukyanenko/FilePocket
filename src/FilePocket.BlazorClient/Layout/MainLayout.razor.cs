@@ -1,3 +1,5 @@
+using FilePocket.BlazorClient.Features.Storage.Models;
+using FilePocket.BlazorClient.Features.Storage.Requests;
 using FilePocket.BlazorClient.Features.Users.Models;
 using FilePocket.BlazorClient.Features.Users.Requests;
 using FilePocket.BlazorClient.Services.Files.Requests;
@@ -5,6 +7,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Routing;
 using Microsoft.JSInterop;
+using System.Runtime.CompilerServices;
 
 namespace FilePocket.BlazorClient.Layout;
 
@@ -18,7 +21,12 @@ public partial class MainLayout : IDisposable
     [Inject] AuthenticationStateProvider AuthStateProvider { get; set; } = default!;
     [Inject] IUserRequests UserRequests { get; set; } = default!;
     [Inject] private IFileRequests FileRequests { get; set; } = default!;
+    [Inject] private IStorageRequests StorageRequests { get; set; } = default!;
 
+    private StorageConsumptionModel _storageConsumption = new();
+
+    private string _unoccupiedStorageSpacePercentage = "100";
+    private string _occupiedStorageSpacePercentage = "0";
     protected override async Task OnInitializedAsync()
     {
         var authState = await AuthStateProvider.GetAuthenticationStateAsync();
@@ -30,7 +38,11 @@ public partial class MainLayout : IDisposable
         {
             _user.FirstName ??= string.Empty;
             _user.LastName ??= string.Empty;
-            _iconName = string.Concat(_user.FirstName.AsSpan(0, 1), _user.LastName.AsSpan(0, 1)).ToUpper();               
+            _storageConsumption = await StorageRequests.GetStorageConsumption();
+            GetStorageConsumptionInPercantage();
+            StateHasChanged();
+            _iconName = string.Concat(_user.FirstName.AsSpan(0, 1), _user.LastName.AsSpan(0, 1)).ToUpper();
+
 
             if (_iconName.Length == 0)
             {
@@ -52,6 +64,11 @@ public partial class MainLayout : IDisposable
     {
         _menuOpen = false;
         NavigationHistory.AddToHistory(e.Location);
+    }
+
+    protected override void OnParametersSet()
+    {
+        StateHasChanged();
     }
 
     public void Dispose()
@@ -86,6 +103,12 @@ public partial class MainLayout : IDisposable
         }
 
         return _user.FirstName!.Length > 0 ? _user.FirstName! : _user.LastName!;
+    }
+    private void GetStorageConsumptionInPercantage()
+    {
+        double proportionOfOccupiedSpace = Math.Round(((_storageConsumption.Used / _storageConsumption.Total) * 100), 2);
+        _occupiedStorageSpacePercentage = proportionOfOccupiedSpace.ToString().Replace(',', '.');
+        _unoccupiedStorageSpacePercentage = (100 - proportionOfOccupiedSpace).ToString().Replace(',', '.');
     }
 }
 
