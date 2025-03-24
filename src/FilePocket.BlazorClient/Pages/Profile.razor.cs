@@ -2,6 +2,7 @@
 using FilePocket.BlazorClient.Features.Profiles.Requests;
 using FilePocket.BlazorClient.Features.Users.Models;
 using FilePocket.BlazorClient.Features.Users.Requests;
+using FilePocket.BlazorClient.Helpers;
 using FilePocket.BlazorClient.Services.Files.Models;
 using FilePocket.BlazorClient.Services.Files.Requests;
 using FilePocket.BlazorClient.Services.Pockets.Requests;
@@ -32,6 +33,7 @@ public partial class Profile : ComponentBase
     [Inject] private IProfileRequests ProfileRequests { get; set; } = default!;
     [Inject] private IPocketRequests PocketRequests { get; set; } = default!;
     [Inject] private IFileRequests FileRequests { get; set; } = default!;
+    [Inject] private StateContainer<LoggedInUserModel> UserStateContainer { get; set; } = default!;
     [Inject] private IJSRuntime JS { get; set; } = default!;
 
     protected override async Task OnInitializedAsync()
@@ -57,11 +59,6 @@ public partial class Profile : ComponentBase
 
     private async Task SaveChangesAsync(MouseEventArgs e)
     {
-        if (string.IsNullOrEmpty(_profile.FirstName) || string.IsNullOrEmpty(_profile.LastName))
-        {
-            return;
-        }
-
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
 
         var request = new UpdateUserRequest
@@ -91,6 +88,8 @@ public partial class Profile : ComponentBase
         if (isUpdated)
         {
             await TriggerNotification();
+            var user = await UserRequests.GetByUserNameAsync(request.UserName);
+            UserStateContainer.SetValue(user!);
         }
     }
 
