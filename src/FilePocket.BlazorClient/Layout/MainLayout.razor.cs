@@ -31,8 +31,8 @@ public partial class MainLayout : IDisposable
 
         if (_user is not null)
         {
-            var fisrtName = _user.FirstName is null ? string.Empty : _user.FirstName.AsSpan(0, 1);
-            var lastName = _user.LastName is null ? string.Empty : _user.LastName.AsSpan(0, 1);
+            var fisrtName = string.IsNullOrEmpty(_user.FirstName) ? string.Empty : _user.FirstName.AsSpan(0, 1);
+            var lastName = string.IsNullOrEmpty(_user.LastName) ? string.Empty : _user.LastName.AsSpan(0, 1);
             _iconName = string.Concat(fisrtName, lastName).ToUpper();
 
             if (_iconName.Length == 0)
