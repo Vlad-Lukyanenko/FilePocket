@@ -14,6 +14,12 @@ namespace FilePocket.BlazorClient.Features.Users.Models
 
         public string? Email { get; set; }
 
+        public DateTime? BirthDate { get; set; }
+
+        public string? Language { get; set; }       
+         
+        public string? PhoneNumber { get; set; }
+
         public ICollection<string>? Roles { get; set; }
 
         public ProfileModel? Profile { get; set; }

@@ -15,6 +15,7 @@ using System.Collections.ObjectModel;
 using System.Net.Http.Headers;
 
 
+
 namespace FilePocket.BlazorClient.Pages;
 
 public partial class Profile : ComponentBase
@@ -36,15 +37,18 @@ public partial class Profile : ComponentBase
     [Inject] private IJSRuntime JS { get; set; } = default!;
     [Inject] private NavigationManager? Navigation { get; set; }
 
+    private bool isModalOpen = false;
+
 
     protected override async Task OnInitializedAsync()
     {
 
-        var query = Navigation?.ToAbsoluteUri(Navigation.Uri).Query ?? string.Empty;
-        if (query.Contains("openModal=true"))
-        {
-            isModalOpen = true; // Если параметр есть, показываем модальное окно
-        }
+        var uri = Navigation != null ? new Uri(Navigation.Uri) : throw new InvalidOperationException("Navigation is null");
+        var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
+        if (query.AllKeys.Contains("openModal"))
+            {
+                isModalOpen = true;
+            }
 
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var userAuth = authState.User;
@@ -61,6 +65,7 @@ public partial class Profile : ComponentBase
                 _avatar = await FileRequests.GetImageThumbnailAsync((Guid)_profile.IconId, 500);
             }
         }
+    
 
         _isLoading = false;
     }
@@ -78,7 +83,10 @@ public partial class Profile : ComponentBase
         {
             UserName = authState.User.Identity?.Name!,
             FirstName = _profile.FirstName,
-            LastName = _profile.LastName
+            LastName = _profile.LastName,
+            PhoneNumber = _profile.PhoneNumber,  
+            BirthDate = _profile.BirthDate,
+            Language = _profile.Language ?? string.Empty,
         };
 
         await UserRequests.UpdateUserAsync(request);
@@ -93,7 +101,10 @@ public partial class Profile : ComponentBase
             Id = _profile.Id,
             FirstName = _profile.FirstName,
             LastName = _profile.LastName,
-            IconId = _profile.IconId
+            IconId = _profile.IconId,
+            PhoneNumber = _profile.PhoneNumber,  
+            BirthDate = _profile.BirthDate,
+            Language = _profile.Language,
         };
 
         var isUpdated = await ProfileRequests.UpdateAsync(profileToUpdate);
@@ -101,6 +112,13 @@ public partial class Profile : ComponentBase
         if (isUpdated)
         {
             await TriggerNotification();
+        }
+        
+        CloseModal();
+
+        foreach (var key in editStates.Keys.ToList())
+        {
+            editStates[key] = false;
         }
     }
 
@@ -236,17 +254,43 @@ public partial class Profile : ComponentBase
         return memoryStream.ToArray();
     }
 
-     private bool isModalOpen = false;
-
     private void OpenModal()
     {
         isModalOpen = true;
-        StateHasChanged(); // обновление UI
+        StateHasChanged(); 
     }
 
     private void CloseModal()
     {
+
         isModalOpen = false;
+
+        var uri = Navigation?.Uri.Split('?')[0] ?? throw new InvalidOperationException("Navigation is null");
+        Navigation.NavigateTo(uri, replace: true);
+       
         StateHasChanged();
+    }
+
+    private Dictionary<string, bool> editStates = new()
+    {
+        { "FirstName", false },
+        { "LastName", false },
+        { "PhoneNumber", false },
+        { "BirthDate", false },
+        { "Language", false }
+    };
+
+    private void ToggleEditState(string fieldName)
+    {
+        if (editStates[fieldName])
+        {
+            editStates[fieldName] = false;
+        }
+        else
+        {
+            editStates[fieldName] = true;
+        }
+
+        StateHasChanged(); 
     }
 }

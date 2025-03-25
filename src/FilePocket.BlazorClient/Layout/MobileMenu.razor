@@ -45,12 +45,17 @@
                         </li>
                         <li class="nav-item">
                             <a href="/notes" class="nav-link @(IsActive("/notes"))" @onclick='() => CloseOffcanvasAndNavigate("/notes")' data-bs-dismiss="offcanvas">
-                                <i class="fs-4 bi-gear"></i> <span class="ms-2">Notes</span>
+                                <i class="bi bi-pencil-square"></i> <span class="ms-2">Notes</span>
                             </a>
                         </li>
                         <li class="nav-item">
                             <a href="/settings" class="nav-link @(IsActive("/settings"))" @onclick='() => CloseOffcanvasAndNavigate("/settings")' data-bs-dismiss="offcanvas">
                                 <i class="fs-4 bi-gear"></i> <span class="ms-2">Settings</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/profile" class="nav-link @(IsActive("/profile"))" @onclick="NavigateToProfile" data-bs-dismiss="offcanvas">
+                                <i class="bi bi-pencil-square"></i><span class="ms-2">Edit Profile</span>
                             </a>
                         </li>
                         <li class="nav-item">
@@ -62,9 +67,15 @@
 
                
               <!-- Logout Button -->
-                     <a href="/logout" class="btn btn-outline-danger px-3 mt-3">
-                        <strong>Logout</strong>
-                     </a>
+                    <div class="d-flex flex-column p-3">
+                        <a href="/support" class="link text-white @(IsActive("/support"))" @onclick='() => CloseOffcanvasAndNavigate("/support")'>
+                            <i class="bi bi-question-circle"></i><span class="ms-2">Help &amp; Support</span>
+                        </a>
+                                                
+                        <a href="/logout" class="link text-white">
+                            <i class="bi bi-box-arrow-right"></i> <span class="ms-2">Logout</span>
+                        </a>
+                    </div>
                 </div>
             </div>
 
@@ -79,5 +90,10 @@
     {
         await JS.InvokeVoidAsync("closeOffcanvasMenu");
         NavigationManager.NavigateTo(url);
+    }
+
+    private void NavigateToProfile()
+    {
+        NavigationManager.NavigateTo("/profile?openModal=true", forceLoad: false);
     }
 }

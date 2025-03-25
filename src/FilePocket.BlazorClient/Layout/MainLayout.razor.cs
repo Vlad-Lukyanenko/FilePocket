@@ -75,7 +75,7 @@ public partial class MainLayout : IDisposable
 
     private void NavigateToProfile()
     {
-        Navigation.NavigateTo("/profile?openModal=true");
+        Navigation.NavigateTo("/profile?openModal=true", forceLoad: false);
     }
 
 
