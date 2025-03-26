@@ -9,8 +9,8 @@ namespace FilePocket.Domain.Entities;
 public class User : IdentityUser<Guid>
 {
     // Identity specific data
-    public string? FirstName { get; private set; }
-    public string? LastName { get; private set; }
+    public string? FirstName { get; set; }
+    public string? LastName { get; set; }
     public string? RefreshToken { get; set; }
     public DateTime RefreshTokenExpiryTime { get; set; }
 
