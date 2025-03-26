@@ -1,7 +1,8 @@
 ﻿@page "/profile"
 @using FilePocket.BlazorClient.Features.Users.Requests
+@using Microsoft.AspNetCore.Components.Routing
 
-<div class="container-fluid" style="min-height: 600px;">
+<div class="container-fluid">
     <div class="container-fluid w-100 w-md-75">
 
         <TopSubMenu Title="Profile" ShowBackButton="false"/>
@@ -17,34 +18,121 @@
         }
         else
         {
-            <!-- Form Container -->
-            <div class="d-flex justify-content-center align-items-center border p-3 mt-3 gap-5">
-                <label class="img-container" title="Change avatar">
-                    <img class="rounded-circle image" src="@GetProfileIcon()" alt="userPicture">
-                    <div class="d-flex align-items-end justify-content-center overlay">
-                        <i class="bi bi-camera"></i>                        
-                    </div>
-                    <InputFile hidden id="fileInput" OnChange="UploadFilesAsync" accept=".png, .jpg, .jpeg" />
-                </label>
-                <div class="col-12 col-md-9 col-lg-6">
-                    <label for="email" class="form-label fw-semibold">Email:</label>
-                    <input type="text" class="form-control" value="@_profile.Email" id="email" disabled>
-                    <br />
-                    <label for="firstName" class="form-label fw-semibold">First name:</label>
-                    <input type="text" class="form-control" @bind="_profile.FirstName" id="firstName">
-                    <br />
-                    <label for="lastName" class="form-label fw-semibold">Last name:</label>
-                    <input type="text" class="form-control" @bind="_profile.LastName" id="lastName">
+            <div>
 
-                    <!-- Save Button -->
-                    <div class="d-flex justify-content-end mt-3">
-                        <button class="btn btn-success ps-4 pe-4" @onclick="SaveChangesAsync">Save</button>
+                @if (isModalOpen)
+                {
+                    <div class="modal-backdrop fade show"></div>
+                    <div class="modal fade show" id="profileModal" tabindex="-1" aria-labelledby="profileModalLabel" aria-hidden="true" style="display: block;">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                    <button type="button" class="btn-close" @onclick="CloseModal"></button>
+                                    <div class="d-flex flex-column justify-content-center align-items-center p-3 mt-3 gap-5">
+                                        <label class="img-container" title="Change avatar">
+                                            <img class="rounded-circle image" src="@GetProfileIcon()" alt="userPicture">
+                                            <div class="d-flex align-items-end justify-content-center overlay">
+                                                <i class="bi bi-camera"></i>
+                                            </div>
+                                            <InputFile hidden id="fileInput" OnChange="UploadFilesAsync" accept=".png, .jpg, .jpeg" />
+                                        </label>
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <label for="email" class="fw-semibold">Email:</label>
+                                                <input type="text" class="form-control" value="@_profile.Email" id="email" style="margin-right: 90px;" disabled>
+                                                
+                                            </div>
+                                            
+                                            <div class="form-group">
+                                                <label for="firstName" class="fw-semibold">Name:</label>
+                                                <input type="text" class="form-control" @bind="_profile.FirstName" id="firstName" disabled="@(!editStates["FirstName"])" >
+                                                <button class="btn btn-link" @onclick='() => ToggleEditState("FirstName")'>
+                                                    @if (editStates["FirstName"]) 
+                                                    { 
+                                                        <span>Save</span> 
+                                                    } 
+                                                    else 
+                                                    { 
+                                                        <span>Edit</span> 
+                                                    }
+                                                </button>
+                                            </div>
+                                            
+                                            <div class="form-group">
+                                                <label for="lastName" class="fw-semibold">Surname:</label>
+                                                <input type="text" class="form-control" @bind="_profile.LastName" id="lastName" disabled="@(!editStates["LastName"])">
+                                                <button class="btn btn-link" @onclick='() => ToggleEditState("LastName")'>
+                                                    @if (editStates["LastName"]) 
+                                                    { 
+                                                        <span>Save</span> 
+                                                    } 
+                                                    else 
+                                                    { 
+                                                        <span>Edit</span> 
+                                                    }
+                                                </button>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="phone" class="fw-semibold">Number:</label>
+                                                <input type="tel" class="form-control" @bind="_profile.PhoneNumber" id="phone" placeholder="+1 (555) 123-4567" disabled="@(!editStates["PhoneNumber"])">
+                                                <button class="btn btn-link" @onclick='() => ToggleEditState("PhoneNumber")'>
+                                                    @if (editStates["PhoneNumber"]) 
+                                                    { 
+                                                        <span>Save</span> 
+                                                    } 
+                                                    else 
+                                                    { 
+                                                        <span>Edit</span> 
+                                                    }
+                                                </button>
+                                            </div>
+
+                                            <div class="d-flex justify-content-between align-items-center form-group">
+                                                <label for="birthDate" class="fw-semibold">Birthday:</label>
+                                                <input type="date" class="form-control" @bind="_profile.BirthDate" id="birthDate" disabled="@(!editStates["BirthDate"])">
+                                                <button class="btn btn-link" @onclick='() => ToggleEditState("BirthDate")'>
+                                                    @if (editStates["BirthDate"]) 
+                                                    { 
+                                                        <span>Save</span> 
+                                                    } 
+                                                    else 
+                                                    { 
+                                                        <span>Edit</span> 
+                                                    }
+                                                </button>
+                                            </div>
+
+                                            <div class="dropdown form-group">
+                                                <button class="btn dropdown-toggle fw-semibold" type="button" data-bs-toggle="dropdown" style="color: #6c63ff; border: 2px solid #6c63ff;">
+                                                    @selectedLanguage
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    @foreach (var lang in languages)
+                                                    {
+                                                        <li>
+                                                            <button class="dropdown-item" @onclick="() => SelectLanguage(lang.Key)">
+                                                                @lang.Value
+                                                            </button>
+                                                        </li>
+                                                    }
+                                                </ul>
+                                            </div>
+
+                                            <!-- Save Button -->
+                                            <div class="d-flex justify-content-end mt-3">
+                                                <button class="btn btn-success ps-4 pe-4" @onclick="SaveChangesAsync" >Save</button>
+                                            </div>
+                                            
+                                        </div>
+                                    </div>
+                            </div>
+                        </div>
                     </div>
-                </div>
+                    
+                
+                }
             </div>
         }
-
-        <br/>
 
         <!-- Error Block -->
         @if (_fileUploadErrors.Any())
@@ -68,12 +156,38 @@
             <strong>@_alertMessage</strong>
             <button type="button" class="btn-close" aria-label="Close" @onclick="CloseAlert"></button>
         </div>
-
+        <div>
+            @if (_profile != null)
+                    {
+                        <div class="card mt-3 p-3 shadow-sm">
+                            <h5 class="card-title text-center">Profile Information</h5>
+                            <div class="card-body">
+                                <p><strong>Email:</strong> @_profile.Email</p>
+                                <p><strong>Name:</strong> @_profile.FirstName</p>
+                                <p><strong>Surname:</strong> @_profile.LastName</p>
+                                <p><strong>Phone Number:</strong> @_profile.PhoneNumber</p>
+                                <p><strong>Birthday:</strong> @_profile.BirthDate?.ToString("yyyy-MM-dd")</p>
+                            </div>
+                        </div>
+                    }
+        </div>
     </div>
 </div>
 
-<script>
-    function resetFileInput(inputId) {
-        document.getElementById(inputId).value = null;
+
+
+@code {
+    private string selectedLanguage = "English";
+    private Dictionary<string, string> languages = new()
+    {
+        { "en", "English" },
+        { "ua", "Ukrainian" },
+        { "ru", "Russian" }
+    };
+
+    private void SelectLanguage(string lang)
+    {
+        selectedLanguage = languages[lang];
+        // Логика для сохранения выбора (например, в localStorage или API)
     }
-</script>
+}

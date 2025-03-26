@@ -1,7 +1,22 @@
 canvas {
-    width: 120px !important;
-    height: 120px !important;
+    width: 250px;
+    height: 250px;
     margin: 0 auto;
+}
+
+.submenu {
+    list-style: none;
+    padding-left: 20px;
+    height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: height 0.3s ease-in-out, opacity 0.3s ease-in-out;
+}
+
+.submenu.show {
+    height: auto; /* Меню займет нужную высоту */
+    opacity: 1;
+    overflow: visible;
 }
 
 
@@ -74,7 +89,7 @@ aside{
     z-index: 10;
 }
 
-.user-info-dialog .card {
+.user-inkfo-dialog .card {
     border: none;
     text-align: center;
 }
@@ -102,19 +117,21 @@ aside{
     margin-top: 15px;
 }
 
-.link-dark{
+.link{
     display: flex;
     align-items: center;
     text-decoration: none;
-    color: black important!;
+    color: white important!;
     font-size: 14px;
     margin: 8px 0;
     transition: 0.3s;
+    padding-left: 24px;
 }
 
-.link-dark:hover{
-    color: #4a2b8a important!;
-    border-bottom: #4a2b8a 2px solid;
+.link:hover{
+    color: rgba(146, 118, 173, 1);
+    cursor: pointer;
+    /* border-bottom: #4a2b8a 2px solid; */
 }
 
 .user-info-dialog i {
@@ -168,10 +185,54 @@ aside{
 .avatar-image {
     width: 70px;
     height: 70px;
+    margin-right: 10px;
+}
+
+
+.search-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.search-box {
+    /* width: 0; */
+    padding: 8px;
+    border: 2px solid rgba(65, 44, 168, 1);
+    border-radius: 20px;
+    outline: none;
+    transition: width 0.3s ease-in-out, opacity 0.3s;
+    margin-right: 5px;
+    /* opacity: 0; */
+}
+
+
+
+.btn-menu{
+    border: 2px solid rgba(65, 44, 168, 1) !important;
+    border-radius: 17px !important;
+    background: transparent;
+    padding: 7px;
+}
+
+.search-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    padding: 8px;
+    margin-right: 10px;
+    color: rgba(65, 44, 168, 1);
 }
 
 /* Custom styles for mobile optimization */
 @media (max-width: 768px) {
+    
+
+    .offcanvasMenuRight{
+        display: none;
+    }
+
     .search-container {
         width: 100%;
         max-width: none;

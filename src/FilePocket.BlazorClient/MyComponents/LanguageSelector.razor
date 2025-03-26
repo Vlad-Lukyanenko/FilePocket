@@ -1,0 +1,26 @@
+@inject IJSRuntime JS
+
+@code {
+    private string selectedLanguage = "English";
+    private Dictionary<string, string> languages = new()
+    {
+        { "en", "English" },
+        { "ua", "Ukrainian" },
+        { "ru", "Russian" }
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        var lang = await JS.InvokeAsync<string>("getLanguage");
+        if (languages.ContainsKey(lang))
+        {
+            selectedLanguage = languages[lang];
+        }
+    }
+
+    private async Task SelectLanguage(string lang)
+    {
+        selectedLanguage = languages[lang];
+        await JS.InvokeVoidAsync("setLanguage", lang);
+    }
+}
