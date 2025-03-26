@@ -4,6 +4,21 @@ canvas {
     margin: 0 auto;
 }
 
+.submenu {
+    list-style: none;
+    padding-left: 20px;
+    height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: height 0.3s ease-in-out, opacity 0.3s ease-in-out;
+}
+
+.submenu.show {
+    height: auto; /* Меню займет нужную высоту */
+    opacity: 1;
+    overflow: visible;
+}
+
 
 .page {
     position: relative;
@@ -173,8 +188,46 @@ aside{
     margin-right: 10px;
 }
 
+
+.search-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.search-box {
+    /* width: 0; */
+    padding: 8px;
+    border: 2px solid rgba(65, 44, 168, 1);
+    border-radius: 20px;
+    outline: none;
+    transition: width 0.3s ease-in-out, opacity 0.3s;
+    margin-right: 5px;
+    /* opacity: 0; */
+}
+
+
+
+.btn-menu{
+    border: 2px solid rgba(65, 44, 168, 1) !important;
+    border-radius: 17px !important;
+    background: transparent;
+    padding: 7px;
+}
+
+.search-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    padding: 8px;
+    margin-right: 10px;
+    color: rgba(65, 44, 168, 1);
+}
+
 /* Custom styles for mobile optimization */
 @media (max-width: 768px) {
+    
 
     .offcanvasMenuRight{
         display: none;

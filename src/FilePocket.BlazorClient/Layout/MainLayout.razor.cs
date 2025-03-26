@@ -90,5 +90,13 @@ public partial class MainLayout : IDisposable
 
         return _user.FirstName!.Length > 0 ? _user.FirstName! : _user.LastName!;
     }
+
+    private bool _isFilesMenuOpen = false;
+
+    private void ToggleFilesMenu()
+    {
+        _isFilesMenuOpen = !_isFilesMenuOpen;
+        StateHasChanged();
+    }
 }
 

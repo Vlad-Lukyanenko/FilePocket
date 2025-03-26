@@ -41,14 +41,36 @@
                                 <!-- Removed the extra closing div -->
                             </a>
                         </li>
-                        <li class="nav-item flex-fill flex-md-grow-0">
+                        @* <li class="nav-item flex-fill flex-md-grow-0">
                             <a href="/files" class="nav-link text-dark px-2 @(IsActive("/files"))">
                                 <div class="d-flex align-items-center justify-content-center justify-content-md-start">
                                     <i class="fs-4 bi-file-earmark-medical"></i>
                                     <span class="ms-2 d-none d-md-inline">Files</span>
                                 </div>
                             </a>
+                        </li> *@
+
+                        <li class="nav-item flex-fill flex-md-grow-0">
+                            <a href="/files" class="d-flex align-items-center justify-content-between nav-link text-dark px-2 @(IsActive("/files"))"
+                            @onclick="ToggleFilesMenu">
+                                <div>
+                                    <i class="bi bi-file-earmark"></i>
+                                    <span class="ms-2">Files</span>
+                                </div>
+                                <i class="bi @( _isFilesMenuOpen ? "bi-chevron-up" : "bi-chevron-down")"></i>
+                            </a>
+                            <ul class="submenu @( _isFilesMenuOpen ? "show" : "" )">
+                                <li class="nav-item flex-fill flex-md-grow-0"><a href="/files/documents" class="nav-link text-dark px-2">Documents</a></li>
+                                <li class="nav-item flex-fill flex-md-grow-0"><a href="/files/books" class="nav-link text-dark px-2">Books</a></li>
+                                <li class="nav-item flex-fill flex-md-grow-0"><a href="/files/music" class="nav-link text-dark px-2">Music</a></li>
+                                <li class="nav-item flex-fill flex-md-grow-0"><a href="/files/pictures" class="nav-link text-dark px-2">Pictures</a></li>
+                                <li class="nav-item flex-fill flex-md-grow-0"><a href="/files/videos" class="nav-link text-dark px-2">Videos</a></li>
+                                <li class="nav-item flex-fill flex-md-grow-0"><a href="/files/other" class="nav-link text-dark px-2">Other</a></li>
+                            </ul>
                         </li>
+
+
+
                         @* <li class="nav-item flex-fill flex-md-grow-0">
                             <a href="/pockets" class="nav-link text-dark px-2 @(IsActive("/pockets"))">
                                 <div class="d-flex align-items-center justify-content-center justify-content-md-start">
@@ -109,19 +131,15 @@
             <div class="col container-fluid">
                 <!-- Navbar -->
                 <header class="position-relative mb-2 navbar navbar-expand-md w-100 p-2">
-                        <div class="container-fluid">
-                            <!-- Mobile Toggle Button -->
-                            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu">
-                                <span class="navbar-toggler-icon"></span>
-                            </button>
-
+                        <div class="d-flex justify-content-end align-items-center w-100">
+                        
                             <!-- Collapsible Content -->
                             <div class="collapse navbar-collapse">
                                 <div class="d-flex flex-column flex-md-row align-items-center ms-auto gap-3">
                                     <!-- Search Form -->
                                     <form class="d-flex" role="search">
                                         <div class="search-container">
-                                            <input class="search-box" type="text" placeholder="looking for something?" />
+                                            <input class="search-box" type="text" />
                                             <button class="search-button">
                                                 <i class="fas fa-search" style="color:rgba(65, 44, 168, 1)"></i>
                                             </button>
@@ -131,6 +149,31 @@
                                 </div>
                                 
                             </div>
+
+                            <!-- Mobile Header -->
+                            <div class="d-flex justify-content-between align-items-center w-100 d-md-none">
+                                <a class="fw-bold main-text-header d-flex align-items-center text-white text-decoration-none" href="#">
+                                    <img src="./assets/img/logo.png" alt="Logo" width="50" height="50" class="d-inline-block align-text-top me-2">
+                                        File Pocket
+                                </a>
+                            
+                                <div class="d-flex justify-content-between align-items-center ">
+                                    <form class="d-flex" role="search">
+                                        <div class="search-container">
+                                            <input class="search-box" type="text" />
+                                            <button class="search-button">
+                                                <i class="fas fa-search" style="color:rgba(65, 44, 168, 1)"></i>
+                                            </button>
+                                        </div>
+                                    </form>
+
+                                    <button class="btn-menu" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu">
+                                        <span class="navbar-toggler-icon"></span>
+                                    </button>
+                                </div>
+                                
+                            </div>
+                            
                         </div>
                 </header>
 

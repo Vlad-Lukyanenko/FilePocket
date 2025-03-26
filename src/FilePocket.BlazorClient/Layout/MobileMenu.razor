@@ -5,32 +5,77 @@
 <!-- Menu for Mobile -->
             <div class="offcanvas offcanvas-start d-md-none" tabindex="-1" id="offcanvasMenu">
                 <div class="offcanvas-header">
-                    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"></button>
+                    <button type="button" class="btn text-reset" data-bs-dismiss="offcanvas">
+                        <i class="bi bi-x-lg" style="color: #F85276;"></i>
+                    </button>
                 </div>
                 <div class="offcanvas-body">
-                    <!--  Search Form for Mobile -->
+                    @* <!--  Search Form for Mobile -->
                     <form class="d-flex mb-3" role="search">
                         <input class="form-control me-2" type="text" placeholder="Looking for something?">
                         <button class="btn btn-outline-secondary">
                             <i class="fas fa-search"></i>
                         </button>
-                    </form>
+                    </form> *@
                     <!-- Menu-item for Mobile-->
                     <ul class="nav nav-pills d-flex flex-column gap-2">
                         <li class="nav-item">
                             <a href="#" class="nav-link @(IsActive("#"))" @onclick='async () => await CloseOffcanvasAndNavigate("#")' data-bs-dismiss="offcanvas">
-                                <i class="fs-4 bi-house"></i> <span class="ms-2">Home</span>
+                                <i class="fs-4 bi-house"></i> <span class="ms-3">Home</span>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="/files" class="nav-link @(IsActive("/files"))" @onclick='async () => await CloseOffcanvasAndNavigate("/files")' data-bs-dismiss="offcanvas">
-                                <i class="fs-4 bi-file-earmark-medical"></i> <span class="ms-2">Files</span>
+                            <a href="/files" class="d-flex align-items-center justify-content-between nav-link @(IsActive("/files"))"
+                            @onclick="ToggleFilesMenu">
+                                <div>
+                                    <i class="bi bi-file-earmark"></i>
+                                    <span class="ms-2">Files</span>
+                                </div>
+                                <i class="bi @( _isFilesMenuOpen ? "bi-chevron-up" : "bi-chevron-down")"></i>
                             </a>
+                            <ul class="submenu @( _isFilesMenuOpen ? "show" : "" )">
+                                <li class="nav-item">
+                                    <a href="/files/documents" class="nav-link px-2" 
+                                        @onclick='async () => await CloseOffcanvasAndNavigate("/files/documents")' 
+                                        data-bs-dismiss="offcanvas">Documents
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="/files/books" class="nav-link px-2"
+                                        @onclick='async () => await CloseOffcanvasAndNavigate("/files/books")' 
+                                        data-bs-dismiss="offcanvas">Books
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="/files/music" class="nav-link px-2"
+                                        @onclick='async () => await CloseOffcanvasAndNavigate("/files/music")' 
+                                        data-bs-dismiss="offcanvas">Music
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="/files/pictures" class="nav-link px-2"
+                                        @onclick='async () => await CloseOffcanvasAndNavigate("/files/pictures")' 
+                                        data-bs-dismiss="offcanvas">Pictures
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="/files/videos" class="nav-link px-2"
+                                        @onclick='async () => await CloseOffcanvasAndNavigate("/files/videos")' 
+                                        data-bs-dismiss="offcanvas">Videos
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="/files/other" class="nav-link px-2"
+                                        @onclick='async () => await CloseOffcanvasAndNavigate("/files/other")' 
+                                        data-bs-dismiss="offcanvas">Other
+                                    </a>
+                                </li>
+                            </ul>
                         </li>
 
                         <li class="nav-item">
                             <a href="/bookmarks" class="nav-link @(IsActive("/bookmarks"))" @onclick='() => CloseOffcanvasAndNavigate("/bookmarks")' data-bs-dismiss="offcanvas">
-                                <i class="fs-4 bi-bookmarks"></i><span class="ms-2">Bookmarks</span>
+                                <i class="fs-4 bi-bookmarks"></i><span class="ms-3">Bookmarks</span>
                             </a>
                         </li>
                         @* <li class="nav-item">
@@ -40,12 +85,12 @@
                         </li> *@
                         <li class="nav-item">
                             <a href="/files/shared" class="nav-link @(IsActive("/files/shared"))" @onclick='() => CloseOffcanvasAndNavigate("/files/shared")' data-bs-dismiss="offcanvas">
-                                <i class="fs-4 bi-share"></i> <span class="ms-2">Shared</span>
+                                <i class="fs-4 bi-share"></i> <span class="ms-3">Shared</span>
                             </a>
                         </li>
                         <li class="nav-item">
                             <a href="/notes" class="nav-link @(IsActive("/notes"))" @onclick='() => CloseOffcanvasAndNavigate("/notes")' data-bs-dismiss="offcanvas">
-                                <i class="bi bi-pencil-square"></i> <span class="ms-2">Notes</span>
+                                <i class="bi bi-pencil-square"></i> <span class="ms-3">Notes</span>
                             </a>
                         </li>
                         <li class="nav-item">
@@ -55,12 +100,12 @@
                         </li>
                         <li class="nav-item">
                             <a href="/profile" class="nav-link @(IsActive("/profile"))" @onclick="NavigateToProfile" data-bs-dismiss="offcanvas">
-                                <i class="bi bi-pencil-square"></i><span class="ms-2">Edit Profile</span>
+                                <i class="bi bi-pencil-square"></i><span class="ms-3">Edit Profile</span>
                             </a>
                         </li>
                         <li class="nav-item">
                             <a href="/trash" class="nav-link @(IsActive("/trash"))" @onclick='() => CloseOffcanvasAndNavigate("/trash")' data-bs-dismiss="offcanvas">
-                                <i class="fs-4 bi-trash"></i> <span class="ms-2">Delete</span>
+                                <i class="fs-4 bi-trash"></i> <span class="ms-3">Delete</span>
                             </a>
                         </li>
                     </ul>
@@ -95,5 +140,13 @@
     private void NavigateToProfile()
     {
         NavigationManager.NavigateTo("/profile?openModal=true", forceLoad: false);
+    }
+
+    private bool _isFilesMenuOpen = false;
+
+    private void ToggleFilesMenu()
+    {
+        _isFilesMenuOpen = !_isFilesMenuOpen;
+        StateHasChanged();
     }
 }
