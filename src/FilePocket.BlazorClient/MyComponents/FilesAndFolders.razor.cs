@@ -43,7 +43,6 @@ public partial class FilesAndFolders
     [Inject] private IFileRequests FileRequests { get; set; } = default!;
     [Inject] private IFolderRequests FolderRequests { get; set; } = default!;
     [Inject] private IPocketRequests PocketRequests { get; set; } = default!;
-    [Inject] private ITrashRequests TrashRequests { get; set; } = default!;
     [Inject] AuthenticationStateProvider AuthStateProvider { get; set; } = default!;
     [Inject] IUserRequests UserRequests { get; set; } = default!;
     [Inject] private NavigationManager Navigation { get; set; } = default!;
@@ -119,7 +118,7 @@ public partial class FilesAndFolders
     {
         if (FolderId is not null)
         {
-            await TrashRequests.MoveFolderToTrash(FolderId.Value);
+            await FolderRequests.SoftDeleteAsync(FolderId.Value);
         }
 
         _removalProcessStarted = false;

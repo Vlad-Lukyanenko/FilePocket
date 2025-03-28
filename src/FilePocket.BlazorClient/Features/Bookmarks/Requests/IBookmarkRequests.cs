@@ -8,4 +8,5 @@ public interface IBookmarkRequests
     Task<bool> CreateAsync(CreateBookmarkModel bookmark);
     Task<bool> UpdateAsync(UpdateBookmarkModel bookmark);
     Task<bool> DeleteAsync(Guid id);
+    Task<bool> SoftDeleteAsync(Guid id);
 }

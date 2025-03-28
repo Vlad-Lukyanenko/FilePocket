@@ -1,6 +1,4 @@
 ﻿using FilePocket.BlazorClient.Features.Bookmarks.Models;
-using FilePocket.BlazorClient.Features.Files;
-using FilePocket.BlazorClient.Services.Files.Models;
 using Newtonsoft.Json;
 using System.Text;
 
@@ -23,7 +21,7 @@ public class BookmarkRequests : IBookmarkRequests
         if (pocketId is not null && folderId is not null)
         {
             url = $"api/pockets/{pocketId}/folders/{folderId}/bookmarks";
-        }        
+        }
         else if (pocketId is not null && folderId is null)
         {
             url = $"api/pockets/{pocketId}/bookmarks";
@@ -59,6 +57,13 @@ public class BookmarkRequests : IBookmarkRequests
     public async Task<bool> DeleteAsync(Guid id)
     {
         var response = await _apiClient.DeleteAsync($"{BaseUrl}/{id}");
+
+        return response.IsSuccessStatusCode;
+    }
+
+    public async Task<bool> SoftDeleteAsync(Guid id)
+    {
+        var response = await _apiClient.DeleteAsync($"{BaseUrl}/soft/{id}");
 
         return response.IsSuccessStatusCode;
     }

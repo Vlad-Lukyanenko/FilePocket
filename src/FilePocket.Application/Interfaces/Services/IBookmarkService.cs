@@ -10,4 +10,5 @@ public interface IBookmarkService
     Task<IEnumerable<BookmarkModel>> GetAllAsync(Guid userId, Guid pocketId, Guid? folderId, bool trackChanges);
     Task UpdateBookmarkAsync(UpdateBookmarkRequest bookmark);
     Task DeleteBookmarkAsync(Guid id);
+    Task MoveToTrashAsync(Guid bookmarkId);
 }

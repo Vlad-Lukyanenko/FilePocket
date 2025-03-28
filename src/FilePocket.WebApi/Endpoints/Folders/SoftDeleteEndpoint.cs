@@ -3,23 +3,25 @@ using FilePocket.WebApi.Endpoints.Base;
 
 namespace FilePocket.WebApi.Endpoints.Folders;
 
-public class DeleteEndpoint : BaseEndpointWithoutRequestAndResponse
+public class SoftDeleteEndpoint : BaseEndpointWithoutRequestAndResponse
 {
     private readonly IServiceManager _service;
 
-    public DeleteEndpoint(IServiceManager service)
+    public SoftDeleteEndpoint(IServiceManager service)
     {
         _service = service;
     }
 
     public override void Configure()
     {
-        Delete("api/folders/{folderId:guid}");
+        Delete("api/folders/soft/{id:guid}");
+        AuthSchemes("Bearer");
     }
 
     public override async Task HandleAsync(CancellationToken cancellationToken)
     {
-        await _service.FolderService.DeleteAsync(FolderId!.Value);
+        var id = Route<Guid>("id");
+        await _service.FolderService.MoveToTrashAsync(id);
 
         await SendOkAsync(cancellationToken);
     }

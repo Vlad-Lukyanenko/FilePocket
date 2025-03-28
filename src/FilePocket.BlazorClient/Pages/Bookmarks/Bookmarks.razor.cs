@@ -1,7 +1,6 @@
 ﻿using FilePocket.BlazorClient.Features.Bookmarks.Models;
 using FilePocket.BlazorClient.Features.Bookmarks.Requests;
 using FilePocket.BlazorClient.Features.Folders.Models;
-using FilePocket.BlazorClient.Features.Trash;
 using FilePocket.BlazorClient.Services.Folders.Requests;
 using FilePocket.BlazorClient.Services.Pockets.Requests;
 using FilePocket.BlazorClient.Shared.Enums;
@@ -30,7 +29,6 @@ public partial class Bookmarks
     [Inject] private IPocketRequests PocketRequests { get; set; } = default!;
     [Inject] private IBookmarkRequests BookmarkRequests { get; set; } = default!;
     [Inject] private IFolderRequests FolderRequests { get; set; } = default!;
-    [Inject] private ITrashRequests TrashRequests { get; set; } = default!;
     [Inject] private IJSRuntime JSRuntime { get; set; } = default!;
 
     protected override async Task OnParametersSetAsync()
@@ -111,7 +109,7 @@ public partial class Bookmarks
 
         if (bookmark is not null)
         {
-            var isDeleted = await BookmarkRequests.DeleteAsync(bookmark.Id);
+            var isDeleted = await BookmarkRequests.SoftDeleteAsync(bookmark.Id);
 
             if (isDeleted)
             {
@@ -184,7 +182,7 @@ public partial class Bookmarks
     {
         if (FolderId is not null)
         {
-            await TrashRequests.MoveFolderToTrash(FolderId.Value);
+            await FolderRequests.SoftDeleteAsync(FolderId.Value);
         }
 
         _deleteFolderStarted = false;

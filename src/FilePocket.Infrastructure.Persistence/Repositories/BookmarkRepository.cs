@@ -13,7 +13,7 @@ public class BookmarkRepository : RepositoryBase<Bookmark>, IBookmarkRepository
 
     public IEnumerable<Bookmark> GetAll(Guid userId, bool trackChanges)
     {
-        return FindByCondition(b => b.UserId == userId, trackChanges).OrderByDescending(b => b.CreatedAt);
+        return FindByCondition(b => b.UserId == userId && !b.IsDeleted, trackChanges).OrderByDescending(b => b.CreatedAt);
     }
 
     public async Task<Bookmark> GetByIdAsync(Guid id)
@@ -23,7 +23,10 @@ public class BookmarkRepository : RepositoryBase<Bookmark>, IBookmarkRepository
 
     public async Task<List<Bookmark>> GetAllAsync(Guid userId, Guid pocketId, Guid? folderId, bool trackChanges)
     {
-        return await FindByCondition(b => b.UserId.Equals(userId) && b.PocketId.Equals(pocketId) && b.FolderId.Equals(folderId), trackChanges).ToListAsync();
+        return await FindByCondition(b => b.UserId.Equals(userId) 
+                                            && b.PocketId.Equals(pocketId) 
+                                            && b.FolderId.Equals(folderId) 
+                                            && !b.IsDeleted, trackChanges).ToListAsync();
     }
 
     public void CreateBookmark(Bookmark bookmark)
