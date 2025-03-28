@@ -16,6 +16,7 @@ public class Pocket : IAmSoftDeletedEntity
     public DateTime DateCreated { get; init; } = DateTime.UtcNow;
     public DateTime? DeletedAt { get; private set; }
     public virtual ICollection<FileMetadata>? FileMetadata { get; init; }
+    public virtual ICollection<Folder>? Folders { get; init; }
 
     public void UpdateDetails(FileMetadata fileMetadata)
     {
@@ -23,10 +24,19 @@ public class Pocket : IAmSoftDeletedEntity
         TotalSize += fileMetadata.FileSize;
     }
 
-    public void MarkAsDeleted()
+    public void MarkAsDeleted(DateTime? deletedAt = null)
     {
         IsDeleted = true;
-        DeletedAt = DateTime.UtcNow;
-        FileMetadata?.ForEach(f => f.MarkAsDeleted(DeletedAt));
+        DeletedAt = deletedAt ?? DateTime.UtcNow;
+
+        if (FileMetadata is not null && FileMetadata.Any())
+        {
+            FileMetadata?.ForEach(b => b.MarkAsDeleted(DeletedAt));
+        }
+
+        if (Folders is not null && Folders.Any())
+        {
+            Folders?.ForEach(b => b.MarkAsDeleted(DeletedAt));
+        }
     }
 }
