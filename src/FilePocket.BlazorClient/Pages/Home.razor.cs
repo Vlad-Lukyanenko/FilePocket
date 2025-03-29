@@ -28,7 +28,7 @@ public partial class Home : ComponentBase
 
         var files = await FileRequests.GetRecentFilesAsync();
 
-        if (files.Any())
+        if (files is not null && files.Any())
         {
             if (user.Profile!.IconId is not null && user.Profile!.IconId != Guid.Empty)
             {
