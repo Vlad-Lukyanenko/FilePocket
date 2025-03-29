@@ -22,9 +22,10 @@ namespace FilePocket.Infrastructure.Persistence.Repositories.MongoDbRepositories
         public async Task UpdateAsync(Note note, CancellationToken cancellationToken = default)
         {
             await _notes.UpdateOneAsync(n => n.Id == note.Id, Builders<Note>.Update
-                                                                 .Set(n => n.Title, note.Title)
-                                                                 .Set(n => n.Content, note.Content)
-                                                                 .Set(n => n.UpdatedAt, DateTime.UtcNow),null, cancellationToken);
+                                                                .Set(n => n.FolderId, note.FolderId)
+                                                                .Set(n => n.Title, note.Title)
+                                                                .Set(n => n.Content, note.Content)
+                                                                .Set(n => n.UpdatedAt, DateTime.UtcNow), null, cancellationToken);
         }
 
         public async Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)
@@ -39,14 +40,18 @@ namespace FilePocket.Infrastructure.Persistence.Repositories.MongoDbRepositories
                                                             .Set(n => n.DeletedAt, DateTime.UtcNow), null, cancellationToken);
         }
 
-        public async Task<List<Note>> GetAllByUserIdAsync(Guid userId, CancellationToken cancellationToken = default)
+        public async Task<List<Note>> GetAllByUserIdAndFolderIdAsync(Guid userId, Guid? folderId = null, CancellationToken cancellationToken = default)
         {
-            return await _notes.Find(note => note.UserId == userId && !note.IsDeleted).ToListAsync(cancellationToken);
+            var userNotes  = await _notes.Find(note => note.UserId == userId && !note.IsDeleted).ToListAsync(cancellationToken);
+
+            return folderId.HasValue
+                ? userNotes.Where(note => note.FolderId == folderId).ToList()
+                : userNotes.Where(note => note.FolderId == null).ToList();
         }
 
         public async Task<Note> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
         {
-            return await _notes.Find(n=>n.Id==id).SingleOrDefaultAsync(cancellationToken);
+            return await _notes.Find(n => n.Id == id).SingleOrDefaultAsync(cancellationToken);
         }
     }
 }

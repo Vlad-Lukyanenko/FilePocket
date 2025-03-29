@@ -4,7 +4,6 @@ using FilePocket.Application.Interfaces.Repositories;
 using FilePocket.Application.Interfaces.Services;
 using FilePocket.Domain.Entities;
 using FilePocket.Domain.Models;
-using MongoDB.Driver;
 
 
 namespace FilePocket.Application.Services
@@ -27,6 +26,8 @@ namespace FilePocket.Application.Services
             var noteEntity = new Note
             {
                 UserId = note.UserId,
+                PocketId = note.PocketId,
+                FolderId = note.FolderId,
                 Title = note.Title,
                 Content = note.Content,
                 CreatedAt = DateTime.UtcNow,
@@ -57,9 +58,9 @@ namespace FilePocket.Application.Services
             await _notes.DeleteAsync(id, cancellationToken);
         }
 
-        public async Task<IEnumerable<NoteModel>> GetAllByUserIdAsync(Guid userId, CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<NoteModel>> GetAllByUserIdAndFolderIdAsync(Guid userId, Guid? folderId = null, CancellationToken cancellationToken = default)
         {
-            var notes = await _notes.GetAllByUserIdAsync(userId, cancellationToken)
+            var notes = await _notes.GetAllByUserIdAndFolderIdAsync(userId, folderId, cancellationToken)
                 ?? [];
 
             return _mapper.Map<IEnumerable<NoteModel>>(notes);

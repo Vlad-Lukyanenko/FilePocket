@@ -4,7 +4,7 @@ namespace FilePocket.BlazorClient.Features.Notes.Requests
 {
     public interface INoteRequests
     {
-        Task<List<NoteModel>> GetAllByUserId();
+        Task<List<NoteModel>> GetAllByUserIdAndFolderId(Guid? folderId = null);
         Task<NoteModel> GetByIdAsync(Guid id);
         Task<NoteCreateResponse> CreateAsync(NoteCreateModel note);
         Task<NoteUpdateResponse> UpdateAsync(NoteModel note);

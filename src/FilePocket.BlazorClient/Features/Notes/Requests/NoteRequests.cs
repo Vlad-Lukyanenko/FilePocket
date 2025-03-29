@@ -34,9 +34,9 @@ namespace FilePocket.BlazorClient.Features.Notes.Requests
             return response.IsSuccessStatusCode;
         }
 
-        public async Task<List<NoteModel>> GetAllByUserId()
+        public async Task<List<NoteModel>> GetAllByUserIdAndFolderId(Guid? folderId)
         {
-            var content = await _apiClient.GetAsync(NoteUrl.GetAllByUserId());
+            var content = await _apiClient.GetAsync(NoteUrl.GetAllByUserIdAndFolderId(folderId));
             var notes = JsonConvert.DeserializeObject<List<NoteModel>>(content) ?? [];
 
             return notes;
@@ -59,7 +59,7 @@ namespace FilePocket.BlazorClient.Features.Notes.Requests
 
         public async Task<NoteUpdateResponse> UpdateAsync(NoteModel note)
         {
-            var response = await _apiClient.PutAsJsonAsync(NoteUrl.Update(note.Id), note);
+            var response = await _apiClient.PutAsJsonAsync(NoteUrl.Update(), note);
 
             if (response.IsSuccessStatusCode)
             {

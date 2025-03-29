@@ -13,7 +13,7 @@
         {
             <div class="card h-100 shadow-sm me-2 pt-2" style="width: 8em;">
 
-                <a class="file-link text-decoration-none" title="@note.Title" href="@GetFolderUrl(note.Id)">
+                <a class="file-link text-decoration-none" title="@note.Title" href="@GetFolderUrl(note)">
                     <h6 class="card-title" style="font-size: 0.8em">@Tools.TruncateString(note.Title!)</h6>
                 </a>
                 <button class="btn-close btn-close" aria-label="Delete" @onclick="@(async()=> await DeleteNote(note))"/>
@@ -30,9 +30,12 @@
     [Parameter]
     public INoteRequests NoteRequests { get; set; } = default!;
 
-    private string GetFolderUrl(Guid id)
+    private string GetFolderUrl(NoteModel note)
     {
-        return $"notes/{id}";
+
+        return note.FolderId == null
+            ? $"pockets/{note.PocketId}/notes/{note.Id}"
+            : $"pockets/{note.PocketId}/folders/{note.FolderId}/notes/{note.Id}";
     }
 
     private async Task DeleteNote(NoteModel note)

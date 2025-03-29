@@ -58,7 +58,7 @@ namespace FilePocket.Infrastructure.Persistence.Repositories
         public async Task<List<Folder>> GetAllAsync(Guid userId, Guid? pocketId, Guid? parentFolderId, FolderType folderType)
         {
             var result = DbContext.Set<Folder>().Where(c => c.UserId == userId 
-                                                            && c.PocketId == pocketId 
+                                                            && c.PocketId == (pocketId == null ? Guid.Empty : pocketId)
                                                             && c.ParentFolderId == parentFolderId 
                                                             && c.FolderType == folderType
                                                             && !c.IsDeleted);

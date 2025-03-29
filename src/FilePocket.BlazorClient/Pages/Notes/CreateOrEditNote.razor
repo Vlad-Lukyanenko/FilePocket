@@ -1,5 +1,7 @@
-﻿@page "/notes/new"
-@page "/notes/{Id:guid}"
+﻿@page "/pockets/{PocketId:guid}/notes/new"
+@page "/pockets/{PocketId:guid}/notes/{Id:guid}"
+@page "/pockets/{PocketId:guid}/folders/{FolderId:guid}/notes/new"
+@page "/pockets/{PocketId:guid}/folders/{FolderId:guid}/notes/{Id:guid}"
 @using FilePocket.BlazorClient.Features.Notes
 @using FilePocket.BlazorClient.Features.Notes.Models
 @using FilePocket.BlazorClient.Features.Notes.Requests
@@ -13,7 +15,7 @@
 <div class="container-fluid" style="min-height: 600px;">
 
     <!-- Top SubMenu -->
-    <TopSubMenu Title="Note Editor" ShowBackButton="false" />
+    <TopSubMenu Title="Note Editor" ShowBackButton="true" />
 
     @if (_note != null)
     {
@@ -33,14 +35,14 @@
                     </div>
                 }
             </div>
-            <div class="col-sm-3 d-flex align-items-center mb-3">
+            <div class="col-sm-3 d-flex align-items-center mb-3" style="font-size: 0.75rem">
                 <small>
-                    <strong>Created: </strong>@(_note.CreatedAt)
+                    <strong >Created: </strong>@_createdAt
                 </small>
             </div>
             <div class="col-sm-3 d-flex align-items-center mb-3">
                 <small>
-                    <strong>Updated: </strong>@(_note.UpdatedAt)
+                    <strong>Updated: </strong>@_updatedAt
                 </small>
             </div>
             <div class="col-sm-1 d-flex align-items-center justify-content-end align-content-end mb-3">

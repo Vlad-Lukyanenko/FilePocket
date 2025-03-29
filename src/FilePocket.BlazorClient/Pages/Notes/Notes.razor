@@ -1,4 +1,6 @@
 ﻿@page "/notes"
+@page "/pockets/{PocketId}/notes"
+@page "/pockets/{PocketId}/folders/{FolderId}/notes"
 
 @using FilePocket.BlazorClient.Helpers
 @using Microsoft.AspNetCore.Authorization
@@ -6,5 +8,5 @@
 @attribute [Authorize]
 
 <div>
-    <NotesView UserId="@_userId" />
+    <NotesAndFolders UserId="@_userId" PocketId="@_pocketId" FolderId="@_folderId" />
 </div>

@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FilePocket.WebApi.Controllers
 {
-    [Route("api/notes")]
+    [Route("api")]
     [ApiController]
     [Authorize]
     public class NotesController : BaseController
@@ -17,15 +17,16 @@ namespace FilePocket.WebApi.Controllers
             _service = service;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetAllByUserId()
+        [HttpGet("notes")]
+        [HttpGet("folders/{folderId:guid}/notes")]
+        public async Task<IActionResult> GetAllByUserIdAndFolderId(Guid? folderId)
         {
-            var notes = await _service.GetAllByUserIdAsync(UserId);
+            var notes = await _service.GetAllByUserIdAndFolderIdAsync(UserId, folderId);
 
             return Ok(notes);
         }
 
-        [HttpGet("{id:guid}")]
+        [HttpGet("notes/{id:guid}")]
         public async Task<IActionResult> GetById([FromRoute] Guid id)
         {
             var note = await _service.GetByIdAsync(id);
@@ -38,7 +39,7 @@ namespace FilePocket.WebApi.Controllers
             return Ok(note);
         }
 
-        [HttpPost]
+        [HttpPost("notes")]
         public async Task<IActionResult> Create([FromBody] NoteCreateModel note)
         {
             if (!ModelState.IsValid)
@@ -51,7 +52,7 @@ namespace FilePocket.WebApi.Controllers
             return Ok(result);
         }
 
-        [HttpPut]
+        [HttpPut("notes")]
         public async Task<IActionResult> Update([FromBody] NoteModel note)
         {
             if (!ModelState.IsValid)
@@ -64,7 +65,7 @@ namespace FilePocket.WebApi.Controllers
             return Ok(result);
         }
 
-        [HttpDelete("{id:guid}")]
+        [HttpDelete("notes/{id:guid}")]
         public async Task<IActionResult> Delete([FromRoute] Guid id)
         {
             await _service.SoftDeleteAsync(id);
@@ -72,7 +73,7 @@ namespace FilePocket.WebApi.Controllers
             return NoContent();
         }
 
-        [HttpDelete("{id:guid}/delete-irreversibly")]
+        [HttpDelete("notes/{id:guid}/delete-irreversibly")]
         public async Task<IActionResult> IrreversiblyDelete([FromRoute] Guid id)
         {
             await _service.DeleteAsync(id);

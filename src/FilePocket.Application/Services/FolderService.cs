@@ -30,7 +30,6 @@ namespace FilePocket.Application.Services
             _repository.Folder.Create(folderEntity);
             await _repository.SaveChangesAsync();
             return _mapper.Map<FolderModel>(folderEntity);
-
         }
 
         public async Task<FolderModel?> GetAsync(Guid folderId)

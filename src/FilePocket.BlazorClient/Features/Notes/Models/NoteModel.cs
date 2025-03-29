@@ -10,6 +10,10 @@ namespace FilePocket.BlazorClient.Features.Notes.Models
         [Required]
         public Guid UserId { get; set; }
 
+        public Guid PocketId { get; set; }
+
+        public Guid? FolderId { get; set; }
+
         [Required]
         public string Title { get; set; } = string.Empty;
 

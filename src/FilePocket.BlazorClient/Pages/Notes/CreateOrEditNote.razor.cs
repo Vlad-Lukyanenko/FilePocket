@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components;
 using FilePocket.BlazorClient.Features.Notes.Models;
 using Microsoft.AspNetCore.Components.Web;
+using FilePocket.BlazorClient.Features;
 
 namespace FilePocket.BlazorClient.Pages.Notes
 {
@@ -11,6 +12,12 @@ namespace FilePocket.BlazorClient.Pages.Notes
     {
         [Parameter]
         public Guid Id { get; set; }
+
+        [Parameter]
+        public Guid PocketId { get; set; }
+
+        [Parameter]
+        public Guid? FolderId { get; set; }
 
         [Inject]
         private INoteRequests NoteRequests { get; set; } = default!;
@@ -24,9 +31,15 @@ namespace FilePocket.BlazorClient.Pages.Notes
         [Inject]
         private IUserRequests UserRequests { get; set; } = default!;
 
+        [Inject]
+        private NavigationHistoryService NavigationHistory { get; set; } = default!;
+
         private NoteModel? _note;
         private Guid _userId = Guid.Empty;
         private bool _editTitle;
+        private const string DateTimePlaceholder = "--.--.-- --:--:--";
+        private string? _createdAt;
+        private string? _updatedAt;
 
         protected override async Task OnParametersSetAsync()
         {
@@ -45,14 +58,22 @@ namespace FilePocket.BlazorClient.Pages.Notes
             if (Id != Guid.Empty)
             {
                 _note = await NoteRequests.GetByIdAsync(Id);
+
+                _createdAt = _note.UpdatedAt.ToString();
+                _updatedAt = _note.UpdatedAt.ToString();
             }
             else
             {
                 _note = new()
                 {
                     UserId = _userId,
-                    Title = "New Note"
+                    Title = "New Note",
+                    FolderId = this.FolderId,
+                    PocketId = this.PocketId
                 };
+
+                _createdAt = DateTimePlaceholder;
+                _updatedAt = DateTimePlaceholder;
             }
 
             await base.OnParametersSetAsync();
@@ -62,7 +83,9 @@ namespace FilePocket.BlazorClient.Pages.Notes
         {
             var result = await NoteRequests.CreateAsync(new NoteCreateModel
             {
-                UserId = _note.UserId,
+                UserId = _note!.UserId,
+                FolderId = _note.FolderId,
+                PocketId = _note.PocketId,
                 Title = _note!.Title,
                 Content = _note.Content
             });
@@ -72,6 +95,11 @@ namespace FilePocket.BlazorClient.Pages.Notes
                 _note.Id = result.Id;
                 _note.CreatedAt = result.CreatedAt;
                 _note.UpdatedAt = result.UpdatedAt;
+
+                _createdAt = _note.CreatedAt.ToString();
+                _updatedAt = _note.UpdatedAt.ToString();
+
+                await InvokeAsync(StateHasChanged);
             }
         }
 
@@ -82,6 +110,10 @@ namespace FilePocket.BlazorClient.Pages.Notes
             if (result.UpdatedAt != default)
             {
                 _note!.UpdatedAt = result.UpdatedAt;
+
+                _updatedAt = _note.UpdatedAt.ToString();
+
+                await InvokeAsync(StateHasChanged);
             }
         }
 
@@ -110,7 +142,8 @@ namespace FilePocket.BlazorClient.Pages.Notes
 
         private void CloseEditor()
         {
-            Navigation.NavigateTo("/notes");
+            var prevUrl = NavigationHistory.GetPreviousUrl() ?? "/notes";
+            Navigation.NavigateTo(prevUrl);
         }
 
         private void EditTile()

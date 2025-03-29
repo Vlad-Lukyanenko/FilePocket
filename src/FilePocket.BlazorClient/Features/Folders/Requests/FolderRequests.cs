@@ -38,9 +38,9 @@ namespace FilePocket.BlazorClient.Services.Folders.Requests
             return JsonConvert.DeserializeObject<IEnumerable<FolderModel>>(content)!;
         }
 
-        public async Task<FolderModel> GetAsync(Guid folderId)
+        public async Task<FolderModel> GetAsync(Guid pocketId, Guid folderId)
         { 
-            var url = $"api/folders/{folderId}";
+            var url = $"api/pockets/{pocketId}/folders/{folderId}";
             
             var content = await _apiClient.GetAsync(url);
 
@@ -50,7 +50,7 @@ namespace FilePocket.BlazorClient.Services.Folders.Requests
         public async Task<IEnumerable<FolderModel>> GetAllAsync(Guid? pocketId, FolderType folderType)
         {
             var url = pocketId is null 
-                ? $"api/folders/{folderType}"
+                ? $"api/{folderType}/folders"
                 : $"api/pockets/{pocketId}/{folderType}/folders";
             
             var content = await _apiClient.GetAsync(url);

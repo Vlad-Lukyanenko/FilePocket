@@ -8,7 +8,7 @@ namespace FilePocket.BlazorClient.Pages.Folders
 {
     public partial class CreateFolder
     {
-        [Inject] 
+        [Inject]
         private IFolderRequests FolderRequests { get; set; } = default!;
 
         [Inject]
@@ -23,7 +23,7 @@ namespace FilePocket.BlazorClient.Pages.Folders
         [Parameter]
         public string FolderIdParam { get; set; } = string.Empty;
 
-        [Parameter] 
+        [Parameter]
         public int FolderType { get; set; }
 
         private string _folderName = string.Empty;
@@ -34,14 +34,14 @@ namespace FilePocket.BlazorClient.Pages.Folders
         {
             Guid? pocketId = null;
 
-            if(!string.IsNullOrWhiteSpace(PocketIdParam) && PocketIdParam != Guid.Empty.ToString())
+            if (!string.IsNullOrWhiteSpace(PocketIdParam) && PocketIdParam != Guid.Empty.ToString())
             {
                 pocketId = Guid.Parse(PocketIdParam);
             }
 
             Guid? folderId = null;
 
-            if(!string.IsNullOrWhiteSpace(FolderIdParam) && FolderIdParam != Guid.Empty.ToString())
+            if (!string.IsNullOrWhiteSpace(FolderIdParam) && FolderIdParam != Guid.Empty.ToString())
             {
                 folderId = Guid.Parse(FolderIdParam);
             }
@@ -51,7 +51,7 @@ namespace FilePocket.BlazorClient.Pages.Folders
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow,
                 Name = _folderName,
-                ParentFolderId = folderId,
+                ParentFolderId = folderId, 
                 PocketId = pocketId,
                 FolderType = (FolderType)FolderType
             };
@@ -65,33 +65,44 @@ namespace FilePocket.BlazorClient.Pages.Folders
                 return;
             }
 
-            Navigation.NavigateTo(GetGoBackUrl());
+            var entitiesName = GetEntitiesName(folder.FolderType);
+
+            Navigation.NavigateTo(GetGoBackUrl(entitiesName));
         }
 
-        private string GetGoBackUrl()
+        private static string GetEntitiesName(FolderType folderType)
+        {
+            return folderType switch
+            {
+                Shared.Enums.FolderType.Documents => "notes",
+                Shared.Enums.FolderType.Bookmarks => "bookmarks",
+                _ => "files",
+            };
+        }
+
+        private string GetGoBackUrl(string entitiesName)
         {
             if (string.IsNullOrWhiteSpace(PocketIdParam) && string.IsNullOrWhiteSpace(FolderIdParam))
             {
-                return $"/files";
+                return $"/{entitiesName}";
             }
 
-            Guid? folderId = null;
-            if (!string.IsNullOrWhiteSpace(FolderIdParam))
+            var folderId = !string.IsNullOrWhiteSpace(FolderIdParam)
+                ? Guid.Parse(FolderIdParam)
+                : (Guid?)null;
+
+
+            if (string.IsNullOrWhiteSpace(PocketIdParam) && folderId != null)
             {
-                folderId = Guid.Parse(FolderIdParam);
+                return $"/folders/{folderId}/{entitiesName}";
             }
 
-            if (string.IsNullOrWhiteSpace(PocketIdParam) && !string.IsNullOrWhiteSpace(FolderIdParam))
+            if (!string.IsNullOrWhiteSpace(PocketIdParam) && folderId == null)
             {
-                return $"/folders/{folderId}/files";
+                return $"/pockets/{PocketIdParam}/{entitiesName}";
             }
 
-            if (!string.IsNullOrWhiteSpace(PocketIdParam) && string.IsNullOrWhiteSpace(FolderIdParam))
-            {
-                return $"/pockets/{PocketIdParam}/files";
-            }
-
-            return $"/pockets/{PocketIdParam}/folders/{folderId}/files";
+            return $"/pockets/{PocketIdParam}/folders/{folderId}/{entitiesName}";
         }
 
         private void NameChanged()

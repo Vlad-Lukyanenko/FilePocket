@@ -32,11 +32,28 @@
 
     private string GetFolderUrl(Guid? pocketId, Guid? folderId, FolderType folderType)
     {
-        if (pocketId is null)
+        var pocketIdUrlPart = string.Empty;
+
+        if (pocketId != null)
         {
-            return folderType == FolderType.Files ? $"/folders/{folderId}/files" : $"/folders/{folderId}/bookmarks";
+            pocketIdUrlPart = $"/pockets/{pocketId}";
         }
 
-        return folderType == FolderType.Files ? $"/pockets/{pocketId}/folders/{folderId}/files" : $"/pockets/{pocketId}/folders/{folderId}/bookmarks";
+        switch (folderType)
+        {
+            case FolderType.Bookmarks:
+                return $"{pocketIdUrlPart}/folders/{folderId}/bookmarks";
+            case FolderType.Documents:
+                return $"{pocketIdUrlPart}/folders/{folderId}/notes";
+            default:
+                return $"{pocketIdUrlPart}/folders/{folderId}/files";
+        }
+
+        // if (pocketId is null)
+        // {
+        //     return folderType == FolderType.Files ? $"/folders/{folderId}/files" : $"/folders/{folderId}/bookmarks";
+        // }
+
+        // return folderType == FolderType.Files ? $"/pockets/{pocketId}/folders/{folderId}/files" : $"/pockets/{pocketId}/folders/{folderId}/bookmarks";
     }
 }
