@@ -1,4 +1,5 @@
 ﻿using FilePocket.Domain.Entities.Abstractions;
+using System.Text.Json.Serialization;
 
 namespace FilePocket.Domain.Entities;
 
@@ -14,7 +15,10 @@ public class Bookmark : IAmSoftDeletedEntity
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime? UpdatedAt { get; set; }
     public DateTime? DeletedAt { get; set; }
+
+    [JsonIgnore]
     public virtual Pocket Pocket { get; init; }
+    [JsonIgnore]
     public virtual Folder Folder { get; init; }
 
     public void MarkAsDeleted(DateTime? deletedAt = null)
