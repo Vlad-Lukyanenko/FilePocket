@@ -1,7 +1,7 @@
 ﻿@page "/pockets/{PocketId:guid}/notes/new"
-@page "/pockets/{PocketId:guid}/notes/{Id:guid}"
+@page "/pockets/{PocketId:guid}/notes/{Id:guid}/edit"
 @page "/pockets/{PocketId:guid}/folders/{FolderId:guid}/notes/new"
-@page "/pockets/{PocketId:guid}/folders/{FolderId:guid}/notes/{Id:guid}"
+@page "/pockets/{PocketId:guid}/folders/{FolderId:guid}/notes/{Id:guid}/edit"
 @using FilePocket.BlazorClient.Features.Notes
 @using FilePocket.BlazorClient.Features.Notes.Models
 @using FilePocket.BlazorClient.Features.Notes.Requests
@@ -24,29 +24,29 @@
                 @if (_editTitle)
                 {
                     <div class="title-input-container">
-                        <input type="text" class="form-control" aria-label="Note Title" @bind="_note.Title" @onblur="SaveTitle" @onkeypress="@InvokeSaveTitle" @onfocusout="SaveTitle">
+                        <input type="text" class="form-control" aria-label="Note Title" @bind="_note.Title" @onblur="SaveTitle" @onkeypress="@InvokeSaveTitle">
                         <i class="bi bi-check2" @onclick="@SaveTitle"></i>
                     </div>
                 }
                 else
                 {
                     <div class="title-text-container" @onclick="EditTile">
-                        <span class="align-middle">@(Tools.TruncateString(_note?.Title!, 39))</span>
+                        <span class="align-middle">@(Tools.TruncateString(_note?.Title!, 36))</span>
                     </div>
                 }
             </div>
-            <div class="col-sm-3 d-flex align-items-center mb-3" style="font-size: 0.75rem">
-                <small>
-                    <strong >Created: </strong>@_createdAt
-                </small>
+            <div class="col-sm-6 align-items-center justify-content-evenly d-flex mb-3 note-attributes">
+                <div>
+                    <strong>Created:</strong>@($" {_createdAt}")
+                </div>
+                <div>
+                    <strong>Updated:</strong>@($" {_updatedAt}")
+                </div>
             </div>
-            <div class="col-sm-3 d-flex align-items-center mb-3">
-                <small>
-                    <strong>Updated: </strong>@_updatedAt
-                </small>
-            </div>
-            <div class="col-sm-1 d-flex align-items-center justify-content-end align-content-end mb-3">
-                <button class="btn-close btn-close" aria-label="Close" @onclick="@CloseEditor" />
+            <div class="col-sm-1 d-flex align-items-center justify-content-end mb-3 controls-container">
+                <button type="button" aria-label="Close editor" data-bs-original-title="Close editor" @onclick="@CloseEditor">
+                    <i class="bi bi-x-circle"></i>
+                </button>
             </div>
         </div>
         <NotesEditor Content="@_note!.Content" OnSaveOrUpdate="ChangeNoteContent" />
@@ -54,6 +54,29 @@
 </div>
 
 <style>
+    .note-attributes {
+/*         line-height: 38px; */
+        font-size: 0.875rem;
+    }
+
+        .note-attributes > div {
+            padding: 0 0.5rem;
+        }
+
+    .controls-container button {
+        border: 0;
+        background-color: transparent;
+        color: #7F7F7F;
+        padding: 4px;
+        width: 38px;
+        height: 38px;
+        line-height: 30px;
+    }
+
+        .controls-container button:hover {
+            color: black;
+        }
+
     .title-text-container {
         width: 100%;
         height: 38px;
@@ -71,15 +94,15 @@
         font-style: italic;
     }
 
-        .title-input-container>input{
+        .title-input-container > input {
             font-style: italic;
         }
 
-    .title-input-container>i{
-        position: absolute;
-        right: 12px;
-        top: calc(50% - 10px);
-    }
+        .title-input-container > i {
+            position: absolute;
+            right: 12px;
+            top: calc(50% - 10px);
+        }
 
 </style>
 

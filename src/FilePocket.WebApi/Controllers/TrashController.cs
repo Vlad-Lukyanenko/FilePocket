@@ -1,8 +1,6 @@
 ﻿using FilePocket.Application.Interfaces.Services;
-using FilePocket.Domain.Entities;
 using FilePocket.WebApi.Attributes;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading;
 
 namespace FilePocket.WebApi.Controllers
 {
@@ -39,7 +37,7 @@ namespace FilePocket.WebApi.Controllers
                 }
                 catch
                 {
-                    return Problem("Error deleting folder contents");
+                    return Problem("Error deleting folder content");
                 }
             }
 

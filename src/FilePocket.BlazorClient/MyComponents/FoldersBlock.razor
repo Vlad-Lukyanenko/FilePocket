@@ -8,7 +8,7 @@
     <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4 text-center justify-content-center">
         @foreach (var folder in Folders)
         {
-            <div class="card h-100 shadow-sm me-2 pt-2" style="width: 8em;">
+            <div class="card shadow-sm me-2 pt-2" style="width: 8em;">
                 @{
                     var url = GetFolderUrl(PocketId, folder.Id, folder.FolderType);
                 }
@@ -32,12 +32,9 @@
 
     private string GetFolderUrl(Guid? pocketId, Guid? folderId, FolderType folderType)
     {
-        var pocketIdUrlPart = string.Empty;
-
-        if (pocketId != null)
-        {
-            pocketIdUrlPart = $"/pockets/{pocketId}";
-        }
+        var pocketIdUrlPart = pocketId != null
+            ? $"/pockets/{pocketId}"
+            : string.Empty;
 
         switch (folderType)
         {

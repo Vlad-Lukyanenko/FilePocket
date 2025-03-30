@@ -134,9 +134,6 @@ builder.Services.AddSingleton<IUploadService, UploadService>();
 builder.Services.AddScoped<IServiceManager, ServiceManager>();
 builder.Services.AddScoped<JwtOrApiKeyAuthorizeAttribute>();
 
-//builder.Services.AddSingleton<INotesRepository, NotesRepository>();
-//builder.Services.AddScoped<INoteService, NoteService>();
-
 var app = builder.Build();
 
 app.UseCors("AllowSpecificOrigin");

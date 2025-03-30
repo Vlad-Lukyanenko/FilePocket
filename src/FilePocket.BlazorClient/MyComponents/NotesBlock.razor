@@ -6,17 +6,91 @@
 @using System.Collections.Concurrent
 @using System.Collections.ObjectModel
 
+<style>
+    .title {
+    font-size: 0.875rem;
+    }
+
+    .title a {
+    line-height: 24px;
+    }
+
+    .controls-container button {
+    border: 0;
+    background-color: transparent;
+    color: #7F7F7F;
+    padding: 4px;
+    width: 24px;
+    height: 24px;
+    line-height: 16px;
+    }
+
+    .controls-container button:hover {
+    color: black;
+    }
+
+    .dialog-container {
+    position: fixed;
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+    top: 0;
+    left: 0;
+    justify-content: center;
+    align-items: center;
+    align-content: stretch;
+    background-color: rgba(50, 50, 50, 0.25);
+    }
+
+    .dialog {
+    background-color: white;
+    border-color: silver;
+    }
+</style>
+
 <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4 text-center justify-content-center">
     @if (Notes != null)
     {
         @foreach (var note in Notes)
         {
-            <div class="card h-100 shadow-sm me-2 pt-2" style="width: 8em;">
+            <div class="card shadow-sm me-2 py-2 px-3" style="width: 16rem;">
+                <div class="row">
+                    <div class="col px-2 text-start title">
+                        <a class="file-link text-decoration-none " title="@note.Title" href="@GetNoteUrl(note)">
+                            @Tools.TruncateString(note.Title!, 24)
+                        </a>
+                    </div>
+                    <div class="col-3 px-1 controls-container">
+                        <button type="button" aria-label="Edit note" data-bs-original-title="Edit note" @onclick="@(()=>NavigateToEdit(note))">
+                            <i class="bi bi-pencil-square"></i>
+                        </button>
+                        <button type="button" aria-label="Delete note" data-bs-original-title="Delete note" @onclick="@(()=>OpenDialog(note.Id))">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        }
 
-                <a class="file-link text-decoration-none" title="@note.Title" href="@GetFolderUrl(note)">
-                    <h6 class="card-title" style="font-size: 0.8em">@Tools.TruncateString(note.Title!)</h6>
-                </a>
-                <button class="btn-close btn-close" aria-label="Delete" @onclick="@(async()=> await DeleteNote(note))"/>
+
+        <!-- Delite Confirm Dilog -->
+        @if (_dialogOpen)
+        {
+            <div class="dialog-container m-0 p-0">
+                <div class="card dialog">
+                    <div class="card-body">
+                        <div class="text-end mb-3">
+                            <button type="button" class="btn-close" aria-label="Close" @onclick="CloseDialog"></button>
+                        </div>
+                        <div class="mb-4 px-3" style="font-size: 0.875rem;">
+                            Are you realy going to delete the note?
+                        </div>
+                        <div class="mb-2">
+                            <button type="button" class="btn btn-outline-secondary btn-sm" @onclick="CloseDialog">Cancel</button>
+                            <button type="button" class="btn btn-outline-danger btn-sm" @onclick="@(async()=>await DeleteNote())">Delete</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         }
     }
@@ -30,21 +104,51 @@
     [Parameter]
     public INoteRequests NoteRequests { get; set; } = default!;
 
-    private string GetFolderUrl(NoteModel note)
-    {
+    [Inject]
+    private NavigationManager Navigation { get; set; } = default!;
 
+    private bool _dialogOpen;
+    private Guid? _noteToDeleteId;
+
+    private string GetNoteUrl(NoteModel note)
+    {
         return note.FolderId == null
-            ? $"pockets/{note.PocketId}/notes/{note.Id}"
-            : $"pockets/{note.PocketId}/folders/{note.FolderId}/notes/{note.Id}";
+        ? $"pockets/{note.PocketId}/notes/{note.Id}"
+        : $"pockets/{note.PocketId}/folders/{note.FolderId}/notes/{note.Id}";
     }
 
-    private async Task DeleteNote(NoteModel note)
+    private void OpenDialog(Guid id)
     {
-        var result = await NoteRequests.DeleteAsync(note.Id);
+        _dialogOpen = true;
+        _noteToDeleteId = id;
+    }
 
-        if (result)
+    private void CloseDialog()
+    {
+        _noteToDeleteId = null;
+        _dialogOpen = false;
+    }
+
+    private void NavigateToEdit(NoteModel note)
+    {
+        var url = GetNoteUrl(note) + "/edit";
+
+        Navigation.NavigateTo(url);
+    }
+
+    private async Task DeleteNote()
+    {
+        if (_noteToDeleteId != null)
         {
-            Notes?.Remove(note);
+            var noteToDelete = Notes!.First(n => n.Id == _noteToDeleteId);
+            var result = await NoteRequests.DeleteAsync(_noteToDeleteId.Value);
+
+            if (result)
+            {
+                Notes?.Remove(noteToDelete);
+
+                CloseDialog();
+            }
         }
     }
 }
