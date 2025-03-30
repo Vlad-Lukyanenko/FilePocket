@@ -10,5 +10,7 @@ namespace FilePocket.Application.Interfaces.Repositories
         Task UpdateAsync(Note note, CancellationToken cancellationToken = default);
         Task DeleteAsync(Guid id, CancellationToken cancellationToken = default);
         Task SoftDeleteAsync(Guid id, CancellationToken cancellationToken = default);
+        Task BulkDeleteAsync(Guid folderId, CancellationToken cancellationToken = default);
+        Task BulkSoftDeleteAsync(Guid folderId, CancellationToken cancellationToken = default);
     }
 }

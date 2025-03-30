@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+﻿using MapsterMapper;
 using FilePocket.Application.Exceptions;
 using FilePocket.Application.Interfaces.Repositories;
 using FilePocket.Application.Interfaces.Services;
@@ -11,12 +11,12 @@ namespace FilePocket.Application.Services
     public class NoteService : INoteService
     {
 
-        private readonly INotesRepository _notes;
+        private readonly IRepositoryManager _manager;
         private readonly IMapper _mapper;
 
-        public NoteService(INotesRepository notes, IMapper mapper)
+        public NoteService(IRepositoryManager manager, IMapper mapper)
         {
-            _notes = notes;
+            _manager = manager;
             _mapper = mapper;
         }
 
@@ -34,7 +34,7 @@ namespace FilePocket.Application.Services
                 UpdatedAt = DateTime.UtcNow,
             };
 
-            await _notes.CreateAsync(noteEntity, cancellationToken);
+            await _manager.Note.CreateAsync(noteEntity, cancellationToken);
 
             return _mapper.Map<NoteCreateResponse>(noteEntity);
         }
@@ -46,7 +46,7 @@ namespace FilePocket.Application.Services
             _mapper.Map(note, noteEntity);
             noteEntity.UpdatedAt = DateTime.UtcNow;
 
-            await _notes.UpdateAsync(noteEntity, cancellationToken);
+            await _manager.Note.UpdateAsync(noteEntity, cancellationToken);
 
             return _mapper.Map<NoteUpdateResponse>(noteEntity);
         }
@@ -55,12 +55,12 @@ namespace FilePocket.Application.Services
         {
             _ = await GetNoteIfExists(id, cancellationToken);
 
-            await _notes.DeleteAsync(id, cancellationToken);
+            await _manager.Note.DeleteAsync(id, cancellationToken);
         }
 
         public async Task<IEnumerable<NoteModel>> GetAllByUserIdAndFolderIdAsync(Guid userId, Guid? folderId = null, CancellationToken cancellationToken = default)
         {
-            var notes = await _notes.GetAllByUserIdAndFolderIdAsync(userId, folderId, cancellationToken)
+            var notes = await _manager.Note.GetAllByUserIdAndFolderIdAsync(userId, folderId, cancellationToken)
                 ?? [];
 
             return _mapper.Map<IEnumerable<NoteModel>>(notes);
@@ -77,15 +77,25 @@ namespace FilePocket.Application.Services
         {
             _ = await GetNoteIfExists(id, cancellationToken);
 
-            await _notes.SoftDeleteAsync(id, cancellationToken);
+            await _manager.Note.SoftDeleteAsync(id, cancellationToken);
         }
 
         private async Task<Note> GetNoteIfExists(Guid id, CancellationToken cancellationToken)
         {
-            var noteToProcess = await _notes.GetByIdAsync(id, cancellationToken)
+            var noteToProcess = await _manager.Note.GetByIdAsync(id, cancellationToken)
                ?? throw new NoteNotFoundException(id);
 
             return noteToProcess;
+        }
+
+        public async Task BulkDeleteAsync(Guid folderId, CancellationToken cancellationToken = default)
+        {
+            await _manager.Note.BulkDeleteAsync(folderId,  cancellationToken);
+        }
+
+        public async Task BulkSoftDeleteAsync(Guid folderId, CancellationToken cancellationToken = default)
+        {
+            await _manager.Note.BulkSoftDeleteAsync(folderId, cancellationToken);
         }
     }
 }

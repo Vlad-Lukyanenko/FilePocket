@@ -27,6 +27,7 @@ public class ServiceManager(
     private readonly Lazy<IAuthenticationService> _authenticationService = new(() => new AuthenticationService(logger, userManager, options, consumptionOptions, mapper));
     private readonly Lazy<IBookmarkService> _bookmarkService = new(() => new BookmarkService(repositoryManager, mapper));
     private readonly Lazy<IProfileService> _profileService = new(() => new ProfileService(repositoryManager, mapper));
+    private readonly Lazy<INoteService> _noteService = new(() => new NoteService(repositoryManager, mapper));
 
     public IPocketService PocketService => _pocketService.Value;
 
@@ -41,4 +42,6 @@ public class ServiceManager(
     public IBookmarkService BookmarkService => _bookmarkService.Value;
 
     public IProfileService ProfileService => _profileService.Value;
+
+    public INoteService NoteService=> _noteService.Value;
 }

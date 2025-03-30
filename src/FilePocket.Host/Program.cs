@@ -130,13 +130,12 @@ builder.Services.AddSwaggerGen(s =>
 
 builder.Services.AddScoped<IRepositoryManager, RepositoryManager>();
 builder.Services.AddScoped<IImageService, ImageService>();
-builder.Services.AddScoped<IFolderService, FolderService>();
 builder.Services.AddSingleton<IUploadService, UploadService>();
 builder.Services.AddScoped<IServiceManager, ServiceManager>();
 builder.Services.AddScoped<JwtOrApiKeyAuthorizeAttribute>();
 
-builder.Services.AddSingleton<INotesRepository, NotesRepository>();
-builder.Services.AddScoped<INoteService, NoteService>();
+//builder.Services.AddSingleton<INotesRepository, NotesRepository>();
+//builder.Services.AddScoped<INoteService, NoteService>();
 
 var app = builder.Build();
 

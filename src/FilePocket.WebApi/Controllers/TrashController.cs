@@ -1,6 +1,8 @@
 ﻿using FilePocket.Application.Interfaces.Services;
+using FilePocket.Domain.Entities;
 using FilePocket.WebApi.Attributes;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading;
 
 namespace FilePocket.WebApi.Controllers
 {
@@ -27,6 +29,20 @@ namespace FilePocket.WebApi.Controllers
         [HttpPut("folders/{folderId:guid}")]
         public async Task<IActionResult> MoveFolderToTrash([FromRoute] Guid folderId)
         {
+            var folder = await _service.FolderService.GetAsync(folderId);
+
+            if (folder?.FolderType == Domain.Enums.FolderType.Documents)
+            {
+                try
+                {
+                    await _service.NoteService.BulkSoftDeleteAsync(folderId);
+                }
+                catch
+                {
+                    return Problem("Error deleting folder contents");
+                }
+            }
+
             await _service.FolderService.MoveToTrash(UserId, folderId);
 
             return Ok();

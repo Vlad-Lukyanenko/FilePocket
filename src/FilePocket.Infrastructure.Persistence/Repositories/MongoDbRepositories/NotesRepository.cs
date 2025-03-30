@@ -53,5 +53,17 @@ namespace FilePocket.Infrastructure.Persistence.Repositories.MongoDbRepositories
         {
             return await _notes.Find(n => n.Id == id).SingleOrDefaultAsync(cancellationToken);
         }
+
+        public async Task BulkDeleteAsync(Guid folderId, CancellationToken cancellationToken = default)
+        {
+            await _notes.DeleteManyAsync(n => n.FolderId == folderId, cancellationToken);
+        }
+
+        public async Task BulkSoftDeleteAsync(Guid folderId, CancellationToken cancellationToken = default)
+        {
+            await _notes.UpdateManyAsync(n => n.FolderId == folderId, Builders<Note>.Update
+                                                                    .Set(n => n.IsDeleted, true)
+                                                                    .Set(n => n.DeletedAt, DateTime.UtcNow), null, cancellationToken);
+        }
     }
 }
