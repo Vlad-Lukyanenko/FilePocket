@@ -13,6 +13,9 @@ using FilePocket.BlazorClient.Features.Trash;
 using FilePocket.BlazorClient.Shared.Enums;
 using FilePocket.BlazorClient.Features.Users.Requests;
 using Microsoft.AspNetCore.Components.Authorization;
+using FilePocket.BlazorClient.Features.Storage.Requests;
+using FilePocket.BlazorClient.Features.Storage.Models;
+using FilePocket.BlazorClient.Helpers;
 
 namespace FilePocket.BlazorClient.MyComponents;
 
@@ -48,6 +51,8 @@ public partial class FilesAndFolders
     [Inject] IUserRequests UserRequests { get; set; } = default!;
     [Inject] private NavigationManager Navigation { get; set; } = default!;
     [Inject] private IJSRuntime JS { get; set; } = default!;
+    [Inject] private IStorageRequests StorageRequests { get; set; } = default!;
+    [Inject] private StateContainer<StorageConsumptionModel> StorageStateContainer { get; set; } = default!;
 
     protected override async Task OnInitializedAsync()
     {
@@ -199,6 +204,9 @@ public partial class FilesAndFolders
 
                                 StateHasChanged();
                             });
+
+                            var storageConsumption = await StorageRequests.GetStorageConsumption();
+                            StorageStateContainer.SetValue(storageConsumption!);
                         }
                     }
                 }
