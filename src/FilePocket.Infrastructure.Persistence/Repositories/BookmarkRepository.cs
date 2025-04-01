@@ -11,9 +11,9 @@ public class BookmarkRepository : RepositoryBase<Bookmark>, IBookmarkRepository
     {
     }
 
-    public IEnumerable<Bookmark> GetAll(Guid userId, bool trackChanges)
+    public IEnumerable<Bookmark> GetAll(Guid userId, bool isSoftDeleted, bool trackChanges)
     {
-        return FindByCondition(b => b.UserId == userId && !b.IsDeleted, trackChanges).OrderByDescending(b => b.CreatedAt);
+        return FindByCondition(b => b.UserId == userId && b.IsDeleted == isSoftDeleted, trackChanges).OrderByDescending(b => b.CreatedAt);
     }
 
     public async Task<Bookmark> GetByIdAsync(Guid id)
@@ -21,12 +21,12 @@ public class BookmarkRepository : RepositoryBase<Bookmark>, IBookmarkRepository
         return (await FindByCondition(b => b.Id.Equals(id)))!;
     }
 
-    public async Task<List<Bookmark>> GetAllAsync(Guid userId, Guid pocketId, Guid? folderId, bool trackChanges)
+    public async Task<List<Bookmark>> GetAllAsync(Guid userId, Guid pocketId, Guid? folderId, bool isSoftDeleted, bool trackChanges)
     {
         return await FindByCondition(b => b.UserId.Equals(userId) 
                                             && b.PocketId.Equals(pocketId) 
                                             && b.FolderId.Equals(folderId) 
-                                            && !b.IsDeleted, trackChanges).ToListAsync();
+                                            && b.IsDeleted == isSoftDeleted, trackChanges).ToListAsync();
     }
 
     public void CreateBookmark(Bookmark bookmark)

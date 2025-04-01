@@ -55,7 +55,7 @@ public partial class DeletedBookmarks
         }
 
         _folders = new ObservableCollection<FolderModel>(folders);
-        _bookmarks = await BookmarkRequests.GetAllAsync(PocketId, FolderId);
+        _bookmarks = await BookmarkRequests.GetAllAsync(PocketId, FolderId, isSoftDeleted: true);
         _loading = false;
     }
 
@@ -93,11 +93,6 @@ public partial class DeletedBookmarks
 
         if (bookmark is not null)
         {
-            if (string.IsNullOrEmpty(bookmark.Title) || string.IsNullOrEmpty(bookmark.Url))
-            {
-                return;
-            }
-
             var bookmarkToUpdate = new UpdateBookmarkModel
             {
                 Id = bookmark.Id,

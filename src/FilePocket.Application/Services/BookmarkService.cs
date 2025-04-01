@@ -19,16 +19,16 @@ public class BookmarkService : IBookmarkService
         _mapper = mapper;
     }
 
-    public IEnumerable<BookmarkModel> GetAll(Guid userId, bool trackChanges)
+    public IEnumerable<BookmarkModel> GetAll(Guid userId, bool isSoftDeleted, bool trackChanges)
     {
-        var bookmarks = _repository.Bookmark.GetAll(userId, trackChanges);
+        var bookmarks = _repository.Bookmark.GetAll(userId, isSoftDeleted, trackChanges);
 
         return _mapper.Map<IEnumerable<BookmarkModel>>(bookmarks);
     }
 
-    public async Task<IEnumerable<BookmarkModel>> GetAllAsync(Guid userId, Guid pocketId, Guid? folderId, bool trackChanges)
+    public async Task<IEnumerable<BookmarkModel>> GetAllAsync(Guid userId, Guid pocketId, Guid? folderId, bool isSoftDeleted, bool trackChanges)
     {
-        var bookmarks = await _repository.Bookmark.GetAllAsync(userId, pocketId, folderId, trackChanges);
+        var bookmarks = await _repository.Bookmark.GetAllAsync(userId, pocketId, folderId, isSoftDeleted, trackChanges);
 
         return _mapper.Map<List<BookmarkModel>>(bookmarks);
     }

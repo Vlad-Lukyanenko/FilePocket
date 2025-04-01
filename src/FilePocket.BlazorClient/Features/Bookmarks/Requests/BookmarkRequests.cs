@@ -14,21 +14,21 @@ public class BookmarkRequests : IBookmarkRequests
         _apiClient = apiClient;
     }
 
-    public async Task<List<BookmarkModel>> GetAllAsync(Guid? pocketId, Guid? folderId)
+    public async Task<List<BookmarkModel>> GetAllAsync(Guid? pocketId, Guid? folderId, bool isSoftDeleted)
     {
         var url = string.Empty;
 
         if (pocketId is not null && folderId is not null)
         {
-            url = $"api/pockets/{pocketId}/folders/{folderId}/bookmarks";
+            url = $"api/pockets/{pocketId}/folders/{folderId}/{isSoftDeleted}/bookmarks";
         }
         else if (pocketId is not null && folderId is null)
         {
-            url = $"api/pockets/{pocketId}/bookmarks";
+            url = $"api/pockets/{pocketId}/{isSoftDeleted}/bookmarks";
         }
         else
         {
-            url = $"{BaseUrl}/all";
+            url = $"{BaseUrl}/all/{isSoftDeleted}";
         }
 
         var content = await _apiClient.GetAsync(url);

@@ -59,7 +59,7 @@ public partial class Bookmarks
         }
 
         _folders = new ObservableCollection<FolderModel>(folders);
-        _bookmarks = await BookmarkRequests.GetAllAsync(PocketId, FolderId);
+        _bookmarks = await BookmarkRequests.GetAllAsync(PocketId, FolderId, isSoftDeleted: false);
         _loading = false;
     }
 
@@ -137,7 +137,8 @@ public partial class Bookmarks
                 FolderId = bookmark.FolderId,
                 Title = bookmark.Title,
                 Url = bookmark.Url,
-                UserId = bookmark.UserId
+                UserId = bookmark.UserId,
+                IsDeleted = bookmark.IsDeleted
             };
 
             var isUpdated = await BookmarkRequests.UpdateAsync(bookmarkToUpdate);
