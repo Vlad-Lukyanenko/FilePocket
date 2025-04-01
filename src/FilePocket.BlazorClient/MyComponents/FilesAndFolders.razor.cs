@@ -129,6 +129,8 @@ public partial class FilesAndFolders
 
         _removalProcessStarted = false;
 
+        var storageConsumption = await StorageRequests.GetStorageConsumption();
+        StorageStateContainer.SetValue(storageConsumption!);
         Navigation.NavigateTo(_goBackUrl);
     }
 
