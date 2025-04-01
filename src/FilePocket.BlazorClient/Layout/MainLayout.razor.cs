@@ -2,6 +2,7 @@ using FilePocket.BlazorClient.Features.Storage.Models;
 using FilePocket.BlazorClient.Features.Storage.Requests;
 using FilePocket.BlazorClient.Features.Users.Models;
 using FilePocket.BlazorClient.Features.Users.Requests;
+using FilePocket.BlazorClient.Helpers;
 using FilePocket.BlazorClient.Services.Files.Requests;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -17,11 +18,13 @@ public partial class MainLayout : IDisposable
     LoggedInUserModel? _user;
     private bool _menuOpen;
     private string? _icon;
+    private bool _render;
 
     [Inject] AuthenticationStateProvider AuthStateProvider { get; set; } = default!;
     [Inject] IUserRequests UserRequests { get; set; } = default!;
     [Inject] private IFileRequests FileRequests { get; set; } = default!;
     [Inject] private IStorageRequests StorageRequests { get; set; } = default!;
+    [Inject] private StateContainer<LoggedInUserModel> UserStateContainer { get; set; } = default!;
 
     private StorageConsumptionModel _storageConsumption = new();
 
@@ -43,6 +46,9 @@ public partial class MainLayout : IDisposable
             StateHasChanged();
             _iconName = string.Concat(_user.FirstName.AsSpan(0, 1), _user.LastName.AsSpan(0, 1)).ToUpper();
 
+            var fisrtName = string.IsNullOrEmpty(_user.FirstName) ? string.Empty : _user.FirstName.AsSpan(0, 1);
+            var lastName = string.IsNullOrEmpty(_user.LastName) ? string.Empty : _user.LastName.AsSpan(0, 1);
+            _iconName = string.Concat(fisrtName, lastName).ToUpper();
 
             if (_iconName.Length == 0)
             {
@@ -51,12 +57,13 @@ public partial class MainLayout : IDisposable
 
             if (_user.Profile!.IconId is not null && _user.Profile!.IconId != Guid.Empty)
             {
-                var avatar = await FileRequests.GetImageThumbnailAsync((Guid)_user.Profile!.IconId, 500);
+                var avatar = await FileRequests.GetImageThumbnailAsync((Guid)_user.Profile.IconId, 500);
                 _icon = Convert.ToBase64String(avatar.FileByteArray!);
             }
         }
 
         Navigation.LocationChanged += OnLocationChanged;
+        UserStateContainer.OnStateChange += async () => await UpdateUserStateAsync();
         NavigationHistory.AddToHistory(Navigation.Uri);
     }
 
@@ -74,6 +81,7 @@ public partial class MainLayout : IDisposable
     public void Dispose()
     {
         Navigation.LocationChanged -= OnLocationChanged;
+        UserStateContainer.OnStateChange -= async () => await UpdateUserStateAsync();
         GC.SuppressFinalize(this);
     }
 
@@ -95,14 +103,30 @@ public partial class MainLayout : IDisposable
 
     private string GetDisplayedName()
     {
-        if (_user == null) return string.Empty;
+        if (_user is null || (string.IsNullOrEmpty(_user.FirstName) && string.IsNullOrEmpty(_user.LastName)))
+        {
+            return string.Empty;
+        }
 
-        if (_user.FirstName!.Length > 0 && _user.LastName!.Length > 0)
+        if (!string.IsNullOrEmpty(_user.FirstName) && !string.IsNullOrEmpty(_user.LastName))
         {
             return $"{_user.FirstName} {_user.LastName}";
         }
 
-        return _user.FirstName!.Length > 0 ? _user.FirstName! : _user.LastName!;
+        return string.IsNullOrEmpty(_user.FirstName) ? _user.LastName! : _user.FirstName;
+    }
+
+    private async Task UpdateUserStateAsync()
+    {
+        _user = UserStateContainer.Value;
+
+        if (_user!.Profile!.IconId is not null && _user.Profile!.IconId != Guid.Empty)
+        {
+            var avatar = await FileRequests.GetImageThumbnailAsync((Guid)_user.Profile.IconId, 500);
+            _icon = Convert.ToBase64String(avatar.FileByteArray!);
+        }
+
+        await InvokeAsync(StateHasChanged);
     }
     private void GetStorageConsumptionInPercantage()
     {

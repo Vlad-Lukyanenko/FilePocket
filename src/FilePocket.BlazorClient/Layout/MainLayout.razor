@@ -20,8 +20,8 @@
 
     <AuthorizeView>
         <Authorized>
-          
-             <!-- Sidebar Menu Desktop-->
+
+            <!-- Sidebar Menu Desktop-->
             <aside class="col-2 d-none d-md-block p-4">
 
                 <!-- Brand Logo and Name -->
@@ -31,24 +31,24 @@
                 </a>
 
                 <ul class="nav nav-pills d-flex flex-row flex-md-column justify-content-start overflow-auto mt-4" id="menu">
-                        <li class="nav-item flex-fill flex-md-grow-0">
-                            <a href="#" class="nav-link text-dark px-2 @(IsActive("#"))">
-                                <div class="d-flex align-items-center justify-content-center justify-content-md-start">
-                                    <i class="fs-4 bi-house"></i>
-                                    <span class="ms-2 d-none d-md-inline">Home</span>
-                                </div>
-                                <!-- Removed the extra closing div -->
-                            </a>
-                        </li>
-                        <li class="nav-item flex-fill flex-md-grow-0">
-                            <a href="/files" class="nav-link text-dark px-2 @(IsActive("/files"))">
-                                <div class="d-flex align-items-center justify-content-center justify-content-md-start">
-                                    <i class="fs-4 bi-file-earmark-medical"></i>
-                                    <span class="ms-2 d-none d-md-inline">Files</span>
-                                </div>
-                            </a>
-                        </li>
-                        @* <li class="nav-item flex-fill flex-md-grow-0">
+                    <li class="nav-item flex-fill flex-md-grow-0">
+                        <a href="#" class="nav-link text-dark px-2 @(IsActive("#"))">
+                            <div class="d-flex align-items-center justify-content-center justify-content-md-start">
+                                <i class="fs-4 bi-house"></i>
+                                <span class="ms-2 d-none d-md-inline">Home</span>
+                            </div>
+                            <!-- Removed the extra closing div -->
+                        </a>
+                    </li>
+                    <li class="nav-item flex-fill flex-md-grow-0">
+                        <a href="/files" class="nav-link text-dark px-2 @(IsActive("/files"))">
+                            <div class="d-flex align-items-center justify-content-center justify-content-md-start">
+                                <i class="fs-4 bi-file-earmark-medical"></i>
+                                <span class="ms-2 d-none d-md-inline">Files</span>
+                            </div>
+                        </a>
+                    </li>
+                    @* <li class="nav-item flex-fill flex-md-grow-0">
                             <a href="/pockets" class="nav-link text-dark px-2 @(IsActive("/pockets"))">
                                 <div class="d-flex align-items-center justify-content-center justify-content-md-start">
                                     <i class="fs-4 bi-archive"></i>
@@ -56,49 +56,49 @@
                                 </div>
                             </a>
                         </li> *@
-                        <li class="nav-item flex-fill flex-md-grow-0">
-                            <a href="/bookmarks" class="nav-link text-dark px-2 @(IsActive("/bookmarks"))">
-                                <div class="d-flex align-items-center justify-content-center justify-content-md-start">
-                                    <i class="fs-4 bi-bookmarks"></i>
-                                    <span class="ms-2 d-none d-md-inline">Bookmarks</span>
-                                </div>
-                            </a>
-                        </li>
+                    <li class="nav-item flex-fill flex-md-grow-0">
+                        <a href="/bookmarks" class="nav-link text-dark px-2 @(IsActive("/bookmarks"))">
+                            <div class="d-flex align-items-center justify-content-center justify-content-md-start">
+                                <i class="fs-4 bi-bookmarks"></i>
+                                <span class="ms-2 d-none d-md-inline">Bookmarks</span>
+                            </div>
+                        </a>
+                    </li>
 
-                        <li class="nav-item flex-fill flex-md-grow-0">
-                            <a href="/files/shared" class="nav-link text-dark px-2 @(IsActive("/files/shared"))">
-                                <div class="d-flex align-items-center justify-content-center justify-content-md-start">
-                                    <i class="fs-4 bi-share"></i>
-                                    <span class="ms-2 d-none d-md-inline">Shared</span>
-                                </div>
-                            </a>
-                        </li>
-                        
-                        <li class="nav-item flex-fill flex-md-grow-0">
-                            <a href="/notes" class="nav-link text-dark px-2 @(IsActive("/notes"))">
-                                <div class="d-flex align-items-center justify-content-center justify-content-md-start">
-                                    <i class="bi bi-pencil-square"></i>
-                                    <span class="ms-2 d-none d-md-inline">Notes</span>
-                                </div>
-                            </a>
-                        </li>
-                        
-                        <li class="nav-item flex-fill flex-md-grow-0">
-                            <a href="/settings" class="nav-link text-dark px-2 @(IsActive("/settings"))">
-                                <div class="d-flex align-items-center justify-content-center justify-content-md-start">
-                                    <i class="fs-4 bi bi-gear"></i>
-                                    <span class="ms-2 d-none d-md-inline">Settings</span>
-                                </div>
-                            </a>
-                        </li>
-                        <li class="nav-item flex-fill flex-md-grow-0">
-                            <a href="/trash" class="nav-link text-dark px-2 @(IsActive("/trash"))">
-                                <div class="d-flex align-items-center justify-content-center justify-content-md-start">
-                                    <i class="fs-4 bi bi-trash"></i>
-                                    <span class="ms-2 d-none d-md-inline">Delete</span>
-                                </div>
-                            </a>
-                        </li>
+                    <li class="nav-item flex-fill flex-md-grow-0">
+                        <a href="/files/shared" class="nav-link text-dark px-2 @(IsActive("/files/shared"))">
+                            <div class="d-flex align-items-center justify-content-center justify-content-md-start">
+                                <i class="fs-4 bi-share"></i>
+                                <span class="ms-2 d-none d-md-inline">Shared</span>
+                            </div>
+                        </a>
+                    </li>
+
+                    <li class="nav-item flex-fill flex-md-grow-0">
+                        <a href="/notes" class="nav-link text-dark px-2 @(IsActive("/notes"))">
+                            <div class="d-flex align-items-center justify-content-center justify-content-md-start">
+                                <i class="bi bi-pencil-square"></i>
+                                <span class="ms-2 d-none d-md-inline">Notes</span>
+                            </div>
+                        </a>
+                    </li>
+
+                    <li class="nav-item flex-fill flex-md-grow-0">
+                        <a href="/settings" class="nav-link text-dark px-2 @(IsActive("/settings"))">
+                            <div class="d-flex align-items-center justify-content-center justify-content-md-start">
+                                <i class="fs-4 bi bi-gear"></i>
+                                <span class="ms-2 d-none d-md-inline">Settings</span>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="nav-item flex-fill flex-md-grow-0">
+                        <a href="/trash" class="nav-link text-dark px-2 @(IsActive("/trash"))">
+                            <div class="d-flex align-items-center justify-content-center justify-content-md-start">
+                                <i class="fs-4 bi bi-trash"></i>
+                                <span class="ms-2 d-none d-md-inline">Delete</span>
+                            </div>
+                        </a>
+                    </li>
                 </ul>
             </aside>
 
@@ -160,40 +160,40 @@
                         </li>
                     </ul>
 
-               
-              <!-- Logout Button -->
-                     <a href="/logout" class="btn btn-outline-danger px-3 mt-3">
+
+                    <!-- Logout Button -->
+                    <a href="/logout" class="btn btn-outline-danger px-3 mt-3">
                         <strong>Logout</strong>
-                     </a>
+                    </a>
                 </div>
             </div>
 
             <div class="col container-fluid">
                 <!-- Navbar -->
                 <header class="position-relative mb-2 navbar navbar-expand-md w-100 p-2">
-                        <div class="container-fluid">
-                            <!-- Mobile Toggle Button -->
-                            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu">
-                                <span class="navbar-toggler-icon"></span>
-                            </button>
+                    <div class="container-fluid">
+                        <!-- Mobile Toggle Button -->
+                        <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
 
-                            <!-- Collapsible Content -->
-                            <div class="collapse navbar-collapse">
-                                <div class="d-flex flex-column flex-md-row align-items-center ms-auto gap-3">
-                                    <!-- Search Form -->
-                                    <form class="d-flex" role="search">
-                                        <div class="search-container">
-                                            <input class="search-box" type="text" placeholder="looking for something?" />
-                                            <button class="search-button">
-                                                <i class="fas fa-search" style="color:rgba(65, 44, 168, 1)"></i>
-                                            </button>
-                                        </div>
-                                    </form>
-                                   
-                                </div>
-                                
+                        <!-- Collapsible Content -->
+                        <div class="collapse navbar-collapse">
+                            <div class="d-flex flex-column flex-md-row align-items-center ms-auto gap-3">
+                                <!-- Search Form -->
+                                <form class="d-flex" role="search">
+                                    <div class="search-container">
+                                        <input class="search-box" type="text" placeholder="looking for something?" />
+                                        <button class="search-button">
+                                            <i class="fas fa-search" style="color:rgba(65, 44, 168, 1)"></i>
+                                        </button>
+                                    </div>
+                                </form>
+
                             </div>
+
                         </div>
+                    </div>
                 </header>
 
                 <!-- Main Content Area -->
@@ -206,36 +206,36 @@
 
             <!-- Right Offcanvas Menu -->
             <div class="offcanvasMenuRight p-3">
-              <!-- Open the Right offcanvas Menu -->
-               <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#rightOffcanvasMenu">
+                <!-- Open the Right offcanvas Menu -->
+                <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#rightOffcanvasMenu">
                     <img src="./assets/img/menu.svg" alt="menu" width="20" height="20" class="d-inline-block">
                 </button>
 
-                    
+
                 <div class="offcanvas offcanvas-end" tabindex="-1" id="rightOffcanvasMenu">
-                        <div class="offcanvas-header">
-                            <button type="button" class="btn-close btn-close-white text-reset" data-bs-dismiss="offcanvas"></button>
-                        </div>
-                        <div class="offcanvas-body">
-                            <div class="controls-container">
-                                <!-- Signing In User Info Button -->
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div class="d-flex align-items-center">
-                                            @* <span>@_user?.Email</span> *@
-                                            <img class="rounded-circle avatar-image" src="@(_icon is null ? "../assets/img/man.png" : $"data:image/jpeg;base64,{_icon}")" alt="userPicture">
-                                            <div>
-                                                <span>@_user?.Email</span>
-                                                <h5 class="card-title">
-                                                    @GetDisplayedName()
-                                                </h5>
-                                            </div>
-                                    </div>
-                                    <div class="icon" @onclick="SwitchUserInfoDialog">
-                                        @* @(_iconName ?? "...") *@
-                                        <i class="bi bi-chevron-double-right"></i>
+                    <div class="offcanvas-header">
+                        <button type="button" class="btn-close btn-close-white text-reset" data-bs-dismiss="offcanvas"></button>
+                    </div>
+                    <div class="offcanvas-body">
+                        <div class="controls-container">
+                            <!-- Signing In User Info Button -->
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="d-flex align-items-center">
+                                    @* <span>@_user?.Email</span> *@
+                                    <img class="rounded-circle avatar-image" src="@(_icon is null ? "../assets/img/man.png" : $"data:image/jpeg;base64,{_icon}")" alt="userPicture">
+                                    <div>
+                                        <span>@_user?.Email</span>
+                                        <h5 class="card-title">
+                                            @GetDisplayedName()
+                                        </h5>                                                                               
                                     </div>
                                 </div>
+                                <div class="icon" @onclick="SwitchUserInfoDialog">
+                                    @* @(_iconName ?? "...") *@
+                                    <i class="bi bi-chevron-double-right"></i>
+                                </div>
                             </div>
+                        </div>
                                 
                             @if (_menuOpen)
                             {
