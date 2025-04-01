@@ -1,7 +1,19 @@
 ﻿@page "/trash"
 
-<h3>Trash</h3>
+<div class="container-fluid" style="min-height: 600px;">
+    <div class="container-fluid w-100 my-w-md-75">
+        <TopSubMenu Title="Recycle Bin" ShowBackButton="@(false)" />
 
-@code {
-
-}
+        <div class="d-flex gap-lg-5 justify-content-center">
+            <div class="link-card" @onclick="@(() => Navigate("/files"))">
+                <h5>Files</h5>
+            </div>
+            <div class="link-card" @onclick="@(() => Navigate("/bookmarks"))">
+                <h5>Bookmarks</h5>
+            </div>
+            <div class="link-card" @onclick="@(() => Navigate("/"))">
+                <h5>Notes</h5>
+            </div>
+        </div>
+    </div>
+</div>

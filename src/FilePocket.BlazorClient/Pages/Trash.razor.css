@@ -1,0 +1,15 @@
+﻿.link-card {
+    border-radius: 25px;
+    border: 2px solid #206196;
+    text-align: center;
+    height: 100px;
+    width: 200px;
+    cursor: pointer;
+    background-color: rgb(119, 217, 247, 0.1);
+}
+
+h5 {
+    line-height: 100px;
+    color: #437fb0;
+    font-weight: 600;
+}
