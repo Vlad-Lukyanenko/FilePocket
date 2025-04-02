@@ -97,7 +97,7 @@ public partial class DeletedBookmarks
             {
                 Id = bookmark.Id,
                 PocketId = bookmark.PocketId,
-                FolderId = bookmark.FolderId,
+                FolderId = null,
                 Title = bookmark.Title,
                 Url = bookmark.Url,
                 UserId = bookmark.UserId,
