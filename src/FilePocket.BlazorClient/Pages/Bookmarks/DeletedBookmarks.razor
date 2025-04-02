@@ -13,7 +13,7 @@
         <!-- Top SubMenu -->
         <TopSubMenu Title="@_pageTitle" ShowBackButton="@(FolderId is not null)" />
 
-        <FoldersBlock Folders="_folders" PocketId="PocketId"></FoldersBlock>
+        <FoldersBlock Folders="_folders" PocketId="PocketId" IsSoftDeleted="true" />
 
         <!-- Action Button Row -->
         <div class="row mx-auto">

@@ -30,11 +30,25 @@
     [Parameter]
     public Guid? PocketId { get; set; }
 
+    [Parameter]
+    public bool IsSoftDeleted { get; set; }
+
     private string GetFolderUrl(Guid? pocketId, Guid? folderId, FolderType folderType)
     {
         if (pocketId is null)
         {
+            if (IsSoftDeleted)
+            {
+                return folderType == FolderType.Files ? $"/folders/{folderId}/files/trash" : $"/folders/{folderId}/bookmarks/trash";
+            }
+
             return folderType == FolderType.Files ? $"/folders/{folderId}/files" : $"/folders/{folderId}/bookmarks";
+        }
+
+        if (IsSoftDeleted)
+        {
+            return folderType == FolderType.Files ? $"/pockets/{pocketId}/folders/{folderId}/files/trash" 
+                                                  : $"/pockets/{pocketId}/folders/{folderId}/bookmarks/trash";
         }
 
         return folderType == FolderType.Files ? $"/pockets/{pocketId}/folders/{folderId}/files" : $"/pockets/{pocketId}/folders/{folderId}/bookmarks";

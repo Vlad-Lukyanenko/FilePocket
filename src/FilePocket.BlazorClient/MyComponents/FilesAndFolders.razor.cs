@@ -87,12 +87,12 @@ public partial class FilesAndFolders
 
         if (FolderId == null)
         {
-            folders = (await FolderRequests.GetAllAsync(PocketId, FolderType.Files)).ToList();
+            folders = (await FolderRequests.GetAllAsync(PocketId, FolderType.Files, isSoftDeleted: false)).ToList();
             files = await FileRequests.GetFilesAsync(PocketId, null);
         }
         else
         {
-            folders = (await FolderRequests.GetAllAsync(PocketId, FolderId.Value, FolderType.Files)).ToList();
+            folders = (await FolderRequests.GetAllAsync(PocketId, FolderId.Value, FolderType.Files, isSoftDeleted: false)).ToList();
             files = await FileRequests.GetFilesAsync(PocketId, FolderId.Value);
         }
 

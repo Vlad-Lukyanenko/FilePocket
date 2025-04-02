@@ -5,9 +5,9 @@ namespace FilePocket.BlazorClient.Services.Folders.Requests;
 
 public interface IFolderRequests
 {
-    Task<IEnumerable<FolderModel>> GetAllAsync(Guid? pocketId, Guid parentFolderId, FolderType folderType);
+    Task<IEnumerable<FolderModel>> GetAllAsync(Guid? pocketId, Guid parentFolderId, FolderType folderType, bool isSoftDeleted);
     Task<FolderModel> GetAsync(Guid folderId);
-    Task<IEnumerable<FolderModel>> GetAllAsync(Guid? pocketId, FolderType folderType);
+    Task<IEnumerable<FolderModel>> GetAllAsync(Guid? pocketId, FolderType folderType, bool isSoftDeleted);
     Task<bool> CreateAsync(FolderModel folder);
     Task<bool> DeleteAsync(Guid folderId);
     Task<bool> SoftDeleteAsync(Guid folderId);

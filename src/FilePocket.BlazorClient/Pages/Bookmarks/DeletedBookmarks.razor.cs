@@ -47,11 +47,11 @@ public partial class DeletedBookmarks
 
         if (FolderId is null)
         {
-            folders = (await FolderRequests.GetAllAsync(PocketId, FolderType.Bookmarks)).ToList();
+            folders = (await FolderRequests.GetAllAsync(PocketId, FolderType.Bookmarks, isSoftDeleted: true)).ToList();
         }
         else
         {
-            folders = (await FolderRequests.GetAllAsync(PocketId, FolderId.Value, FolderType.Bookmarks)).ToList();
+            folders = (await FolderRequests.GetAllAsync(PocketId, FolderId.Value, FolderType.Bookmarks, isSoftDeleted: true)).ToList();
         }
 
         _folders = new ObservableCollection<FolderModel>(folders);

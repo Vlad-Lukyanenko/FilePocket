@@ -27,12 +27,12 @@ public class FolderRequests : IFolderRequests
         return response.IsSuccessStatusCode;
     }
 
-    public async Task<IEnumerable<FolderModel>> GetAllAsync(Guid? pocketId, Guid parentFolderId, FolderType folderType)
+    public async Task<IEnumerable<FolderModel>> GetAllAsync(Guid? pocketId, Guid parentFolderId, FolderType folderType, bool isSoftDeleted)
     {
 
         var url = pocketId is null 
-            ? $"api/parent-folder/{parentFolderId}/{folderType}/folders"
-            : $"api/pockets/{pocketId}/parent-folder/{parentFolderId}/{folderType}/folders";
+            ? $"api/parent-folder/{parentFolderId}/{folderType}/{isSoftDeleted}/folders"
+            : $"api/pockets/{pocketId}/parent-folder/{parentFolderId}/{folderType}/{isSoftDeleted}/folders";
         
         var content = await _apiClient.GetAsync(url);
 
@@ -48,11 +48,11 @@ public class FolderRequests : IFolderRequests
         return JsonConvert.DeserializeObject<FolderModel>(content)!;
     }
 
-    public async Task<IEnumerable<FolderModel>> GetAllAsync(Guid? pocketId, FolderType folderType)
+    public async Task<IEnumerable<FolderModel>> GetAllAsync(Guid? pocketId, FolderType folderType, bool isSoftDeleted)
     {
         var url = pocketId is null 
-            ? $"api/folders/{folderType}"
-            : $"api/pockets/{pocketId}/{folderType}/folders";
+            ? $"api/folders/{folderType}/{isSoftDeleted}"
+            : $"api/pockets/{pocketId}/{folderType}/{isSoftDeleted}/folders";
         
         var content = await _apiClient.GetAsync(url);
 

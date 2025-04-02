@@ -60,13 +60,13 @@ public class FolderRepository : RepositoryBase<Folder>, IFolderRepository
         }
     }
 
-    public async Task<List<Folder>> GetAllAsync(Guid userId, Guid? pocketId, Guid? parentFolderId, FolderType folderType)
+    public async Task<List<Folder>> GetAllAsync(Guid userId, Guid? pocketId, Guid? parentFolderId, FolderType folderType, bool isSoftDeleted)
     {
         var result = DbContext.Set<Folder>().Where(c => c.UserId == userId
                                                         && c.PocketId == pocketId
                                                         && c.ParentFolderId == parentFolderId
                                                         && c.FolderType == folderType
-                                                        && !c.IsDeleted);
+                                                        && c.IsDeleted == isSoftDeleted);
 
         return await result.ToListAsync();
     }
