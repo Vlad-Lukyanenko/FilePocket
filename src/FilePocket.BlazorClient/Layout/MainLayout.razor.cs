@@ -1,4 +1,4 @@
-using FilePocket.BlazorClient.Features.Users.Models;
+﻿using FilePocket.BlazorClient.Features.Users.Models;
 using FilePocket.BlazorClient.Features.Users.Requests;
 using FilePocket.BlazorClient.Helpers;
 using FilePocket.BlazorClient.Services.Files.Requests;
@@ -21,6 +21,8 @@ public partial class MainLayout : IDisposable
     [Inject] IUserRequests UserRequests { get; set; } = default!;
     [Inject] private IFileRequests FileRequests { get; set; } = default!;
     [Inject] private StateContainer<LoggedInUserModel> UserStateContainer { get; set; } = default!;
+
+    [Inject] private NavigationManager? NavigationManager { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -76,10 +78,11 @@ public partial class MainLayout : IDisposable
         Navigation.NavigateTo(url);
     }
 
-    private void SwitchUserInfoDialog()
+    private void NavigateToProfile()
     {
-        _menuOpen = !_menuOpen;
+        Navigation.NavigateTo("/profile?openModal=true", forceLoad: false);
     }
+
 
     private string GetDisplayedName()
     {
@@ -107,6 +110,14 @@ public partial class MainLayout : IDisposable
         }
 
         await InvokeAsync(StateHasChanged);
+    }
+
+    private bool _isFilesMenuOpen = false;
+
+    private void ToggleFilesMenu()
+    {
+        _isFilesMenuOpen = !_isFilesMenuOpen;
+        StateHasChanged();
     }
 }
 
