@@ -58,9 +58,19 @@ public class FolderService : IFolderService
     public async Task MoveToTrashAsync(Guid folderId)
     {
         var folder = await GetFolderAndCheckIfItExistsAsync(folderId);
-        await IterateAndMarkAsDeletedThroughChildFoldersAsync(folder.Id);
+        await IterateAndMarkAsDeletedOrRestoredThroughChildFoldersAsync(folder.Id, isDeleted: true);
 
         folder.MarkAsDeleted();
+
+        await _repository.SaveChangesAsync();
+    }
+
+    public async Task RestoreFromTrashAsync(Guid folderId)
+    {
+        var folder = await GetFolderAndCheckIfItExistsAsync(folderId);
+        await IterateAndMarkAsDeletedOrRestoredThroughChildFoldersAsync(folder.Id, isDeleted: false);
+
+        folder.RestoreFromDeleted();
 
         await _repository.SaveChangesAsync();
     }
@@ -84,7 +94,7 @@ public class FolderService : IFolderService
         return folder;
     }
 
-    private async Task IterateAndMarkAsDeletedThroughChildFoldersAsync(Guid folderId)
+    private async Task IterateAndMarkAsDeletedOrRestoredThroughChildFoldersAsync(Guid folderId, bool isDeleted)
     {
         var stack = new Stack<Guid>();
         stack.Push(folderId);
@@ -92,7 +102,7 @@ public class FolderService : IFolderService
         while (stack.Count > 0)
         {
             var currentFolderId = stack.Pop();
-            var childFolders = _repository.Folder.GetChildFolders(currentFolderId, true);
+            var childFolders = _repository.Folder.GetChildFolders(currentFolderId, true).Where(f => f.IsDeleted == isDeleted);
 
             if (childFolders is not null && childFolders.Any())
             {
@@ -102,8 +112,16 @@ public class FolderService : IFolderService
                 }
             }
 
-            var folderToDelete = await GetFolderAndCheckIfItExistsAsync(currentFolderId);
-            folderToDelete.IsDeleted = true;
+            var folderToUpdate = await GetFolderAndCheckIfItExistsAsync(currentFolderId);
+
+            if (isDeleted)
+            {
+                folderToUpdate.MarkAsDeleted();
+            }
+            else
+            {
+                folderToUpdate.RestoreFromDeleted();
+            }
         }
     }
 }

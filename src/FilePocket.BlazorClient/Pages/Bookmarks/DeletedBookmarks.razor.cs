@@ -20,6 +20,7 @@ public partial class DeletedBookmarks
     private string _pageTitle = string.Empty;
     private FolderModel? _currentFolder;
     private bool _deleteFolderStarted;
+    private bool _restoreFolderStarted;
 
     [Parameter] public Guid PocketId { get; set; }
     [Parameter] public Guid? FolderId { get; set; }

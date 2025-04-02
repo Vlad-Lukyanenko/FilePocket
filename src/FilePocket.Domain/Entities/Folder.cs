@@ -34,4 +34,29 @@ public class Folder : IAmSoftDeletedEntity
             FileMetadata?.ForEach(b => b.MarkAsDeleted(DeletedAt));
         }
     }
+
+    public void RestoreFromDeleted()
+    {
+        IsDeleted = false;
+        DeletedAt = null;
+        ParentFolderId = null;
+
+        if (Bookmarks is not null && Bookmarks.Any())
+        {
+            Bookmarks?.ForEach(b =>
+            {
+                b.DeletedAt = null;
+                b.IsDeleted = false;
+            });
+        }
+
+        if (FileMetadata is not null && FileMetadata.Any())
+        {
+            FileMetadata?.ForEach(f =>
+            {
+                f.DeletedAt = null;
+                f.IsDeleted = false;
+            });
+        }
+    }
 }
