@@ -132,4 +132,16 @@ public partial class DeletedBookmarks
 
         await JSRuntime.InvokeVoidAsync("history.back");
     }
+
+    private async Task RestoreFolderClickAsync()
+    {
+        if (FolderId is not null)
+        {
+            await FolderRequests.RestoreAsync(FolderId.Value);
+        }
+
+        _restoreFolderStarted = false;
+
+        await JSRuntime.InvokeVoidAsync("history.back");        
+    }
 }

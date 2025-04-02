@@ -77,6 +77,15 @@ public class FolderRequests : IFolderRequests
         return response.IsSuccessStatusCode;
     }
 
+    public async Task<bool> RestoreAsync(Guid folderId)
+    {
+        var url = $"api/folders/restore/{folderId}";
+
+        var response = await _apiClient.PutAsync(url, null);
+
+        return response.IsSuccessStatusCode;
+    }
+
     public Task<bool> UpdateAsync(FolderModel folder)
     {
         throw new NotImplementedException();

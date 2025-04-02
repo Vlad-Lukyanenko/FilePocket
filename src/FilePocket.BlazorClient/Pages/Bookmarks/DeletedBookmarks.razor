@@ -40,7 +40,7 @@
                         {
                             <button class="btn btn-sm btn-outline-danger p-1 folder-action-btn"
                                     title="Confirm"
-                                    @onclick="DeleteFolderClickAsync">
+                                    @onclick="RestoreFolderClickAsync">
                                 <i class="bi-check-square fs-6"></i> Confirm
                             </button>
                             <button class="btn btn-sm btn-outline-secondary p-1 folder-action-btn"
@@ -53,11 +53,11 @@
                         @if (!_restoreFolderStarted && !_deleteFolderStarted)
                         {
                             <button class="btn btn-outline-primary p-1 folder-action-btn"
-                                    @onclick="() => _deleteFolderStarted = true">
+                                    @onclick="() => _restoreFolderStarted = true">
                                 <i class="bi bi-arrow-repeat me-1"></i> Restore
                             </button>
                             <button class="btn btn-outline-danger p-1 folder-action-btn"
-                                    @onclick="() => _restoreFolderStarted = true">
+                                    @onclick="() => _deleteFolderStarted = true">
                                 <i class="bi bi-trash fs-6"></i> Delete
                             </button>                            
                         }

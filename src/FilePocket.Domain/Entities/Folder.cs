@@ -22,7 +22,7 @@ public class Folder : IAmSoftDeletedEntity
     public void MarkAsDeleted(DateTime? deletedAt = null)
     {
         IsDeleted = true;
-        DeletedAt = deletedAt ?? DateTime.UtcNow;
+        DeletedAt = deletedAt ?? DateTime.UtcNow;       
 
         if (Bookmarks is not null && Bookmarks.Any())
         {
@@ -39,7 +39,6 @@ public class Folder : IAmSoftDeletedEntity
     {
         IsDeleted = false;
         DeletedAt = null;
-        ParentFolderId = null;
 
         if (Bookmarks is not null && Bookmarks.Any())
         {

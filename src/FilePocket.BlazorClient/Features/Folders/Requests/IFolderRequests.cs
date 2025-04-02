@@ -11,5 +11,6 @@ public interface IFolderRequests
     Task<bool> CreateAsync(FolderModel folder);
     Task<bool> DeleteAsync(Guid folderId);
     Task<bool> SoftDeleteAsync(Guid folderId);
+    Task<bool> RestoreAsync(Guid folderId);
     Task<bool> UpdateAsync(FolderModel folder);
 }

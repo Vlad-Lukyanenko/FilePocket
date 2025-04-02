@@ -58,9 +58,10 @@ public class FolderService : IFolderService
     public async Task MoveToTrashAsync(Guid folderId)
     {
         var folder = await GetFolderAndCheckIfItExistsAsync(folderId);
-        await IterateAndMarkAsDeletedOrRestoredThroughChildFoldersAsync(folder.Id, isDeleted: true);
+        await IterateAndMarkAsDeletedOrRestoredThroughChildFoldersAsync(folder, isDeleted: true);
 
         folder.MarkAsDeleted();
+        folder.ParentFolderId = null;
 
         await _repository.SaveChangesAsync();
     }
@@ -68,9 +69,10 @@ public class FolderService : IFolderService
     public async Task RestoreFromTrashAsync(Guid folderId)
     {
         var folder = await GetFolderAndCheckIfItExistsAsync(folderId);
-        await IterateAndMarkAsDeletedOrRestoredThroughChildFoldersAsync(folder.Id, isDeleted: false);
+        await IterateAndMarkAsDeletedOrRestoredThroughChildFoldersAsync(folder, isDeleted: false);
 
         folder.RestoreFromDeleted();
+        folder.ParentFolderId = null;
 
         await _repository.SaveChangesAsync();
     }
@@ -94,15 +96,15 @@ public class FolderService : IFolderService
         return folder;
     }
 
-    private async Task IterateAndMarkAsDeletedOrRestoredThroughChildFoldersAsync(Guid folderId, bool isDeleted)
+    private async Task IterateAndMarkAsDeletedOrRestoredThroughChildFoldersAsync(Folder folder, bool isDeleted)
     {
         var stack = new Stack<Guid>();
-        stack.Push(folderId);
+        stack.Push(folder.Id);
 
         while (stack.Count > 0)
         {
             var currentFolderId = stack.Pop();
-            var childFolders = _repository.Folder.GetChildFolders(currentFolderId, true).Where(f => f.IsDeleted == isDeleted);
+            var childFolders = _repository.Folder.GetChildFolders(currentFolderId, true).Where(f => f.IsDeleted == folder.IsDeleted);
 
             if (childFolders is not null && childFolders.Any())
             {
