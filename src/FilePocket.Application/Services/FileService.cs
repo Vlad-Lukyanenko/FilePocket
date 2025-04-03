@@ -21,9 +21,9 @@ public class FileService(
 {
     private readonly string _rootFolder = configuration.GetValue<string>("AppRootFolder")!;
 
-    public async Task<IEnumerable<FileResponseModel>> GetAllFilesAsync(Guid userId, Guid pocketId, Guid? folderId)
+    public async Task<IEnumerable<FileResponseModel>> GetAllFilesAsync(Guid userId, Guid pocketId, Guid? folderId, bool isSoftDeleted)
     {
-        var fileMetadata = await repository.FileMetadata.GetAllAsync(userId, pocketId, folderId);
+        var fileMetadata = await repository.FileMetadata.GetAllAsync(userId, pocketId, folderId, isSoftDeleted);
 
         var result = mapper.Map<List<FileResponseModel>>(fileMetadata);
 
