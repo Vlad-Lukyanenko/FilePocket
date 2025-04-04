@@ -46,11 +46,11 @@ public class FilesController : BaseController
     #endregion
 
     #region GET
-    [HttpGet("pockets/{pocketId:guid}/folders/{folderId:guid}/files")]
-    [HttpGet("pockets/{pocketId:guid}/files")]
-    public async Task<IActionResult> GetAll([FromRoute] Guid pocketId, [FromRoute] Guid? folderId)
+    [HttpGet("pockets/{pocketId:guid}/folders/{folderId:guid}/{isSoftDeleted:bool}/files")]
+    [HttpGet("pockets/{pocketId:guid}/{isSoftDeleted:bool}/files")]
+    public async Task<IActionResult> GetAll([FromRoute] Guid pocketId, [FromRoute] Guid? folderId, [FromRoute] bool isSoftDeleted)
     {
-        var fileMetadata = await _service.FileService.GetAllFilesAsync(UserId, pocketId, folderId);
+        var fileMetadata = await _service.FileService.GetAllFilesAsync(UserId, pocketId, folderId, isSoftDeleted);
 
         return Ok(fileMetadata);
     }
@@ -92,6 +92,17 @@ public class FilesController : BaseController
         var images = await _service.FileService.GetThumbnailsAsync(UserId, imageIds,  size);
 
         return CreatedAtRoute("All", new { pocketId }, images!);
+    }
+    #endregion
+
+    #region PUT
+    [HttpPut("files")]
+    public async Task<IActionResult> Update(UpdateFileModel file)
+    {
+        file.UserId = UserId;
+        await _service.FileService.UpdateFileAsync(file);
+
+        return NoContent();
     }
     #endregion
 

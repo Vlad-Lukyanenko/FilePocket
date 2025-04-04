@@ -1,25 +1,27 @@
 ﻿using FilePocket.Application.Interfaces.Services;
 using FilePocket.WebApi.Endpoints.Base;
 
-namespace FilePocket.WebApi.Endpoints.Folders;
+namespace FilePocket.WebApi.Endpoints.Bookmark;
 
-public class DeleteEndpoint : BaseEndpointWithoutRequestAndResponse
+public class SoftDeleteBookmarkEndpoint : BaseEndpointWithoutRequestAndResponse
 {
     private readonly IServiceManager _service;
 
-    public DeleteEndpoint(IServiceManager service)
+    public SoftDeleteBookmarkEndpoint(IServiceManager service)
     {
         _service = service;
     }
 
     public override void Configure()
     {
-        Delete("api/folders/{folderId:guid}");
+        Delete("api/bookmark/soft/{id:guid}");
+        AuthSchemes("Bearer");
     }
 
     public override async Task HandleAsync(CancellationToken cancellationToken)
     {
-        await _service.FolderService.DeleteAsync(FolderId!.Value);
+        var id = Route<Guid>("id");
+        await _service.BookmarkService.MoveToTrashAsync(id);
 
         await SendOkAsync(cancellationToken);
     }

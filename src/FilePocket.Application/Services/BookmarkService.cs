@@ -19,16 +19,16 @@ public class BookmarkService : IBookmarkService
         _mapper = mapper;
     }
 
-    public IEnumerable<BookmarkModel> GetAll(Guid userId, bool trackChanges)
+    public IEnumerable<BookmarkModel> GetAll(Guid userId, bool isSoftDeleted, bool trackChanges)
     {
-        var bookmarks = _repository.Bookmark.GetAll(userId, trackChanges);
+        var bookmarks = _repository.Bookmark.GetAll(userId, isSoftDeleted, trackChanges);
 
         return _mapper.Map<IEnumerable<BookmarkModel>>(bookmarks);
     }
 
-    public async Task<IEnumerable<BookmarkModel>> GetAllAsync(Guid userId, Guid pocketId, Guid? folderId, bool trackChanges)
+    public async Task<IEnumerable<BookmarkModel>> GetAllAsync(Guid userId, Guid pocketId, Guid? folderId, bool isSoftDeleted, bool trackChanges)
     {
-        var bookmarks = await _repository.Bookmark.GetAllAsync(userId, pocketId, folderId, trackChanges);
+        var bookmarks = await _repository.Bookmark.GetAllAsync(userId, pocketId, folderId, isSoftDeleted, trackChanges);
 
         return _mapper.Map<List<BookmarkModel>>(bookmarks);
     }
@@ -46,25 +46,27 @@ public class BookmarkService : IBookmarkService
 
     public async Task UpdateBookmarkAsync(UpdateBookmarkRequest bookmark)
     {
-        var bookmarkToUpdate = await _repository.Bookmark.GetByIdAsync(bookmark.Id);
+        var bookmarkToUpdate = await GetBookmarkAndCheckIfItExistsAsync(bookmark.Id);
 
-        if (bookmarkToUpdate is not null)
-        {
-            _mapper.Map(bookmark, bookmarkToUpdate);
-
-            await _repository.SaveChangesAsync();
-        }
+        _mapper.Map(bookmark, bookmarkToUpdate);
+        await _repository.SaveChangesAsync();        
     }
 
     public async Task DeleteBookmarkAsync(Guid id)
     {
-        var bookmarkToDelete = await _repository.Bookmark.GetByIdAsync(id);
+        var bookmarkToDelete = await GetBookmarkAndCheckIfItExistsAsync(id);
+        
+        _repository.Bookmark.DeleteBookmark(bookmarkToDelete);
+        await _repository.SaveChangesAsync();        
+    }
 
-        if (bookmarkToDelete is not null)
-        {
-            _repository.Bookmark.DeleteBookmark(bookmarkToDelete);
-            await _repository.SaveChangesAsync();
-        }
+    public async Task MoveToTrashAsync(Guid id)
+    {
+        var bookmark = await GetBookmarkAndCheckIfItExistsAsync(id);
+
+        bookmark.MarkAsDeleted();
+
+        await _repository.SaveChangesAsync();
     }
 
     private async Task AttachBookmarkToPocketAsync(BookmarkModel bookmark)
@@ -75,5 +77,17 @@ public class BookmarkService : IBookmarkService
         {
             throw new PocketNotFoundException(bookmark.PocketId);
         }
+    }
+
+    private async Task<Bookmark> GetBookmarkAndCheckIfItExistsAsync(Guid id)
+    {
+        var bookmark = await _repository.Bookmark.GetByIdAsync(id);
+
+        if (bookmark is null)
+        {
+            throw new BookmarkNotFoundException(id);
+        }
+
+        return bookmark;
     }
 }
