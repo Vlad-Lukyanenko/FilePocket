@@ -220,13 +220,27 @@
                             
                                 </div>
                             </div>
+                        </div>
                             
                             <!--  doughnut chart -->
-                            <div class="text-white p-4" style="margin: 65px auto;">
+                            <div class="text-white p-4" style="margin: 40px auto;">
                                 <canvas id="storageChart"></canvas>
 
-                                <h5 class="text-center mt-2">150 GB</h5>
-                                <p class="text-center text-white">50% of 100%</p>
+                                <h5 class="text-center mt-2">@(Math.Round(_storageConsumption.Total/1000)) GB</h5>
+                                <p class="text-center text-white" style="margin-bottom: 0px">@(_occupiedStorageSpacePercentage)%</p>
+
+                             <div class="progressBar-body">
+                                <div class="progressBar-occupied" style="width:@(_occupiedStorageSpacePercentage)%"></div>
+                                <div class="progressBar-free-space" style="width:@(_unoccupiedStorageSpacePercentage)%"></div>
+                            </div>
+                            @if (_storageConsumption.Used<100)
+                            {
+                                <p class="text-center text-white">@(Math.Round((_storageConsumption.Used), 0)) MB of @(Math.Round((_storageConsumption.Total/1000), 2)) GB used</p>
+                            }
+                            else
+                            {
+                                <p class="text-center text-white">@(Math.Round((_storageConsumption.Used/1000), 2)) GB of @(Math.Round((_storageConsumption.Total/1000), 2)) GB used</p>
+                            }
 
                                 <div class="mt-3">
                                     @foreach (var item in StorageItems)
@@ -241,8 +255,6 @@
                                     }
                                 </div>
                             </div>
-                    
-                        </div>
 
                         <div class="d-flex flex-column p-3">
                             <a href="/support" class="link text-white @(IsActive("/support"))" @onclick='() => CloseOffcanvasAndNavigate("/support")'>
