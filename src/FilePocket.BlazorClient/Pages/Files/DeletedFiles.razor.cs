@@ -63,6 +63,40 @@ public partial class DeletedFiles
         _loading = false;
     }
 
+    private void DeleteFileClicked(FileInfoModel file)
+    {
+        _fileIdToBeDeleted = file.Id;
+        _fileIdToBeRestored = default;
+    }
+
+    private void RestoreFileClicked(FileInfoModel file)
+    {
+        _fileIdToBeDeleted = default;
+        _fileIdToBeRestored = file.Id;
+    }
+
+    private async Task ConfirmFileDeletionAsync()
+    {
+        var file = _files.FirstOrDefault(f => f.Id == _fileIdToBeDeleted);
+
+        if (file is not null)
+        {
+            var isDeleted = await FileRequests.DeleteFile(file.Id);
+
+            if (isDeleted)
+            {
+                _files.Remove(file);
+                _fileIdToBeDeleted = default;
+            }
+        }
+    }
+
+    private void CancelClicked()
+    {
+        _fileIdToBeDeleted = default;
+        _fileIdToBeRestored = default;
+    }
+
     private async Task DeleteFolderClickAsync()
     {
         if (FolderId is not null)

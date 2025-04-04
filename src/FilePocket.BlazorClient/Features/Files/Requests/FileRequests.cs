@@ -107,11 +107,13 @@ public class FileRequests : IFileRequests
         return result!;
     }
 
-    public async Task DeleteFile(Guid fileId)
+    public async Task<bool> DeleteFile(Guid fileId)
     {
         var response = await _apiClient.DeleteAsync(FileUrl.DeleteFile(fileId));
 
         response.EnsureSuccessStatusCode();
+
+        return response.IsSuccessStatusCode;
     }
 
     public async Task<List<FileInfoModel>> GetRecentFilesAsync()
