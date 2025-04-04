@@ -1,4 +1,5 @@
-﻿using FilePocket.BlazorClient.Services.Files.Models;
+﻿using FilePocket.BlazorClient.Features.Files.Models;
+using FilePocket.BlazorClient.Services.Files.Models;
 
 namespace FilePocket.BlazorClient.Services.Files.Requests;
 
@@ -11,4 +12,5 @@ public interface IFileRequests
     Task<FileModel> GetFileInfoAsync(Guid fileId);
     Task<FileModel> UploadFileAsync(MultipartFormDataContent content);
     Task<bool> DeleteFile(Guid fileId);
+    Task<bool> UpdateFileAsync(UpdateFileInfoModel file);
 }

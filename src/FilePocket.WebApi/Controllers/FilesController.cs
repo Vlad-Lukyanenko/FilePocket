@@ -95,6 +95,17 @@ public class FilesController : BaseController
     }
     #endregion
 
+    #region PUT
+    [HttpPut("files")]
+    public async Task<IActionResult> Update(UpdateFileModel file)
+    {
+        file.UserId = UserId;
+        await _service.FileService.UpdateFileAsync(file);
+
+        return NoContent();
+    }
+    #endregion
+
     #region DELETE
     [HttpDelete("files/{fileId:guid}")]
     public async Task<IActionResult> Delete( [FromRoute] Guid fileId)

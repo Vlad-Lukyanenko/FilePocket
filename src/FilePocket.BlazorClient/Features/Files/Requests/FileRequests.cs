@@ -1,10 +1,12 @@
 ﻿using FilePocket.BlazorClient.Features;
 using FilePocket.BlazorClient.Features.Files;
+using FilePocket.BlazorClient.Features.Files.Models;
 using FilePocket.BlazorClient.Helpers;
 using FilePocket.BlazorClient.Services.Files.Models;
 using FilePocket.BlazorClient.Shared.Models;
 using Newtonsoft.Json;
 using System.Net.Http.Json;
+using System.Text;
 
 namespace FilePocket.BlazorClient.Services.Files.Requests;
 
@@ -116,6 +118,16 @@ public class FileRequests : IFileRequests
         return response.IsSuccessStatusCode;
     }
 
+    public async Task<bool> UpdateFileAsync(UpdateFileInfoModel file)
+    {
+        var content = GetStringContent(file);
+        var response = await _apiClient.PutAsync(FileUrl.Update(), content);
+
+        response.EnsureSuccessStatusCode();
+
+        return response.IsSuccessStatusCode;
+    }
+
     public async Task<List<FileInfoModel>> GetRecentFilesAsync()
     {
         var content = await _apiClient.GetAsync(FileUrl.GetRecentFiles());
@@ -126,5 +138,12 @@ public class FileRequests : IFileRequests
     public Task<List<FileInfoModel>> GetFilesAsync(Guid? pocketId)
     {
         throw new NotImplementedException();
+    }
+
+    private static StringContent? GetStringContent(object? obj)
+    {
+        var json = JsonConvert.SerializeObject(obj);
+
+        return new StringContent(json, Encoding.UTF8, "application/json");
     }
 }

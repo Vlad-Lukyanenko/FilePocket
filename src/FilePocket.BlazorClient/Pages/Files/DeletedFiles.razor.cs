@@ -1,4 +1,7 @@
-﻿using FilePocket.BlazorClient.Features.Folders.Models;
+﻿using FilePocket.BlazorClient.Features.Bookmarks.Models;
+using FilePocket.BlazorClient.Features.Bookmarks.Requests;
+using FilePocket.BlazorClient.Features.Files.Models;
+using FilePocket.BlazorClient.Features.Folders.Models;
 using FilePocket.BlazorClient.Services.Files.Models;
 using FilePocket.BlazorClient.Services.Files.Requests;
 using FilePocket.BlazorClient.Services.Folders.Requests;
@@ -87,6 +90,32 @@ public partial class DeletedFiles
             {
                 _files.Remove(file);
                 _fileIdToBeDeleted = default;
+            }
+        }
+    }
+
+    private async Task ConfirmFileRestorationAsync()
+    {
+        var file = _files.FirstOrDefault(f => f.Id == _fileIdToBeRestored);
+
+        if (file is not null)
+        {
+            var fileToUpdate = new UpdateFileInfoModel
+            {
+                Id = file.Id,
+                OriginalName = file.OriginalName,
+                PocketId = file.PocketId,
+                FolderId = null,
+                IsDeleted = false,
+                DeletedAt = null
+            };
+
+            var isRestored = await FileRequests.UpdateFileAsync(fileToUpdate);
+
+            if (isRestored)
+            {
+                _fileIdToBeRestored = default;
+                _files.Remove(file);
             }
         }
     }

@@ -2,6 +2,7 @@ using FilePocket.Application.Exceptions;
 using FilePocket.Application.Extensions;
 using FilePocket.Application.Interfaces.Repositories;
 using FilePocket.Application.Interfaces.Services;
+using FilePocket.Contracts.Bookmark;
 using FilePocket.Domain;
 using FilePocket.Domain.Entities;
 using FilePocket.Domain.Entities.Consumption.Errors;
@@ -265,6 +266,21 @@ public class FileService(
         await repository.SaveChangesAsync(cancellationToken);
 
         return true;
+    }
+
+    public async Task UpdateFileAsync(UpdateFileModel file)
+    {
+        var fileMetadataToUpdate = await repository.FileMetadata.GetByIdAsync(file.UserId, file.Id, trackChanges: true);
+
+        if (fileMetadataToUpdate is null)
+        {
+            throw new FileMetadataNotFoundException(file.Id);
+        }
+
+        mapper.Map(file, fileMetadataToUpdate);
+        var i = fileMetadataToUpdate;
+
+        await repository.SaveChangesAsync();
     }
 
     private Task<FileMetadata> GetFileByIdAndPocketIdAsync(Guid userId, Guid fileId)

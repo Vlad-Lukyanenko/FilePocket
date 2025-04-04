@@ -10,6 +10,7 @@ public static class FileUrl
     public static string GetAll(Guid pocketId, bool isSoftDeleted) => $"api/pockets/{pocketId}/{isSoftDeleted}/files";
     public static string GetAllFromFolder(Guid folderId) => $"api/folders/{folderId}/files";
     public static string GetAll() => $"api/files";
+    public static string Update() => "api/files";
     public static string GetRecentFiles() => $"api/home/files/recent";
     public static string DeleteFile(Guid fileId) => $"api/files/{fileId}";
 }
