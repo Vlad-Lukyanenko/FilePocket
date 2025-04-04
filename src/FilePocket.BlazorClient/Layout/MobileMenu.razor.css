@@ -1,0 +1,57 @@
+#offcanvasMenu{
+    background-color: #202656;
+    color: rgba(251, 251, 255, 1) !important;
+}
+
+.offcanvas-header{
+   justify-content: flex-end
+}
+
+.offcanvas-body{
+    justify-content: space-between;
+    display: flex;
+    flex-direction: column;
+}
+
+.nav-link{
+    color: rgba(251, 251, 255, 1);
+}
+
+.nav-link.active{
+    background-color:#9276AD;
+    color: rgba(251, 251, 255, 1);
+}
+
+
+.link{
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: white important!;
+    font-size: 14px;
+    margin: 8px 0;
+    transition: 0.3s;
+    /* padding-left: 24px; */
+
+}
+
+.link:hover{
+    color: rgba(146, 118, 173, 1);
+    cursor: pointer;
+    /* border-bottom: #4a2b8a 2px solid; */
+}
+
+.submenu {
+    list-style: none;
+    padding-left: 20px;
+    height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: height 0.3s ease-in-out, opacity 0.3s ease-in-out;
+}
+
+.submenu.show {
+    height: auto; /* Меню займет нужную высоту */
+    opacity: 1;
+    overflow: visible;
+}

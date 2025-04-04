@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Routing;
 using Microsoft.JSInterop;
-using System.Runtime.CompilerServices;
 
 namespace FilePocket.BlazorClient.Layout;
 
@@ -26,9 +25,9 @@ public partial class MainLayout : IDisposable
     [Inject] private IStorageRequests StorageRequests { get; set; } = default!;
     [Inject] private StateContainer<LoggedInUserModel> UserStateContainer { get; set; } = default!;
     [Inject] private StateContainer<StorageConsumptionModel> StorageStateContainer { get; set; } = default!;
+    [Inject] private NavigationManager? NavigationManager { get; set; }
 
     private StorageConsumptionModel _storageConsumption = new();
-
     private string _unoccupiedStorageSpacePercentage = "100";
     private string _occupiedStorageSpacePercentage = "0";
     protected override async Task OnInitializedAsync()
@@ -90,10 +89,11 @@ public partial class MainLayout : IDisposable
         Navigation.NavigateTo(url);
     }
 
-    private void SwitchUserInfoDialog()
+    private void NavigateToProfile()
     {
-        _menuOpen = !_menuOpen;
+        Navigation.NavigateTo("/profile?openModal=true", forceLoad: false);
     }
+
 
     private string GetDisplayedName()
     {
@@ -133,6 +133,14 @@ public partial class MainLayout : IDisposable
     {
         _storageConsumption = StorageStateContainer.Value!;
         await InvokeAsync(StateHasChanged);
+    }
+
+    private bool _isFilesMenuOpen = false;
+
+    private void ToggleFilesMenu()
+    {
+        _isFilesMenuOpen = !_isFilesMenuOpen;
+        StateHasChanged();
     }
 }
 
