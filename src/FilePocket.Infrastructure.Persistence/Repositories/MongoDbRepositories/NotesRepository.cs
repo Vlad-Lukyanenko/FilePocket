@@ -19,12 +19,18 @@ namespace FilePocket.Infrastructure.Persistence.Repositories.MongoDbRepositories
             await _notes.InsertOneAsync(note, cancellationToken: cancellationToken);
         }
 
+        public async Task AddEncryptedContent(Note note, CancellationToken cancellationToken = default)
+        {
+            await _notes.UpdateOneAsync(n => n.Id == note.Id, Builders<Note>.Update
+                                                                .Set(n => n.EncryptedContent, note.EncryptedContent), null, cancellationToken);
+        }
+
         public async Task UpdateAsync(Note note, CancellationToken cancellationToken = default)
         {
             await _notes.UpdateOneAsync(n => n.Id == note.Id, Builders<Note>.Update
                                                                 .Set(n => n.FolderId, note.FolderId)
                                                                 .Set(n => n.Title, note.Title)
-                                                                .Set(n => n.Content, note.Content)
+                                                                .Set(n=>n.EncryptedContent, note.EncryptedContent)
                                                                 .Set(n => n.UpdatedAt, DateTime.UtcNow), null, cancellationToken);
         }
 

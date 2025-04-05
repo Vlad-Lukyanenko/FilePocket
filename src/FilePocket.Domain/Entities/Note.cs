@@ -13,7 +13,7 @@ namespace FilePocket.Domain.Entities
         public Guid PocketId { get; set; }
         public Guid? FolderId { get; init; }
         public string Title { get; set; } = string.Empty;
-        public string Content { get; set; } = string.Empty;
+        public byte[] EncryptedContent { get; set; } = [];
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
         public bool IsDeleted { get; set; }

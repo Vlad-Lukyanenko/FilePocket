@@ -91,10 +91,10 @@ namespace FilePocket.BlazorClient.MyComponents
                     : (await FolderRequests.GetAllAsync(PocketId, FolderId.Value, FolderType.Documents)))
                 ?? [];
 
-            var notess = (await NoteRequests.GetAllByUserIdAndFolderId(FolderId));
+            var notes = (await NoteRequests.GetAllByUserIdAndFolderId(FolderId));
 
             _folders = [.. folders];
-            _notes = [.. notess];
+            _notes = [.. notes];
             _goBackUrl = GetGoBackUrl();
         }
 

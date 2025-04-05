@@ -99,6 +99,7 @@ BsonSerializer.RegisterSerializer(new DateTimeOffsetSerializer(BsonType.String))
 
 // Add services to the container.
 builder.Services.AddSingleton<ILoggerService, LoggerService>();
+builder.Services.AddScoped<IEncryptionService, EncryptionService>();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddAutoMapper(typeof(WebApiAssemblyReference));

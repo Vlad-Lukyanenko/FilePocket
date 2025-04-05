@@ -12,11 +12,13 @@ namespace FilePocket.Application.Services
     {
 
         private readonly IRepositoryManager _manager;
+        private readonly IEncryptionService _encryptionService;
         private readonly IMapper _mapper;
 
-        public NoteService(IRepositoryManager manager, IMapper mapper)
+        public NoteService(IRepositoryManager manager, IEncryptionService encryptionService, IMapper mapper)
         {
             _manager = manager;
+            _encryptionService = encryptionService;
             _mapper = mapper;
         }
 
@@ -29,12 +31,19 @@ namespace FilePocket.Application.Services
                 PocketId = note.PocketId,
                 FolderId = note.FolderId,
                 Title = note.Title,
-                Content = note.Content,
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow,
             };
 
             await _manager.Note.CreateAsync(noteEntity, cancellationToken);
+
+            if (!string.IsNullOrEmpty(note.Content))
+            {
+                var encryptedContent = await EncryptContent(note.UserId, noteEntity.Id, note.Content, cancellationToken);
+                noteEntity.EncryptedContent = Convert.FromBase64String(encryptedContent);
+            }
+
+            await _manager.Note.AddEncryptedContent(noteEntity, cancellationToken);
 
             return _mapper.Map<NoteCreateResponse>(noteEntity);
         }
@@ -45,6 +54,16 @@ namespace FilePocket.Application.Services
 
             _mapper.Map(note, noteEntity);
             noteEntity.UpdatedAt = DateTime.UtcNow;
+
+            if (!string.IsNullOrEmpty(note.Content))
+            {
+                var encryptedContent = await EncryptContent(note.UserId, noteEntity.Id, note.Content, cancellationToken);
+                noteEntity.EncryptedContent = Convert.FromBase64String(encryptedContent);
+            }
+            else if(noteEntity.EncryptedContent.Length != 0)
+            {
+                noteEntity.EncryptedContent = [];
+            }
 
             await _manager.Note.UpdateAsync(noteEntity, cancellationToken);
 
@@ -69,8 +88,15 @@ namespace FilePocket.Application.Services
         public async Task<NoteModel> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
         {
             var note = await GetNoteIfExists(id, cancellationToken);
+            var noteModel = _mapper.Map<NoteModel>(note);
 
-            return _mapper.Map<NoteModel>(note);
+            if (note.EncryptedContent != null && note.EncryptedContent.Length > 0)
+            {
+                var decryptedContent = await DecryptContent(note.UserId, note.Id, note.EncryptedContent, cancellationToken);
+                noteModel.Content = decryptedContent;
+            }
+
+            return noteModel;
         }
 
         public async Task SoftDeleteAsync(Guid id, CancellationToken cancellationToken = default)
@@ -78,6 +104,16 @@ namespace FilePocket.Application.Services
             _ = await GetNoteIfExists(id, cancellationToken);
 
             await _manager.Note.SoftDeleteAsync(id, cancellationToken);
+        }
+
+        public async Task BulkDeleteAsync(Guid folderId, CancellationToken cancellationToken = default)
+        {
+            await _manager.Note.BulkDeleteAsync(folderId, cancellationToken);
+        }
+
+        public async Task BulkSoftDeleteAsync(Guid folderId, CancellationToken cancellationToken = default)
+        {
+            await _manager.Note.BulkSoftDeleteAsync(folderId, cancellationToken);
         }
 
         private async Task<Note> GetNoteIfExists(Guid id, CancellationToken cancellationToken)
@@ -88,14 +124,19 @@ namespace FilePocket.Application.Services
             return noteToProcess;
         }
 
-        public async Task BulkDeleteAsync(Guid folderId, CancellationToken cancellationToken = default)
+        private async Task<string> EncryptContent(Guid userId, Guid noteId, string text, CancellationToken cancellationToken)
         {
-            await _manager.Note.BulkDeleteAsync(folderId,  cancellationToken);
+            var passPhrase = _encryptionService.GeneratePassPhrase(userId, noteId);
+            var noteEncryptedContent = await _encryptionService.EncryptAsync(text, passPhrase, cancellationToken);
+
+            return Convert.ToBase64String(noteEncryptedContent);
         }
 
-        public async Task BulkSoftDeleteAsync(Guid folderId, CancellationToken cancellationToken = default)
+        private async Task<string> DecryptContent(Guid userId, Guid noteId, byte[] encryptedContent, CancellationToken cancellationToken)
         {
-            await _manager.Note.BulkSoftDeleteAsync(folderId, cancellationToken);
+            var passPhrase = _encryptionService.GeneratePassPhrase(userId, noteId);
+            var decryptedText = await _encryptionService.DecryptAsync(encryptedContent, passPhrase, cancellationToken);
+            return decryptedText;
         }
     }
 }
