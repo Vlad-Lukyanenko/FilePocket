@@ -9,4 +9,8 @@ public class UpdateProfileModel
     public string? LastName { get; set; }
 
     public Guid? IconId { get; set; }
+
+    public string? PhoneNumber { get; set; } 
+    public string? Language { get; set; } 
+    public DateTime? BirthDate { get; set; } 
 }
