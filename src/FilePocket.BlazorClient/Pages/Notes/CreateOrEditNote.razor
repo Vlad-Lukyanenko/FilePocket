@@ -24,7 +24,9 @@
                 @if (_editTitle)
                 {
                     <div class="title-input-container">
-                        <input type="text" class="form-control" aria-label="Note Title" @bind="_note.Title" @onblur="SaveTitle" @onkeypress="@InvokeSaveTitle">
+                        <input type="text" class="form-control" aria-label="Note Title" @bind="_note.Title"
+                               @onblur="SaveTitle"
+                               @onkeyup="@InvokeSaveTitle">
                         <i class="bi bi-check2" @onclick="@SaveTitle"></i>
                     </div>
                 }
@@ -55,7 +57,7 @@
 
 <style>
     .note-attributes {
-/*         line-height: 38px; */
+        /*         line-height: 38px; */
         font-size: 0.875rem;
     }
 

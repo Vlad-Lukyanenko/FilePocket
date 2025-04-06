@@ -98,8 +98,6 @@ namespace FilePocket.BlazorClient.Pages.Notes
 
                 _createdAt = _note.CreatedAt.ToString();
                 _updatedAt = _note.UpdatedAt.ToString();
-
-                await InvokeAsync(StateHasChanged);
             }
         }
 
@@ -112,8 +110,6 @@ namespace FilePocket.BlazorClient.Pages.Notes
                 _note!.UpdatedAt = result.UpdatedAt;
 
                 _updatedAt = _note.UpdatedAt.ToString();
-
-                await InvokeAsync(StateHasChanged);
             }
         }
 
@@ -157,11 +153,11 @@ namespace FilePocket.BlazorClient.Pages.Notes
             await SaveOrUpdateNote();
         }
 
-        private async Task InvokeSaveTitle(KeyboardEventArgs e)
+        private void InvokeSaveTitle(KeyboardEventArgs e)
         {
-            if(e.Code == "Enter" || e.Code == "NumpadEnter")
+            if (e.Code == "Enter" || e.Code == "NumpadEnter")
             {
-                await SaveTitle();
+                _editTitle = false;
             }
         }
     }
