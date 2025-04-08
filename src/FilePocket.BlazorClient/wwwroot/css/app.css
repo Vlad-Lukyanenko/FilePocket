@@ -1,5 +1,5 @@
 ﻿html, body {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: 'Montserrat', sans-serif;
     overflow-x: hidden;
 }
 
@@ -30,10 +30,11 @@
 
 /* File Pocket branding */
 .top-header-link {
-    font-size: 2rem;
-    font-weight: bold;
+    font-size: 42px;
+    font-weight: 600;
     text-decoration: none;
-    color: #333;
+    text-transform: uppercase;
+    color: #452EAA;
 }
 
 h1:focus {
@@ -46,12 +47,22 @@ h1:focus {
 
 .btn-primary {
     color: #fff;
-    background-color: #1b6ec2;
-    border-color: #1861ac;
+    background-color: #452EAA;
+    border-color: #452EAA;
+    border-radius: 10px;
+    font-size: 20px;
+    font-weight: 700;
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+.btn:hover, .btn:active:focus{
+    color: #fff;
+    background-color: #452EAA;
+    border-color: #452EAA;
+    border-radius: 10px;
+}
+
+.btn:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #452EAA;
 }
 
 .content {

@@ -2,12 +2,21 @@
 using FilePocket.BlazorClient.Services.Authentication.Requests;
 using Microsoft.AspNetCore.Components;
 using System.Net.Http.Json;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace FilePocket.BlazorClient.Pages
 {
     public partial class SignUp
     {
+        private bool showEmailError = false;
+        private bool showPasswordError = false;
+        private bool showConfirmPasswordError = false;
+        private bool isPasswordVisible = false;
+        private bool isConfirmPasswordVisible = false;
+        private string passwordInputType = "password";
+        private string confirmPasswordInputType = "password";
+        private string passwordIcon = "bi bi-eye";
+        private string confirmPasswordIcon = "bi bi-eye";
+
         [Inject]
         NavigationManager Navigation { get; set; } = default!;
 
@@ -17,6 +26,36 @@ namespace FilePocket.BlazorClient.Pages
         private RegistrationRequest _registrationRequest = new RegistrationRequest();
 
         private List<string> _errors = new List<string>();
+
+
+        private void ValidateEmail()
+        {
+            showEmailError = string.IsNullOrWhiteSpace(_registrationRequest.Email);
+        }
+
+        private void ValidatePassword()
+        {
+            showPasswordError = string.IsNullOrWhiteSpace(_registrationRequest.Password);
+        }
+
+        private void ValidateConfirmPassword()
+        {
+            showConfirmPasswordError = string.IsNullOrWhiteSpace(_registrationRequest.ConfirmPassword);
+        }
+
+        private void TogglePassword()
+        {
+            isPasswordVisible = !isPasswordVisible;
+            passwordInputType = isPasswordVisible ? "text" : "password";
+            passwordIcon = isPasswordVisible ? "bi bi-eye-slash" : "bi bi-eye";
+        }
+
+        private void ToggleConfirmPassword()
+        {
+            isConfirmPasswordVisible = !isConfirmPasswordVisible;
+            confirmPasswordInputType = isConfirmPasswordVisible ? "text" : "password";
+            confirmPasswordIcon = isConfirmPasswordVisible ? "bi bi-eye-slash" : "bi bi-eye";
+        }
 
         private async void HandleValidSubmit()
         {
