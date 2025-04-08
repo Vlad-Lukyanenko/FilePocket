@@ -112,7 +112,7 @@ public partial class MainLayout : IDisposable
         await InvokeAsync(StateHasChanged);
     }
 
-    private bool _isFilesMenuOpen = false;
+    private bool _isFilesMenuOpen = true;
 
     private void ToggleFilesMenu()
     {
