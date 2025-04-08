@@ -7,6 +7,12 @@ namespace FilePocket.BlazorClient.MyComponents
 {
     public partial class SignInComponent
     {
+        private bool showEmailError = false;
+        private bool showPasswordError = false;
+        private bool isPasswordVisible = false;
+        private string passwordInputType = "password";
+        private string passwordIcon = "bi bi-eye";
+
         [Inject]
         NavigationManager Navigation { get; set; } = default!;
 
@@ -19,7 +25,23 @@ namespace FilePocket.BlazorClient.MyComponents
 
         private int _numberOfTimerStarts = 0;
 
+        private void ValidateEmail()
+        {
+            showEmailError = string.IsNullOrWhiteSpace(_loginModel.Email);
+        }
 
+        private void ValidatePassword()
+        {
+            showPasswordError = string.IsNullOrWhiteSpace(_loginModel.Password);
+        }
+
+        private void TogglePassword()
+        {
+            isPasswordVisible = !isPasswordVisible;
+            passwordInputType = isPasswordVisible ? "text" : "password";
+            passwordIcon = isPasswordVisible ? "bi bi-eye-slash" : "bi bi-eye";
+        }
+        
         private async void FormSubmitted(EditContext editContext)
         {
             var success = await AuthRequests.LoginAsync(_loginModel);
