@@ -17,7 +17,7 @@ public class GetUserByNameEndpoint : BaseEndpointWithoutRequest<GetUserResponse>
 
     public override void Configure()
     {
-        Get("api/users/{name:string}");
+        Get("api/users/{name}");
         AuthSchemes("Bearer");
     }
 

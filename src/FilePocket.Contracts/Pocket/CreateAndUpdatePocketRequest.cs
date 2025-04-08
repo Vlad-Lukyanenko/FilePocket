@@ -1,6 +1,8 @@
-﻿namespace FilePocket.Domain.Models;
+﻿using System.ComponentModel.DataAnnotations;
 
-public class PocketForManipulationsModel
+namespace FilePocket.Contracts.Pocket;
+
+public class CreateAndUpdatePocketRequest
 {
     public Guid UserId { get; set; }
     public string Name { get; set; } = string.Empty;
