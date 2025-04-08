@@ -1,4 +1,6 @@
-﻿using FilePocket.BlazorClient.Features.Users.Models;
+using FilePocket.BlazorClient.Features.Storage.Models;
+using FilePocket.BlazorClient.Features.Storage.Requests;
+using FilePocket.BlazorClient.Features.Users.Models;
 using FilePocket.BlazorClient.Features.Users.Requests;
 using FilePocket.BlazorClient.Helpers;
 using FilePocket.BlazorClient.Services.Files.Requests;
@@ -20,10 +22,14 @@ public partial class MainLayout : IDisposable
     [Inject] AuthenticationStateProvider AuthStateProvider { get; set; } = default!;
     [Inject] IUserRequests UserRequests { get; set; } = default!;
     [Inject] private IFileRequests FileRequests { get; set; } = default!;
+    [Inject] private IStorageRequests StorageRequests { get; set; } = default!;
     [Inject] private StateContainer<LoggedInUserModel> UserStateContainer { get; set; } = default!;
-
+    [Inject] private StateContainer<StorageConsumptionModel> StorageStateContainer { get; set; } = default!;
     [Inject] private NavigationManager? NavigationManager { get; set; }
 
+    private StorageConsumptionModel _storageConsumption = new();
+    private string _unoccupiedStorageSpacePercentage = "100";
+    private string _occupiedStorageSpacePercentage = "0";
     protected override async Task OnInitializedAsync()
     {
         var authState = await AuthStateProvider.GetAuthenticationStateAsync();
@@ -33,6 +39,10 @@ public partial class MainLayout : IDisposable
 
         if (_user is not null)
         {
+            _storageConsumption = await StorageRequests.GetStorageConsumption();
+            GetStorageConsumptionInPercantage();
+            StateHasChanged();
+
             var fisrtName = string.IsNullOrEmpty(_user.FirstName) ? string.Empty : _user.FirstName.AsSpan(0, 1);
             var lastName = string.IsNullOrEmpty(_user.LastName) ? string.Empty : _user.LastName.AsSpan(0, 1);
             _iconName = string.Concat(fisrtName, lastName).ToUpper();
@@ -51,6 +61,7 @@ public partial class MainLayout : IDisposable
 
         Navigation.LocationChanged += OnLocationChanged;
         UserStateContainer.OnStateChange += async () => await UpdateUserStateAsync();
+        StorageStateContainer.OnStateChange += async () => await UpdateStorageStateAsync();
         NavigationHistory.AddToHistory(Navigation.Uri);
     }
 
@@ -109,6 +120,18 @@ public partial class MainLayout : IDisposable
             _icon = Convert.ToBase64String(avatar.FileByteArray!);
         }
 
+        await InvokeAsync(StateHasChanged);
+    }
+    private void GetStorageConsumptionInPercantage()
+    {
+        double proportionOfOccupiedSpace = Math.Round(((_storageConsumption.Used / _storageConsumption.Total) * 100), 2);
+        _occupiedStorageSpacePercentage = proportionOfOccupiedSpace.ToString().Replace(',', '.');
+        _unoccupiedStorageSpacePercentage = (100 - proportionOfOccupiedSpace).ToString().Replace(',', '.');
+    }
+
+    private async Task UpdateStorageStateAsync()
+    {
+        _storageConsumption = StorageStateContainer.Value!;
         await InvokeAsync(StateHasChanged);
     }
 
