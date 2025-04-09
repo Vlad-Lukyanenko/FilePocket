@@ -1,130 +1,149 @@
 ﻿using FilePocket.BlazorClient.Features;
 using FilePocket.BlazorClient.Features.Files;
+using FilePocket.BlazorClient.Features.Files.Models;
 using FilePocket.BlazorClient.Helpers;
 using FilePocket.BlazorClient.Services.Files.Models;
+using FilePocket.BlazorClient.Shared.Models;
 using Newtonsoft.Json;
 using System.Net.Http.Json;
-using FilePocket.BlazorClient.Shared.Models;
-using FilePocket.BlazorClient.Features.Files.Models;
+using System.Text;
 
-namespace FilePocket.BlazorClient.Services.Files.Requests
+namespace FilePocket.BlazorClient.Services.Files.Requests;
+
+public class FileRequests : IFileRequests
 {
-    public class FileRequests : IFileRequests
+    private readonly FilePocketApiClient _apiClient;
+
+    public FileRequests(FilePocketApiClient apiClient)
     {
-        private readonly FilePocketApiClient _apiClient;
+        _apiClient = apiClient;
+    }
 
-        public FileRequests(FilePocketApiClient apiClient)
+    public async Task<FileModel> GetFileAsync(Guid fileId)
+    {
+        var url = FileUrl.GetFile(fileId);
+
+        var content = await _apiClient.GetAsync(url);
+
+        return JsonConvert.DeserializeObject<FileModel>(content)!;
+    }
+
+    public async Task<List<FileInfoModel>> GetFilesAsync(Guid? pocketId, Guid? folderId, bool isSoftDeleted)
+    {
+        var url = string.Empty;
+
+        if (pocketId is not null && folderId is not null)
         {
-            _apiClient = apiClient;
+            url = FileUrl.GetAll(pocketId.Value, folderId.Value, isSoftDeleted);
+        }
+        else if (pocketId is null && folderId is not null)
+        {
+            url = FileUrl.GetAllFromFolder(folderId.Value);
+        }
+        else if (pocketId is not null && folderId is null)
+        {
+            url = FileUrl.GetAll(pocketId.Value, isSoftDeleted);
+        }
+        else if (pocketId is null && folderId is null)
+        {
+            url = FileUrl.GetAll();
         }
 
-        public async Task<FileModel> GetFileAsync(Guid fileId)
+        var content = await _apiClient.GetAsync(url);
+
+        return JsonConvert.DeserializeObject<List<FileInfoModel>>(content)!;
+    }
+
+    public async Task<FileModel> GetFileInfoAsync(Guid fileId)
+    {
+        var content = await _apiClient.GetAsync(FileUrl.GetFileInfo(fileId));
+
+        return JsonConvert.DeserializeObject<FileModel>(content)!;
+    }
+
+    public async Task<FileModel> GetImageThumbnailAsync(Guid imageId, int size)
+    {
+        var content = await _apiClient.GetAsync(FileUrl.GetImageThumbnail(imageId, size));
+        var result = JsonConvert.DeserializeObject<FileModel>(content)!;
+        string base64 = Convert.ToBase64String(new ReadOnlySpan<byte>(result.FileByteArray!));
+        var mimeType = Tools.GetMimeType(result.OriginalName!);
+        result.FileData = $"data:{mimeType};base64,{base64}";
+
+        var fileToCache = new ThumbnailRecord()
         {
-            var url = FileUrl.GetFile(fileId);
+            Id = result.Id,
+            PocketId = result.PocketId,
+            OriginalName = result.OriginalName,
+            FileSize = result.FileSize,
+            DataUrl = result.FileData
+        };
 
-            var content = await _apiClient.GetAsync(url);
+        return result;
+    }
 
-            return JsonConvert.DeserializeObject<FileModel>(content)!;
+    public async Task<FileModel> UploadFileAsync(MultipartFormDataContent content)
+    {
+        var response = await _apiClient.PostAsync(FileUrl.UploadFile, content);
+
+        if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+        {
+            var errorDetails = await ErrorDetailsModel.UnwrapErrorAsync(response);
+            errorDetails.Throw();
         }
 
-        public async Task<List<FileInfoModel>> GetFilesAsync(Guid? pocketId, Guid? folderId)
+        var result = await response.Content.ReadFromJsonAsync<FileModel>();
+
+        response.EnsureSuccessStatusCode();
+
+        var fileToCache = new ThumbnailRecord()
         {
-            var url = string.Empty;
+            Id = result.Id,
+            PocketId = result.PocketId,
+            OriginalName = result.OriginalName,
+            FileSize = result.FileSize,
+            DataUrl = result.FileData
+        };
 
-            if (pocketId is not null && folderId is not null)
-            {
-                url = FileUrl.GetAll(pocketId.Value, folderId.Value);
-            }
-            else if (pocketId is null && folderId is not null)
-            {
-                url = FileUrl.GetAllFromFolder(folderId.Value);
-            }
-            else if (pocketId is not null && folderId is null)
-            {
-                url = FileUrl.GetAll(pocketId.Value);
-            }
-            else if (pocketId is null && folderId is null)
-            {
-                url = FileUrl.GetAll();
-            }
+        //await _thumbnailCacheService.AddThumbnailAsync(fileToCache);
 
-            var content = await _apiClient.GetAsync(url);
+        return result!;
+    }
 
-            return JsonConvert.DeserializeObject<List<FileInfoModel>>(content)!;
-        }
+    public async Task<bool> DeleteFile(Guid fileId)
+    {
+        var response = await _apiClient.DeleteAsync(FileUrl.DeleteFile(fileId));
 
-        public async Task<FileModel> GetFileInfoAsync(Guid fileId)
-        {
-            var content = await _apiClient.GetAsync(FileUrl.GetFileInfo(fileId));
+        response.EnsureSuccessStatusCode();
 
-            return JsonConvert.DeserializeObject<FileModel>(content)!;
-        }
+        return response.IsSuccessStatusCode;
+    }
 
-        public async Task<FileModel> GetImageThumbnailAsync(Guid imageId, int size)
-        {
-            var content = await _apiClient.GetAsync(FileUrl.GetImageThumbnail(imageId, size));
-            var result = JsonConvert.DeserializeObject<FileModel>(content)!;
-            string base64 = Convert.ToBase64String(new ReadOnlySpan<byte>(result.FileByteArray!));
-            var mimeType = Tools.GetMimeType(result.OriginalName!);
-            result.FileData = $"data:{mimeType};base64,{base64}";
+    public async Task<bool> UpdateFileAsync(UpdateFileInfoModel file)
+    {
+        var content = GetStringContent(file);
+        var response = await _apiClient.PutAsync(FileUrl.Update(), content);
 
-            var fileToCache = new ThumbnailRecord()
-            {
-                Id = result.Id,
-                PocketId= result.PocketId,
-                OriginalName= result.OriginalName,
-                FileSize= result.FileSize,
-                DataUrl = result.FileData
-            };
+        response.EnsureSuccessStatusCode();
 
-            return result;
-        }
+        return response.IsSuccessStatusCode;
+    }
 
-        public async Task<FileModel> UploadFileAsync(MultipartFormDataContent content)
-        {
-            var response = await _apiClient.PostAsync(FileUrl.UploadFile, content);
+    public async Task<List<FileInfoModel>> GetRecentFilesAsync()
+    {
+        var content = await _apiClient.GetAsync(FileUrl.GetRecentFiles());
 
-            if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
-            {
-                var errorDetails = await ErrorDetailsModel.UnwrapErrorAsync(response);
-               errorDetails.Throw();
-            }
+        return JsonConvert.DeserializeObject<List<FileInfoModel>>(content)!;
+    }
 
-            var result = await response.Content.ReadFromJsonAsync<FileModel>();
+    public Task<List<FileInfoModel>> GetFilesAsync(Guid? pocketId)
+    {
+        throw new NotImplementedException();
+    }
 
-            response.EnsureSuccessStatusCode();
+    private static StringContent? GetStringContent(object? obj)
+    {
+        var json = JsonConvert.SerializeObject(obj);
 
-            var fileToCache = new ThumbnailRecord()
-            {
-                Id = result.Id,
-                PocketId= result.PocketId,
-                OriginalName= result.OriginalName,
-                FileSize= result.FileSize,
-                DataUrl = result.FileData
-            };
-
-            //await _thumbnailCacheService.AddThumbnailAsync(fileToCache);
-
-            return result!;
-        }
-
-        public async Task DeleteFile(Guid fileId)
-        {
-            var response = await _apiClient.DeleteAsync(FileUrl.DeleteFile(fileId));
-
-            response.EnsureSuccessStatusCode();
-        }
-
-        public async Task<List<FileInfoModel>> GetRecentFilesAsync()
-        {
-            var content = await _apiClient.GetAsync(FileUrl.GetRecentFiles());
-
-            return JsonConvert.DeserializeObject<List<FileInfoModel>>(content)!;
-        }
-
-        public Task<List<FileInfoModel>> GetFilesAsync(Guid? pocketId)
-        {
-            throw new NotImplementedException();
-        }
+        return new StringContent(json, Encoding.UTF8, "application/json");
     }
 }

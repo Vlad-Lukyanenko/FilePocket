@@ -16,5 +16,6 @@ public class UpdateBookmarkRequest
 
     [Required]
     public string Url { get; set; } = string.Empty;
+    public bool IsDeleted { get; set; }
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 }

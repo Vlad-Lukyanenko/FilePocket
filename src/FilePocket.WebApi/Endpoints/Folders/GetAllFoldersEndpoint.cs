@@ -5,37 +5,37 @@ using FilePocket.WebApi.Endpoints.Base;
 using MapsterMapper;
 using static System.Net.WebRequestMethods;
 
-namespace FilePocket.WebApi.Endpoints.Folders
+namespace FilePocket.WebApi.Endpoints.Folders;
+
+public class GetAllFoldersEndpoint : BaseEndpointWithoutRequest<List<GetAllFoldersResponse>>
 {
-    public class GetAllFoldersEndpoint : BaseEndpointWithoutRequest<List<GetAllFoldersResponse>>
+    private readonly IServiceManager _service;
+    private readonly IMapper _mapper;
+
+    public GetAllFoldersEndpoint(IServiceManager service, IMapper mapper)
     {
-        private readonly IServiceManager _service;
-        private readonly IMapper _mapper;
+        _service = service;
+        _mapper = mapper;
+    }
 
-        public GetAllFoldersEndpoint(IServiceManager service, IMapper mapper)
+    public override void Configure()
+    {
+        Verbs(Http.Get);
+        Routes("api/pockets/{pocketId:guid}/{folderType}/{isSoftDeleted:bool}/folders");
+    }
+
+    public override async Task HandleAsync(CancellationToken cancellationToken)
+    {
+        var folderType = Route<FolderType>("folderType");
+        var isSoftDeleted = Route<bool>("isSoftDeleted");
+        var folders = await _service.FolderService.GetAllAsync(UserId, PocketId, null, folderType, isSoftDeleted);
+
+        var response = new List<GetAllFoldersResponse>();
+        foreach (var folder in folders)
         {
-            _service = service;
-            _mapper = mapper;
+            response.Add(_mapper.Map<GetAllFoldersResponse>(folder));
         }
 
-        public override void Configure()
-        {
-            Verbs(Http.Get);
-            Routes("api/pockets/{pocketId:guid}/{folderType}/folders");
-        }
-
-        public override async Task HandleAsync(CancellationToken cancellationToken)
-        {
-            var folderType = Route<FolderType>("folderType");
-            var folders = await _service.FolderService.GetAllAsync(UserId, PocketId, null, folderType);
-
-            var response = new List<GetAllFoldersResponse>();
-            foreach (var folder in folders)
-            {
-                response.Add(_mapper.Map<GetAllFoldersResponse>(folder));
-            }
-
-            await SendOkAsync(response, cancellationToken);
-        }
+        await SendOkAsync(response, cancellationToken);
     }
 }

@@ -16,6 +16,7 @@ public class BookmarkModel
 
     [Required]
     public string Url { get; set; } = string.Empty;
+    public bool isDeleted { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
 }

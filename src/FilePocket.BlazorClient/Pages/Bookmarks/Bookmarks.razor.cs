@@ -1,7 +1,6 @@
 ﻿using FilePocket.BlazorClient.Features.Bookmarks.Models;
 using FilePocket.BlazorClient.Features.Bookmarks.Requests;
 using FilePocket.BlazorClient.Features.Folders.Models;
-using FilePocket.BlazorClient.Features.Trash;
 using FilePocket.BlazorClient.Services.Folders.Requests;
 using FilePocket.BlazorClient.Services.Pockets.Requests;
 using FilePocket.BlazorClient.Shared.Enums;
@@ -30,7 +29,6 @@ public partial class Bookmarks
     [Inject] private IPocketRequests PocketRequests { get; set; } = default!;
     [Inject] private IBookmarkRequests BookmarkRequests { get; set; } = default!;
     [Inject] private IFolderRequests FolderRequests { get; set; } = default!;
-    [Inject] private ITrashRequests TrashRequests { get; set; } = default!;
     [Inject] private IJSRuntime JSRuntime { get; set; } = default!;
 
     protected override async Task OnParametersSetAsync()
@@ -53,15 +51,15 @@ public partial class Bookmarks
 
         if (FolderId is null)
         {
-            folders = (await FolderRequests.GetAllAsync(PocketId, FolderType.Bookmarks)).ToList();
+            folders = (await FolderRequests.GetAllAsync(PocketId, FolderType.Bookmarks, isSoftDeleted: false)).ToList();
         }
         else
         {
-            folders = (await FolderRequests.GetAllAsync(PocketId, FolderId.Value, FolderType.Bookmarks)).ToList();
+            folders = (await FolderRequests.GetAllAsync(PocketId, FolderId.Value, FolderType.Bookmarks, isSoftDeleted: false)).ToList();
         }
 
         _folders = new ObservableCollection<FolderModel>(folders);
-        _bookmarks = await BookmarkRequests.GetAllAsync(PocketId, FolderId);
+        _bookmarks = await BookmarkRequests.GetAllAsync(PocketId, FolderId, isSoftDeleted: false);
         _loading = false;
     }
 
@@ -111,7 +109,7 @@ public partial class Bookmarks
 
         if (bookmark is not null)
         {
-            var isDeleted = await BookmarkRequests.DeleteAsync(bookmark.Id);
+            var isDeleted = await BookmarkRequests.SoftDeleteAsync(bookmark.Id);
 
             if (isDeleted)
             {
@@ -139,7 +137,8 @@ public partial class Bookmarks
                 FolderId = bookmark.FolderId,
                 Title = bookmark.Title,
                 Url = bookmark.Url,
-                UserId = bookmark.UserId
+                UserId = bookmark.UserId,
+                IsDeleted = bookmark.IsDeleted
             };
 
             var isUpdated = await BookmarkRequests.UpdateAsync(bookmarkToUpdate);
@@ -184,7 +183,7 @@ public partial class Bookmarks
     {
         if (FolderId is not null)
         {
-            await TrashRequests.MoveFolderToTrash(FolderId.Value);
+            await FolderRequests.SoftDeleteAsync(FolderId.Value);
         }
 
         _deleteFolderStarted = false;
