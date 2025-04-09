@@ -28,11 +28,13 @@ public class RefreshTokenEndpoint : BaseEndpoint<RefreshTokenRequest, RefreshTok
         {
             await SendErrorsAsync();
         }
+        else
+        {
+            var tokenToRefresh = _mapper.Map<TokenModel>(token);
+            var tokenDtoToReturn = await _service.AuthenticationService.RefreshToken(tokenToRefresh);
+            var response = _mapper.Map<RefreshTokenResponse>(tokenDtoToReturn);
 
-        var tokenToRefresh = _mapper.Map<TokenModel>(token);
-        var tokenDtoToReturn = await _service.AuthenticationService.RefreshToken(tokenToRefresh);
-        var response = _mapper.Map<RefreshTokenResponse>(tokenDtoToReturn);
-
-        await SendOkAsync(response, cancellationToken);
+            await SendOkAsync(response, cancellationToken);
+        }            
     }
 }
