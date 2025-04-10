@@ -27,6 +27,20 @@ namespace FilePocket.WebApi.Controllers
         [HttpPut("folders/{folderId:guid}")]
         public async Task<IActionResult> MoveFolderToTrash([FromRoute] Guid folderId)
         {
+            var folder = await _service.FolderService.GetAsync(folderId);
+
+            if (folder?.FolderType == Domain.Enums.FolderType.Documents)
+            {
+                try
+                {
+                    await _service.NoteService.BulkSoftDeleteAsync(folderId);
+                }
+                catch
+                {
+                    return Problem("Error deleting folder content");
+                }
+            }
+
             await _service.FolderService.MoveToTrash(UserId, folderId);
 
             return Ok();
