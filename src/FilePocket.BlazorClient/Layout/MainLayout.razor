@@ -39,7 +39,7 @@
                                 <i class="fs-4 bi-house"></i>
                                 <span class="ms-2 d-none d-md-inline">Home</span>
                             </div>
-                            <!-- Removed the extra closing div -->
+                        
                         </a>
                     </li>
                     @* <li class="nav-item flex-fill flex-md-grow-0">
@@ -205,17 +205,15 @@
                     <div class="offcanvas-body">
                         <div class="controls-container">
                             <!-- Signing In User Info Button -->
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div class="d-flex align-items-center">
-
-
+                            <div class="d-flex justify-content-center align-items-center">
+                                <div class="d-flex align-items-center flex-column">
                                     <img class="rounded-circle avatar-image" 
                                     src="@(_icon is null ? "../assets/img/man.png" : $"data:image/jpeg;base64,{_icon}")" 
                                     alt="userPicture" 
                                     @onclick="NavigateToProfile" 
                                     />
 
-                                    <div>
+                                    <div class="d-flex align-items-center flex-column">
                                         <span>@_user?.Email</span>
                                         <h5 class="card-title">
                                             @GetDisplayedName()
@@ -364,11 +362,11 @@
 
 
     function renderStorageChart(documentSize, booksSize, musicSize, picturesSize, videosSize, otherSize) {
-    @* console.log("renderStorageChart() вызван!"); *@
+    console.log("renderStorageChart() вызван!");
 
     var ctx = document.getElementById("storageChart");
     if (!ctx) {
-        @* console.error("Canvas не найден!"); *@
+        console.error("Canvas не найден!");
         return;
     }
 

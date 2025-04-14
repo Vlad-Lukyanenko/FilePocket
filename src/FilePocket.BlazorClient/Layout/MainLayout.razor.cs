@@ -26,7 +26,7 @@ public partial class MainLayout : IDisposable
     private string _unoccupiedStorageSpacePercentage = "100";
     private string _occupiedStorageSpacePercentage = "0";
 
-    public Dictionary<FileTypes, double> _occupiedSpaceByFileType;
+    public Dictionary<FileTypes, double> _occupiedSpaceByFileType = new();
 
     [Inject] AuthenticationStateProvider AuthStateProvider { get; set; } = default!;
     [Inject] IUserRequests UserRequests { get; set; } = default!;
@@ -101,7 +101,7 @@ public partial class MainLayout : IDisposable
 
     private void NavigateToProfile()
     {
-        Navigation.NavigateTo("/profile?openModal=true", forceLoad: false);
+        Navigation.NavigateTo("/profile", forceLoad: false);
     }
 
 
