@@ -95,8 +95,7 @@ public partial class CreateFolder
             if ((FolderType)FolderType == Shared.Enums.FolderType.Bookmarks)
             {
                 return $"/pockets/{PocketIdParam}/bookmarks";
-            }
-        }
+            }        
 
             return $"/pockets/{PocketIdParam}/folders/{folderId}/{entitiesName}";
         }

@@ -34,7 +34,7 @@ public partial class DeletedBookmarks
     {
         List<FolderModel> folders;
 
-        _currentFolder = FolderId is null ? null : await FolderRequests.GetAsync(FolderId.Value);
+        _currentFolder = FolderId is null ? null : await FolderRequests.GetAsync(FolderId.Value, PocketId);
         var currentFolderName = _currentFolder is null ? string.Empty : $" - {_currentFolder.Name}";
         var currentFolderUrl = FolderId is null ? "" : $"{FolderId}/";
 
