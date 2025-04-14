@@ -18,13 +18,15 @@ public class GetAllBookmarksEndpoint : BaseEndpointWithoutRequest<List<GetBookma
 
     public override void Configure()
     {
-        Get("api/bookmark/all");
+        Get("api/bookmark/all/{isSoftDeleted:bool}");
         AuthSchemes("Bearer");
     }
 
     public override async Task HandleAsync(CancellationToken cancellationToken)
     {
-        var bookmarks = _service.BookmarkService.GetAll(UserId, trackChanges: false);
+        var isSoftDeleted = Route<bool>("isSoftDeleted");
+
+        var bookmarks = _service.BookmarkService.GetAll(UserId, isSoftDeleted, trackChanges: false);
 
         var response = _mapper.Map<List<GetBookmarksResponse>>(bookmarks);
 

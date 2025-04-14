@@ -9,8 +9,8 @@ using FilePocket.BlazorClient.Services.Files.Requests;
 using FilePocket.BlazorClient.Services.Pockets.Requests;
 using System.Collections.ObjectModel;
 using FilePocket.BlazorClient.Shared.Models;
-using FilePocket.BlazorClient.Features.Trash;
 using FilePocket.BlazorClient.Shared.Enums;
+using FilePocket.BlazorClient.Features.Trash;
 using FilePocket.BlazorClient.Features.Users.Requests;
 using Microsoft.AspNetCore.Components.Authorization;
 using FilePocket.BlazorClient.Features.Storage.Requests;
@@ -46,7 +46,6 @@ public partial class FilesAndFolders
     [Inject] private IFileRequests FileRequests { get; set; } = default!;
     [Inject] private IFolderRequests FolderRequests { get; set; } = default!;
     [Inject] private IPocketRequests PocketRequests { get; set; } = default!;
-    [Inject] private ITrashRequests TrashRequests { get; set; } = default!;
     [Inject] AuthenticationStateProvider AuthStateProvider { get; set; } = default!;
     [Inject] IUserRequests UserRequests { get; set; } = default!;
     [Inject] private NavigationManager Navigation { get; set; } = default!;
@@ -89,17 +88,17 @@ public partial class FilesAndFolders
         List<FileInfoModel> files;
         List<FolderModel> folders;
 
-        _currentFolder = FolderId is null ? null : await FolderRequests.GetAsync(FolderId.Value);
+        _currentFolder = FolderId is null ? null : await FolderRequests.GetAsync(PocketId!.Value, FolderId.Value);
 
         if (FolderId == null)
         {
-            folders = (await FolderRequests.GetAllAsync(PocketId, FolderType.Files)).ToList();
-            files = await FileRequests.GetFilesAsync(PocketId, null);
+            folders = (await FolderRequests.GetAllAsync(PocketId, FolderType.Files, isSoftDeleted: false)).ToList();
+            files = await FileRequests.GetFilesAsync(PocketId, null, false);
         }
         else
         {
-            folders = (await FolderRequests.GetAllAsync(PocketId, FolderId.Value, FolderType.Files)).ToList();
-            files = await FileRequests.GetFilesAsync(PocketId, FolderId.Value);
+            folders = (await FolderRequests.GetAllAsync(PocketId, FolderId.Value, FolderType.Files, isSoftDeleted: false)).ToList();
+            files = await FileRequests.GetFilesAsync(PocketId, FolderId.Value, false);
         }
 
 
@@ -124,7 +123,7 @@ public partial class FilesAndFolders
     {
         if (FolderId is not null)
         {
-            await TrashRequests.MoveFolderToTrash(FolderId.Value);
+            await FolderRequests.SoftDeleteAsync(FolderId.Value);
         }
 
         _removalProcessStarted = false;

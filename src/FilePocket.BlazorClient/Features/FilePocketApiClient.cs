@@ -54,6 +54,13 @@ namespace FilePocket.BlazorClient.Features
             return await _httpClient.PutAsync(endpoint, content);
         }
 
+        public async Task<HttpResponseMessage> PutAsJsonAsync(string endpoint, object model)
+        {
+            await AuthAsync();
+
+            return await _httpClient.PutAsJsonAsync(endpoint, model);
+        }
+
         public async Task<HttpResponseMessage> DeleteAsync(string endpoint)
         {
             await AuthAsync();

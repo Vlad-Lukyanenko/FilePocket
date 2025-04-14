@@ -34,8 +34,14 @@ namespace FilePocket.DataAccess.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<Guid?>("FolderId")
                         .HasColumnType("uuid");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
 
                     b.Property<Guid>("PocketId")
                         .HasColumnType("uuid");
@@ -152,6 +158,8 @@ namespace FilePocket.DataAccess.Migrations
                     b.HasIndex("ActualName")
                         .IsUnique();
 
+                    b.HasIndex("FolderId");
+
                     b.HasIndex("PocketId");
 
                     b.HasIndex("UserId");
@@ -194,6 +202,8 @@ namespace FilePocket.DataAccess.Migrations
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("PocketId");
 
                     b.ToTable("Folders");
                 });
@@ -561,6 +571,10 @@ namespace FilePocket.DataAccess.Migrations
 
             modelBuilder.Entity("FilePocket.Domain.Entities.FileMetadata", b =>
                 {
+                    b.HasOne("FilePocket.Domain.Entities.Folder", null)
+                        .WithMany("FileMetadata")
+                        .HasForeignKey("FolderId");
+
                     b.HasOne("FilePocket.Domain.Entities.Pocket", null)
                         .WithMany("FileMetadata")
                         .HasForeignKey("PocketId")
@@ -570,6 +584,15 @@ namespace FilePocket.DataAccess.Migrations
                     b.HasOne("FilePocket.Domain.Entities.User", null)
                         .WithMany("FilesMetadata")
                         .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("FilePocket.Domain.Entities.Folder", b =>
+                {
+                    b.HasOne("FilePocket.Domain.Entities.Pocket", null)
+                        .WithMany("Folders")
+                        .HasForeignKey("PocketId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -585,13 +608,11 @@ namespace FilePocket.DataAccess.Migrations
 
             modelBuilder.Entity("FilePocket.Domain.Entities.Profile", b =>
                 {
-                    b.HasOne("FilePocket.Domain.Entities.User", "User")
+                    b.HasOne("FilePocket.Domain.Entities.User", null)
                         .WithOne("Profile")
                         .HasForeignKey("FilePocket.Domain.Entities.Profile", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -648,11 +669,15 @@ namespace FilePocket.DataAccess.Migrations
             modelBuilder.Entity("FilePocket.Domain.Entities.Folder", b =>
                 {
                     b.Navigation("Bookmarks");
+
+                    b.Navigation("FileMetadata");
                 });
 
             modelBuilder.Entity("FilePocket.Domain.Entities.Pocket", b =>
                 {
                     b.Navigation("FileMetadata");
+
+                    b.Navigation("Folders");
                 });
 
             modelBuilder.Entity("FilePocket.Domain.Entities.User", b =>

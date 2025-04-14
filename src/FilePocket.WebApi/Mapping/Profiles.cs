@@ -23,5 +23,9 @@ public class Profiles : Profile
 
         CreateMap<Bookmark, BookmarkModel>().ReverseMap();
         CreateMap<BookmarkModel, GetBookmarksResponse>();
+
+        CreateMap<Note, NoteModel>().ReverseMap();
+        CreateMap<Note, NoteCreateResponse>();
+        CreateMap<Note, NoteUpdateResponse>();
     }
 }

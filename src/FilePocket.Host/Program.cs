@@ -1,23 +1,26 @@
-using FilePocket.WebApi;
-using FilePocket.Shared.Extensions;
-using Serilog;
-using FilePocket.Host;
-using FilePocket.Application.Services;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Mvc;
-using FilePocket.Domain.Entities;
-using Microsoft.AspNetCore.Identity;
-using FilePocket.Domain.Models;
-using Microsoft.OpenApi.Models;
-using FilePocket.Domain.Models.Configuration;
-using FilePocket.WebApi.Attributes;
-using Microsoft.AspNetCore.Server.Kestrel.Core;
-using FilePocket.Application.Interfaces.Services;
-using FilePocket.Application.Interfaces.Repositories;
 using FastEndpoints;
-using Mapster;
-using FilePocket.Infrastructure.Persistence.Repositories;
+using FilePocket.Application.Interfaces.Repositories;
+using FilePocket.Application.Interfaces.Services;
+using FilePocket.Application.Services;
+using FilePocket.Domain.Entities;
+using FilePocket.Domain.Models;
+using FilePocket.Domain.Models.Configuration;
+using FilePocket.Host;
 using FilePocket.Infrastructure.Persistence;
+using FilePocket.Infrastructure.Persistence.Repositories;
+using FilePocket.Shared.Extensions;
+using FilePocket.WebApi;
+using FilePocket.WebApi.Attributes;
+using Mapster;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
+using MongoDB.Bson.Serialization.Serializers;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -86,8 +89,16 @@ builder.Services.Configure<JwtConfigurationModel>(builder.Configuration.GetSecti
 builder.Services.Configure<ApiKeyConfigurationModel>(builder.Configuration.GetSection("ApiKeySettings"));
 builder.Services.AddHostedService<InitialRolesAndAdminSeeding>();
 
+builder.Services.Configure<MongoDbSettings>(
+    builder.Configuration.GetSection(nameof(MongoDbSettings)));
+
+BsonSerializer.RegisterSerializer(new GuidSerializer(BsonType.String));
+BsonSerializer.RegisterSerializer(new DateTimeSerializer(BsonType.String));
+BsonSerializer.RegisterSerializer(new DateTimeOffsetSerializer(BsonType.String));
+
 // Add services to the container.
 builder.Services.AddSingleton<ILoggerService, LoggerService>();
+builder.Services.AddScoped<IEncryptionService, EncryptionService>();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddAutoMapper(typeof(WebApiAssemblyReference));
@@ -119,7 +130,6 @@ builder.Services.AddSwaggerGen(s =>
 
 builder.Services.AddScoped<IRepositoryManager, RepositoryManager>();
 builder.Services.AddScoped<IImageService, ImageService>();
-builder.Services.AddScoped<IFolderService, FolderService>();
 builder.Services.AddSingleton<IUploadService, UploadService>();
 builder.Services.AddScoped<IServiceManager, ServiceManager>();
 builder.Services.AddScoped<JwtOrApiKeyAuthorizeAttribute>();
@@ -151,4 +161,4 @@ app.Run();
 
 
 // Used by FilePocket.Application.IntegrationTests project
-public partial class Program {}
+public partial class Program { }

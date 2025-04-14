@@ -8,7 +8,7 @@
     <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4 text-center justify-content-center">
         @foreach (var folder in Folders)
         {
-            <div class="card h-100 shadow-sm me-2 pt-2" style="width: 8em;">
+            <div class="card shadow-sm me-2 pt-2" style="width: 8em;">
                 @{
                     var url = GetFolderUrl(PocketId, folder.Id, folder.FolderType);
                 }
@@ -30,11 +30,25 @@
     [Parameter]
     public Guid? PocketId { get; set; }
 
+    [Parameter]
+    public bool IsSoftDeleted { get; set; }
+
     private string GetFolderUrl(Guid? pocketId, Guid? folderId, FolderType folderType)
     {
         if (pocketId is null)
         {
+            if (IsSoftDeleted)
+            {
+                return folderType == FolderType.Files ? $"/folders/{folderId}/files/trash" : $"/folders/{folderId}/bookmarks/trash";
+            }
+
             return folderType == FolderType.Files ? $"/folders/{folderId}/files" : $"/folders/{folderId}/bookmarks";
+        }
+
+        if (IsSoftDeleted)
+        {
+            return folderType == FolderType.Files ? $"/pockets/{pocketId}/folders/{folderId}/files/trash" 
+                                                  : $"/pockets/{pocketId}/folders/{folderId}/bookmarks/trash";
         }
 
         return folderType == FolderType.Files ? $"/pockets/{pocketId}/folders/{folderId}/files" : $"/pockets/{pocketId}/folders/{folderId}/bookmarks";
