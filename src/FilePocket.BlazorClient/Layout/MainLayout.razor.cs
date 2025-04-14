@@ -160,7 +160,7 @@ public partial class MainLayout : IDisposable
     private async Task GetOccupiedSpaceByFileType()
     {
         var pocketId = await PocketRequests.GetDefaultAsync();
-        List<FileInfoModel> files = await FileRequests.GetFilesAsync(pocketId.Id, null, true);
+        List<FileInfoModel> files = await FileRequests.GetFilesAsync(pocketId.Id, null, false);
         CreateNewFileTypeDictionary();
         foreach (FileInfoModel file in files)
         {
