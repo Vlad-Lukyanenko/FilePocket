@@ -1,8 +1,10 @@
 ﻿using FilePocket.Application.Interfaces.Repositories;
 using FilePocket.Domain.Entities;
+using FilePocket.Infrastructure.Persistence.Repositories.MongoDbRepositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using System.Data;
 using System.Data.Common;
 
@@ -18,8 +20,9 @@ public class RepositoryManager : IRepositoryManager
     private readonly Lazy<IAccountConsumptionRepository> _accountConsumptionRepository;
     private readonly Lazy<IBookmarkRepository> _bookmarkRepository;
     private readonly Lazy<IProfileRepository> _profileRepository;
+    private readonly Lazy<INotesRepository> _noteRepository;    
 
-    public RepositoryManager(FilePocketDbContext dbContext, UserManager<User> userManager, IServiceScopeFactory scopeFactory)
+    public RepositoryManager(FilePocketDbContext dbContext, UserManager<User> userManager, IServiceScopeFactory scopeFactory, IOptions<MongoDbSettings> options)
     {
         _dbContext = dbContext;
         _pocketRepository = new Lazy<IPocketRepository>(() => new PocketRepository(dbContext));
@@ -29,6 +32,7 @@ public class RepositoryManager : IRepositoryManager
         _accountConsumptionRepository = new Lazy<IAccountConsumptionRepository>(() => new AccountConsumptionRepository(dbContext));
         _bookmarkRepository = new Lazy<IBookmarkRepository>(() => new BookmarkRepository(dbContext));
         _profileRepository = new Lazy<IProfileRepository>(() => new ProfileRepository(dbContext));
+        _noteRepository = new Lazy<INotesRepository>(() => new NotesRepository(options));
     }
 
     public IPocketRepository Pocket => _pocketRepository.Value;
@@ -38,6 +42,7 @@ public class RepositoryManager : IRepositoryManager
     public IAccountConsumptionRepository AccountConsumption => _accountConsumptionRepository.Value;
     public IBookmarkRepository Bookmark => _bookmarkRepository.Value;
     public IProfileRepository Profile => _profileRepository.Value;
+    public INotesRepository Note => _noteRepository.Value;
 
     public Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken cancellationToken = default)
     {

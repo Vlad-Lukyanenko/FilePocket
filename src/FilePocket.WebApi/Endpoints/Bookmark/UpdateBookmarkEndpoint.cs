@@ -1,8 +1,6 @@
 ﻿using FilePocket.Application.Interfaces.Services;
 using FilePocket.Contracts.Bookmark;
-using FilePocket.Domain.Models;
 using FilePocket.WebApi.Endpoints.Base;
-using MapsterMapper;
 
 namespace FilePocket.WebApi.Endpoints.Bookmark;
 

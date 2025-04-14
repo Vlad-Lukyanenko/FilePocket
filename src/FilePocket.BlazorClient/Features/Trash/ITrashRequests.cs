@@ -1,9 +1,7 @@
-﻿namespace FilePocket.BlazorClient.Features.Trash
+﻿namespace FilePocket.BlazorClient.Features.Trash;
+
+public interface ITrashRequests
 {
-    public interface ITrashRequests
-    {
-        Task MoveFileToTrash(Guid fileId);
-        Task MoveFolderToTrash(Guid folderId);
-        Task MovePocketToTrash(Guid pocketId);
-    }
+    Task MoveFileToTrash(Guid fileId);
+    Task MovePocketToTrash(Guid pocketId);
 }

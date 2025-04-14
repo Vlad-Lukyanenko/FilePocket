@@ -8,4 +8,5 @@ public class UpdateBookmarkModel
     public Guid UserId { get; set; }
     public string Title { get; set; } = string.Empty;
     public string Url { get; set; } = string.Empty;
+    public bool IsDeleted { get; set; }
 }

@@ -171,7 +171,7 @@ aside{
 
 .nav-link {
     display: flex;
-    align-items: left;
+    align-items: start;
     justify-content: left;
     color: rgba(251, 251, 255, 1) !important; /* Darker text color */
     /* background-color: rgba(0,0,0,0.05); Subtle background */
