@@ -87,8 +87,8 @@ namespace FilePocket.BlazorClient.MyComponents
 
             var folders =
                 (FolderId == null
-                    ? (await FolderRequests.GetAllAsync(PocketId, FolderType.Documents))
-                    : (await FolderRequests.GetAllAsync(PocketId, FolderId.Value, FolderType.Documents)))
+                    ? (await FolderRequests.GetAllAsync(PocketId, FolderType.Documents, false))
+                    : (await FolderRequests.GetAllAsync(PocketId, FolderId.Value, FolderType.Documents, false)))
                 ?? [];
 
             var notes = (await NoteRequests.GetAllByUserIdAndFolderId(FolderId));
@@ -111,7 +111,8 @@ namespace FilePocket.BlazorClient.MyComponents
         {
             if (FolderId is not null)
             {
-                await TrashRequests.MoveFolderToTrash(FolderId.Value);
+                //MoveFolderToTrash does not exist
+                //await TrashRequests.MoveFolderToTrash(FolderId.Value);
             }
 
             _removalProcessStarted = false;

@@ -4,42 +4,32 @@ using FilePocket.BlazorClient.Shared.Enums;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 
-namespace FilePocket.BlazorClient.Pages.Folders
+namespace FilePocket.BlazorClient.Pages.Folders;
+
+public partial class CreateFolder
 {
-    public partial class CreateFolder
+    [Inject] private IFolderRequests FolderRequests { get; set; } = default!;
+    [Inject] private IJSRuntime JSRuntime { get; set; } = default!;
+    [Inject] private NavigationManager Navigation { get; set; } = default!;
+
+    [Parameter] public string PocketIdParam { get; set; } = string.Empty;
+    [Parameter] public string FolderIdParam { get; set; } = string.Empty;
+    [Parameter] public int FolderType { get; set; }
+
+    private string _folderName = string.Empty;
+    private bool _isDuplicate = false;
+    private bool _validName = true;
+
+    private async Task CreateFolderAsync()
     {
-        [Inject]
-        private IFolderRequests FolderRequests { get; set; } = default!;
-
-        [Inject]
-        private IJSRuntime JSRuntime { get; set; } = default!;
-
-        [Inject]
-        private NavigationManager Navigation { get; set; } = default!;
-
-        [Parameter]
-        public string PocketIdParam { get; set; } = string.Empty;
-
-        [Parameter]
-        public string FolderIdParam { get; set; } = string.Empty;
-
-        [Parameter]
-        public int FolderType { get; set; }
-
-        private string _folderName = string.Empty;
-        private bool _isDuplicate = false;
-        private bool _validName = true;
-
-        private async Task CreateFolderAsync()
-        {
-            Guid? pocketId = null;
+        Guid? pocketId = null;
 
             if (!string.IsNullOrWhiteSpace(PocketIdParam) && PocketIdParam != Guid.Empty.ToString())
             {
                 pocketId = Guid.Parse(PocketIdParam);
             }
 
-            Guid? folderId = null;
+        Guid? folderId = null;
 
             if (!string.IsNullOrWhiteSpace(FolderIdParam) && FolderIdParam != Guid.Empty.ToString())
             {
@@ -56,14 +46,14 @@ namespace FilePocket.BlazorClient.Pages.Folders
                 FolderType = (FolderType)FolderType
             };
 
-            var result = await FolderRequests.CreateAsync(folder);
+        var result = await FolderRequests.CreateAsync(folder);
 
-            if (!result)
-            {
-                _isDuplicate = true;
-                StateHasChanged();
-                return;
-            }
+        if (!result)
+        {
+            _isDuplicate = true;
+            StateHasChanged();
+            return;
+        }
 
             var entitiesName = GetEntitiesName(folder.FolderType);
 
@@ -102,12 +92,16 @@ namespace FilePocket.BlazorClient.Pages.Folders
                 return $"/pockets/{PocketIdParam}/{entitiesName}";
             }
 
+            if ((FolderType)FolderType == Shared.Enums.FolderType.Bookmarks)
+            {
+                return $"/pockets/{PocketIdParam}/bookmarks";
+            }        
+
             return $"/pockets/{PocketIdParam}/folders/{folderId}/{entitiesName}";
         }
 
-        private void NameChanged()
-        {
-            _validName = !string.IsNullOrEmpty(_folderName);
-        }
+    private void NameChanged()
+    {
+        _validName = !string.IsNullOrEmpty(_folderName);
     }
 }

@@ -30,27 +30,27 @@
     [Parameter]
     public Guid? PocketId { get; set; }
 
+    [Parameter]
+    public bool IsSoftDeleted { get; set; }
+
     private string GetFolderUrl(Guid? pocketId, Guid? folderId, FolderType folderType)
     {
-        var pocketIdUrlPart = pocketId != null
-            ? $"/pockets/{pocketId}"
-            : string.Empty;
-
-        switch (folderType)
+        if (pocketId is null)
         {
-            case FolderType.Bookmarks:
-                return $"{pocketIdUrlPart}/folders/{folderId}/bookmarks";
-            case FolderType.Documents:
-                return $"{pocketIdUrlPart}/folders/{folderId}/notes";
-            default:
-                return $"{pocketIdUrlPart}/folders/{folderId}/files";
+            if (IsSoftDeleted)
+            {
+                return folderType == FolderType.Files ? $"/folders/{folderId}/files/trash" : $"/folders/{folderId}/bookmarks/trash";
+            }
+
+            return folderType == FolderType.Files ? $"/folders/{folderId}/files" : $"/folders/{folderId}/bookmarks";
         }
 
-        // if (pocketId is null)
-        // {
-        //     return folderType == FolderType.Files ? $"/folders/{folderId}/files" : $"/folders/{folderId}/bookmarks";
-        // }
+        if (IsSoftDeleted)
+        {
+            return folderType == FolderType.Files ? $"/pockets/{pocketId}/folders/{folderId}/files/trash" 
+                                                  : $"/pockets/{pocketId}/folders/{folderId}/bookmarks/trash";
+        }
 
-        // return folderType == FolderType.Files ? $"/pockets/{pocketId}/folders/{folderId}/files" : $"/pockets/{pocketId}/folders/{folderId}/bookmarks";
+        return folderType == FolderType.Files ? $"/pockets/{pocketId}/folders/{folderId}/files" : $"/pockets/{pocketId}/folders/{folderId}/bookmarks";
     }
 }
