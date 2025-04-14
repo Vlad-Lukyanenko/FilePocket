@@ -15,4 +15,6 @@ public interface IServiceManager
     IBookmarkService BookmarkService { get; }
 
     IProfileService ProfileService { get; }
+
+    INoteService NoteService { get; }
 }

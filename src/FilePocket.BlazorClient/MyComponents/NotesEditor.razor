@@ -1,0 +1,35 @@
+﻿
+<div>
+    <textarea id="@_editorId">
+        @Content
+    </textarea>
+</div>
+
+<script>
+    function getTinyMceContent(editorId) {
+        var editor = tinymce.get(`${editorId}`);
+        console.log(editor);
+        return editor.getContent();
+    }
+
+    function initializeTinyMCE(editorId, saveCallBackReference) {
+        tinymce.init({
+            license_key: 'gpl',
+            selector: editorId,
+            height: 600,
+
+            plugins: 'link code save preview searchreplace directionality visualblocks visualchars fullscreen codesample table charmap pagebreak nonbreaking anchor insertdatetime advlist lists wordcount help charmap quickbars emoticons accordion',
+            menubar: 'file edit view insert format tools table help',
+            toolbar: 'undo redo | save | accordion accordionremove | blocks fontfamily fontsize | bold italic underline strikethrough | align numlist bullist | link | table | lineheight outdent indent | forecolor backcolor removeformat | charmap emoticons | code fullscreen preview | print | pagebreak anchor codesample | ltr rtl',
+            toolbar_mode: 'sliding',
+            content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:16px }',
+            quickbars_insert_toolbar: false,
+
+            save_enablewhendirty: true,
+            save_onsavecallback: function () {
+                const content = tinymce.activeEditor.getContent();
+                saveCallBackReference.invokeMethodAsync('OnSave', content);
+            }
+        });
+    }
+</script>

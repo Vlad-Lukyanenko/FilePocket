@@ -16,7 +16,6 @@ public class FilePocketDbContext(DbContextOptions<FilePocketDbContext> options)
     }
 
     public DbSet<FileMetadata> FilesMetadata { get; set; } // should be created inside pocket, or linked to default pocket
-    
     public DbSet<Pocket> Pockets { get; set; }
     public DbSet<Folder> Folders { get; set; } // should be created inside pocket only
     public DbSet<SharedFile> SharedFiles { get; set; }

@@ -35,17 +35,17 @@ public partial class Bookmarks
     {
         List<FolderModel> folders;
 
-        _currentFolder = FolderId is null ? null : await FolderRequests.GetAsync(FolderId.Value);
-        var currentFolderName = _currentFolder is null ? string.Empty : $" - {_currentFolder.Name}";
-        var currentFolderUrl = FolderId is null ? "" : $"{FolderId}/";
-
-        _pageTitle = $"My bookmarks{currentFolderName}";
-
         if (PocketId == Guid.Empty)
         {
             var defaultPocket = await PocketRequests.GetDefaultAsync();
             PocketId = defaultPocket.Id;
         }
+
+        _currentFolder = FolderId is null ? null : await FolderRequests.GetAsync(PocketId, FolderId.Value);
+        var currentFolderName = _currentFolder is null ? string.Empty : $" - {_currentFolder.Name}";
+        var currentFolderUrl = FolderId is null ? "" : $"{FolderId}/";
+
+        _pageTitle = $"My bookmarks{currentFolderName}";
 
         _createFolderUrl = $"/pockets/{PocketId}/folders/{currentFolderUrl}{(int)FolderType.Bookmarks}/new";
 

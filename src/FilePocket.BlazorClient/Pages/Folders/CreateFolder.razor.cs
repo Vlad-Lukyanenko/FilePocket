@@ -24,27 +24,27 @@ public partial class CreateFolder
     {
         Guid? pocketId = null;
 
-        if(!string.IsNullOrWhiteSpace(PocketIdParam) && PocketIdParam != Guid.Empty.ToString())
-        {
-            pocketId = Guid.Parse(PocketIdParam);
-        }
+            if (!string.IsNullOrWhiteSpace(PocketIdParam) && PocketIdParam != Guid.Empty.ToString())
+            {
+                pocketId = Guid.Parse(PocketIdParam);
+            }
 
         Guid? folderId = null;
 
-        if(!string.IsNullOrWhiteSpace(FolderIdParam) && FolderIdParam != Guid.Empty.ToString())
-        {
-            folderId = Guid.Parse(FolderIdParam);
-        }
+            if (!string.IsNullOrWhiteSpace(FolderIdParam) && FolderIdParam != Guid.Empty.ToString())
+            {
+                folderId = Guid.Parse(FolderIdParam);
+            }
 
-        var folder = new FolderModel()
-        {
-            CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow,
-            Name = _folderName,
-            ParentFolderId = folderId,
-            PocketId = pocketId,
-            FolderType = (FolderType)FolderType
-        };
+            var folder = new FolderModel()
+            {
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow,
+                Name = _folderName,
+                ParentFolderId = folderId, 
+                PocketId = pocketId,
+                FolderType = (FolderType)FolderType
+            };
 
         var result = await FolderRequests.CreateAsync(folder);
 
@@ -55,48 +55,41 @@ public partial class CreateFolder
             return;
         }
 
-        Navigation.NavigateTo(GetGoBackUrl());
-    }
+            var entitiesName = GetEntitiesName(folder.FolderType);
 
-    private string GetGoBackUrl()
-    {
-        if (string.IsNullOrWhiteSpace(PocketIdParam) && string.IsNullOrWhiteSpace(FolderIdParam))
-        {
-            if((FolderType)FolderType == Shared.Enums.FolderType.Files)
-            {
-                return "/files";
-            }
-
-            if ((FolderType)FolderType == Shared.Enums.FolderType.Bookmarks)
-            {
-                return "/bookmarks";
-            }
+            Navigation.NavigateTo(GetGoBackUrl(entitiesName));
         }
 
-        Guid? folderId = null;
-        if (!string.IsNullOrWhiteSpace(FolderIdParam))
+        private static string GetEntitiesName(FolderType folderType)
         {
-            folderId = Guid.Parse(FolderIdParam);
+            return folderType switch
+            {
+                Shared.Enums.FolderType.Documents => "notes",
+                Shared.Enums.FolderType.Bookmarks => "bookmarks",
+                _ => "files",
+            };
         }
 
-        if (string.IsNullOrWhiteSpace(PocketIdParam) && !string.IsNullOrWhiteSpace(FolderIdParam))
+        private string GetGoBackUrl(string entitiesName)
         {
-            if ((FolderType)FolderType == Shared.Enums.FolderType.Files)
+            if (string.IsNullOrWhiteSpace(PocketIdParam) && string.IsNullOrWhiteSpace(FolderIdParam))
             {
-                return $"/folders/{folderId}/files";
+                return $"/{entitiesName}";
             }
 
-            if ((FolderType)FolderType == Shared.Enums.FolderType.Bookmarks)
-            {
-                return $"/folders/{folderId}/bookmarks";
-            }            
-        }
+            var folderId = !string.IsNullOrWhiteSpace(FolderIdParam)
+                ? Guid.Parse(FolderIdParam)
+                : (Guid?)null;
 
-        if (!string.IsNullOrWhiteSpace(PocketIdParam) && string.IsNullOrWhiteSpace(FolderIdParam))
-        {
-            if ((FolderType)FolderType == Shared.Enums.FolderType.Files)
+
+            if (string.IsNullOrWhiteSpace(PocketIdParam) && folderId != null)
             {
-                return $"/pockets/{PocketIdParam}/files";
+                return $"/folders/{folderId}/{entitiesName}";
+            }
+
+            if (!string.IsNullOrWhiteSpace(PocketIdParam) && folderId == null)
+            {
+                return $"/pockets/{PocketIdParam}/{entitiesName}";
             }
 
             if ((FolderType)FolderType == Shared.Enums.FolderType.Bookmarks)
@@ -105,13 +98,8 @@ public partial class CreateFolder
             }
         }
 
-        if ((FolderType)FolderType == Shared.Enums.FolderType.Bookmarks)
-        {
-            return $"/pockets/{PocketIdParam}/folders/{folderId}/bookmarks";
+            return $"/pockets/{PocketIdParam}/folders/{folderId}/{entitiesName}";
         }
-
-        return $"/pockets/{PocketIdParam}/folders/{folderId}/files";
-    }
 
     private void NameChanged()
     {

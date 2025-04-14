@@ -17,9 +17,23 @@ public class DeleteEndpoint : BaseEndpointWithoutRequestAndResponse
         Delete("api/folders/{folderId:guid}");
     }
 
-    public override async Task HandleAsync(CancellationToken cancellationToken)
-    {
-        await _service.FolderService.DeleteAsync(FolderId!.Value);
+        public override async Task HandleAsync(CancellationToken cancellationToken)
+        {
+            var folder = await _service.FolderService.GetAsync(FolderId!.Value);
+
+            if (folder?.FolderType == Domain.Enums.FolderType.Documents)
+            {
+                try
+                {
+                    await _service.NoteService.BulkDeleteAsync(FolderId!.Value, cancellationToken);
+                }
+                catch
+                {
+                    await SendErrorsAsync(cancellation: cancellationToken);
+                }
+            }
+
+            await _service.FolderService.DeleteAsync(FolderId!.Value);
 
         await SendOkAsync(cancellationToken);
     }

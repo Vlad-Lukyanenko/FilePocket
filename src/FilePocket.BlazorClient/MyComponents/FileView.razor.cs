@@ -1,4 +1,6 @@
 ﻿using FilePocket.BlazorClient.Features.Files.Models;
+using FilePocket.BlazorClient.Features.Storage.Models;
+using FilePocket.BlazorClient.Features.Storage.Requests;
 using FilePocket.BlazorClient.Features.Trash;
 using FilePocket.BlazorClient.Helpers;
 using FilePocket.BlazorClient.Services.Files.Models;
@@ -34,6 +36,12 @@ namespace FilePocket.BlazorClient.MyComponents
 
         [Inject]
         private NavigationManager Navigation { get; set; } = default!;
+
+        [Inject]
+        private IStorageRequests StorageRequests { get; set; } = default!;
+
+        [Inject]
+        private StateContainer<StorageConsumptionModel> StorageStateContainer { get; set; } = default!;
 
         private Guid _fileId;
 
@@ -107,6 +115,8 @@ namespace FilePocket.BlazorClient.MyComponents
             _removalProcessStarted = true;
             await TrashRequests.MoveFileToTrash(_fileId);
 
+            var storageConsumption = await StorageRequests.GetStorageConsumption();
+            StorageStateContainer.SetValue(storageConsumption!);
             Navigation.NavigateTo(_goBackUrl);
         }
     }

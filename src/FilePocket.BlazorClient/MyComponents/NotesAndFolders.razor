@@ -1,0 +1,116 @@
+﻿@using FilePocket.BlazorClient.Helpers
+@using FilePocket.BlazorClient.Services.Files.Models
+@using FilePocket.BlazorClient.Shared.Enums
+
+<style>
+    @@media (max-width: 768px) {
+    .table-responsive {
+    overflow-x: auto;
+    }
+
+    .table th, .table td {
+    padding: 0.5rem;
+    }
+
+    .btn-outline-success, .btn-outline-warning, .btn-outline-danger {
+    padding: 0.25rem 0.5rem;
+    }
+
+    .fs-4 {
+    font-size: 1.5rem;
+    }
+
+    .w-md-75 {
+    width: 100% !important;
+    }
+
+    .form-check-input {
+    margin-right: 0.5rem;
+    }
+
+    .link-dark {
+    font-size: 0.9rem;
+    }
+    }
+</style>
+
+<div class="container-fluid" style="min-height: 600px;">
+    @{
+        var showGoBackBtn = FolderId is not null;
+
+        var notes = "Notes";
+        var folder = _currentFolder is null ? "" : $"/ {Tools.TruncateString(_currentFolder.Name)}";
+        var parentFolder = _currentFolder?.ParentFolderId is null ? "" : " /... ";
+
+        var title = $"{notes} {parentFolder}{folder}";
+    }
+    <!-- Top SubMenu -->
+    <TopSubMenu Title="@title" ShowBackButton="showGoBackBtn" />
+
+    <!-- Action Buttons Row -->
+    <div class="row">
+        <div class="col-12 d-flex align-items-center mb-3">
+
+            <!-- Create Or Edit Note Button -->
+            <button class="btn btn-outline-primary py-0 px-2 me-2" @onclick="@OpenEditor">
+                <i class="ps-2 pe-2 bi-file-earmark-plus fs-4"></i>
+            </button>
+
+            @{
+                var folderId = FolderId is null ? "" : $"{FolderId}/";
+
+                var url = $"/pockets/{PocketId}/folders/{folderId}{(int)FolderType.Documents}/new";
+            }
+
+            <a href="@url" class="btn btn-outline-warning py-0 px-3">
+                <i class="bi bi-folder-plus fs-4"></i>
+            </a>
+
+            <div style="display: flex; justify-content: flex-end; width: 100%; gap: 8px;">
+                @if (FolderId is not null)
+                {
+                    @if (_removalProcessStarted)
+                    {
+                        <button class="btn btn-sm btn-outline-danger p-1"
+                                style="border-radius: 10px; min-width: 6em;"
+                                title="Confirm"
+                                @onclick="DeleteFolderClick">
+                            <i class="bi-check-square fs-6"></i> Confirm
+                        </button>
+                        <button class="btn btn-sm btn-outline-secondary p-1"
+                                style="border-radius: 10px; min-width: 6em;"
+                                title="Cancel"
+                                @onclick="() => _removalProcessStarted = false">
+                            <i class="bi bi-x-square fs-6"></i> Cancel
+                        </button>
+                    }
+                    else
+                    {
+                        <button class="btn btn-outline-danger p-1"
+                                style="border-radius: 10px; min-width: 6em;"
+                                @onclick="() => _removalProcessStarted = true">
+                            <i class="bi bi-trash fs-6"></i> Delete
+                        </button>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+
+    <br />
+
+    <!-- Notes Table -->
+    @if (_folders != null && !_folders.Any() && _notes != null && !_notes.Any())
+    {
+        <div class="text-center no-content">
+            <h6>It looks like you haven't uploaded or created any notes yet. <br /> Would you like to upload or create one now?</h6>
+        </div>
+    }
+    else
+    {
+        <FoldersBlock Folders="_folders" PocketId="PocketId" />
+        <NotesBlock Notes="_notes" NoteRequests="NoteRequests" />
+    }
+
+</div>
+

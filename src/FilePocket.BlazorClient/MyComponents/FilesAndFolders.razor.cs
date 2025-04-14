@@ -9,10 +9,13 @@ using FilePocket.BlazorClient.Services.Files.Requests;
 using FilePocket.BlazorClient.Services.Pockets.Requests;
 using System.Collections.ObjectModel;
 using FilePocket.BlazorClient.Shared.Models;
-using FilePocket.BlazorClient.Features.Trash;
 using FilePocket.BlazorClient.Shared.Enums;
+using FilePocket.BlazorClient.Features.Trash;
 using FilePocket.BlazorClient.Features.Users.Requests;
 using Microsoft.AspNetCore.Components.Authorization;
+using FilePocket.BlazorClient.Features.Storage.Requests;
+using FilePocket.BlazorClient.Features.Storage.Models;
+using FilePocket.BlazorClient.Helpers;
 
 namespace FilePocket.BlazorClient.MyComponents;
 
@@ -47,6 +50,8 @@ public partial class FilesAndFolders
     [Inject] IUserRequests UserRequests { get; set; } = default!;
     [Inject] private NavigationManager Navigation { get; set; } = default!;
     [Inject] private IJSRuntime JS { get; set; } = default!;
+    [Inject] private IStorageRequests StorageRequests { get; set; } = default!;
+    [Inject] private StateContainer<StorageConsumptionModel> StorageStateContainer { get; set; } = default!;
 
     protected override async Task OnInitializedAsync()
     {
@@ -83,7 +88,7 @@ public partial class FilesAndFolders
         List<FileInfoModel> files;
         List<FolderModel> folders;
 
-        _currentFolder = FolderId is null ? null : await FolderRequests.GetAsync(FolderId.Value);
+        _currentFolder = FolderId is null ? null : await FolderRequests.GetAsync(PocketId!.Value, FolderId.Value);
 
         if (FolderId == null)
         {
@@ -123,6 +128,8 @@ public partial class FilesAndFolders
 
         _removalProcessStarted = false;
 
+        var storageConsumption = await StorageRequests.GetStorageConsumption();
+        StorageStateContainer.SetValue(storageConsumption!);
         Navigation.NavigateTo(_goBackUrl);
     }
 
@@ -198,6 +205,9 @@ public partial class FilesAndFolders
 
                                 StateHasChanged();
                             });
+
+                            var storageConsumption = await StorageRequests.GetStorageConsumption();
+                            StorageStateContainer.SetValue(storageConsumption!);
                         }
                     }
                 }
