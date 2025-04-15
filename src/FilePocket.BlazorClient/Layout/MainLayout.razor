@@ -39,7 +39,7 @@
                                 <i class="fs-4 bi-house"></i>
                                 <span class="ms-2 d-none d-md-inline">Home</span>
                             </div>
-                            <!-- Removed the extra closing div -->
+                        
                         </a>
                     </li>
                     @* <li class="nav-item flex-fill flex-md-grow-0">
@@ -51,24 +51,28 @@
                             </a>
                         </li> *@
 
-                    <li class="nav-item flex-fill flex-md-grow-0">
-                        <a href="/files" class="d-flex align-items-center justify-content-between nav-link text-dark px-2 @(IsActive("/files"))"
-                        @onclick="ToggleFilesMenu">
-                            <div>
-                                <i class="bi bi-file-earmark"></i>
-                                <span class="ms-2">Files</span>
-                            </div>
-                            <i class="bi @( _isFilesMenuOpen ? "bi-chevron-up" : "bi-chevron-down")"></i>
-                        </a>
-                        <ul class="submenu @( _isFilesMenuOpen ? "show" : "" )">
-                            <li class="nav-item flex-fill flex-md-grow-0"><a href="/files/documents" class="nav-link text-dark px-2">Documents</a></li>
-                            <li class="nav-item flex-fill flex-md-grow-0"><a href="/files/books" class="nav-link text-dark px-2">Books</a></li>
-                            <li class="nav-item flex-fill flex-md-grow-0"><a href="/files/music" class="nav-link text-dark px-2">Music</a></li>
-                            <li class="nav-item flex-fill flex-md-grow-0"><a href="/files/pictures" class="nav-link text-dark px-2">Pictures</a></li>
-                            <li class="nav-item flex-fill flex-md-grow-0"><a href="/files/videos" class="nav-link text-dark px-2">Videos</a></li>
-                            <li class="nav-item flex-fill flex-md-grow-0"><a href="/files/other" class="nav-link text-dark px-2">Other</a></li>
-                        </ul>
-                    </li>
+                        <li class="nav-item flex-fill flex-md-grow-0">
+                            @* <a href="/files" class="d-flex align-items-center justify-content-between nav-link text-dark px-2"
+                            @onclick="ToggleFilesMenu"> *@
+                                <div @onclick="ToggleFilesMenu" class="nav-link px-2 d-flex align-items-center justify-content-between">
+                                    <div>
+                                        <i class="fs-4 bi bi-file-earmark"></i>
+                                        <span class="ms-2">Files</span>
+                                    </div>
+                                    <i class="bi @( _isFilesMenuOpen ? "bi-chevron-up" : "bi-chevron-down")"></i>
+                                </div>
+                                
+                            @* </a> *@
+                            <ul class="submenu @( _isFilesMenuOpen ? "show" : "" )">
+                                <li class="nav-item flex-fill flex-md-grow-0"><a href="/files" class="nav-link text-dark px-2 @(IsActive("/files"))">All</a></li>
+                                <li class="nav-item flex-fill flex-md-grow-0"><a href="/files/documents" class="nav-link text-dark px-2">Documents</a></li>
+                                <li class="nav-item flex-fill flex-md-grow-0"><a href="/files/books" class="nav-link text-dark px-2">Books</a></li>
+                                <li class="nav-item flex-fill flex-md-grow-0"><a href="/files/music" class="nav-link text-dark px-2">Music</a></li>
+                                <li class="nav-item flex-fill flex-md-grow-0"><a href="/files/pictures" class="nav-link text-dark px-2">Pictures</a></li>
+                                <li class="nav-item flex-fill flex-md-grow-0"><a href="/files/videos" class="nav-link text-dark px-2">Videos</a></li>
+                                <li class="nav-item flex-fill flex-md-grow-0"><a href="/files/other" class="nav-link text-dark px-2">Other</a></li>
+                            </ul>
+                        </li>
 
 
 
@@ -198,20 +202,21 @@
                     <div class="offcanvas-header">
                         <button type="button" class="btn-close btn-close-white text-reset" data-bs-dismiss="offcanvas"></button>
                     </div>
-                    <div class="offcanvas-body">
+                    
+                    <div class="offcanvas-scrollable">
+                        @* <div class="offcanvas-body"> *@
+                    
                         <div class="controls-container">
                             <!-- Signing In User Info Button -->
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div class="d-flex align-items-center">
-
-
+                            <div class="d-flex justify-content-center align-items-center">
+                                <div class="d-flex align-items-center flex-column">
                                     <img class="rounded-circle avatar-image" 
                                     src="@(_icon is null ? "../assets/img/man.png" : $"data:image/jpeg;base64,{_icon}")" 
                                     alt="userPicture" 
                                     @onclick="NavigateToProfile" 
                                     />
 
-                                    <div>
+                                    <div class="d-flex align-items-center flex-column">
                                         <span>@_user?.Email</span>
                                         <h5 class="card-title">
                                             @GetDisplayedName()
@@ -221,10 +226,10 @@
 
                             </div>
                         </div>
-                    </div>
+                    
 
                     <!--  doughnut chart -->
-                    <div class="text-white p-4" style="margin: 40px auto;">
+                    <div class="text-white p-4">
                         <canvas id="storageChart"></canvas>
 
                         <h5 class="text-center mt-2">@(Math.Round(_storageConsumption.Total/1000)) GB</h5>
@@ -263,7 +268,6 @@
                             }
                         </div>
                     </div>
-
                     <div class="d-flex flex-column p-3">
                         <a href="/support" class="link text-white @(IsActive("/support"))" @onclick='() => CloseOffcanvasAndNavigate("/support")'>
                             <i class="bi bi-question-circle"></i><span class="ms-2">Help &amp; Support</span>
@@ -274,6 +278,8 @@
                         </a>
                     </div>
 
+                    </div>
+
                 </div>   
 
             </div>   
@@ -281,7 +287,7 @@
 
 
         <NotAuthorized>
-            <section class="col-12 mt-3 text-center pt-3 pb-4">
+            <section class="col-12 mt-3 text-center pt-5 pb-4">
                 <div class="mx-auto d-block">
                     <a href="#" class="top-header-link">File Pocket</a>
                 </div>
@@ -305,12 +311,12 @@
 
     private List<StorageItem> StorageItems = new()
     {
-        new StorageItem("Documents", 0.0, "#0000FF", "bi bi-folder"),
-        new StorageItem("Books", 0.0, "#FF0000", "bi bi-book"),
-        new StorageItem("Music", 0.0, "#008000", "bi bi-file-music"),
-        new StorageItem("Pictures", 0.0, "#FFFF00", "bi bi-image"),
-        new StorageItem("Videos", 0.0, "#FFA500", "bi bi-film"),
-        new StorageItem("Other", 0.0, "#40E0D0", "bi bi-file-earmark"),
+        new StorageItem("Documents", 0.0, "#FEE6AC", "bi bi-folder"),
+        new StorageItem("Books", 0.0, "#699CFF", "bi bi-book"),
+        new StorageItem("Music", 0.0, "#47A3BC", "bi bi-file-music"),
+        new StorageItem("Pictures", 0.0, "#F7B169", "bi bi-image"),
+        new StorageItem("Videos", 0.0, "#AC91DA", "bi bi-film"),
+        new StorageItem("Other", 0.0, "#CFE6F3", "bi bi-file-earmark"),
     };
 
     private class StorageItem
@@ -360,11 +366,11 @@
 
 
     function renderStorageChart(documentSize, booksSize, musicSize, picturesSize, videosSize, otherSize) {
-    @* console.log("renderStorageChart() вызван!"); *@
+    console.log("renderStorageChart() вызван!");
 
     var ctx = document.getElementById("storageChart");
     if (!ctx) {
-        @* console.error("Canvas не найден!"); *@
+        console.error("Canvas не найден!");
         return;
     }
 
@@ -374,10 +380,10 @@
     new Chart(ctx, {
         type: "doughnut",
         data: {
-            labels: ["Documents", "Books", "Music", "Pictures", "videosSize", "otherSize"],
+            labels: ["Documents", "Books", "Music", "Pictures", "Videos", "Other"],
             datasets: [{
                 data: [documentSize, booksSize, musicSize, picturesSize, videosSize, otherSize],
-                backgroundColor: ["#0000FF", "#FF0000", "#008000", "#FFFF00", "#FFA500", "#40E0D0"],
+                backgroundColor: ["#FEE6AC", "#699CFF", "#47A3BC", "#F7B169", "#AC91DA", "#CFE6F3"],
                 borderWidth: 0
             }]
         },

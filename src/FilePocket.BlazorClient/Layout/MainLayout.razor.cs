@@ -26,7 +26,7 @@ public partial class MainLayout : IDisposable
     private string _unoccupiedStorageSpacePercentage = "100";
     private string _occupiedStorageSpacePercentage = "0";
 
-    public Dictionary<FileTypes, double> _occupiedSpaceByFileType;
+    public required Dictionary<FileTypes, double> _occupiedSpaceByFileType;
 
     [Inject] AuthenticationStateProvider AuthStateProvider { get; set; } = default!;
     [Inject] IUserRequests UserRequests { get; set; } = default!;
@@ -101,7 +101,7 @@ public partial class MainLayout : IDisposable
 
     private void NavigateToProfile()
     {
-        Navigation.NavigateTo("/profile?openModal=true", forceLoad: false);
+        Navigation.NavigateTo("/profile", forceLoad: false);
     }
 
 
@@ -149,7 +149,7 @@ public partial class MainLayout : IDisposable
         await InvokeAsync(StateHasChanged);
     }
 
-    private bool _isFilesMenuOpen = false;
+    private bool _isFilesMenuOpen = true;
 
     private void ToggleFilesMenu()
     {
@@ -246,4 +246,3 @@ public partial class MainLayout : IDisposable
         };
     }
 }
-

@@ -38,8 +38,14 @@ aside{
 #offcanvasMenuRight, .offcanvasMenuRight, #offcanvasMenu, #rightOffcanvasMenu{
     background-color: rgba(32, 38, 86, 1);
     color: rgba(251, 251, 255, 1) !important;
+   
 }
 
+.offcanvas-scrollable {
+    overflow-y: auto;
+    max-height: 100vh; /* Высота окна */
+    padding-right: 1rem;
+}
 
 .profile-icon{
     margin-right: 10px;
