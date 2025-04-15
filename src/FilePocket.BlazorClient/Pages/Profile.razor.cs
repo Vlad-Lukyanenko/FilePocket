@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 using System.Collections.ObjectModel;
 using System.Net.Http.Headers;
+using System.Threading.Tasks;
 
 
 
@@ -29,7 +30,6 @@ public partial class Profile : ComponentBase
     private Guid _defaultPocketId;
     private FileModel _avatar = new();
     private IBrowserFile? _file;
-    private bool isEditing = false;
 
     [Inject] private AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
     [Inject] private IUserRequests UserRequests { get; set; } = default!;
@@ -40,37 +40,34 @@ public partial class Profile : ComponentBase
     [Inject] private IJSRuntime JS { get; set; } = default!;
     [Inject] private NavigationManager? Navigation { get; set; }
 
+
     protected override async Task OnInitializedAsync()
     {
+
+        var uri = Navigation != null ? new Uri(Navigation.Uri) : throw new InvalidOperationException("Navigation is null");
+        var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
+
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var userAuth = authState.User;
         var userStringId = userAuth.FindFirst(c => c.Type == "uid")?.Value;
+        var userId = new Guid(userStringId!);
 
-        if (Guid.TryParse(userStringId, out var userId) && userId != Guid.Empty)
+        if (userId != Guid.Empty)
         {
             _profile = await ProfileRequests.GetByUserIdAsync(userId);
             _defaultPocketId = (await PocketRequests.GetDefaultAsync()).Id;
 
             if (_profile.IconId is not null && _profile.IconId != Guid.Empty)
             {
-                try
-                {
-                    _avatar = await FileRequests.GetImageThumbnailAsync((Guid)_profile.IconId, 500);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Ошибка при загрузке иконки: {ex.Message}");
-                    
-                    _avatar = new FileModel(); 
-                }
+                _avatar = await FileRequests.GetImageThumbnailAsync((Guid)_profile.IconId, 500);
             }
         }
+    
 
         _isLoading = false;
     }
 
-
-    private async Task SaveChangesAsync(MouseEventArgs? e = null)
+    private async Task SaveChangesAsync(MouseEventArgs e)
     {
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
 
@@ -250,6 +247,7 @@ public partial class Profile : ComponentBase
         return memoryStream.ToArray();
     }
 
+
     private Dictionary<string, bool> editStates = new()
     {
         { "FirstName", false },
@@ -259,26 +257,27 @@ public partial class Profile : ComponentBase
         { "Language", false }
     };
 
-    private void ToggleEditState(string fieldName)
-    {
-        if (editStates[fieldName])
-        {
-            editStates[fieldName] = false;
-        }
-        else
-        {
-            editStates[fieldName] = true;
-        }
-
-        StateHasChanged(); 
-    }
-
-    private async Task ToggleEditMode()
+    private async Task ToggleEditState()
 {
-    if (isEditing)
+    if (editStates.Values.Any(v => v))
     {
-        await SaveChangesAsync(); 
+
+       await SaveChangesAsync(new MouseEventArgs());
+
+        var keys = editStates.Keys.ToList();
+        foreach (var key in keys)
+        {
+            editStates[key] = false;
+        }
     }
-    isEditing = !isEditing;
+    else
+    {
+        var keys = editStates.Keys.ToList();
+        foreach (var key in keys)
+        {
+            editStates[key] = true;
+        }
+    }
+    StateHasChanged();
 }
 }

@@ -1,14 +1,21 @@
 ﻿
-
-.modal-content {
-    margin-top: 50px;
-    padding: 20px;
-    text-align: center;
-    position: relative;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+.image {
+    transition: 0.3s ease;
 }
 
-.btn-close {
+.image:hover {
+    opacity: 0.9;
+    cursor: pointer;
+}
+
+.btn-primary{
+    background: linear-gradient(to right, #9b5cff, #6c63ff);
+    border: none;
+    width: 300px;
+}
+
+
+/* .btn-close {
     position: absolute;
     top: 15px;
     right: 15px;
@@ -31,16 +38,16 @@
     width: 100%;
 }
 
-.image {
+/* .image {
     width: 250px;
     /* height: 120px; */
-    object-fit: cover;
+    /* object-fit: cover;
     border-radius: 50%;
     border: 4px solid white;
-    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2);
-}
+    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2); */
+/* }  */
 
-.overlay {
+/* .overlay {
     position: absolute;
     bottom: 0;
     right: 0;
@@ -52,20 +59,20 @@
     align-items: center;
     justify-content: center;
     box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2);
-}
+} */
 
-.overlay i {
+/* .overlay i {
     font-size: 18px;
     color: #6c63ff;
-}
+} */
 
-label {
+/* label {
     font-weight: 600;
     color: #6c63ff;
     margin-right: 10px;
-}
+} */
 
-.form-control {
+/* .form-control {
     max-width: 250px; ;
     border: none;
     border-bottom: 2px solid #ccc;
@@ -74,13 +81,13 @@ label {
     width: 100%;
     outline: none;
     transition: border-bottom 0.3s;
-}
+} */
 
 /* input:focus, select:focus {
     border-bottom: 2px solid #6c63ff;
 } */
 
-.btn-link {
+/* .btn-link {
     color: #6c63ff;
     text-decoration: none;
     font-weight: 600;
@@ -98,10 +105,10 @@ label {
 
 .btn-success:hover {
     background-color: #5a55e0;
-}
+} */
 
 
-
+/* 
 .custom-select {
     position: relative;
     display: inline-block;
@@ -118,30 +125,23 @@ label {
     color: #6c63ff;
     cursor: pointer;
     width: 150px;
-}
-
-/* Добавляем кастомную стрелку */
-.custom-select::after {
-    content: "▼";
-    font-size: 14px;
-    color: #6c63ff;
-    position: absolute;
-    right: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    pointer-events: none;
-}
-
-/* Убираем стандартную стрелку в Firefox */
-.custom-select select::-ms-expand {
-    display: none;
-}
+} */
 
 
-
-@media (max-width: 768px) {
-    .modal{
-        display: block;
-    
+@media screen and (max-width: 768px) {
+    .btn-primary {
+        width: 100%;
     }
+    .form-group {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .form-control {
+        max-width: 100%;
+    }
+    .image {
+        width: 100%;
+        height: auto;
+    }
+    
 }

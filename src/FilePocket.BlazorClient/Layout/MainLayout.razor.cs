@@ -26,7 +26,7 @@ public partial class MainLayout : IDisposable
     private string _unoccupiedStorageSpacePercentage = "100";
     private string _occupiedStorageSpacePercentage = "0";
 
-    public Dictionary<FileTypes, double> _occupiedSpaceByFileType = new();
+    public required Dictionary<FileTypes, double> _occupiedSpaceByFileType;
 
     [Inject] AuthenticationStateProvider AuthStateProvider { get; set; } = default!;
     [Inject] IUserRequests UserRequests { get; set; } = default!;
@@ -246,4 +246,3 @@ public partial class MainLayout : IDisposable
         };
     }
 }
-
