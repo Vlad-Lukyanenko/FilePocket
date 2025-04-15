@@ -161,8 +161,10 @@ public partial class MainLayout : IDisposable
     {
         var pocketId = await PocketRequests.GetDefaultAsync();
         List<FileInfoModel> files = await FileRequests.GetFilesAsync(pocketId.Id, null, false);
+        List<FileInfoModel> softDeletedFiles = await FileRequests.GetFilesAsync(pocketId.Id, null, true);
+        List<FileInfoModel> allFiles = files.Union(softDeletedFiles).ToList();
         CreateNewFileTypeDictionary();
-        foreach (FileInfoModel file in files)
+        foreach (FileInfoModel file in allFiles)
         {
             switch (file.FileType)
             {
