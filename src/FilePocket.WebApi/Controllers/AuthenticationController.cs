@@ -1,5 +1,6 @@
 ﻿using FilePocket.Application.Interfaces.Services;
 using FilePocket.Domain.Entities;
+using FilePocket.Domain.Enums;
 using FilePocket.Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -43,9 +44,10 @@ public class AuthenticationController : ControllerBase
             IsDefault = true
         };
 
-        await _service.PocketService.CreatePocketAsync(defaultPocket);
+        var createdPocket = await _service.PocketService.CreatePocketAsync(defaultPocket);
         await CreateProfileAsync(result.User);
-
+        await CreateDefaultFoldersAsync(createdPocket.Id, createdPocket.UserId)
+;
         return StatusCode(201);
     }
 
@@ -82,5 +84,23 @@ public class AuthenticationController : ControllerBase
         };
 
         await _service.ProfileService.CreateProfileAsync(newProfile);
+    }
+
+    private async Task CreateDefaultFoldersAsync(Guid defaultPocketId, Guid userId)
+    {
+        var defaultFolders = new List<FolderModel>
+        {
+            new FolderModel() { UserId = userId, PocketId = defaultPocketId, Name = "Documents", FolderType = FolderType.Documents },
+            new FolderModel() { UserId = userId, PocketId = defaultPocketId, Name = "Music", FolderType = FolderType.Files  },
+            new FolderModel() { UserId = userId, PocketId = defaultPocketId, Name = "Books", FolderType = FolderType.Files  },
+            new FolderModel() { UserId = userId, PocketId = defaultPocketId, Name = "Pictures", FolderType = FolderType.Files  },
+            new FolderModel() { UserId = userId, PocketId = defaultPocketId, Name = "Videos", FolderType = FolderType.Files  },
+            new FolderModel() { UserId = userId, PocketId = defaultPocketId, Name = "Other", FolderType = FolderType.Files  }
+        };
+
+        foreach (var folder in defaultFolders)
+        {
+            await _service.FolderService.CreateAsync(folder);
+        }
     }
 }
