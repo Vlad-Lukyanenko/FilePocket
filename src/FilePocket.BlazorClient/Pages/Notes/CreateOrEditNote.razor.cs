@@ -59,7 +59,7 @@ namespace FilePocket.BlazorClient.Pages.Notes
             {
                 _note = await NoteRequests.GetByIdAsync(Id);
 
-                _createdAt = _note.UpdatedAt.ToString();
+                _createdAt = _note.CreatedAt.ToString();
                 _updatedAt = _note.UpdatedAt.ToString();
             }
             else
@@ -110,6 +110,8 @@ namespace FilePocket.BlazorClient.Pages.Notes
                 _note!.UpdatedAt = result.UpdatedAt;
 
                 _updatedAt = _note.UpdatedAt.ToString();
+
+                await InvokeAsync(StateHasChanged);
             }
         }
 
