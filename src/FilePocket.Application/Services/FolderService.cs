@@ -1,74 +1,129 @@
-﻿using FilePocket.Application.Interfaces.Repositories;
+﻿using FilePocket.Application.Exceptions;
+using FilePocket.Application.Interfaces.Repositories;
 using FilePocket.Application.Interfaces.Services;
 using FilePocket.Domain.Entities;
 using FilePocket.Domain.Enums;
 using FilePocket.Domain.Models;
 using MapsterMapper;
 
-namespace FilePocket.Application.Services
+namespace FilePocket.Application.Services;
+
+public class FolderService : IFolderService
 {
-    public class FolderService : IFolderService
+    private readonly IRepositoryManager _repository;
+    private readonly IMapper _mapper;
+
+    public FolderService(IRepositoryManager repository, IMapper mapper)
     {
-        private readonly IRepositoryManager _repository;
-        private readonly IMapper _mapper;
+        _repository = repository;
+        _mapper = mapper;
+    }
 
-        public FolderService(IRepositoryManager repository, IMapper mapper)
+    public async Task<FolderModel> CreateAsync(FolderModel folder)
+    {
+        var folderExists = await _repository.Folder.ExistsAsync(folder.Name, folder.PocketId, folder.ParentFolderId);
+        if (folderExists)
         {
-            _repository = repository;
-            _mapper = mapper;
+            throw new InvalidOperationException("A folder with the same name already exists.");
+        }
+        var folderEntity = _mapper.Map<Folder>(folder);
+
+        _repository.Folder.Create(folderEntity);
+        await _repository.SaveChangesAsync();
+        return _mapper.Map<FolderModel>(folderEntity);
+
+    }
+
+    public async Task<FolderModel?> GetAsync(Guid folderId)
+    {
+        var folder = await GetFolderAndCheckIfItExistsAsync(folderId);
+
+        return _mapper.Map<FolderModel?>(folder);
+    }
+
+    public async Task DeleteAsync(Guid folderId)
+    {
+        var folderToDelete = await GetFolderAndCheckIfItExistsAsync(folderId);
+
+        await _repository.Folder.Delete(folderToDelete.Id);
+        await _repository.SaveChangesAsync();
+    }
+
+    public async Task DeleteByPocketIdAsync(Guid pocketId)
+    {
+        _repository.Folder.DeleteByPocketId(pocketId);
+        await _repository.SaveChangesAsync();
+    }
+
+    public async Task MoveToTrashAsync(Guid folderId)
+    {
+        var folder = await GetFolderAndCheckIfItExistsAsync(folderId);
+        await IterateAndMarkAsDeletedOrRestoredThroughChildFoldersAsync(folder, isDeleted: true);
+
+        folder.MarkAsDeleted();
+        folder.ParentFolderId = null;
+
+        await _repository.SaveChangesAsync();
+    }
+
+    public async Task RestoreFromTrashAsync(Guid folderId)
+    {
+        var folder = await GetFolderAndCheckIfItExistsAsync(folderId);
+        await IterateAndMarkAsDeletedOrRestoredThroughChildFoldersAsync(folder, isDeleted: false);
+
+        folder.RestoreFromDeleted();
+        folder.ParentFolderId = null;
+
+        await _repository.SaveChangesAsync();
+    }
+
+    public async Task<List<FolderModel>> GetAllAsync(Guid userId, Guid? pocketId, Guid? parentFolderId, FolderType folderType, bool isSoftDeleted)
+    {
+        var result = await _repository.Folder.GetAllAsync(userId, pocketId, parentFolderId, folderType, isSoftDeleted);
+
+        return _mapper.Map<List<FolderModel>>(result);
+    }
+
+    private async Task<Folder> GetFolderAndCheckIfItExistsAsync(Guid id)
+    {
+        var folder = await _repository.Folder.GetAsync(id);
+
+        if (folder is null)
+        {
+            throw new FolderNotFoundException(id);
         }
 
-        public async Task<FolderModel> CreateAsync(FolderModel folder)
+        return folder;
+    }
+
+    private async Task IterateAndMarkAsDeletedOrRestoredThroughChildFoldersAsync(Folder folder, bool isDeleted)
+    {
+        var stack = new Stack<Guid>();
+        stack.Push(folder.Id);
+
+        while (stack.Count > 0)
         {
-            var folderExists = await _repository.Folder.ExistsAsync(folder.Name, folder.PocketId, folder.ParentFolderId);
-            if (folderExists)
+            var currentFolderId = stack.Pop();
+            var childFolders = _repository.Folder.GetChildFolders(currentFolderId, true).Where(f => f.IsDeleted == folder.IsDeleted);
+
+            if (childFolders is not null && childFolders.Any())
             {
-                throw new InvalidOperationException("A folder with the same name already exists.");
+                foreach (var childFolder in childFolders)
+                {
+                    stack.Push(childFolder.Id);
+                }
             }
-            var folderEntity = _mapper.Map<Folder>(folder);
 
-            _repository.Folder.Create(folderEntity);
-            await _repository.SaveChangesAsync();
-            return _mapper.Map<FolderModel>(folderEntity);
-        }
+            var folderToUpdate = await GetFolderAndCheckIfItExistsAsync(currentFolderId);
 
-        public async Task<FolderModel?> GetAsync(Guid folderId)
-        {
-            var folder = await _repository.Folder.GetAsync(folderId);
-
-            return _mapper.Map<FolderModel?>(folder);
-        }
-
-        public async Task DeleteAsync(Guid folderId)
-        {
-            await _repository.Folder.Delete(folderId);
-            await _repository.SaveChangesAsync();
-        }
-
-        public async Task DeleteByPocketIdAsync(Guid pocketId)
-        {
-            _repository.Folder.DeleteByPocketId(pocketId);
-            await _repository.SaveChangesAsync();
-        }
-
-        public async Task MoveToTrash(Guid userId, Guid folderId)
-        {
-            var folder = await _repository.Folder.GetAsync(folderId);
-
-            if (folder is null)
-                return;
-
-            folder.IsDeleted = true;
-            folder.DeletedAt = DateTime.UtcNow;
-
-            await _repository.SaveChangesAsync();
-        }
-
-        public async Task<List<FolderModel>> GetAllAsync(Guid userId, Guid? pocketId, Guid? parentFolderId, FolderType folderType)
-        {
-            var result = await _repository.Folder.GetAllAsync(userId, pocketId, parentFolderId, folderType);
-
-            return _mapper.Map<List<FolderModel>>(result);
+            if (isDeleted)
+            {
+                folderToUpdate.MarkAsDeleted();
+            }
+            else
+            {
+                folderToUpdate.RestoreFromDeleted();
+            }
         }
     }
 }

@@ -1,9 +1,12 @@
+using FilePocket.BlazorClient.Features.Files.Models;
 using FilePocket.BlazorClient.Features.Storage.Models;
 using FilePocket.BlazorClient.Features.Storage.Requests;
 using FilePocket.BlazorClient.Features.Users.Models;
 using FilePocket.BlazorClient.Features.Users.Requests;
 using FilePocket.BlazorClient.Helpers;
+using FilePocket.BlazorClient.Services.Files.Models;
 using FilePocket.BlazorClient.Services.Files.Requests;
+using FilePocket.BlazorClient.Services.Pockets.Requests;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Routing;
@@ -19,6 +22,12 @@ public partial class MainLayout : IDisposable
     private string? _icon;
     private bool _render;
 
+    private StorageConsumptionModel _storageConsumption = new();
+    private string _unoccupiedStorageSpacePercentage = "100";
+    private string _occupiedStorageSpacePercentage = "0";
+
+    public Dictionary<FileTypes, double> _occupiedSpaceByFileType;
+
     [Inject] AuthenticationStateProvider AuthStateProvider { get; set; } = default!;
     [Inject] IUserRequests UserRequests { get; set; } = default!;
     [Inject] private IFileRequests FileRequests { get; set; } = default!;
@@ -26,10 +35,8 @@ public partial class MainLayout : IDisposable
     [Inject] private StateContainer<LoggedInUserModel> UserStateContainer { get; set; } = default!;
     [Inject] private StateContainer<StorageConsumptionModel> StorageStateContainer { get; set; } = default!;
     [Inject] private NavigationManager? NavigationManager { get; set; }
+    [Inject] private IPocketRequests PocketRequests { get; set; } = default!;
 
-    private StorageConsumptionModel _storageConsumption = new();
-    private string _unoccupiedStorageSpacePercentage = "100";
-    private string _occupiedStorageSpacePercentage = "0";
     protected override async Task OnInitializedAsync()
     {
         var authState = await AuthStateProvider.GetAuthenticationStateAsync();
@@ -41,6 +48,9 @@ public partial class MainLayout : IDisposable
         {
             _storageConsumption = await StorageRequests.GetStorageConsumption();
             GetStorageConsumptionInPercantage();
+            await GetOccupiedSpaceByFileType();
+            GetSizeForStorageItems();
+            await DrawDoughnutChart();
             StateHasChanged();
 
             var fisrtName = string.IsNullOrEmpty(_user.FirstName) ? string.Empty : _user.FirstName.AsSpan(0, 1);
@@ -132,6 +142,10 @@ public partial class MainLayout : IDisposable
     private async Task UpdateStorageStateAsync()
     {
         _storageConsumption = StorageStateContainer.Value!;
+        await GetOccupiedSpaceByFileType();
+        GetSizeForStorageItems();
+        await JS.InvokeVoidAsync("destroyStorageChart");
+        await DrawDoughnutChart();
         await InvokeAsync(StateHasChanged);
     }
 
@@ -141,6 +155,95 @@ public partial class MainLayout : IDisposable
     {
         _isFilesMenuOpen = !_isFilesMenuOpen;
         StateHasChanged();
+    }
+
+    private async Task GetOccupiedSpaceByFileType()
+    {
+        var pocketId = await PocketRequests.GetDefaultAsync();
+        List<FileInfoModel> files = await FileRequests.GetFilesAsync(pocketId.Id, null, false);
+        CreateNewFileTypeDictionary();
+        foreach (FileInfoModel file in files)
+        {
+            switch (file.FileType)
+            {
+                case FileTypes.Document:
+                    _occupiedSpaceByFileType[FileTypes.Document] += file.FileSize;
+                    break;
+                case FileTypes.EBook:
+                    _occupiedSpaceByFileType[FileTypes.EBook] += file.FileSize;
+                    break;
+                case FileTypes.Audio:
+                    _occupiedSpaceByFileType[FileTypes.Audio] += file.FileSize;
+                    break;
+                case FileTypes.Image:
+                    _occupiedSpaceByFileType[FileTypes.Image] += file.FileSize;
+                    break;
+                case FileTypes.Video:
+                    _occupiedSpaceByFileType[FileTypes.Video] += file.FileSize;
+                    break;
+                default:
+                    _occupiedSpaceByFileType[FileTypes.Other] += file.FileSize;
+                    break;
+            }
+        }
+        foreach (var type in _occupiedSpaceByFileType.Keys)
+        {
+            _occupiedSpaceByFileType[type] = Math.Round(_occupiedSpaceByFileType[type]);
+        }
+    }
+
+    private void GetSizeForStorageItems()
+    {
+        foreach (var item in StorageItems)
+        {
+            switch (item.Name)
+            {
+                case "Documents":
+                    item.Size = _occupiedSpaceByFileType[FileTypes.Document];
+                    break;
+                case "Books":
+                    item.Size = _occupiedSpaceByFileType[FileTypes.EBook];
+                    break;
+                case "Music":
+                    item.Size = _occupiedSpaceByFileType[FileTypes.Audio];
+                    break;
+                case "Pictures":
+                    item.Size = _occupiedSpaceByFileType[FileTypes.Image];
+                    break;
+                case "Videos":
+                    item.Size = _occupiedSpaceByFileType[FileTypes.Video];
+                    break;
+                case "Other":
+                    item.Size = _occupiedSpaceByFileType[FileTypes.Other];
+                    break;
+            }
+        }
+    }
+
+    private async Task DrawDoughnutChart()
+    {
+        await JS.InvokeVoidAsync(
+            "renderStorageChart",
+            _occupiedSpaceByFileType[FileTypes.Document],
+            _occupiedSpaceByFileType[FileTypes.EBook],
+            _occupiedSpaceByFileType[FileTypes.Audio],
+            _occupiedSpaceByFileType[FileTypes.Image],
+            _occupiedSpaceByFileType[FileTypes.Video],
+            _occupiedSpaceByFileType[FileTypes.Other]
+            );
+    }
+
+    private void CreateNewFileTypeDictionary()
+    {
+        _occupiedSpaceByFileType = new()
+        {
+            {FileTypes.Document, 0.0},
+            {FileTypes.EBook, 0.0},
+            {FileTypes.Audio, 0.0},
+            {FileTypes.Image, 0.0},
+            {FileTypes.Video, 0.0},
+            {FileTypes.Other, 0.0},
+        };
     }
 }
 

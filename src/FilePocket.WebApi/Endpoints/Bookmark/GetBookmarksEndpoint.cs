@@ -18,8 +18,8 @@ public class GetBookmarksEndpoint : BaseEndpointWithoutRequest<List<GetBookmarks
 
     public override void Configure()
     {
-        Get("api/pockets/{pocketId:guid}/bookmarks",
-            "api/pockets/{pocketId:guid}/folders/{folderId:guid?}/bookmarks");
+        Get("api/pockets/{pocketId:guid}/{isSoftDeleted:bool}/bookmarks",
+            "api/pockets/{pocketId:guid}/folders/{folderId:guid?}/{isSoftDeleted:bool}/bookmarks");
 
         AuthSchemes("Bearer");
     }
@@ -28,8 +28,9 @@ public class GetBookmarksEndpoint : BaseEndpointWithoutRequest<List<GetBookmarks
     {
         var pocketId = Route<Guid>("pocketId");
         var folderId = Route<Guid?>("folderId", false);
+        var isSoftDeleted = Route<bool>("isSoftDeleted");
 
-        var bookmarks = await _service.BookmarkService.GetAllAsync(UserId, pocketId, folderId, trackChanges: false);
+        var bookmarks = await _service.BookmarkService.GetAllAsync(UserId, pocketId, folderId, isSoftDeleted, trackChanges: false);
 
         var response = _mapper.Map<List<GetBookmarksResponse>>(bookmarks);
 

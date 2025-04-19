@@ -1,27 +1,26 @@
-using FilePocket.WebApi;
-using FilePocket.Shared.Extensions;
-using Serilog;
-using FilePocket.Host;
-using FilePocket.Application.Services;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Mvc;
-using FilePocket.Domain.Entities;
-using Microsoft.AspNetCore.Identity;
-using FilePocket.Domain.Models;
-using Microsoft.OpenApi.Models;
-using FilePocket.Domain.Models.Configuration;
-using FilePocket.WebApi.Attributes;
-using Microsoft.AspNetCore.Server.Kestrel.Core;
-using FilePocket.Application.Interfaces.Services;
-using FilePocket.Application.Interfaces.Repositories;
 using FastEndpoints;
-using Mapster;
-using FilePocket.Infrastructure.Persistence.Repositories;
+using FilePocket.Application.Interfaces.Repositories;
+using FilePocket.Application.Interfaces.Services;
+using FilePocket.Application.Services;
+using FilePocket.Domain.Entities;
+using FilePocket.Domain.Models;
+using FilePocket.Domain.Models.Configuration;
+using FilePocket.Host;
 using FilePocket.Infrastructure.Persistence;
-using FilePocket.Infrastructure.Persistence.Repositories.MongoDbRepositories;
-using MongoDB.Bson.Serialization.Serializers;
-using MongoDB.Bson.Serialization;
+using FilePocket.Infrastructure.Persistence.Repositories;
+using FilePocket.Shared.Extensions;
+using FilePocket.WebApi;
+using FilePocket.WebApi.Attributes;
+using Mapster;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
+using MongoDB.Bson.Serialization.Serializers;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -162,4 +161,4 @@ app.Run();
 
 
 // Used by FilePocket.Application.IntegrationTests project
-public partial class Program {}
+public partial class Program { }
