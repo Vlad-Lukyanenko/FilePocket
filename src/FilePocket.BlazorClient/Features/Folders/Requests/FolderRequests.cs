@@ -27,32 +27,35 @@ public class FolderRequests : IFolderRequests
         return response.IsSuccessStatusCode;
     }
 
-    public async Task<IEnumerable<FolderModel>> GetAllAsync(Guid? pocketId, Guid parentFolderId, FolderType folderType, bool isSoftDeleted)
+    public async Task<IEnumerable<FolderModel>> GetAllAsync(Guid? pocketId, Guid parentFolderId, List<FolderType> folderTypes, bool isSoftDeleted)
     {
+        var folderTypesQueryStringParams = string.Concat("?folderTypes=", string.Join("&folderTypes=", folderTypes));
 
         var url = pocketId is null 
-            ? $"api/parent-folder/{parentFolderId}/{folderType}/{isSoftDeleted}/folders"
-            : $"api/pockets/{pocketId}/parent-folder/{parentFolderId}/{folderType}/{isSoftDeleted}/folders";
+            ? $"api/parent-folder/{parentFolderId}/{isSoftDeleted}/folders{folderTypesQueryStringParams}"
+            : $"api/pockets/{pocketId}/parent-folder/{parentFolderId}/{isSoftDeleted}/folders{folderTypesQueryStringParams}";
         
         var content = await _apiClient.GetAsync(url);
 
         return JsonConvert.DeserializeObject<IEnumerable<FolderModel>>(content)!;
     }
 
-        public async Task<FolderModel> GetAsync(Guid pocketId, Guid folderId)
-        { 
-            var url = $"api/pockets/{pocketId}/folders/{folderId}";
+    public async Task<FolderModel> GetAsync(Guid pocketId, Guid folderId)
+    { 
+        var url = $"api/pockets/{pocketId}/folders/{folderId}";
             
-            var content = await _apiClient.GetAsync(url);
+        var content = await _apiClient.GetAsync(url);
 
         return JsonConvert.DeserializeObject<FolderModel>(content)!;
     }
 
-    public async Task<IEnumerable<FolderModel>> GetAllAsync(Guid? pocketId, FolderType folderType, bool isSoftDeleted)
+    public async Task<IEnumerable<FolderModel>> GetAllAsync(Guid? pocketId, List<FolderType> folderTypes, bool isSoftDeleted)
     {
+        var folderTypesQueryStringParams = string.Concat("?folderTypes=", string.Join("&folderTypes=", folderTypes));
+
         var url = pocketId is null 
-            ? $"api/folders/{folderType}/{isSoftDeleted}"
-            : $"api/pockets/{pocketId}/{folderType}/{isSoftDeleted}/folders";
+            ? $"api/folders/{isSoftDeleted}{folderTypesQueryStringParams}"
+            : $"api/pockets/{pocketId}/{isSoftDeleted}/folders{folderTypesQueryStringParams}";
         
         var content = await _apiClient.GetAsync(url);
 
