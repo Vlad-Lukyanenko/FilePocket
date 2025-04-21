@@ -11,12 +11,14 @@ public class NoteService : INoteService
 {
     private readonly IRepositoryManager _manager;
     private readonly IEncryptionService _encryptionService;
+    private readonly IFileService _fileService;
     private readonly IMapper _mapper;
 
-    public NoteService(IRepositoryManager manager, IEncryptionService encryptionService, IMapper mapper)
+    public NoteService(IRepositoryManager manager, IEncryptionService encryptionService, IFileService fileService, IMapper mapper)
     {
         _manager = manager;
         _encryptionService = encryptionService;
+        _fileService = fileService;
         _mapper = mapper;
     }
 
@@ -35,12 +37,12 @@ public class NoteService : INoteService
 
         await _manager.Note.CreateAsync(noteEntity, cancellationToken);
 
-        if (!string.IsNullOrEmpty(note.Content))
-        {
-            var encryptedContent = await EncryptContent(note.UserId, noteEntity.Id, note.Content, cancellationToken);
-            noteEntity.EncryptedContent = Convert.FromBase64String(encryptedContent);
-        }
+        var encryptedContent = await EncryptContent(note.UserId, noteEntity.Id, note.Content, cancellationToken);
+        var contentBytes = Convert.FromBase64String(encryptedContent);
+        var writeContentResponse = await _fileService.CreateNoteContentToFileAsync(noteEntity, contentBytes, cancellationToken)
+                                   ?? throw new ArgumentNullException();
 
+        noteEntity.ContentFileMetadataId = writeContentResponse.Id;
         await _manager.Note.AddEncryptedContent(noteEntity, cancellationToken);
 
         return _mapper.Map<NoteCreateResponse>(noteEntity);
@@ -53,15 +55,12 @@ public class NoteService : INoteService
         _mapper.Map(note, noteEntity);
         noteEntity.UpdatedAt = DateTime.UtcNow;
 
-        if (!string.IsNullOrEmpty(note.Content))
-        {
-            var encryptedContent = await EncryptContent(note.UserId, noteEntity.Id, note.Content, cancellationToken);
-            noteEntity.EncryptedContent = Convert.FromBase64String(encryptedContent);
-        }
-        else if(noteEntity.EncryptedContent.Length != 0)
-        {
-            noteEntity.EncryptedContent = [];
-        }
+        var encryptedContent = await EncryptContent(note.UserId, noteEntity.Id, note.Content, cancellationToken);
+        var contentBytes = Convert.FromBase64String(encryptedContent);
+        var writeContentResponse = await _fileService.UpdateNoteContentFileAsync(noteEntity, contentBytes, cancellationToken)
+                                   ?? throw new ArgumentNullException();
+
+        noteEntity.ContentFileMetadataId = writeContentResponse.Id;
 
         await _manager.Note.UpdateAsync(noteEntity, cancellationToken);
 
@@ -70,9 +69,13 @@ public class NoteService : INoteService
 
     public async Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        _ = await GetNoteIfExists(id, cancellationToken);
+        var noteEntity = await GetNoteIfExists(id, cancellationToken);
+        var deleteResult = await _fileService.RemoveFileAsync(noteEntity.UserId, noteEntity.ContentFileMetadataId, cancellationToken);
 
-        await _manager.Note.DeleteAsync(id, cancellationToken);
+        if (deleteResult)
+        {
+            await _manager.Note.DeleteAsync(id, cancellationToken);
+        }
     }
 
     public async Task<IEnumerable<NoteModel>> GetAllByUserIdAndFolderIdAsync(Guid userId, Guid? folderId = null, CancellationToken cancellationToken = default)
@@ -88,9 +91,11 @@ public class NoteService : INoteService
         var note = await GetNoteIfExists(id, cancellationToken);
         var noteModel = _mapper.Map<NoteModel>(note);
 
-        if (note.EncryptedContent != null && note.EncryptedContent.Length > 0)
+        if (note.ContentFileMetadataId != Guid.Empty)
         {
-            var decryptedContent = await DecryptContent(note.UserId, note.Id, note.EncryptedContent, cancellationToken);
+            var contentBytes = await _fileService.ReadNoteContentFromFileAsync(note.UserId, note.ContentFileMetadataId);
+            var decryptedContent = await DecryptContent(note.UserId, note.Id, contentBytes, cancellationToken);
+
             noteModel.Content = decryptedContent;
         }
 
@@ -99,18 +104,32 @@ public class NoteService : INoteService
 
     public async Task SoftDeleteAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        _ = await GetNoteIfExists(id, cancellationToken);
+        var noteEntity = await GetNoteIfExists(id, cancellationToken);
 
         await _manager.Note.SoftDeleteAsync(id, cancellationToken);
+        _ = await _fileService.MoveToTrash(noteEntity.UserId, noteEntity.ContentFileMetadataId, cancellationToken);
     }
 
-    public async Task BulkDeleteAsync(Guid folderId, CancellationToken cancellationToken = default)
+    public async Task BulkDeleteAsync(Guid userId, Guid folderId, CancellationToken cancellationToken = default)
     {
+        var notes = (await _manager.Note.GetAllByUserIdAndFolderIdAsync(userId, folderId, cancellationToken))
+            .Where(n => n.IsDeleted && n.ContentFileMetadataId != Guid.Empty);
+
+        var removeContentFileTasks = notes.Select(n => _fileService.RemoveFileAsync(userId, n.ContentFileMetadataId, cancellationToken));
+
+        await Task.WhenAll(removeContentFileTasks);
         await _manager.Note.BulkDeleteAsync(folderId, cancellationToken);
+
     }
 
-    public async Task BulkSoftDeleteAsync(Guid folderId, CancellationToken cancellationToken = default)
+    public async Task BulkSoftDeleteAsync(Guid userId, Guid folderId, CancellationToken cancellationToken = default)
     {
+        var notes = (await _manager.Note.GetAllByUserIdAndFolderIdAsync(userId, folderId, cancellationToken))
+            .Where(n => !n.IsDeleted && n.ContentFileMetadataId != Guid.Empty);
+
+        var moveToTrashTasks = notes.Select(n => _fileService.MoveToTrash(userId, n.ContentFileMetadataId, cancellationToken));
+
+        await Task.WhenAll(moveToTrashTasks);
         await _manager.Note.BulkSoftDeleteAsync(folderId, cancellationToken);
     }
 
@@ -136,4 +155,5 @@ public class NoteService : INoteService
         var decryptedText = await _encryptionService.DecryptAsync(encryptedContent, passPhrase, cancellationToken);
         return decryptedText;
     }
+
 }

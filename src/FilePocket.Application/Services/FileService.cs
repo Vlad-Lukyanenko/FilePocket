@@ -2,7 +2,6 @@ using FilePocket.Application.Exceptions;
 using FilePocket.Application.Extensions;
 using FilePocket.Application.Interfaces.Repositories;
 using FilePocket.Application.Interfaces.Services;
-using FilePocket.Contracts.Bookmark;
 using FilePocket.Domain;
 using FilePocket.Domain.Entities;
 using FilePocket.Domain.Entities.Consumption.Errors;
@@ -278,9 +277,160 @@ public class FileService(
         }
 
         mapper.Map(file, fileMetadataToUpdate);
-        var i = fileMetadataToUpdate;
 
         await repository.SaveChangesAsync();
+    }
+
+    public async Task<FileResponseModel?> CreateNoteContentToFileAsync(Note note, byte[] content, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(note);
+
+        await using var writeContentTransaction = await repository.BeginTransactionAsync(cancellationToken);
+        try
+        {
+            var storageConsumption = await repository.AccountConsumption.GetStorageConsumptionAsync(
+                note.UserId, lockChanges: true, trackChanges: true, cancellationToken);
+
+            if (storageConsumption is null)
+                throw new AccountConsumptionNotFoundException(note.UserId);
+
+            var fileSizeInMbs = ((long)content.Length).ToMegabytes();
+            if (storageConsumption.RemainingSizeMb < fileSizeInMbs)
+                throw new InsufficientStorageCapacityException(
+                    storageConsumption.Used,
+                    storageConsumption.Total,
+                    additionalUsedMb: fileSizeInMbs);
+
+            var fileExtension = GetNoteFileExtension();
+            var fileType = Tools.DefineFileType(fileExtension);
+            var filePath = SelectFileDirectory(note.UserId, note.PocketId, fileExtension);
+            var fileName = GetNoteFileNameWithExtension(note.Id);
+
+            var fileMetadata = FileMetadata.Create(
+                note.UserId, fileName, filePath, fileType, fileSizeInMbs, note.PocketId, note.FolderId);
+
+            var contentFileMetadataTask = AttachFileToPocketTask(fileMetadata, note.UserId, note.PocketId);
+            var storageConsumptionTask = ChangeStorageConsumption(storageConsumption, fileMetadata.FileSize);
+            var WriteContentFileTask = WriteContentToFile(fileMetadata);
+
+            await Task.WhenAll(
+                contentFileMetadataTask,
+                storageConsumptionTask,
+                WriteContentFileTask);
+
+            await repository.SaveChangesAsync(cancellationToken);
+            await writeContentTransaction.CommitAsync(cancellationToken);
+
+            return GetFileResponseModel(fileMetadata);
+        }
+        catch (Exception)
+        {
+            await writeContentTransaction.RollbackAsync(cancellationToken);
+            throw;
+        }
+
+
+        async Task WriteContentToFile(FileMetadata fileMetadata)
+        {
+            fileMetadata.Path.CreateFolderIfDoesNotExist();
+
+            var fullPath = Path.Combine(fileMetadata.Path, fileMetadata.ActualName);
+
+            fullPath.CheckIfFileNotExistsOnDisk();
+
+            await File.WriteAllBytesAsync(fullPath, content, cancellationToken);
+        }
+    }
+
+    public async Task<FileResponseModel?> UpdateNoteContentFileAsync(Note note, byte[] content, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(note);
+        var fileMetadata = await repository.FileMetadata.GetByIdAsync(note.UserId, note.ContentFileMetadataId, trackChanges: true);
+        if (fileMetadata is null)
+            throw new FileMetadataNotFoundException(note.ContentFileMetadataId);
+
+        await using var transaction = await repository.BeginTransactionAsync(cancellationToken);
+        try
+        {
+            var storageConsumption = await repository.AccountConsumption.GetStorageConsumptionAsync(
+                note.UserId, lockChanges: true, trackChanges: true, cancellationToken);
+
+            if (storageConsumption is null)
+            {
+                throw new AccountConsumptionNotFoundException(note.UserId);
+            }
+
+            var newFileSizeInMbs = ((long)content.Length).ToMegabytes();
+            var consumptionChangeInMbs = newFileSizeInMbs - ((long)fileMetadata.FileSize).ToMegabytes();
+            if (storageConsumption.RemainingSizeMb < consumptionChangeInMbs)
+            {
+                throw new InsufficientStorageCapacityException(
+                    storageConsumption.Used,
+                    storageConsumption.Total,
+                    additionalUsedMb: consumptionChangeInMbs);
+            }
+
+            var fileExtension = GetNoteFileExtension();
+            var fileType = Tools.DefineFileType(fileExtension);
+            var filePath = SelectFileDirectory(note.UserId, note.PocketId, fileExtension);
+            var fileName = GetNoteFileNameWithExtension(note.Id);
+
+            var updatedFileMetadata = FileMetadata.Create(
+                note.UserId, fileName, filePath, fileType, newFileSizeInMbs, note.PocketId, note.FolderId);
+
+            var contentFileMetadataTask = AttachFileToPocketTask(updatedFileMetadata, note.UserId, note.PocketId);
+            var storageConsumptionTask = ChangeStorageConsumption(storageConsumption, consumptionChangeInMbs);
+            var rewriteFileTask = RewriteToFileSystemAsync(updatedFileMetadata);
+
+            await Task.WhenAll(
+                contentFileMetadataTask,
+                storageConsumptionTask,
+                rewriteFileTask);
+
+            RemoveFromFileSystem(fileMetadata);
+            repository.FileMetadata.DeleteFileMetadata(fileMetadata);
+
+            await repository.SaveChangesAsync(cancellationToken);
+            await transaction.CommitAsync(cancellationToken);
+
+            return GetFileResponseModel(updatedFileMetadata);
+        }
+        catch (Exception)
+        {
+            await transaction.RollbackAsync(cancellationToken);
+            throw;
+        }
+
+        void RemoveFromFileSystem(FileMetadata file)
+        {
+            var fullPath = Path.Combine(
+                file.Path,
+                file.ActualName);
+
+            if (!File.Exists(fullPath))
+                throw new FileDoesNotExistInFileSystemException(file.Id);
+
+            File.Delete(fullPath);
+        }
+
+        async Task RewriteToFileSystemAsync(FileMetadata file)
+        {
+            file.Path.CreateFolderIfDoesNotExist();
+            var fullPath = Path.Combine(file.Path, file.ActualName);
+            await File.WriteAllBytesAsync(fullPath, content, cancellationToken);
+        }
+    }
+
+    public async Task<byte[]> ReadNoteContentFromFileAsync(Guid userId, Guid fileId)
+    {
+        var fileMetadata = await repository.FileMetadata.GetByIdAsync(userId, fileId, trackChanges: true) 
+            ?? throw new FileMetadataNotFoundException(fileId);
+
+        var fullPath = Path.Combine(fileMetadata.Path, fileMetadata.ActualName);
+
+        fullPath.EnsureFileExistsOnDisk();
+
+        return await File.ReadAllBytesAsync(fullPath);
     }
 
     private Task<FileMetadata> GetFileByIdAndPocketIdAsync(Guid userId, Guid fileId)
@@ -375,5 +525,55 @@ public class FileService(
             PocketId = fileMetadata.PocketId,
             FileSize = fileMetadata.FileSize,
         };
+    }
+
+    private async Task AttachFileToPocketTask(FileMetadata fileMetadata, Guid userId, Guid pocketId)
+    {
+        Pocket? pocket = null;
+
+        pocket = await repository.Pocket.GetByIdAsync(userId, pocketId, trackChanges: true);
+
+        if (pocket is null)
+        {
+            throw new PocketNotFoundException(pocketId);
+        }
+
+        pocket.UpdateDetails(fileMetadata);
+        repository.FileMetadata.CreateFileMetadata(fileMetadata);
+    }
+
+    private Task ChangeStorageConsumption(StorageConsumption storageConsumption, double consumptionChangeValue)
+    {
+        if (consumptionChangeValue > 0)
+        {
+            storageConsumption.IncreaseUsage(consumptionChangeValue);
+        }
+        else if (consumptionChangeValue < 0)
+        {
+            storageConsumption.DecreaseUsage(Math.Abs(consumptionChangeValue));
+        }
+
+        repository.AccountConsumption.Update(storageConsumption);
+
+        return Task.CompletedTask;
+    }
+
+    private FileResponseModel? GetFileResponseModel(FileMetadata? fileMetadata)
+    {
+        return fileMetadata is null ? null : new FileResponseModel
+        {
+            Id = fileMetadata.Id
+        };
+    }
+
+    private string GetNoteFileExtension()
+    {
+        return configuration.GetValue<string>("NoteContentFileExtension")!;
+    }
+
+    private string GetNoteFileNameWithExtension(Guid noteId)
+    {
+        var fileExtension = GetNoteFileExtension();
+        return $"{noteId}{fileExtension}";
     }
 }

@@ -6,7 +6,7 @@ public interface IServiceManager
 
     ISharedFileService SharedFileService { get; }
 
-    IFileService FileService { get; }
+    //IFileService FileService { get; }
 
     IFolderService FolderService { get; }
 

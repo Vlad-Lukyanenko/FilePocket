@@ -1,3 +1,6 @@
+using FilePocket.Application.Exceptions;
+using FilePocket.Application.Extensions;
+using FilePocket.Domain.Entities;
 using FilePocket.Domain.Models;
 using Microsoft.AspNetCore.Http;
 
@@ -56,4 +59,16 @@ public interface IFileService : IFileProvider
         CancellationToken cancellationToken = default);
 
     Task UpdateFileAsync(UpdateFileModel file);
+
+    Task<FileResponseModel?> CreateNoteContentToFileAsync(
+       Note note,
+       byte[] content,
+       CancellationToken cancellationToken = default);
+
+    Task<FileResponseModel?> UpdateNoteContentFileAsync(
+        Note note,
+        byte[] content,
+        CancellationToken cancellationToken = default);
+
+    Task<byte[]> ReadNoteContentFromFileAsync(Guid userId, Guid fileId);
 }

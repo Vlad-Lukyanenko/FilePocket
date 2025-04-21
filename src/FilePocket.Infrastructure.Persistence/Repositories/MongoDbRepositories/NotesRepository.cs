@@ -21,7 +21,7 @@ public class NotesRepository(IOptions<MongoDbSettings> options) : INotesReposito
     public async Task AddEncryptedContent(Note note, CancellationToken cancellationToken = default)
     {
         await _notes.UpdateOneAsync(n => n.Id == note.Id, Builders<Note>.Update
-                                                            .Set(n => n.EncryptedContent, note.EncryptedContent), null, cancellationToken);
+                                                            .Set(n => n.ContentFileMetadataId, note.ContentFileMetadataId), null, cancellationToken);
     }
 
     public async Task UpdateAsync(Note note, CancellationToken cancellationToken = default)
@@ -29,7 +29,7 @@ public class NotesRepository(IOptions<MongoDbSettings> options) : INotesReposito
         await _notes.UpdateOneAsync(n => n.Id == note.Id, Builders<Note>.Update
                                                             .Set(n => n.FolderId, note.FolderId)
                                                             .Set(n => n.Title, note.Title)
-                                                            .Set(n=>n.EncryptedContent, note.EncryptedContent)
+                                                            .Set(n => n.ContentFileMetadataId, note.ContentFileMetadataId)
                                                             .Set(n => n.UpdatedAt, DateTime.UtcNow), null, cancellationToken);
     }
 

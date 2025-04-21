@@ -10,6 +10,6 @@ public interface INoteService
     Task<NoteUpdateResponse> UpdateAsync(NoteModel note, CancellationToken cancellationToken = default);
     Task DeleteAsync(Guid id, CancellationToken cancellationToken = default);
     Task SoftDeleteAsync(Guid id, CancellationToken cancellationToken = default);
-    Task BulkDeleteAsync(Guid folderId, CancellationToken cancellationToken = default);
-    Task BulkSoftDeleteAsync(Guid folderId, CancellationToken cancellationToken = default);
+    Task BulkDeleteAsync(Guid userId, Guid folderId, CancellationToken cancellationToken = default);
+    Task BulkSoftDeleteAsync(Guid userId, Guid folderId, CancellationToken cancellationToken = default);
 }

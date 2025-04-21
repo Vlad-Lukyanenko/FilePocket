@@ -25,7 +25,7 @@ public class DeleteEndpoint : BaseEndpointWithoutRequestAndResponse
             {
                 try
                 {
-                    await _service.NoteService.BulkDeleteAsync(FolderId!.Value, cancellationToken);
+                    await _service.NoteService.BulkDeleteAsync(UserId, FolderId!.Value, cancellationToken);
                 }
                 catch
                 {

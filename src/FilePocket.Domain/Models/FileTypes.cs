@@ -12,5 +12,6 @@
         Archive,
         Code,
         Font,
+        Note,
     }
 }

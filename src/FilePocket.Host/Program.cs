@@ -131,6 +131,7 @@ builder.Services.AddSwaggerGen(s =>
 builder.Services.AddScoped<IRepositoryManager, RepositoryManager>();
 builder.Services.AddScoped<IImageService, ImageService>();
 builder.Services.AddSingleton<IUploadService, UploadService>();
+builder.Services.AddScoped<IFileService, FileService>();
 builder.Services.AddScoped<IServiceManager, ServiceManager>();
 builder.Services.AddScoped<JwtOrApiKeyAuthorizeAttribute>();
 
