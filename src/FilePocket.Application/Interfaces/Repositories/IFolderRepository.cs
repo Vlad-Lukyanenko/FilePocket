@@ -11,5 +11,5 @@ public interface IFolderRepository
     void DeleteByPocketId(Guid pocketId);
     Task<Folder?> GetAsync(Guid folderId);
     Task<bool> ExistsAsync(string folderName, Guid? pocketId, Guid? parentFolderId);
-    Task<List<Folder>> GetAllAsync(Guid userId, Guid? pocketId, Guid? parentFolderId, FolderType folderType, bool isSoftDeleted);
+    Task<List<Folder>> GetAllAsync(Guid userId, Guid? pocketId, Guid? parentFolderId, List<FolderType> folderTypes, bool isSoftDeleted);
 }

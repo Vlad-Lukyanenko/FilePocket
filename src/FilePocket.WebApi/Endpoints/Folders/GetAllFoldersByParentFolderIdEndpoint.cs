@@ -21,14 +21,14 @@ public class GetAllFoldersByParentFolderIdEndpoint : BaseEndpointWithoutRequest<
     public override void Configure()
     {
         Verbs(Http.Get);
-        Routes("api/pockets/{pocketId:guid}/parent-folder/{parentFolderId:guid}/{folderType}/{isSoftDeleted:bool}/folders");
+        Routes("api/pockets/{pocketId:guid}/parent-folder/{parentFolderId:guid}/{isSoftDeleted:bool}/folders");
     }
 
     public override async Task HandleAsync(CancellationToken cancellationToken)
     {
-        var folderType = Route<FolderType>("folderType");
+        var folderTypes = Query<List<FolderType>>("folderTypes");
         var isSoftDeleted = Route<bool>("isSoftDeleted");
-        var folders = await _service.FolderService.GetAllAsync(UserId, PocketId, ParentFolderId, folderType, isSoftDeleted);
+        var folders = await _service.FolderService.GetAllAsync(UserId, PocketId, ParentFolderId, folderTypes, isSoftDeleted);
 
         var response = new List<GetAllFoldersByParentFolderIdResponse>();
         foreach (var folder in folders)
