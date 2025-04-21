@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 using System.Collections.ObjectModel;
 using System.Net.Http.Headers;
+using System.Threading.Tasks;
 
 
 
@@ -39,18 +40,12 @@ public partial class Profile : ComponentBase
     [Inject] private IJSRuntime JS { get; set; } = default!;
     [Inject] private NavigationManager? Navigation { get; set; }
 
-    private bool isModalOpen = false;
-
 
     protected override async Task OnInitializedAsync()
     {
 
         var uri = Navigation != null ? new Uri(Navigation.Uri) : throw new InvalidOperationException("Navigation is null");
         var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
-        if (query.AllKeys.Contains("openModal"))
-            {
-                isModalOpen = true;
-            }
 
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var userAuth = authState.User;
@@ -113,7 +108,6 @@ public partial class Profile : ComponentBase
             UserStateContainer.SetValue(user!);
         }
         
-        CloseModal();
 
         foreach (var key in editStates.Keys.ToList())
         {
@@ -253,22 +247,6 @@ public partial class Profile : ComponentBase
         return memoryStream.ToArray();
     }
 
-    private void OpenModal()
-    {
-        isModalOpen = true;
-        StateHasChanged(); 
-    }
-
-    private void CloseModal()
-    {
-
-        isModalOpen = false;
-
-        var uri = Navigation?.Uri.Split('?')[0] ?? throw new InvalidOperationException("Navigation is null");
-        Navigation.NavigateTo(uri, replace: true);
-       
-        StateHasChanged();
-    }
 
     private Dictionary<string, bool> editStates = new()
     {
@@ -279,17 +257,27 @@ public partial class Profile : ComponentBase
         { "Language", false }
     };
 
-    private void ToggleEditState(string fieldName)
+    private async Task ToggleEditState()
+{
+    if (editStates.Values.Any(v => v))
     {
-        if (editStates[fieldName])
-        {
-            editStates[fieldName] = false;
-        }
-        else
-        {
-            editStates[fieldName] = true;
-        }
 
-        StateHasChanged(); 
+       await SaveChangesAsync(new MouseEventArgs());
+
+        var keys = editStates.Keys.ToList();
+        foreach (var key in keys)
+        {
+            editStates[key] = false;
+        }
     }
+    else
+    {
+        var keys = editStates.Keys.ToList();
+        foreach (var key in keys)
+        {
+            editStates[key] = true;
+        }
+    }
+    StateHasChanged();
+}
 }

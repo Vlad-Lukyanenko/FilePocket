@@ -1,17 +1,18 @@
 ﻿@page "/sign-up"
 @using FilePocket.BlazorClient.Services.Authentication.Models
 
+
 <section>
     <div class="container">
-        <div class="card border-light-subtle shadow-sm">
+        <div class="border-top">
             <div class="row g-0 justify-content-around">
                 <!-- Image Column -->
-                <div class="col-12 col-md-6">
+                <div class="col-12 col-md-6 order-2 order-md-1">
                     <img class="img-fluid rounded-start w-90 h-90 ps-1 pt-5" loading="lazy" src="./assets/img/sign-up.png" alt="Sign-up illustration">
                 </div>
 
                 <!-- Form Column -->
-                <div class="col-12 col-md-4">
+                <div class="col-12 col-md-4 order-1 order-md-2">
                     <div class="card-body p-3 p-md-4 p-xl-5">
                         <div class="row">
                             <div class="col-12">
@@ -113,7 +114,7 @@
                         <div class="row">
                             <div class="col-12">
                                 <hr class="mt-4 mb-2 border-secondary-subtle">
-                                <div class="d-flex gap-2 gap-md-4 flex-column flex-md-row justify-content-md-end">
+                                <div class="d-flex gap-2 gap-md-4 flex-md-row justify-content-between">
                                     <label>Already have an account?</label>
                                     <a href="/sign-in" class="link-secondary text-decoration-none">Sign-in</a>
                                 </div>
@@ -125,44 +126,3 @@
         </div>
     </div>
 </section>
-
-@code {
-    private bool showEmailError = false;
-    private bool showPasswordError = false;
-    private bool showConfirmPasswordError = false;
-    private bool isPasswordVisible = false;
-    private bool isConfirmPasswordVisible = false;
-    private string passwordInputType = "password";
-    private string confirmPasswordInputType = "password";
-    private string passwordIcon = "bi bi-eye";
-    private string confirmPasswordIcon = "bi bi-eye";
-
-    private void ValidateEmail()
-    {
-        showEmailError = string.IsNullOrWhiteSpace(_registrationRequest.Email);
-    }
-
-    private void ValidatePassword()
-    {
-        showPasswordError = string.IsNullOrWhiteSpace(_registrationRequest.Password);
-    }
-
-    private void ValidateConfirmPassword()
-    {
-        showConfirmPasswordError = string.IsNullOrWhiteSpace(_registrationRequest.ConfirmPassword);
-    }
-
-    private void TogglePassword()
-    {
-        isPasswordVisible = !isPasswordVisible;
-        passwordInputType = isPasswordVisible ? "text" : "password";
-        passwordIcon = isPasswordVisible ? "bi bi-eye-slash" : "bi bi-eye";
-    }
-
-    private void ToggleConfirmPassword()
-    {
-        isConfirmPasswordVisible = !isConfirmPasswordVisible;
-        confirmPasswordInputType = isConfirmPasswordVisible ? "text" : "password";
-        confirmPasswordIcon = isConfirmPasswordVisible ? "bi bi-eye-slash" : "bi bi-eye";
-    }
-}
