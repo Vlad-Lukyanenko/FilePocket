@@ -26,7 +26,7 @@ public partial class MainLayout : IDisposable
     private string _unoccupiedStorageSpacePercentage = "100";
     private string _occupiedStorageSpacePercentage = "0";
 
-    public Dictionary<FileTypes, double> _occupiedSpaceByFileType;
+    public required Dictionary<FileTypes, double> _occupiedSpaceByFileType;
 
     [Inject] AuthenticationStateProvider AuthStateProvider { get; set; } = default!;
     [Inject] IUserRequests UserRequests { get; set; } = default!;
@@ -101,7 +101,7 @@ public partial class MainLayout : IDisposable
 
     private void NavigateToProfile()
     {
-        Navigation.NavigateTo("/profile?openModal=true", forceLoad: false);
+        Navigation.NavigateTo("/profile", forceLoad: false);
     }
 
 
@@ -149,7 +149,7 @@ public partial class MainLayout : IDisposable
         await InvokeAsync(StateHasChanged);
     }
 
-    private bool _isFilesMenuOpen = false;
+    private bool _isFilesMenuOpen = true;
 
     private void ToggleFilesMenu()
     {
@@ -161,8 +161,10 @@ public partial class MainLayout : IDisposable
     {
         var pocketId = await PocketRequests.GetDefaultAsync();
         List<FileInfoModel> files = await FileRequests.GetFilesAsync(pocketId.Id, null, false);
+        List<FileInfoModel> softDeletedFiles = await FileRequests.GetFilesAsync(pocketId.Id, null, true);
+        List<FileInfoModel> allFiles = files.Union(softDeletedFiles).ToList();
         CreateNewFileTypeDictionary();
-        foreach (FileInfoModel file in files)
+        foreach (FileInfoModel file in allFiles)
         {
             switch (file.FileType)
             {
@@ -246,4 +248,3 @@ public partial class MainLayout : IDisposable
         };
     }
 }
-
