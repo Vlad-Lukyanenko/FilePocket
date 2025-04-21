@@ -29,7 +29,8 @@ public class FolderRequests : IFolderRequests
 
     public async Task<IEnumerable<FolderModel>> GetAllAsync(Guid? pocketId, Guid parentFolderId, List<FolderType> folderTypes, bool isSoftDeleted)
     {
-        var folderTypesQueryStringParams = string.Concat("?folderTypes=", string.Join("&folderTypes=", folderTypes));
+        var folderTypeValues = folderTypes.Select(ft => (int)ft);
+        var folderTypesQueryStringParams = string.Concat("?folderTypes=", string.Join("&folderTypes=", folderTypeValues));
 
         var url = pocketId is null 
             ? $"api/parent-folder/{parentFolderId}/{isSoftDeleted}/folders{folderTypesQueryStringParams}"
@@ -51,7 +52,8 @@ public class FolderRequests : IFolderRequests
 
     public async Task<IEnumerable<FolderModel>> GetAllAsync(Guid? pocketId, List<FolderType> folderTypes, bool isSoftDeleted)
     {
-        var folderTypesQueryStringParams = string.Concat("?folderTypes=", string.Join("&folderTypes=", folderTypes));
+        var folderTypeValues = folderTypes.Select(ft => (int)ft);
+        var folderTypesQueryStringParams = string.Concat("?folderTypes=", string.Join("&folderTypes=", folderTypeValues));
 
         var url = pocketId is null 
             ? $"api/folders/{isSoftDeleted}{folderTypesQueryStringParams}"
