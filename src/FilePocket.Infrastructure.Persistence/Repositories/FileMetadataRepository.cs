@@ -13,12 +13,12 @@ public class FileMetadataRepository : RepositoryBase<FileMetadata>, IFileMetadat
 
     public async Task<List<FileMetadata>> GetAllAsync(Guid pocketId, bool trackChanges)
     {
-        return await FindByCondition(f => f.PocketId.Equals(pocketId) && f.FolderId == null && !f.IsDeleted, trackChanges).ToListAsync();
+        return await FindByCondition(f => f.PocketId.Equals(pocketId) && f.FolderId == null && !f.IsDeleted && f.FileType != Domain.FileTypes.Note, trackChanges).ToListAsync();
     }
 
     public async Task<List<FileMetadata>> GetRecentFilesAsync(Guid userId, int numberOfFiles)
     {
-        return await FindByCondition(f => f.UserId.Equals(userId) && !f.IsDeleted, false).OrderByDescending(c => c.CreatedAt).Take(numberOfFiles).ToListAsync();
+        return await FindByCondition(f => f.UserId.Equals(userId) && !f.IsDeleted && f.FileType != Domain.FileTypes.Note, false).OrderByDescending(c => c.CreatedAt).Take(numberOfFiles).ToListAsync();
     }
 
     public async Task<List<FileMetadata>> GetAllAsync(Guid userId, Guid pocketId, Guid? folderId, bool isSofDeleted, bool trackChanges)
@@ -26,7 +26,8 @@ public class FileMetadataRepository : RepositoryBase<FileMetadata>, IFileMetadat
         return await FindByCondition(f => f.UserId.Equals(userId) 
                                             && f.PocketId.Equals(pocketId) 
                                             && f.FolderId.Equals(folderId) 
-                                            && f.IsDeleted == isSofDeleted, trackChanges).ToListAsync();
+                                            && f.IsDeleted == isSofDeleted
+                                            && f.FileType != Domain.FileTypes.Note, trackChanges).ToListAsync();
     }
     
     public async Task<FileMetadata> GetByIdAsync(Guid userId, Guid fileId, bool trackChanges = false)
