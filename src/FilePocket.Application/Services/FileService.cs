@@ -30,6 +30,14 @@ public class FileService(
 
         return result;
     }
+    public async Task<IEnumerable<FileResponseModel>> GetAllFilesWithSoftDeletedAsync(Guid userId, Guid pocketId)
+    {
+        var fileMetadata = await repository.FileMetadata.GetAllWithSoftDeletedAsync(userId, pocketId);
+
+        var result = mapper.Map<List<FileResponseModel>>(fileMetadata);
+
+        return result;
+    }
 
     public async Task<FileResponseModel> GetFileByIdAsync(Guid userId, Guid fileId)
     {

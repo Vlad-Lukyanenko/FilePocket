@@ -146,4 +146,13 @@ public class FileRequests : IFileRequests
 
         return new StringContent(json, Encoding.UTF8, "application/json");
     }
+
+    public async Task<List<FileInfoModel>> GetAllFilesWithSoftDeletedAsync(Guid? pocketId)
+    {
+        var url = FileUrl.GetAllFilesWithSoftDeleted(pocketId.Value);
+
+        var content = await _apiClient.GetAsync(url);
+
+        return JsonConvert.DeserializeObject<List<FileInfoModel>>(content)!;
+    }
 }
