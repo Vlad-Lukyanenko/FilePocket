@@ -52,6 +52,7 @@ public partial class FilesAndFolders
     [Inject] private IJSRuntime JS { get; set; } = default!;
     [Inject] private IStorageRequests StorageRequests { get; set; } = default!;
     [Inject] private StateContainer<StorageConsumptionModel> StorageStateContainer { get; set; } = default!;
+    [Inject] private AppState AppState { get; set; } = default!;
 
     protected override async Task OnInitializedAsync()
     {
@@ -131,6 +132,7 @@ public partial class FilesAndFolders
 
         var storageConsumption = await StorageRequests.GetStorageConsumption();
         StorageStateContainer.SetValue(storageConsumption!);
+        AppState.NotifyStateChanged();
         Navigation.NavigateTo(_goBackUrl);
     }
 
