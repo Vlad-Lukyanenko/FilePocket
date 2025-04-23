@@ -2,6 +2,7 @@
 @using FilePocket.BlazorClient.Features.Files.Models
 @using FilePocket.BlazorClient.Features.Users.Requests
 @using FilePocket.BlazorClient.Features.Users.Models
+@using FilePocket.BlazorClient.Helpers
 @using Microsoft.AspNetCore.Components.Authorization
 @using FilePocket.BlazorClient.MyComponents
 
@@ -12,10 +13,7 @@
 @inject FilePocketApiClient ApiClient
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
-
 @page "/storage"
-
-
 
 <PageTitle>File Pocket Application</PageTitle>
 
@@ -39,7 +37,7 @@
                                 <i class="fs-4 bi-house"></i>
                                 <span class="ms-2 d-none d-md-inline">Home</span>
                             </div>
-                        
+
                         </a>
                     </li>
                     @* <li class="nav-item flex-fill flex-md-grow-0">
@@ -62,19 +60,17 @@
                             <i class="bi @( _isFilesMenuOpen ? "bi-chevron-up" : "bi-chevron-down")"></i>
                         </a>
                         <ul class="submenu @( _isFilesMenuOpen ? "show" : "" )">
-                            <li class="nav-item flex-fill flex-md-grow-0"><a href="/files/documents" class="nav-link text-dark px-2">Documents</a></li>
-                            <li class="nav-item flex-fill flex-md-grow-0"><a href="/files/books" class="nav-link text-dark px-2">Books</a></li>
-                            <li class="nav-item flex-fill flex-md-grow-0"><a href="/files/music" class="nav-link text-dark px-2">Music</a></li>
-                            <li class="nav-item flex-fill flex-md-grow-0"><a href="/files/pictures" class="nav-link text-dark px-2">Pictures</a></li>
-                            <li class="nav-item flex-fill flex-md-grow-0"><a href="/files/videos" class="nav-link text-dark px-2">Videos</a></li>
-                            <li class="nav-item flex-fill flex-md-grow-0"><a href="/files/other" class="nav-link text-dark px-2">Other</a></li>
+                            @if(_folders is not null && _folders.Count > 0)
+                            {
+                                foreach (var folder in _folders)
+                                {
+                                    <li class="nav-item flex-fill flex-md-grow-0">
+                                        <a href="@($"/pockets/{folder.PocketId}/folders/{folder.Id}/files")" class="nav-link text-dark px-2">@Tools.TruncateString(folder.Name, 25)</a>
+                                    </li>
+                                }                                
+                            }
                         </ul>
                     </li>
-
-           
-
-
-
 
                     @* <li class="nav-item flex-fill flex-md-grow-0">
                             <a href="/pockets" class="nav-link text-dark px-2 @(IsActive("/pockets"))">
