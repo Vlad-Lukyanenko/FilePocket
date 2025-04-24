@@ -33,6 +33,7 @@ public partial class DeletedBookmarks
     protected override async Task OnParametersSetAsync()
     {
         List<FolderModel> folders;
+        var folderTypes = new List<FolderType> { FolderType.Bookmarks };
 
         _currentFolder = FolderId is null ? null : await FolderRequests.GetAsync(FolderId.Value, PocketId);
         var currentFolderName = _currentFolder is null ? string.Empty : $" - {_currentFolder.Name}";
@@ -48,11 +49,11 @@ public partial class DeletedBookmarks
 
         if (FolderId is null)
         {
-            folders = (await FolderRequests.GetAllAsync(PocketId, FolderType.Bookmarks, isSoftDeleted: true)).ToList();
+            folders = (await FolderRequests.GetAllAsync(PocketId, folderTypes, isSoftDeleted: true)).ToList();
         }
         else
         {
-            folders = (await FolderRequests.GetAllAsync(PocketId, FolderId.Value, FolderType.Bookmarks, isSoftDeleted: true)).ToList();
+            folders = (await FolderRequests.GetAllAsync(PocketId, FolderId.Value, folderTypes, isSoftDeleted: true)).ToList();
         }
 
         _folders = new ObservableCollection<FolderModel>(folders);

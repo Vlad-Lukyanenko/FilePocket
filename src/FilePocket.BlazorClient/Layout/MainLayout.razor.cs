@@ -1,4 +1,5 @@
 using FilePocket.BlazorClient.Features.Files.Models;
+using FilePocket.BlazorClient.Features.Folders.Models;
 using FilePocket.BlazorClient.Features.Storage.Models;
 using FilePocket.BlazorClient.Features.Storage.Requests;
 using FilePocket.BlazorClient.Features.Users.Models;
@@ -6,7 +7,9 @@ using FilePocket.BlazorClient.Features.Users.Requests;
 using FilePocket.BlazorClient.Helpers;
 using FilePocket.BlazorClient.Services.Files.Models;
 using FilePocket.BlazorClient.Services.Files.Requests;
+using FilePocket.BlazorClient.Services.Folders.Requests;
 using FilePocket.BlazorClient.Services.Pockets.Requests;
+using FilePocket.BlazorClient.Shared.Enums;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Routing;
@@ -21,6 +24,7 @@ public partial class MainLayout : IDisposable
     private bool _menuOpen;
     private string? _icon;
     private bool _render;
+    List<FolderModel>? _folders;
 
     private StorageConsumptionModel _storageConsumption = new();
     private string _unoccupiedStorageSpacePercentage = "100";
@@ -31,11 +35,12 @@ public partial class MainLayout : IDisposable
     [Inject] AuthenticationStateProvider AuthStateProvider { get; set; } = default!;
     [Inject] IUserRequests UserRequests { get; set; } = default!;
     [Inject] private IFileRequests FileRequests { get; set; } = default!;
+    [Inject] private IPocketRequests PocketRequests { get; set; } = default!;
+    [Inject] private IFolderRequests FolderRequests { get; set; } = default!;
     [Inject] private IStorageRequests StorageRequests { get; set; } = default!;
     [Inject] private StateContainer<LoggedInUserModel> UserStateContainer { get; set; } = default!;
     [Inject] private StateContainer<StorageConsumptionModel> StorageStateContainer { get; set; } = default!;
-    [Inject] private NavigationManager? NavigationManager { get; set; }
-    [Inject] private IPocketRequests PocketRequests { get; set; } = default!;
+    [Inject] private AppState AppState { get; set; } = default!;
 
     protected override async Task OnInitializedAsync()
     {
@@ -67,11 +72,14 @@ public partial class MainLayout : IDisposable
                 var avatar = await FileRequests.GetImageThumbnailAsync((Guid)_user.Profile.IconId, 500);
                 _icon = Convert.ToBase64String(avatar.FileByteArray!);
             }
+
+            await GetDefaultFoldersAsync();
         }
 
         Navigation.LocationChanged += OnLocationChanged;
         UserStateContainer.OnStateChange += async () => await UpdateUserStateAsync();
         StorageStateContainer.OnStateChange += async () => await UpdateStorageStateAsync();
+        AppState.OnStateChange += async () => await GetDefaultFoldersAsync();
         NavigationHistory.AddToHistory(Navigation.Uri);
     }
 
@@ -85,6 +93,8 @@ public partial class MainLayout : IDisposable
     {
         Navigation.LocationChanged -= OnLocationChanged;
         UserStateContainer.OnStateChange -= async () => await UpdateUserStateAsync();
+        StorageStateContainer.OnStateChange -= async () => await UpdateStorageStateAsync();
+        AppState.OnStateChange -= async () => await GetDefaultFoldersAsync();
         GC.SuppressFinalize(this);
     }
 
@@ -244,5 +254,13 @@ public partial class MainLayout : IDisposable
             {FileTypes.Video, 0.0},
             {FileTypes.Other, 0.0},
         };
+    }
+
+    private async Task GetDefaultFoldersAsync()
+    {
+        var defaulfPocket = await PocketRequests.GetDefaultAsync();
+        var folderTypes = new List<FolderType> { FolderType.Files, FolderType.Documents };
+        _folders = (await FolderRequests.GetAllAsync(defaulfPocket.Id, folderTypes, isSoftDeleted: false)).ToList();
+        StateHasChanged();
     }
 }

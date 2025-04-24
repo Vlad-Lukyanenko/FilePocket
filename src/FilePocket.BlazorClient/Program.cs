@@ -21,48 +21,48 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
-namespace FilePocket.Client
+namespace FilePocket.Client;
+
+public class Program
 {
-    public class Program
+    public static async Task Main(string[] args)
     {
-        public static async Task Main(string[] args)
+        var builder = WebAssemblyHostBuilder.CreateDefault(args);
+        builder.RootComponents.Add<App>("#app");
+        builder.RootComponents.Add<HeadOutlet>("head::after");
+
+        var apiUrl = builder.Configuration.GetValue<string>("BaseAddresses:ApiBaseUrl")!;
+
+        builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(apiUrl) });
+
+        builder.Services.AddHttpClient<FilePocketApiClient>("FilePocketApi", client =>
         {
-            var builder = WebAssemblyHostBuilder.CreateDefault(args);
-            builder.RootComponents.Add<App>("#app");
-            builder.RootComponents.Add<HeadOutlet>("head::after");
+            client.DefaultRequestHeaders.Add("Accept", "application/json");
+        });
 
-            var apiUrl = builder.Configuration.GetValue<string>("BaseAddresses:ApiBaseUrl")!;
+        builder.Services.AddScoped<NavigationHistoryService>();
+        builder.Services.AddScoped<AuthenticationStateProvider, AuthStateProvider>();
+        builder.Services.AddScoped<FilePocketApiClient>();
 
-            builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(apiUrl) });
+        builder.Services.AddScoped<IAuthentictionRequests, AuthentictionRequests>();
+        builder.Services.AddScoped<IPocketRequests, PocketRequests>();
+        builder.Services.AddScoped<IFileRequests, FileRequests>();
+        builder.Services.AddScoped<IFolderRequests, FolderRequests>();
+        builder.Services.AddScoped<IUserRequests, UserRequests>();
+        builder.Services.AddScoped<ISharedFilesRequests, SharedFilesRequests>();
+        builder.Services.AddScoped<ITrashRequests, TrashRequests>();
+        builder.Services.AddScoped<IBookmarkRequests, BookmarkRequests>();
+        builder.Services.AddScoped<IStorageRequests, StorageRequests> ();
+        builder.Services.AddScoped<IProfileRequests, ProfileRequests>();
+        builder.Services.AddScoped<INoteRequests, NoteRequests>();
 
-            builder.Services.AddHttpClient<FilePocketApiClient>("FilePocketApi", client =>
-            {
-                client.DefaultRequestHeaders.Add("Accept", "application/json");
-            });
+        builder.Services.AddSingleton<StateContainer<LoggedInUserModel>>();
+        builder.Services.AddSingleton<StateContainer<StorageConsumptionModel>>();
+        builder.Services.AddSingleton<AppState>();
 
-            builder.Services.AddScoped<NavigationHistoryService>();
-            builder.Services.AddScoped<AuthenticationStateProvider, AuthStateProvider>();
-            builder.Services.AddScoped<FilePocketApiClient>();
+        builder.Services.AddBlazoredLocalStorage();
+        builder.Services.AddAuthorizationCore();
 
-            builder.Services.AddScoped<IAuthentictionRequests, AuthentictionRequests>();
-            builder.Services.AddScoped<IPocketRequests, PocketRequests>();
-            builder.Services.AddScoped<IFileRequests, FileRequests>();
-            builder.Services.AddScoped<IFolderRequests, FolderRequests>();
-            builder.Services.AddScoped<IUserRequests, UserRequests>();
-            builder.Services.AddScoped<ISharedFilesRequests, SharedFilesRequests>();
-            builder.Services.AddScoped<ITrashRequests, TrashRequests>();
-            builder.Services.AddScoped<IBookmarkRequests, BookmarkRequests>();
-            builder.Services.AddScoped<IStorageRequests, StorageRequests> ();
-            builder.Services.AddScoped<IProfileRequests, ProfileRequests>();
-            builder.Services.AddScoped<INoteRequests, NoteRequests>();
-
-            builder.Services.AddSingleton<StateContainer<LoggedInUserModel>>();
-            builder.Services.AddSingleton<StateContainer<StorageConsumptionModel>>();
-
-            builder.Services.AddBlazoredLocalStorage();
-            builder.Services.AddAuthorizationCore();
-
-            await builder.Build().RunAsync();
-        }
+        await builder.Build().RunAsync();
     }
 }

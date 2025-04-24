@@ -60,12 +60,12 @@ public class FolderRepository : RepositoryBase<Folder>, IFolderRepository
         }
     }
 
-    public async Task<List<Folder>> GetAllAsync(Guid userId, Guid? pocketId, Guid? parentFolderId, FolderType folderType, bool isSoftDeleted)
+    public async Task<List<Folder>> GetAllAsync(Guid userId, Guid? pocketId, Guid? parentFolderId, List<FolderType> folderTypes, bool isSoftDeleted)
     {
         var result = DbContext.Set<Folder>().Where(c => c.UserId == userId
                                                         && c.PocketId == pocketId
                                                         && c.ParentFolderId == parentFolderId
-                                                        && c.FolderType == folderType
+                                                        && folderTypes.Contains(c.FolderType)
                                                         && c.IsDeleted == isSoftDeleted);
 
         return await result.ToListAsync();
