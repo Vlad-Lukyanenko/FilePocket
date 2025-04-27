@@ -38,7 +38,11 @@ public class FileMetadataRepository : RepositoryBase<FileMetadata>, IFileMetadat
                                     && f.IsDeleted == isSoftDeleted
                                     && f.FileType == Domain.FileTypes.Note, trackChanges).ToListAsync();
     }
-
+    public async Task<List<FileMetadata>> GetAllWithSoftDeletedAsync(Guid userId, Guid pocketId, bool trackChanges)
+    {
+        return await FindByCondition(f => f.UserId.Equals(userId)
+                                            && f.PocketId.Equals(pocketId), trackChanges).ToListAsync();
+    }
 
     public async Task<FileMetadata> GetByIdAsync(Guid userId, Guid fileId, bool trackChanges = false)
     {

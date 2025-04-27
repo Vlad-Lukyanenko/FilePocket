@@ -15,6 +15,9 @@ public interface IFileProvider
         Guid pocketId,
         Guid? folderId,
         bool isSoftDeleted);
+    Task<IEnumerable<FileResponseModel>> GetAllFilesWithSoftDeletedAsync(
+        Guid userId,
+        Guid pocketId);
 
     Task<IEnumerable<NoteModel>> GetAllNotesMetadataAsync(
         Guid userId,

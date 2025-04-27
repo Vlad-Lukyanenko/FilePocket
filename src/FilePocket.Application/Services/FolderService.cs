@@ -77,9 +77,9 @@ public class FolderService : IFolderService
         await _repository.SaveChangesAsync();
     }
 
-    public async Task<List<FolderModel>> GetAllAsync(Guid userId, Guid? pocketId, Guid? parentFolderId, FolderType folderType, bool isSoftDeleted)
+    public async Task<List<FolderModel>> GetAllAsync(Guid userId, Guid? pocketId, Guid? parentFolderId, List<FolderType> folderTypes, bool isSoftDeleted)
     {
-        var result = await _repository.Folder.GetAllAsync(userId, pocketId, parentFolderId, folderType, isSoftDeleted);
+        var result = await _repository.Folder.GetAllAsync(userId, pocketId, parentFolderId, folderTypes, isSoftDeleted);
 
         return _mapper.Map<List<FolderModel>>(result);
     }

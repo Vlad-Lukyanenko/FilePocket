@@ -34,6 +34,7 @@ public partial class Bookmarks
     protected override async Task OnParametersSetAsync()
     {
         List<FolderModel> folders;
+        var folderTypes = new List<FolderType> { FolderType.Bookmarks };
 
         if (PocketId == Guid.Empty)
         {
@@ -51,11 +52,11 @@ public partial class Bookmarks
 
         if (FolderId is null)
         {
-            folders = (await FolderRequests.GetAllAsync(PocketId, FolderType.Bookmarks, isSoftDeleted: false)).ToList();
+            folders = (await FolderRequests.GetAllAsync(PocketId, folderTypes, isSoftDeleted: false)).ToList();
         }
         else
         {
-            folders = (await FolderRequests.GetAllAsync(PocketId, FolderId.Value, FolderType.Bookmarks, isSoftDeleted: false)).ToList();
+            folders = (await FolderRequests.GetAllAsync(PocketId, FolderId.Value, folderTypes, isSoftDeleted: false)).ToList();
         }
 
         _folders = new ObservableCollection<FolderModel>(folders);

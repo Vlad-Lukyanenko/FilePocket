@@ -37,6 +37,7 @@ public partial class DeletedFiles
     {
         List<FileInfoModel> files;
         List<FolderModel> folders;
+        var folderTypes = new List<FolderType> { FolderType.Files, FolderType.Documents };
 
         _currentFolder = FolderId is null ? null : await FolderRequests.GetAsync(FolderId.Value, PocketId);
         var currentFolderName = _currentFolder is null ? string.Empty : $" - {_currentFolder.Name}";
@@ -52,12 +53,12 @@ public partial class DeletedFiles
 
         if (FolderId is null)
         {
-            folders = (await FolderRequests.GetAllAsync(PocketId, FolderType.Files, isSoftDeleted: true)).ToList();
+            folders = (await FolderRequests.GetAllAsync(PocketId, folderTypes, isSoftDeleted: true)).ToList();
             files = await FileRequests.GetFilesAsync(PocketId, null, true);
         }
         else
         {
-            folders = (await FolderRequests.GetAllAsync(PocketId, FolderId.Value, FolderType.Files, isSoftDeleted: true)).ToList();
+            folders = (await FolderRequests.GetAllAsync(PocketId, FolderId.Value, folderTypes, isSoftDeleted: true)).ToList();
             files = await FileRequests.GetFilesAsync(PocketId, FolderId.Value, true);
         }
 

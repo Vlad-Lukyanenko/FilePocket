@@ -6,6 +6,7 @@ namespace FilePocket.BlazorClient.Services.Files.Requests;
 public interface IFileRequests
 {
     Task<List<FileInfoModel>> GetFilesAsync(Guid? pocketId, Guid? folderId, bool isSoftDeleted);
+    Task<List<FileInfoModel>> GetAllFilesWithSoftDeletedAsync(Guid? pocketId);
     Task<List<FileInfoModel>> GetRecentFilesAsync();
     Task<FileModel> GetFileAsync(Guid fileId);
     Task<FileModel> GetImageThumbnailAsync(Guid imageId, int size);

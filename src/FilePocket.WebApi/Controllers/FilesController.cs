@@ -83,6 +83,14 @@ public class FilesController : BaseController
         return Ok(image);
     }
 
+    [HttpGet("pockets/{pocketId:guid}/files")]
+    public async Task<IActionResult> GetAllFilesWithSoftDeleted([FromRoute] Guid pocketId)
+    {
+        var fileMetadata = await _service.FileService.GetAllFilesWithSoftDeletedAsync(UserId, pocketId);
+
+        return Ok(fileMetadata);
+    }
+
     [HttpPost("files/thumbnails/{size}")]
     public async Task<IActionResult> GetImageThumbnails(
         [FromBody, Required] Guid[] imageIds,

@@ -83,12 +83,13 @@ namespace FilePocket.BlazorClient.MyComponents
                 return;
             }
 
+            var folderTypes = new List<FolderType> { FolderType.Documents };
             _currentFolder = FolderId is null ? null : await FolderRequests.GetAsync(PocketId!.Value, FolderId.Value);
 
             var folders =
                 (FolderId == null
-                    ? (await FolderRequests.GetAllAsync(PocketId, FolderType.Documents, false))
-                    : (await FolderRequests.GetAllAsync(PocketId, FolderId.Value, FolderType.Documents, false)))
+                    ? (await FolderRequests.GetAllAsync(PocketId, folderTypes, false))
+                    : (await FolderRequests.GetAllAsync(PocketId, FolderId.Value, folderTypes, false)))
                 ?? [];
 
             var notes = (await NoteRequests.GetAllByUserIdAndFolderId(FolderId));

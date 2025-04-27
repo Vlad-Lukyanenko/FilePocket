@@ -2,6 +2,7 @@
 using FilePocket.WebApi.Endpoints.Base;
 using MapsterMapper;
 using Microsoft.AspNetCore.Identity;
+
 namespace FilePocket.WebApi.Endpoints.User;
 
 public class GetUserByNameEndpoint : BaseEndpointWithoutRequest<GetUserResponse>
@@ -18,7 +19,6 @@ public class GetUserByNameEndpoint : BaseEndpointWithoutRequest<GetUserResponse>
     public override void Configure()
     {
         Get("api/users/{name}");
-        AuthSchemes("Bearer");
     }
 
     public override async Task HandleAsync(CancellationToken cancellationToken)
