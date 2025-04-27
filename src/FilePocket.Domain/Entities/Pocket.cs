@@ -24,6 +24,12 @@ public class Pocket : IAmSoftDeletedEntity
         TotalSize += fileMetadata.FileSize;
     }
 
+    public void UpdateDetails(double sizeChange)
+    {
+        NumberOfFiles++;
+        TotalSize += sizeChange;
+    }
+
     public void MarkAsDeleted(DateTime? deletedAt = null)
     {
         IsDeleted = true;

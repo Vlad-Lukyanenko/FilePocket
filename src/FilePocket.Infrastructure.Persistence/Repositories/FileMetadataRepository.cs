@@ -1,6 +1,7 @@
 ﻿using FilePocket.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using FilePocket.Application.Interfaces.Repositories;
+using FilePocket.Domain;
 
 namespace FilePocket.Infrastructure.Persistence.Repositories;
 
@@ -21,15 +22,24 @@ public class FileMetadataRepository : RepositoryBase<FileMetadata>, IFileMetadat
         return await FindByCondition(f => f.UserId.Equals(userId) && !f.IsDeleted && f.FileType != Domain.FileTypes.Note, false).OrderByDescending(c => c.CreatedAt).Take(numberOfFiles).ToListAsync();
     }
 
-    public async Task<List<FileMetadata>> GetAllAsync(Guid userId, Guid pocketId, Guid? folderId, bool isSofDeleted, bool trackChanges)
+    public async Task<List<FileMetadata>> GetAllAsync(Guid userId, Guid pocketId, Guid? folderId, bool isSoftDeleted, bool trackChanges)
     {
         return await FindByCondition(f => f.UserId.Equals(userId) 
                                             && f.PocketId.Equals(pocketId) 
                                             && f.FolderId.Equals(folderId) 
-                                            && f.IsDeleted == isSofDeleted
+                                            && f.IsDeleted == isSoftDeleted
                                             && f.FileType != Domain.FileTypes.Note, trackChanges).ToListAsync();
     }
-    
+
+    public async Task<List<FileMetadata>> GetAllNotesAsync(Guid userId, Guid? folderId, bool isSoftDeleted, bool trackChanges = false)
+    {
+        return await FindByCondition(f => f.UserId.Equals(userId)
+                                    && f.FolderId.Equals(folderId)
+                                    && f.IsDeleted == isSoftDeleted
+                                    && f.FileType == Domain.FileTypes.Note, trackChanges).ToListAsync();
+    }
+
+
     public async Task<FileMetadata> GetByIdAsync(Guid userId, Guid fileId, bool trackChanges = false)
     {
         return (await FindByCondition(f => f.UserId.Equals(userId) && f.Id.Equals(fileId), trackChanges).SingleOrDefaultAsync())!;
@@ -48,5 +58,14 @@ public class FileMetadataRepository : RepositoryBase<FileMetadata>, IFileMetadat
     public void DeleteFileMetadata(FileMetadata fileMetadata)
     {
         Delete(fileMetadata);
+    }
+
+    private static bool SelectByFileType(FileMetadata fileMetadata, FileTypes? fileType)
+    {
+        if (fileType != null)
+        {
+            return fileMetadata.FileType == fileType;
+        }
+        return fileMetadata.FileType != Domain.FileTypes.Note;
     }
 }

@@ -12,15 +12,18 @@ using FilePocket.Shared.Extensions;
 using FilePocket.WebApi;
 using FilePocket.WebApi.Attributes;
 using Mapster;
+using MapsterMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
 using Serilog;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -89,9 +92,6 @@ builder.Services.Configure<JwtConfigurationModel>(builder.Configuration.GetSecti
 builder.Services.Configure<ApiKeyConfigurationModel>(builder.Configuration.GetSection("ApiKeySettings"));
 builder.Services.AddHostedService<InitialRolesAndAdminSeeding>();
 
-builder.Services.Configure<MongoDbSettings>(
-    builder.Configuration.GetSection(nameof(MongoDbSettings)));
-
 BsonSerializer.RegisterSerializer(new GuidSerializer(BsonType.String));
 BsonSerializer.RegisterSerializer(new DateTimeSerializer(BsonType.String));
 BsonSerializer.RegisterSerializer(new DateTimeOffsetSerializer(BsonType.String));
@@ -102,7 +102,7 @@ builder.Services.AddScoped<IEncryptionService, EncryptionService>();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddAutoMapper(typeof(WebApiAssemblyReference));
-builder.Services.AddMapster();
+builder.Services.AddMapsterWithConfiguration();
 
 builder.Services.AddSwaggerGen(s =>
 {
@@ -130,8 +130,8 @@ builder.Services.AddSwaggerGen(s =>
 
 builder.Services.AddScoped<IRepositoryManager, RepositoryManager>();
 builder.Services.AddScoped<IImageService, ImageService>();
+builder.Services.AddScoped<IEncryptionService, EncryptionService>();
 builder.Services.AddSingleton<IUploadService, UploadService>();
-builder.Services.AddScoped<IFileService, FileService>();
 builder.Services.AddScoped<IServiceManager, ServiceManager>();
 builder.Services.AddScoped<JwtOrApiKeyAuthorizeAttribute>();
 

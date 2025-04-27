@@ -17,25 +17,23 @@ public class ServiceManager(
     UserManager<User> userManager,
     IOptions<JwtConfigurationModel> options,
     IOptions<AccountConsumptionConfigurationModel> consumptionOptions,
-    //IImageService imageService,
-    IFileService fileService,
+    IImageService imageService,
     IEncryptionService encryptionService)
     : IServiceManager
 {
     private readonly Lazy<IPocketService> _pocketService = new(() => new PocketService(repositoryManager, mapper, configuration));
     private readonly Lazy<ISharedFileService> _sharedFileService = new(() => new SharedFileService(repositoryManager, mapper));
-    //private readonly Lazy<IFileService> _fileService = new(() => new FileService(repositoryManager, configuration, imageService, mapper));
+    private readonly Lazy<IFileService> _fileService = new(() => new FileService(repositoryManager, configuration, imageService, encryptionService, mapper));
     private readonly Lazy<IFolderService> _folderService = new(() => new FolderService(repositoryManager, mapper));
     private readonly Lazy<IAuthenticationService> _authenticationService = new(() => new AuthenticationService(logger, userManager, options, consumptionOptions, mapper));
     private readonly Lazy<IBookmarkService> _bookmarkService = new(() => new BookmarkService(repositoryManager, mapper));
     private readonly Lazy<IProfileService> _profileService = new(() => new ProfileService(repositoryManager, mapper));
-    private readonly Lazy<INoteService> _noteService = new(() => new NoteService(repositoryManager, encryptionService, fileService, mapper));
 
     public IPocketService PocketService => _pocketService.Value;
 
     public ISharedFileService SharedFileService => _sharedFileService.Value;
 
-    //public IFileService FileService => _fileService.Value;
+    public IFileService FileService => _fileService.Value;
 
     public IFolderService FolderService => _folderService.Value;
 
@@ -45,5 +43,4 @@ public class ServiceManager(
 
     public IProfileService ProfileService => _profileService.Value;
 
-    public INoteService NoteService=> _noteService.Value;
 }

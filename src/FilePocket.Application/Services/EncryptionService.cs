@@ -75,5 +75,21 @@ namespace FilePocket.Application.Services
                                              hashMethod,
                                              desiredKeyLength);
         }
+
+        public async Task<byte[]> EncryptContent(Guid key1, Guid key2, string text, CancellationToken cancellationToken)
+        {
+            var passPhrase = GeneratePassPhrase(key1, key2);
+            var noteEncryptedContent = await EncryptAsync(text, passPhrase, cancellationToken);
+
+            return noteEncryptedContent;
+        }
+
+        public async Task<string> DecryptContent(Guid key1, Guid key2, byte[] encryptedContent, CancellationToken cancellationToken)
+        {
+            var passPhrase = GeneratePassPhrase(key1, key2);
+            var decryptedText = await DecryptAsync(encryptedContent, passPhrase, cancellationToken);
+            
+            return decryptedText;
+        }
     }
 }

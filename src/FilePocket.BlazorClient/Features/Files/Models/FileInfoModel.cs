@@ -10,7 +10,7 @@ namespace FilePocket.BlazorClient.Services.Files.Models
 
         public FileTypes? FileType { get; set; }
 
-        public DateTime DateCreated { get; set; }
+        public DateTime CreatedAt { get; set; }
 
         public Guid? PocketId { get; set; }
 

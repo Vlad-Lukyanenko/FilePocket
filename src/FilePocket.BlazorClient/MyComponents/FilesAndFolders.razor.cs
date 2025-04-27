@@ -195,7 +195,7 @@ public partial class FilesAndFolders
                             await InvokeAsync(() =>
                             {
                                 fileInfoModel.Id = uploadedFile.Id;
-                                fileInfoModel.DateCreated = uploadedFile.DateCreated;
+                                fileInfoModel.CreatedAt = uploadedFile.CreatedAt;
                                 fileInfoModel.FileSize = uploadedFile.FileSize;
                                 fileInfoModel.FileType = uploadedFile.FileType;
                                 fileInfoModel.OriginalName = uploadedFile.OriginalName;

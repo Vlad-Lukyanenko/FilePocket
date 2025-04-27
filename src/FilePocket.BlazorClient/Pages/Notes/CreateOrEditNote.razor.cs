@@ -37,7 +37,7 @@ namespace FilePocket.BlazorClient.Pages.Notes
         private NoteModel? _note;
         private Guid _userId = Guid.Empty;
         private bool _editTitle;
-        private const string DateTimePlaceholder = "--.--.-- --:--:--";
+        private const string DateTimePlaceholder = "--.--.---- --:--:--";
         private string? _createdAt;
         private string? _updatedAt;
 
@@ -60,7 +60,7 @@ namespace FilePocket.BlazorClient.Pages.Notes
                 _note = await NoteRequests.GetByIdAsync(Id);
 
                 _createdAt = _note.CreatedAt.ToString();
-                _updatedAt = _note.UpdatedAt.ToString();
+                _updatedAt = GetUpdatedDateValue(_note.UpdatedAt);
             }
             else
             {
@@ -94,10 +94,10 @@ namespace FilePocket.BlazorClient.Pages.Notes
             {
                 _note.Id = result.Id;
                 _note.CreatedAt = result.CreatedAt;
-                _note.UpdatedAt = result.UpdatedAt;
+                _note.UpdatedAt = result?.UpdatedAt;
 
                 _createdAt = _note.CreatedAt.ToString();
-                _updatedAt = _note.UpdatedAt.ToString();
+                _updatedAt = GetUpdatedDateValue(_note.UpdatedAt);
             }
         }
 
@@ -108,8 +108,7 @@ namespace FilePocket.BlazorClient.Pages.Notes
             if (result.UpdatedAt != default)
             {
                 _note!.UpdatedAt = result.UpdatedAt;
-
-                _updatedAt = _note.UpdatedAt.ToString();
+                _updatedAt = _note!.UpdatedAt.ToString();
 
                 await InvokeAsync(StateHasChanged);
             }
@@ -161,6 +160,11 @@ namespace FilePocket.BlazorClient.Pages.Notes
             {
                 _editTitle = false;
             }
+        }
+
+        private static string GetUpdatedDateValue(DateTime? updatedAt)
+        {
+            return (updatedAt == null ? DateTimePlaceholder : updatedAt.ToString())!;
         }
     }
 }

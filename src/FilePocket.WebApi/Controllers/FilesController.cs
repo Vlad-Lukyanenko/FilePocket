@@ -14,11 +14,11 @@ namespace FilePocket.WebApi.Controllers;
 [ServiceFilter(typeof(JwtOrApiKeyAuthorizeAttribute))]
 public class FilesController : BaseController
 {
-    private readonly IFileService _fileService;
+    private readonly IServiceManager _service;
 
-    public FilesController(IFileService fileService)
+    public FilesController(IServiceManager service)
     {
-        _fileService = fileService;
+        _service = service;
     }
 
     #region POST
@@ -33,7 +33,7 @@ public class FilesController : BaseController
 
         try
         {
-            var fileMetadata = await _fileService.UploadFileAsync(
+            var fileMetadata = await _service.FileService.UploadFileAsync(
                 UserId, fileInformation.File!, fileInformation.PocketId, fileInformation.FolderId);
 
             return Ok(fileMetadata);
@@ -50,7 +50,7 @@ public class FilesController : BaseController
     [HttpGet("pockets/{pocketId:guid}/{isSoftDeleted:bool}/files")]
     public async Task<IActionResult> GetAll([FromRoute] Guid pocketId, [FromRoute] Guid? folderId, [FromRoute] bool isSoftDeleted)
     {
-        var fileMetadata = await _fileService.GetAllFilesAsync(UserId, pocketId, folderId, isSoftDeleted);
+        var fileMetadata = await _service.FileService.GetAllFilesMetadataAsync(UserId, pocketId, folderId, isSoftDeleted);
 
         return Ok(fileMetadata);
     }
@@ -58,7 +58,7 @@ public class FilesController : BaseController
     [HttpGet("files/{fileId:guid}")]
     public async Task<IActionResult> Get(Guid fileId)
     {
-        var file = await _fileService.GetFileByIdAsync(UserId, fileId);
+        var file = await _service.FileService.GetFileByUserIdIdAsync(UserId, fileId);
 
         return Ok(file);
     }
@@ -66,7 +66,7 @@ public class FilesController : BaseController
     [HttpGet("files/{fileId:guid}/info")]
     public async Task<IActionResult> GetInfo(Guid fileId)
     {
-        var file = await _fileService.GetFileInfoByIdAsync(UserId, fileId);
+        var file = await _service.FileService.GetFileMetadataByUserIdAndIdAsync(UserId, fileId);
 
         return Ok(file);
     }
@@ -76,7 +76,7 @@ public class FilesController : BaseController
         [FromRoute, Required] Guid imageId,
         [FromRoute, Required] int size)
     {
-        var image = await _fileService.GetThumbnailAsync(UserId, imageId, size);
+        var image = await _service.FileService.GetThumbnailAsync(UserId, imageId, size);
 
         if(image.FileByteArray!.Length == 0) return BadRequest(image);
 
@@ -89,7 +89,7 @@ public class FilesController : BaseController
         [FromRoute, Required] Guid? pocketId,
         [FromRoute, Required] int size)
     {
-        var images = await _fileService.GetThumbnailsAsync(UserId, imageIds,  size);
+        var images = await _service.FileService.GetThumbnailsAsync(UserId, imageIds,  size);
 
         return CreatedAtRoute("All", new { pocketId }, images!);
     }
@@ -100,7 +100,7 @@ public class FilesController : BaseController
     public async Task<IActionResult> Update(UpdateFileModel file)
     {
         file.UserId = UserId;
-        await _fileService.UpdateFileAsync(file);
+        await _service.FileService.UpdateFileAsync(file);
 
         return NoContent();
     }
@@ -110,7 +110,7 @@ public class FilesController : BaseController
     [HttpDelete("files/{fileId:guid}")]
     public async Task<IActionResult> Delete( [FromRoute] Guid fileId)
     {
-        await _fileService.RemoveFileAsync(UserId, fileId);
+        await _service.FileService.RemoveFileAsync(UserId, fileId);
 
         return NoContent();
     }

@@ -13,7 +13,7 @@
 
         @if (_fileInfo is not null)
         {
-            <FileInfoBlock Name="@_fileInfo.OriginalName" Size="@_fileInfo.FileSize" CreatedAt="@_fileInfo.DateCreated" />
+            <FileInfoBlock Name="@_fileInfo.OriginalName" Size="@_fileInfo.FileSize" CreatedAt="@_fileInfo.CreatedAt" />
             <br />
             <div class="text-center">
                 <button class="btn btn-lg btn-outline-warning" @onclick="ShareFileAsync">Share</button>
