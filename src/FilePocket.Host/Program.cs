@@ -11,19 +11,12 @@ using FilePocket.Infrastructure.Persistence.Repositories;
 using FilePocket.Shared.Extensions;
 using FilePocket.WebApi;
 using FilePocket.WebApi.Attributes;
-using Mapster;
-using MapsterMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
-using MongoDB.Bson;
-using MongoDB.Bson.Serialization;
-using MongoDB.Bson.Serialization.Serializers;
 using Serilog;
-using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -91,10 +84,6 @@ builder.Services.Configure<AccountConsumptionConfigurationModel>(builder.Configu
 builder.Services.Configure<JwtConfigurationModel>(builder.Configuration.GetSection("JwtSettings"));
 builder.Services.Configure<ApiKeyConfigurationModel>(builder.Configuration.GetSection("ApiKeySettings"));
 builder.Services.AddHostedService<InitialRolesAndAdminSeeding>();
-
-BsonSerializer.RegisterSerializer(new GuidSerializer(BsonType.String));
-BsonSerializer.RegisterSerializer(new DateTimeSerializer(BsonType.String));
-BsonSerializer.RegisterSerializer(new DateTimeOffsetSerializer(BsonType.String));
 
 // Add services to the container.
 builder.Services.AddSingleton<ILoggerService, LoggerService>();
