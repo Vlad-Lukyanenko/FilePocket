@@ -63,10 +63,10 @@
             <div class="col-sm-6 align-items-center justify-content-evenly d-flex mb-3 note-attributes">
 
                 <div>
-                    <strong>Created:</strong>@($" {_note.CreatedAt}")
+                    <strong>Created:</strong>@($" {_note!.CreatedAt}")
                 </div>
                 <div>
-                    <strong>Updated:</strong>@($" {_note.UpdatedAt}")
+                    <strong>Updated:</strong>@($" {GetUpdatedDateValue(_note.UpdatedAt)}")
                 </div>
             </div>
             <div class="col-sm-1 d-flex align-items-center justify-content-end mb-3 controls-container">
@@ -109,6 +109,7 @@
 
     private NoteModel? _note;
     private Guid _userId = Guid.Empty;
+    private const string DateTimePlaceholder = "--.--.---- --:--:--";
 
     protected override async Task OnParametersSetAsync()
     {
@@ -135,5 +136,10 @@
         var url = Navigation.Uri + "/edit";
 
         Navigation.NavigateTo(url);
+    }
+
+    private static string GetUpdatedDateValue(DateTime? updatedAt)
+    {
+        return (updatedAt == null ? DateTimePlaceholder : updatedAt.ToString())!;
     }
 }

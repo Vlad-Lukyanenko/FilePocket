@@ -50,7 +50,7 @@ public class FilesController : BaseController
     [HttpGet("pockets/{pocketId:guid}/{isSoftDeleted:bool}/files")]
     public async Task<IActionResult> GetAll([FromRoute] Guid pocketId, [FromRoute] Guid? folderId, [FromRoute] bool isSoftDeleted)
     {
-        var fileMetadata = await _service.FileService.GetAllFilesAsync(UserId, pocketId, folderId, isSoftDeleted);
+        var fileMetadata = await _service.FileService.GetAllFilesMetadataAsync(UserId, pocketId, folderId, isSoftDeleted);
 
         return Ok(fileMetadata);
     }
@@ -58,7 +58,7 @@ public class FilesController : BaseController
     [HttpGet("files/{fileId:guid}")]
     public async Task<IActionResult> Get(Guid fileId)
     {
-        var file = await _service.FileService.GetFileByIdAsync(UserId, fileId);
+        var file = await _service.FileService.GetFileByUserIdIdAsync(UserId, fileId);
 
         return Ok(file);
     }
@@ -66,7 +66,7 @@ public class FilesController : BaseController
     [HttpGet("files/{fileId:guid}/info")]
     public async Task<IActionResult> GetInfo(Guid fileId)
     {
-        var file = await _service.FileService.GetFileInfoByIdAsync(UserId, fileId);
+        var file = await _service.FileService.GetFileMetadataByUserIdAndIdAsync(UserId, fileId);
 
         return Ok(file);
     }

@@ -12,7 +12,6 @@ namespace FilePocket.WebApi.Controllers
     {
         private readonly IServiceManager _service;
 
-
         public NotesController(IServiceManager service)
         {
             _service = service;
@@ -22,7 +21,7 @@ namespace FilePocket.WebApi.Controllers
         [HttpGet("folders/{folderId:guid}/notes")]
         public async Task<IActionResult> GetAllByUserIdAndFolderId(Guid? folderId)
         {
-            var notes = await _service.NoteService.GetAllByUserIdAndFolderIdAsync(UserId, folderId);
+            var notes = await _service.FileService.GetAllNotesMetadataAsync(UserId, folderId, false);
 
             return Ok(notes);
         }
@@ -30,7 +29,7 @@ namespace FilePocket.WebApi.Controllers
         [HttpGet("notes/{id:guid}")]
         public async Task<IActionResult> GetById([FromRoute] Guid id)
         {
-            var note = await _service.NoteService.GetByIdAsync(id);
+            var note = await _service.FileService.GetNoteByUserIdAndIdAsync(UserId, id);
 
             if (note == null)
             {
@@ -48,7 +47,7 @@ namespace FilePocket.WebApi.Controllers
                 return UnprocessableEntity(ModelState);
             }
 
-            var result = await _service.NoteService.CreateAsync(note);
+            var result = await _service.FileService.CreateNoteContentFileAsync(note);
 
             return Ok(result);
         }
@@ -61,7 +60,7 @@ namespace FilePocket.WebApi.Controllers
                 return UnprocessableEntity(ModelState);
             }
 
-            var result = await _service.NoteService.UpdateAsync(note);
+            var result = await _service.FileService.UpdateNoteContentFileAsync(note);
 
             return Ok(result);
         }
@@ -69,7 +68,7 @@ namespace FilePocket.WebApi.Controllers
         [HttpDelete("notes/{id:guid}")]
         public async Task<IActionResult> Delete([FromRoute] Guid id)
         {
-            await _service.NoteService.SoftDeleteAsync(id);
+            _ = await _service.FileService.MoveToTrash(UserId, id);
 
             return NoContent();
         }
@@ -77,7 +76,7 @@ namespace FilePocket.WebApi.Controllers
         [HttpDelete("notes/{id:guid}/delete-irreversibly")]
         public async Task<IActionResult> IrreversiblyDelete([FromRoute] Guid id)
         {
-            await _service.NoteService.DeleteAsync(id);
+            _ = await _service.FileService.RemoveFileAsync(UserId, id);
 
             return NoContent();
         }

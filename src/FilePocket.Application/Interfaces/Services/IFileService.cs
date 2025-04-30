@@ -1,3 +1,7 @@
+using FilePocket.Application.Exceptions;
+using FilePocket.Application.Extensions;
+using FilePocket.Domain;
+using FilePocket.Domain.Entities;
 using FilePocket.Domain.Models;
 using Microsoft.AspNetCore.Http;
 
@@ -6,7 +10,7 @@ namespace FilePocket.Application.Interfaces.Services;
 // Handles read concerns
 public interface IFileProvider
 {
-    Task<IEnumerable<FileResponseModel>> GetAllFilesAsync(
+    Task<IEnumerable<FileResponseModel>> GetAllFilesMetadataAsync(
         Guid userId,
         Guid pocketId,
         Guid? folderId,
@@ -15,11 +19,20 @@ public interface IFileProvider
         Guid userId,
         Guid pocketId);
 
-    Task<FileResponseModel> GetFileByIdAsync(
+    Task<IEnumerable<NoteModel>> GetAllNotesMetadataAsync(
+        Guid userId,
+        Guid? folderId,
+        bool isSoftDeleted);
+
+    Task<FileResponseModel> GetFileByUserIdIdAsync(
         Guid userId,
         Guid fileId);
 
-    Task<FileResponseModel> GetFileInfoByIdAsync(
+    Task<FileResponseModel> GetFileMetadataByUserIdAndIdAsync(
+        Guid userId,
+        Guid fileId);
+
+    Task<NoteModel> GetNoteByUserIdAndIdAsync(
         Guid userId,
         Guid fileId);
 
@@ -59,4 +72,14 @@ public interface IFileService : IFileProvider
         CancellationToken cancellationToken = default);
 
     Task UpdateFileAsync(UpdateFileModel file);
+
+    Task<FileResponseModel?> CreateNoteContentFileAsync(
+        NoteCreateModel note,
+        CancellationToken cancellationToken = default);
+
+    Task<FileResponseModel?> UpdateNoteContentFileAsync(
+        NoteModel note,
+        CancellationToken cancellationToken = default);
+
+    Task<byte[]> ReadNoteContentFromFileAsync(Guid userId, Guid fileId);
 }

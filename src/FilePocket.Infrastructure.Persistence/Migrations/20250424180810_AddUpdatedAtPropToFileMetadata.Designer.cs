@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FilePocket.DataAccess.Migrations
 {
     [DbContext(typeof(FilePocketDbContext))]
-    [Migration("20250306163530_CascadeDeleteBokmarksOnFolder")]
-    partial class CascadeDeleteBokmarksOnFolder
+    [Migration("20250424180810_AddUpdatedAtPropToFileMetadata")]
+    partial class AddUpdatedAtPropToFileMetadata
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -37,8 +37,14 @@ namespace FilePocket.DataAccess.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<Guid?>("FolderId")
                         .HasColumnType("uuid");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
 
                     b.Property<Guid>("PocketId")
                         .HasColumnType("uuid");
@@ -147,6 +153,9 @@ namespace FilePocket.DataAccess.Migrations
                     b.Property<Guid>("PocketId")
                         .HasColumnType("uuid");
 
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
@@ -154,6 +163,8 @@ namespace FilePocket.DataAccess.Migrations
 
                     b.HasIndex("ActualName")
                         .IsUnique();
+
+                    b.HasIndex("FolderId");
 
                     b.HasIndex("PocketId");
 
@@ -197,6 +208,8 @@ namespace FilePocket.DataAccess.Migrations
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("PocketId");
 
                     b.ToTable("Folders");
                 });
@@ -254,6 +267,41 @@ namespace FilePocket.DataAccess.Migrations
                         .IsUnique();
 
                     b.ToTable("Pockets");
+                });
+
+            modelBuilder.Entity("FilePocket.Domain.Entities.Profile", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("text");
+
+                    b.Property<string>("FirstName")
+                        .HasColumnType("text");
+
+                    b.Property<Guid?>("IconId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("LastName")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("Profile");
                 });
 
             modelBuilder.Entity("FilePocket.Domain.Entities.Role", b =>
@@ -529,6 +577,10 @@ namespace FilePocket.DataAccess.Migrations
 
             modelBuilder.Entity("FilePocket.Domain.Entities.FileMetadata", b =>
                 {
+                    b.HasOne("FilePocket.Domain.Entities.Folder", null)
+                        .WithMany("FileMetadata")
+                        .HasForeignKey("FolderId");
+
                     b.HasOne("FilePocket.Domain.Entities.Pocket", null)
                         .WithMany("FileMetadata")
                         .HasForeignKey("PocketId")
@@ -542,11 +594,29 @@ namespace FilePocket.DataAccess.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("FilePocket.Domain.Entities.Folder", b =>
+                {
+                    b.HasOne("FilePocket.Domain.Entities.Pocket", null)
+                        .WithMany("Folders")
+                        .HasForeignKey("PocketId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("FilePocket.Domain.Entities.Pocket", b =>
                 {
                     b.HasOne("FilePocket.Domain.Entities.User", null)
                         .WithMany("Pockets")
                         .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("FilePocket.Domain.Entities.Profile", b =>
+                {
+                    b.HasOne("FilePocket.Domain.Entities.User", null)
+                        .WithOne("Profile")
+                        .HasForeignKey("FilePocket.Domain.Entities.Profile", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -605,11 +675,15 @@ namespace FilePocket.DataAccess.Migrations
             modelBuilder.Entity("FilePocket.Domain.Entities.Folder", b =>
                 {
                     b.Navigation("Bookmarks");
+
+                    b.Navigation("FileMetadata");
                 });
 
             modelBuilder.Entity("FilePocket.Domain.Entities.Pocket", b =>
                 {
                     b.Navigation("FileMetadata");
+
+                    b.Navigation("Folders");
                 });
 
             modelBuilder.Entity("FilePocket.Domain.Entities.User", b =>
@@ -619,6 +693,9 @@ namespace FilePocket.DataAccess.Migrations
                     b.Navigation("FilesMetadata");
 
                     b.Navigation("Pockets");
+
+                    b.Navigation("Profile")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

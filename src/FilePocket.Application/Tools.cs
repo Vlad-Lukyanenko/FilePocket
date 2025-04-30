@@ -95,6 +95,10 @@ namespace FilePocket.Application
                     fileType = FileTypes.Font;
                     break;
 
+                case ".fpn":
+                    fileType = FileTypes.Note;
+                    break;
+
                 default:
                     fileType = FileTypes.Other;
                     break;

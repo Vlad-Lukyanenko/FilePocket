@@ -21,6 +21,6 @@ namespace FilePocket.BlazorClient.Features.Notes.Models
 
         public DateTime CreatedAt { get; set; }
 
-        public DateTime UpdatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
     }
 }
