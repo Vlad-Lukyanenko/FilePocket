@@ -451,8 +451,8 @@ public class FileService(
 
 #if !DEBUG
         fileDirectory = pocketId is not null 
-            ? $"{_rootFolder}/{userId}/{pocketId}/{now.Year}/{now.Month}/{Tools.DefineFileType(fileExtension)}s"
-            : $"{_rootFolder}/{userId}/{now.Year}/{now.Month}/{Tools.DefineFileType(fileExtension)}s";
+            ? $"{_rootFolder}/{userId}/{pocketId}/{now.Year}/{now.Month}/{fileType}s"
+            : $"{_rootFolder}/{userId}/{now.Year}/{now.Month}/{fileType}s";
 #endif
 
         return fileDirectory;
