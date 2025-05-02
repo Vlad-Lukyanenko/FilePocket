@@ -90,7 +90,6 @@ builder.Services.AddSingleton<ILoggerService, LoggerService>();
 builder.Services.AddScoped<IEncryptionService, EncryptionService>();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddAutoMapper(typeof(WebApiAssemblyReference));
 builder.Services.AddMapsterWithConfiguration();
 
 builder.Services.AddSwaggerGen(s =>

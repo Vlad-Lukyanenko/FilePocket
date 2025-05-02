@@ -59,7 +59,7 @@
             @{
                 var folderId = FolderId is null ? "" : $"{FolderId}/";
 
-                var url = $"/pockets/{PocketId}/folders/{folderId}{(int)FolderType.Documents}/new";
+                var url = $"/pockets/{PocketId}/folders/{folderId}{(int)FolderType.Notes}/new";
             }
 
             <a href="@url" class="btn btn-outline-warning py-0 px-3">

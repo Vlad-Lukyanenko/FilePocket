@@ -4,5 +4,6 @@ public enum FolderType
 {
     Files = 1,
     Bookmarks,
-    Documents
+    Documents,
+    Notes
 }

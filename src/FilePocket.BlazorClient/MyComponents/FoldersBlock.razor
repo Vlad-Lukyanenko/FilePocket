@@ -56,14 +56,11 @@
 
     private string GetEntitiesName(FolderType folderType)
     {
-        switch (folderType)
+        return folderType switch
         {
-            case FolderType.Bookmarks:
-                return "bookmarks";
-            case FolderType.Documents:
-                return "notes";
-            default: 
-                return "files";
-        }
+            FolderType.Bookmarks => "bookmarks",
+            FolderType.Notes => "notes",
+            _ => "files"
+        };
     }
 }

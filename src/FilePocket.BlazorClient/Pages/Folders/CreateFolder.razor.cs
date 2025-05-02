@@ -67,7 +67,7 @@ public partial class CreateFolder
     {
         return folderType switch
         {
-            Shared.Enums.FolderType.Documents => "notes",
+            Shared.Enums.FolderType.Notes => "notes",
             Shared.Enums.FolderType.Bookmarks => "bookmarks",
             _ => "files",
         };
