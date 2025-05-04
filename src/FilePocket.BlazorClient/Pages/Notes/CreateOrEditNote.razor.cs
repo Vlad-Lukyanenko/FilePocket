@@ -5,6 +5,9 @@ using Microsoft.AspNetCore.Components;
 using FilePocket.BlazorClient.Features.Notes.Models;
 using Microsoft.AspNetCore.Components.Web;
 using FilePocket.BlazorClient.Features;
+using FilePocket.BlazorClient.Features.Storage.Requests;
+using FilePocket.BlazorClient.Features.Storage.Models;
+using FilePocket.BlazorClient.Helpers;
 
 namespace FilePocket.BlazorClient.Pages.Notes
 {
@@ -30,6 +33,12 @@ namespace FilePocket.BlazorClient.Pages.Notes
 
         [Inject]
         private IUserRequests UserRequests { get; set; } = default!;
+
+        [Inject] 
+        private IStorageRequests StorageRequests { get; set; } = default!;
+
+        [Inject] 
+        private StateContainer<StorageConsumptionModel> StorageStateContainer { get; set; } = default!;
 
         [Inject]
         private NavigationHistoryService NavigationHistory { get; set; } = default!;
@@ -118,6 +127,9 @@ namespace FilePocket.BlazorClient.Pages.Notes
         {
             _note!.Content = content;
             await SaveOrUpdateNote();
+
+            var storageConsumption = await StorageRequests.GetStorageConsumption();
+            StorageStateContainer.SetValue(storageConsumption!);
         }
 
         private async Task SaveOrUpdateNote()

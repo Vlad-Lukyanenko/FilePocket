@@ -33,6 +33,7 @@ public class FileService(
 
         return result;
     }
+    
     public async Task<IEnumerable<FileResponseModel>> GetAllFilesWithSoftDeletedAsync(Guid userId, Guid pocketId)
     {
         var fileMetadata = await repository.FileMetadata.GetAllWithSoftDeletedAsync(userId, pocketId);
@@ -385,7 +386,7 @@ public class FileService(
                 cancellationToken) ?? throw new AccountConsumptionNotFoundException(note.UserId);
 
             var newFileSizeInMbs = ((long)contentBytes.Length).ToMegabytes();
-            var sizeChangeInMbs = newFileSizeInMbs - ((long)fileMetadata.FileSize).ToMegabytes();
+            var sizeChangeInMbs = newFileSizeInMbs - fileMetadata.FileSize;
 
             if (storageConsumption.RemainingSizeMb < sizeChangeInMbs)
             {

@@ -191,6 +191,9 @@ public partial class MainLayout : IDisposable
                 case FileTypes.Video:
                     _occupiedSpaceByFileType[FileTypes.Video] += file.FileSize;
                     break;
+                case FileTypes.Note:
+                    _occupiedSpaceByFileType[FileTypes.Note] += file.FileSize;
+                    break;
                 default:
                     _occupiedSpaceByFileType[FileTypes.Other] += file.FileSize;
                     break;
@@ -223,6 +226,9 @@ public partial class MainLayout : IDisposable
                 case "Videos":
                     item.Size = _occupiedSpaceByFileType[FileTypes.Video];
                     break;
+                case "Notes":
+                    item.Size = _occupiedSpaceByFileType[FileTypes.Note];
+                    break;
                 case "Other":
                     item.Size = _occupiedSpaceByFileType[FileTypes.Other];
                     break;
@@ -239,6 +245,7 @@ public partial class MainLayout : IDisposable
             _occupiedSpaceByFileType[FileTypes.Audio],
             _occupiedSpaceByFileType[FileTypes.Image],
             _occupiedSpaceByFileType[FileTypes.Video],
+            _occupiedSpaceByFileType[FileTypes.Note],
             _occupiedSpaceByFileType[FileTypes.Other]
             );
     }
@@ -252,6 +259,7 @@ public partial class MainLayout : IDisposable
             {FileTypes.Audio, 0.0},
             {FileTypes.Image, 0.0},
             {FileTypes.Video, 0.0},
+            {FileTypes.Note, 0.0},
             {FileTypes.Other, 0.0},
         };
     }

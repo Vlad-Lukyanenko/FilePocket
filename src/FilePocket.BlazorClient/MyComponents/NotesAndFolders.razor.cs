@@ -33,7 +33,6 @@ namespace FilePocket.BlazorClient.MyComponents
         [Inject]
         private IPocketRequests PocketRequests { get; set; } = default!;
 
-
         [Inject]
         private ITrashRequests TrashRequests { get; set; } = default!;
 
