@@ -17,11 +17,11 @@ namespace FilePocket.BlazorClient.MyComponents
         private DotNetObjectReference<NotesEditor>? _editorRef;
         private readonly string _editorId = $"NotesEditor-{Guid.NewGuid()}";
 
-        protected override void OnParametersSet()
+        protected override async Task  OnParametersSetAsync()
         {
               _editorRef ??= DotNetObjectReference.Create(this);
 
-            base.OnParametersSet();
+            await base.OnParametersSetAsync();
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -40,8 +40,6 @@ namespace FilePocket.BlazorClient.MyComponents
         [JSInvokable]
         public async Task OnSave(string content)
         {
-            Console.WriteLine($"Content saved: {content}");
-
             await OnSaveOrUpdate.Invoke(content);
         }
 

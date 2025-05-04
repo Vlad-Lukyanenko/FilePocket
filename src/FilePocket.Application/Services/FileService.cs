@@ -84,6 +84,7 @@ public class FileService(
             CreatedAt = fileMetadata.CreatedAt,
             UpdatedAt = fileMetadata.UpdatedAt,
             PocketId = fileMetadata.PocketId,
+            FolderId = fileMetadata.FolderId,
             FileSize = fileMetadata.FileSize,
             FileType = fileMetadata.FileType,
             OriginalName = fileMetadata.OriginalName,
