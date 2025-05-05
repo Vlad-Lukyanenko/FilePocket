@@ -105,7 +105,7 @@ public class AuthenticationService : IAuthenticationService
 
         if (user is null || user.RefreshToken != tokenModel.RefreshToken || user.RefreshTokenExpiryTime <= DateTime.Now)
         {
-            throw new RefreshTokenBadRequest();
+            return null;
         }
 
         _user = user;

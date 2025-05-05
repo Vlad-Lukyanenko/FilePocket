@@ -44,10 +44,10 @@ public partial class Profile : ComponentBase
     protected override async Task OnInitializedAsync()
     {
 
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var uri = Navigation != null ? new Uri(Navigation.Uri) : throw new InvalidOperationException("Navigation is null");
         var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
 
-        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var userAuth = authState.User;
         var userStringId = userAuth.FindFirst(c => c.Type == "uid")?.Value;
         var userId = new Guid(userStringId!);
