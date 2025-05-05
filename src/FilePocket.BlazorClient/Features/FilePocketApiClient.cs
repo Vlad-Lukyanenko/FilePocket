@@ -1,8 +1,10 @@
 ﻿using Blazored.LocalStorage;
+using FilePocket.BlazorClient.Features.Authentication;
 using FilePocket.BlazorClient.Services.Authentication;
 using FilePocket.BlazorClient.Services.Authentication.Models;
 using Microsoft.AspNetCore.Components.Authorization;
 using Newtonsoft.Json;
+using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 
@@ -105,10 +107,21 @@ namespace FilePocket.BlazorClient.Features
             else
             {
                 token = (await RefreshAccessTokenAsync()).Token;
-                await _localStorage.SetItemAsync("authToken", token);
-            }
+                if (token == string.Empty)
+                {
+                    await _localStorage.RemoveItemAsync("authToken");
+                    await _localStorage.RemoveItemAsync("refreshToken");
 
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                    ((AuthStateProvider)_authStateProvider).NotifyUserLogout();
+
+                    CleanUpAuthorizationHeader();
+                }
+                else
+                {
+                    await _localStorage.SetItemAsync("authToken", token);
+                    _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                }
+            }
         }
 
         private async Task<TokenModel> RefreshAccessTokenAsync()
@@ -123,6 +136,15 @@ namespace FilePocket.BlazorClient.Features
             };
 
             var response = await _httpClient.PostAsJsonAsync(AuthUrl.RefreshTokenUrl, tokenModel);
+
+            if (response.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                return new TokenModel()
+                {
+                    Token = string.Empty,
+                    RefreshToken = string.Empty
+                };
+            }
 
             var content = await response.Content.ReadAsStringAsync();
 

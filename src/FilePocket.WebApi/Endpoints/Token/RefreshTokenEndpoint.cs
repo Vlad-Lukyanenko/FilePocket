@@ -32,9 +32,15 @@ public class RefreshTokenEndpoint : BaseEndpoint<RefreshTokenRequest, RefreshTok
         {
             var tokenToRefresh = _mapper.Map<TokenModel>(token);
             var tokenDtoToReturn = await _service.AuthenticationService.RefreshToken(tokenToRefresh);
-            var response = _mapper.Map<RefreshTokenResponse>(tokenDtoToReturn);
-
-            await SendOkAsync(response, cancellationToken);
+            if(tokenDtoToReturn == null)
+            {
+                await SendUnauthorizedAsync(cancellationToken);
+            }
+            else
+            {
+                var response = _mapper.Map<RefreshTokenResponse>(tokenDtoToReturn);
+                await SendOkAsync(response, cancellationToken);
+            }
         }            
     }
 }
