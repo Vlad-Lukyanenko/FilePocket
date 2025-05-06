@@ -233,7 +233,6 @@
 
                         <div class="progressBar-body">
                             <div class="progressBar-occupied" style="width:@(_occupiedStorageSpacePercentage)%"></div>
-                            @* <div class="progressBar-free-space" style="width:@(_unoccupiedStorageSpacePercentage)%"></div> *@
                         </div>
                         @if (_storageConsumption.Used<100)
                         {
@@ -365,7 +364,7 @@
     window.openRightOffcanvasMenu = openRightOffcanvasMenu;
 
 
-    function renderStorageChart(documentSize, booksSize, musicSize, picturesSize, videosSize, otherSize) {
+    function renderStorageChart(documentSize, booksSize, musicSize, picturesSize, videosSize, notesSize, otherSize) {
     console.log("renderStorageChart() вызван!");
 
     var ctx = document.getElementById("storageChart");
@@ -380,10 +379,10 @@
     new Chart(ctx, {
         type: "doughnut",
         data: {
-            labels: ["Documents", "Books", "Music", "Pictures", "Videos", "Other"],
+            labels: ["Documents", "Books", "Music", "Pictures", "Videos", "Notes", "Other"],
             datasets: [{
-                data: [documentSize, booksSize, musicSize, picturesSize, videosSize, otherSize],
-                backgroundColor: ["#FEE6AC", "#699CFF", "#47A3BC", "#F7B169", "#AC91DA", "#CFE6F3"],
+                data: [documentSize, booksSize, musicSize, picturesSize, videosSize, notesSize, otherSize],
+                backgroundColor: ["#E9BE26", "#699CFF", "#47A3BC", "#F7B169", "#AC91DA", "#FD7C9B", "#88BFDE"],
                 borderWidth: 0
             }]
         },
