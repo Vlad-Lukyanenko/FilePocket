@@ -57,15 +57,65 @@ public partial class Profile : ComponentBase
             _profile = await ProfileRequests.GetByUserIdAsync(userId);
             _defaultPocketId = (await PocketRequests.GetDefaultAsync()).Id;
 
-            if (_profile.IconId is not null && _profile.IconId != Guid.Empty)
+           try
             {
-                _avatar = await FileRequests.GetImageThumbnailAsync((Guid)_profile.IconId, 500);
+                if (_profile.IconId is not null && _profile.IconId != Guid.Empty)
+                {
+                    _avatar = await FileRequests.GetImageThumbnailAsync((Guid)_profile.IconId, 500);
+                }
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error loading thumbnail: {ex.Message}");
+                // возможно, задать дефолтный аватар:
+                _avatar = new FileModel { FileByteArray = null };
+            }
+
         }
     
 
         _isLoading = false;
     }
+//     protected override async Task OnInitializedAsync()
+// {
+//     try
+//     {
+//         // Получение состояния аутентификации
+//         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+//         var userStringId = authState.User?.FindFirst(c => c.Type == "uid")?.Value;
+
+//         if (string.IsNullOrEmpty(userStringId))
+//         {
+//             throw new InvalidOperationException("User ID is null or empty.");
+//         }
+
+//         var userId = new Guid(userStringId);
+//         _profile = await ProfileRequests.GetByUserIdAsync(userId);
+
+//         if (_profile == null)
+//         {
+//             throw new InvalidOperationException("Profile not found.");
+//         }
+
+//         // Асинхронная загрузка аватара, если есть IconId
+//         if (_profile.IconId.HasValue)
+//         {
+//             _avatar = await FileRequests.GetImageThumbnailAsync(_profile.IconId.Value, 500);
+//         }
+//     }
+//     catch (Exception ex)
+//     {
+//         _alertMessage = $"Error: {ex.Message}";
+//         _alertStyle = "display: block;";
+//         Console.WriteLine($"Error: {ex.Message}");
+//     }
+//     finally
+//     {
+//         _isLoading = false;
+//         await InvokeAsync(StateHasChanged);
+//     }
+// }
+
 
     private async Task SaveChangesAsync(MouseEventArgs e)
     {

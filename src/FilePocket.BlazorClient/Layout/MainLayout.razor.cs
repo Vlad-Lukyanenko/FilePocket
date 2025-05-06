@@ -42,39 +42,88 @@ public partial class MainLayout : IDisposable
     [Inject] private StateContainer<StorageConsumptionModel> StorageStateContainer { get; set; } = default!;
     [Inject] private AppState AppState { get; set; } = default!;
 
+    // protected override async Task OnInitializedAsync()
+    // {
+    //     var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+    //     var userName = authState.User.Identity?.Name!;
+
+    //     _user = await UserRequests.GetByUserNameAsync(userName);
+
+    //     if (_user is not null)
+    //     {
+    //         _storageConsumption = await StorageRequests.GetStorageConsumption();
+    //         GetStorageConsumptionInPercantage();
+    //         await GetOccupiedSpaceByFileType();
+    //         GetSizeForStorageItems();
+    //         await DrawDoughnutChart();
+    //         StateHasChanged();
+
+    //         var fisrtName = string.IsNullOrEmpty(_user.FirstName) ? string.Empty : _user.FirstName.AsSpan(0, 1);
+    //         var lastName = string.IsNullOrEmpty(_user.LastName) ? string.Empty : _user.LastName.AsSpan(0, 1);
+    //         _iconName = string.Concat(fisrtName, lastName).ToUpper();
+
+    //         if (_iconName.Length == 0)
+    //         {
+    //             _iconName = _user!.UserName![..1].ToUpper();
+    //         }
+
+    //         if (_user.Profile!.IconId is not null && _user.Profile!.IconId != Guid.Empty)
+    //         {
+    //             var avatar = await FileRequests.GetImageThumbnailAsync((Guid)_user.Profile.IconId, 500);
+    //             _icon = Convert.ToBase64String(avatar.FileByteArray!);
+    //         }
+
+    //         await GetDefaultFoldersAsync();
+    //     }
+
+    //     Navigation.LocationChanged += OnLocationChanged;
+    //     UserStateContainer.OnStateChange += async () => await UpdateUserStateAsync();
+    //     StorageStateContainer.OnStateChange += async () => await UpdateStorageStateAsync();
+    //     AppState.OnStateChange += async () => await GetDefaultFoldersAsync();
+    //     NavigationHistory.AddToHistory(Navigation.Uri);
+    // }
     protected override async Task OnInitializedAsync()
     {
         var authState = await AuthStateProvider.GetAuthenticationStateAsync();
-        var userName = authState.User.Identity?.Name!;
+        var user = authState.User;
 
-        _user = await UserRequests.GetByUserNameAsync(userName);
-
-        if (_user is not null)
+        if (user.Identity is { IsAuthenticated: true })
         {
-            _storageConsumption = await StorageRequests.GetStorageConsumption();
-            GetStorageConsumptionInPercantage();
-            await GetOccupiedSpaceByFileType();
-            GetSizeForStorageItems();
-            await DrawDoughnutChart();
-            StateHasChanged();
-
-            var fisrtName = string.IsNullOrEmpty(_user.FirstName) ? string.Empty : _user.FirstName.AsSpan(0, 1);
-            var lastName = string.IsNullOrEmpty(_user.LastName) ? string.Empty : _user.LastName.AsSpan(0, 1);
-            _iconName = string.Concat(fisrtName, lastName).ToUpper();
-
-            if (_iconName.Length == 0)
+            var userName = user.Identity?.Name;
+            
+            if (!string.IsNullOrEmpty(userName))
             {
-                _iconName = _user!.UserName![..1].ToUpper();
-            }
+                _user = await UserRequests.GetByUserNameAsync(userName);
 
-            if (_user.Profile!.IconId is not null && _user.Profile!.IconId != Guid.Empty)
-            {
-                var avatar = await FileRequests.GetImageThumbnailAsync((Guid)_user.Profile.IconId, 500);
-                _icon = Convert.ToBase64String(avatar.FileByteArray!);
-            }
+                if (_user is not null)
+                {
+                    _storageConsumption = await StorageRequests.GetStorageConsumption();
+                    GetStorageConsumptionInPercantage();
+                    await GetOccupiedSpaceByFileType();
+                    GetSizeForStorageItems();
+                    await DrawDoughnutChart();
+                    StateHasChanged();
 
-            await GetDefaultFoldersAsync();
+                    var firstName = string.IsNullOrEmpty(_user.FirstName) ? string.Empty : _user.FirstName.AsSpan(0, 1);
+                    var lastName = string.IsNullOrEmpty(_user.LastName) ? string.Empty : _user.LastName.AsSpan(0, 1);
+                    _iconName = string.Concat(firstName, lastName).ToUpper();
+
+                    if (_iconName.Length == 0 && !string.IsNullOrEmpty(_user.UserName))
+                    {
+                        _iconName = _user.UserName[..1].ToUpper();
+                    }
+
+                    if (_user.Profile is not null && _user.Profile.IconId is not null && _user.Profile.IconId != Guid.Empty)
+                    {
+                        var avatar = await FileRequests.GetImageThumbnailAsync((Guid)_user.Profile.IconId, 500);
+                        _icon = Convert.ToBase64String(avatar.FileByteArray!);
+                    }
+
+                    await GetDefaultFoldersAsync();
+                }
+            }
         }
+
 
         Navigation.LocationChanged += OnLocationChanged;
         UserStateContainer.OnStateChange += async () => await UpdateUserStateAsync();
@@ -82,6 +131,7 @@ public partial class MainLayout : IDisposable
         AppState.OnStateChange += async () => await GetDefaultFoldersAsync();
         NavigationHistory.AddToHistory(Navigation.Uri);
     }
+
 
     private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
     {
