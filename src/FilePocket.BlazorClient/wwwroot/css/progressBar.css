@@ -16,7 +16,3 @@
     background-color: var(--dt-primary,rgb(26,115,232));
     border-radius: 0 0.125rem 0.125rem 0;
 }
-
-.progressBar-free-space {
-    background-color: var(--dt-surface-variant,rgb(241,243,244));
-}

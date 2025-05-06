@@ -27,7 +27,6 @@ public partial class MainLayout : IDisposable
     List<FolderModel>? _folders;
 
     private StorageConsumptionModel _storageConsumption = new();
-    private string _unoccupiedStorageSpacePercentage = "100";
     private string _occupiedStorageSpacePercentage = "0";
 
     public required Dictionary<FileTypes, double> _occupiedSpaceByFileType;
@@ -146,7 +145,6 @@ public partial class MainLayout : IDisposable
     {
         double proportionOfOccupiedSpace = Math.Round(((_storageConsumption.Used / _storageConsumption.Total) * 100), 2);
         _occupiedStorageSpacePercentage = proportionOfOccupiedSpace.ToString().Replace(',', '.');
-        _unoccupiedStorageSpacePercentage = (100 - proportionOfOccupiedSpace).ToString().Replace(',', '.');
     }
 
     private async Task UpdateStorageStateAsync()
