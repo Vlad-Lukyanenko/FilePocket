@@ -24,7 +24,7 @@ public class GetAllSharedFilesEndpoint : BaseEndpointWithoutRequest<List<SharedF
 
     public override async Task HandleAsync(CancellationToken cancellationToken)
     {
-        var sharedFiles = _service.SharedFileService.GetAllAsync(UserId, trackChanges: false);
+        var sharedFiles = await _service.SharedFileService.GetAllAsync(UserId, trackChanges: false);
 
         var response = _mapper.Map<List<SharedFileViewResponse>>(sharedFiles);
 
