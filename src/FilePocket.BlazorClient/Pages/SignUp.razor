@@ -1,7 +1,6 @@
 ﻿@page "/sign-up"
 @using FilePocket.BlazorClient.Services.Authentication.Models
 
-
 <section>
     <div class="container">
         <div class="border-top">
@@ -33,72 +32,76 @@
                             }
 
                             <div class="row gy-3 gy-md-4 overflow-hidden">
+
                                 <!-- Email Input -->
                                 <div class="col-12 text-start">
                                     <label for="email" class="form-label">
-                                        Email 
+                                        Email
                                         @if (showEmailError)
                                         {
                                             <span class="text-danger">*</span>
                                         }
                                     </label>
-                                    <InputText @bind-Value="_registrationRequest.Email" 
-                                        type="email" 
-                                        class="form-control" 
-                                        placeholder="name@example.com" required
-                                        id="email" 
-                                        @onblur="ValidateEmail"
-                                    />
-                                    <ValidationMessage For="() => _registrationRequest.Email" class="text-danger" />
+                                    <InputText @bind-Value="_registrationRequest.Email"
+                                               type="email"
+                                               class="form-control"
+                                               placeholder="name@example.com" required
+                                               id="email"
+                                               @onblur="ValidateEmail" />
+                                    <div class="validation-messages">
+                                        <ValidationMessage For="() => _registrationRequest.Email" class="text-danger" />
+                                    </div>
                                 </div>
+
                                 <!-- Password Input -->
                                 <div class="col-12 text-start">
                                     <label for="password" class="form-label">
-                                       Password
+                                        Password
                                         @if (showPasswordError)
                                         {
                                             <span class="text-danger">*</span>
                                         }
                                     </label>
                                     <div class="input-group">
-                                        <InputText @bind-Value="_registrationRequest.Password" 
-                                        type="@passwordInputType" 
-                                        class="form-control" 
-                                        id="password" required
-                                        @onblur="ValidatePassword"
-                                        />
-                                        
+                                        <InputText @bind-Value="_registrationRequest.Password"
+                                                   type="@passwordInputType"
+                                                   class="form-control"
+                                                   id="password" required
+                                                   @onblur="ValidatePassword" />
+
                                         <button class="btn btn-outline-secondary" type="button" @onclick="TogglePassword"
-                                        style="border: var(--bs-border-width, 1px) solid var(--bs-border-color, #6c757d);">
+                                                style="border: var(--bs-border-width, 1px) solid var(--bs-border-color, #6c757d);">
                                             <i class="@passwordIcon"></i>
                                         </button>
                                     </div>
-                                    
-                                    <ValidationMessage For="() => _registrationRequest.Password" class="text-danger" />
+                                    <div class="validation-messages">
+                                        <ValidationMessage For="() => _registrationRequest.Password" class="text-danger" />
+                                    </div>
                                 </div>
+
                                 <!-- Confirm Password Input -->
                                 <div class="col-12 text-start">
                                     <label for="confirmPassword" class="form-label">
-                                        Confirm password 
+                                        Confirm password
                                         @if (showPasswordError)
                                         {
                                             <span class="text-danger">*</span>
                                         }
                                     </label>
                                     <div class="input-group">
-                                        <InputText @bind-Value="_registrationRequest.ConfirmPassword" 
-                                            type="@confirmPasswordInputType" 
-                                            class="form-control" 
-                                            id="confirmPassword" required
-                                            @onblur="ValidateConfirmPassword"
-                                        />
-                                         <button class="btn btn-outline-secondary" type="button" @onclick="ToggleConfirmPassword"
-                                        style="border: var(--bs-border-width, 1px) solid var(--bs-border-color, #6c757d);">
+                                        <InputText @bind-Value="_registrationRequest.ConfirmPassword"
+                                                   type="@confirmPasswordInputType"
+                                                   class="form-control"
+                                                   id="confirmPassword" required
+                                                   @onblur="ValidateConfirmPassword" />
+                                        <button class="btn btn-outline-secondary" type="button" @onclick="ToggleConfirmPassword"
+                                                style="border: var(--bs-border-width, 1px) solid var(--bs-border-color, #6c757d);">
                                             <i class="@confirmPasswordIcon"></i>
                                         </button>
                                     </div>
-                                    
-                                    <ValidationMessage For="() => _registrationRequest.ConfirmPassword" class="text-danger" />
+                                    <div class="validation-messages">
+                                        <ValidationMessage For="() => _registrationRequest.ConfirmPassword" class="text-danger" />
+                                    </div>
                                 </div>
 
                                 <!-- Submit Button -->

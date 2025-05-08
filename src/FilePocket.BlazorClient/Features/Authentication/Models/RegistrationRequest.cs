@@ -10,6 +10,7 @@ public class RegistrationRequest
 
     [Required(ErrorMessage = "Password is required.")]
     [MinLength(6, ErrorMessage = "Password must be at least 6 characters long.")]
+    [RegularExpression(@"^\S*\d\S*$", ErrorMessage = "Passwords must have at least one digit ('0'-'9').")]
     public string? Password { get; set; }
 
     [Required(ErrorMessage = "Confirm password is required.")]
