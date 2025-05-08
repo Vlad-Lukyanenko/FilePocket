@@ -69,10 +69,18 @@ namespace FilePocket.BlazorClient.Pages
                 {
                     var errors = await response.Content.ReadFromJsonAsync<Dictionary<string, string[]>>();
 
-                    if (errors != null && errors.ContainsKey("DuplicateEmail"))
+                    if (errors != null)
                     {
-                        _errors.Add("Oops! This email is already taken.");
+                        if (errors.ContainsKey("DuplicateEmail"))
+                        {
+                            _errors.Add("Oops! This email is already taken.");
+                        }
+                        else if (errors.ContainsKey("PasswordRequiresDigit"))
+                        {
+                            _errors.Add("Oops! Passwords must have at least one digit ('0'-'9').");
+                        }
                     }
+
                 }
                 catch (Exception)
                 {
