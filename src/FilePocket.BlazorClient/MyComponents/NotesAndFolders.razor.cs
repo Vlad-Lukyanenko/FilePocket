@@ -33,7 +33,6 @@ namespace FilePocket.BlazorClient.MyComponents
         [Inject]
         private IPocketRequests PocketRequests { get; set; } = default!;
 
-
         [Inject]
         private ITrashRequests TrashRequests { get; set; } = default!;
 
@@ -83,7 +82,7 @@ namespace FilePocket.BlazorClient.MyComponents
                 return;
             }
 
-            var folderTypes = new List<FolderType> { FolderType.Documents };
+            var folderTypes = new List<FolderType> { FolderType.Notes };
             _currentFolder = FolderId is null ? null : await FolderRequests.GetAsync(PocketId!.Value, FolderId.Value);
 
             var folders =

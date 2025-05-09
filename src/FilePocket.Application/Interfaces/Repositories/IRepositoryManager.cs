@@ -12,7 +12,6 @@ public interface IRepositoryManager
     IAccountConsumptionRepository AccountConsumption { get; }
     IBookmarkRepository Bookmark { get; }
     IProfileRepository Profile { get; }
-    INotesRepository Note { get; }
 
     Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken cancellationToken = default);
     Task CommitTransactionAsync(IDbTransaction transaction, CancellationToken cancellationToken = default);

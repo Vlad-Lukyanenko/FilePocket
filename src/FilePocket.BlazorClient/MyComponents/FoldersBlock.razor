@@ -39,18 +39,28 @@
         {
             if (IsSoftDeleted)
             {
-                return folderType == FolderType.Files ? $"/folders/{folderId}/files/trash" : $"/folders/{folderId}/bookmarks/trash";
+                return $"/folders/{folderId}/{GetEntitiesName(folderType)}/trash";
             }
 
-            return folderType == FolderType.Files ? $"/folders/{folderId}/files" : $"/folders/{folderId}/bookmarks";
+            return $"/folders/{folderId}/{GetEntitiesName(folderType)}";
         }
 
         if (IsSoftDeleted)
         {
-            return folderType == FolderType.Files ? $"/pockets/{pocketId}/folders/{folderId}/files/trash" 
-                                                  : $"/pockets/{pocketId}/folders/{folderId}/bookmarks/trash";
+            return $"/pockets/{pocketId}/folders/{folderId}/{GetEntitiesName(folderType)}/trash";
         }
 
-        return folderType == FolderType.Files ? $"/pockets/{pocketId}/folders/{folderId}/files" : $"/pockets/{pocketId}/folders/{folderId}/bookmarks";
+        return $"/pockets/{pocketId}/folders/{folderId}/{GetEntitiesName(folderType)}";
+
+    }
+
+    private string GetEntitiesName(FolderType folderType)
+    {
+        return folderType switch
+        {
+            FolderType.Bookmarks => "bookmarks",
+            FolderType.Notes => "notes",
+            _ => "files"
+        };
     }
 }

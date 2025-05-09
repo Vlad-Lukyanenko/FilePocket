@@ -1,5 +1,4 @@
 ﻿using FilePocket.Domain.Entities.Abstractions;
-using FilePocket.Domain.Models;
 
 namespace FilePocket.Domain.Entities;
 
@@ -13,7 +12,7 @@ public class FileMetadata : IAmSoftDeletedEntity
         string path, FileTypes fileType, double fileSize,
         Guid pocketId, Guid? folderId,
         bool isDeleted, 
-        DateTime createdAt, DateTime? deletedAt = null)
+        DateTime createdAt)
     {
         Id = id;
         UserId = userId;
@@ -31,21 +30,21 @@ public class FileMetadata : IAmSoftDeletedEntity
         IsDeleted = isDeleted;
         
         CreatedAt = createdAt;
-        DeletedAt = deletedAt;
     }
 
     public Guid Id { get; init; }
-    public string OriginalName { get; init; }
+    public string OriginalName { get; set; }
     public string ActualName { get; init; }
-    public string Path { get; init; }
+    public string Path { get; set; }
     public FileTypes FileType { get; init; }
-    public double FileSize { get; init; }
+    public double FileSize { get; set; }
     public Guid UserId { get; init; }
-    public Guid PocketId { get; init; }
-    public Guid? FolderId { get; init; }
+    public Guid PocketId { get; set; }
+    public Guid? FolderId { get; set; }
     public bool IsDeleted { get; set; }
     public DateTime CreatedAt { get; init; }
     public DateTime? DeletedAt { get; set; }
+    public DateTime? UpdatedAt { get; set; }
 
     public void MarkAsDeleted(DateTime? deletedAt = null)
     {

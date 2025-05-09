@@ -1,4 +1,5 @@
-﻿using FilePocket.Domain.Entities;
+﻿using FilePocket.Domain;
+using FilePocket.Domain.Entities;
 
 namespace FilePocket.Application.Interfaces.Repositories;
 
@@ -10,6 +11,8 @@ public interface IFileMetadataRepository
     Task<List<FileMetadata>> GetAllWithSoftDeletedAsync(Guid userID, Guid pocketId, bool trackChanges = false);
 
     Task<List<FileMetadata>> GetAllAsync(Guid userId, Guid pocketId, Guid? folderId, bool isSofDeleted, bool trackChanges = false);
+
+    Task<List<FileMetadata>> GetAllNotesAsync(Guid userId, Guid? folderId, bool isSoftDeleted, bool trackChanges = false);
 
     Task<FileMetadata> GetByIdAsync(Guid userId, Guid fileId, bool trackChanges = false);
 

@@ -18,6 +18,6 @@ namespace FilePocket.BlazorClient.Services.Files.Models
 
         public double FileSize { get; set; }
 
-        public DateTime DateCreated { get; set; }
+        public DateTime CreatedAt { get; set; }
     }
 }

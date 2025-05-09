@@ -19,21 +19,9 @@ public class DeleteEndpoint : BaseEndpointWithoutRequestAndResponse
 
         public override async Task HandleAsync(CancellationToken cancellationToken)
         {
-            var folder = await _service.FolderService.GetAsync(FolderId!.Value);
-
-            if (folder?.FolderType == Domain.Enums.FolderType.Documents)
-            {
-                try
-                {
-                    await _service.NoteService.BulkDeleteAsync(FolderId!.Value, cancellationToken);
-                }
-                catch
-                {
-                    await SendErrorsAsync(cancellation: cancellationToken);
-                }
-            }
-
-            await _service.FolderService.DeleteAsync(FolderId!.Value);
+        
+        //TODO: Implement files deletion on folder deletion
+        await _service.FolderService.DeleteAsync(FolderId!.Value);
 
         await SendOkAsync(cancellationToken);
     }

@@ -1,4 +1,7 @@
 ﻿using FilePocket.Domain.Models.Configuration;
+using FilePocket.WebApi;
+using Mapster;
+using MapsterMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -30,5 +33,15 @@ public static class ServiceExtensions
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfiguration.TokenKey!))
             };
         });
+    }
+
+    public static void AddMapsterWithConfiguration(this IServiceCollection services)
+    {
+        var config = TypeAdapterConfig.GlobalSettings;
+
+        config.Scan(typeof(WebApiAssemblyReference).Assembly);
+
+        services.AddSingleton(config);
+        services.AddScoped<IMapper, ServiceMapper>();
     }
 }

@@ -2,14 +2,15 @@ using FilePocket.Application.Exceptions;
 using FilePocket.Application.Extensions;
 using FilePocket.Application.Interfaces.Repositories;
 using FilePocket.Application.Interfaces.Services;
-using FilePocket.Contracts.Bookmark;
 using FilePocket.Domain;
 using FilePocket.Domain.Entities;
 using FilePocket.Domain.Entities.Consumption.Errors;
 using FilePocket.Domain.Models;
+using Mapster;
 using MapsterMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
+using System.Collections.Generic;
 using StorageConsumption = FilePocket.Domain.Entities.Consumption.StorageConsumption;
 
 namespace FilePocket.Application.Services;
@@ -18,11 +19,13 @@ public class FileService(
     IRepositoryManager repository,
     IConfiguration configuration,
     IImageService imageService,
+    IEncryptionService encryptionService,
     IMapper mapper) : IFileService
 {
     private readonly string _rootFolder = configuration.GetValue<string>("AppRootFolder")!;
+    private readonly string _noteFileExtension = configuration.GetValue<string>("NoteContentFileExtension")!;
 
-    public async Task<IEnumerable<FileResponseModel>> GetAllFilesAsync(Guid userId, Guid pocketId, Guid? folderId, bool isSoftDeleted)
+    public async Task<IEnumerable<FileResponseModel>> GetAllFilesMetadataAsync(Guid userId, Guid pocketId, Guid? folderId, bool isSoftDeleted)
     {
         var fileMetadata = await repository.FileMetadata.GetAllAsync(userId, pocketId, folderId, isSoftDeleted);
 
@@ -30,6 +33,7 @@ public class FileService(
 
         return result;
     }
+    
     public async Task<IEnumerable<FileResponseModel>> GetAllFilesWithSoftDeletedAsync(Guid userId, Guid pocketId)
     {
         var fileMetadata = await repository.FileMetadata.GetAllWithSoftDeletedAsync(userId, pocketId);
@@ -39,19 +43,29 @@ public class FileService(
         return result;
     }
 
-    public async Task<FileResponseModel> GetFileByIdAsync(Guid userId, Guid fileId)
+    public async Task<IEnumerable<NoteModel>> GetAllNotesMetadataAsync(Guid userId, Guid? folderId, bool isSoftDeleted)
     {
-        var fileMetadata = await GetFileByIdAndPocketIdAsync(userId, fileId);
+        var fileMetadata = await repository.FileMetadata.GetAllNotesAsync(userId, folderId, isSoftDeleted);
+        var result = mapper.Map<List<NoteModel>>(fileMetadata);
+
+        return result;
+    }
+
+    public async Task<FileResponseModel> GetFileByUserIdIdAsync(Guid userId, Guid fileId)
+    {
+        var fileMetadata = await repository.FileMetadata.GetByIdAsync(userId, fileId, true);
+
         var fullPath = fileMetadata.GetFullPath();
 
         fullPath.EnsureFileExistsOnDisk();
 
-        var fileByteArray = await File.ReadAllBytesAsync(fullPath);
+        var fileByteArray = await File.ReadAllBytesAsync(fullPath) ?? [];
 
         return new FileResponseModel
         {
             Id = fileMetadata.Id,
-            DateCreated = fileMetadata.CreatedAt,
+            CreatedAt = fileMetadata.CreatedAt,
+            UpdatedAt = fileMetadata.UpdatedAt,
             PocketId = fileMetadata.PocketId,
             FileSize = fileMetadata.FileSize,
             FileType = fileMetadata.FileType,
@@ -60,19 +74,33 @@ public class FileService(
         };
     }
 
-    public async Task<FileResponseModel> GetFileInfoByIdAsync(Guid userId, Guid fileId)
+    public async Task<FileResponseModel> GetFileMetadataByUserIdAndIdAsync(Guid userId, Guid fileId)
     {
         var fileMetadata = await repository.FileMetadata.GetByIdAsync(userId, fileId);
 
         return new FileResponseModel
         {
             Id = fileMetadata.Id,
-            DateCreated = fileMetadata.CreatedAt,
+            CreatedAt = fileMetadata.CreatedAt,
+            UpdatedAt = fileMetadata.UpdatedAt,
             PocketId = fileMetadata.PocketId,
+            FolderId = fileMetadata.FolderId,
             FileSize = fileMetadata.FileSize,
             FileType = fileMetadata.FileType,
-            OriginalName = fileMetadata.OriginalName
+            OriginalName = fileMetadata.OriginalName,
+            UserId = fileMetadata.UserId,
         };
+    }
+
+    public async Task<NoteModel> GetNoteByUserIdAndIdAsync(Guid userId, Guid fileId)
+    {
+        var fileMetadata = await GetFileMetadataByUserIdAndIdAsync(userId, fileId);
+        var note = mapper.Map<NoteModel>(fileMetadata);
+
+        fileMetadata.FileByteArray = await ReadNoteContentFromFileAsync(userId, fileId);
+        note.Content = await encryptionService.DecryptContent(note.UserId, note.PocketId, fileMetadata.FileByteArray!);
+
+        return note;
     }
 
     public async Task<List<FileResponseModel>> GetLatestAsync(Guid userId, int number)
@@ -127,7 +155,7 @@ public class FileService(
 
             var fileExtension = Path.GetExtension(file.FileName);
             var fileType = Tools.DefineFileType(fileExtension);
-            var filePath = SelectFileDirectory(userId, pocketId, fileExtension);
+            var filePath = SelectFileDirectory(userId, pocketId, fileType);
 
             var fileMetadata = FileMetadata.Create(
                 userId, file.FileName, filePath, fileType, fileSizeInMbs, pocketId, folderId);
@@ -201,7 +229,7 @@ public class FileService(
                 FileType = fileMetadata.FileType,
                 ActualName = fileMetadata.ActualName,
                 OriginalName = fileMetadata.OriginalName,
-                DateCreated = fileMetadata.CreatedAt,
+                CreatedAt = fileMetadata.CreatedAt,
             };
         }
     }
@@ -286,17 +314,132 @@ public class FileService(
         }
 
         mapper.Map(file, fileMetadataToUpdate);
-        var i = fileMetadataToUpdate;
 
         await repository.SaveChangesAsync();
     }
 
-    private Task<FileMetadata> GetFileByIdAndPocketIdAsync(Guid userId, Guid fileId)
+    public async Task<FileResponseModel?> CreateNoteContentFileAsync(NoteCreateModel note, CancellationToken cancellationToken = default)
     {
-        return repository.FileMetadata.GetByIdAsync(userId, fileId, true);
+        ArgumentNullException.ThrowIfNull(note);
+
+        var contentBytes = await encryptionService.EncryptContent(note.UserId, note.PocketId, note.Content, cancellationToken);
+
+        await using var writeContentTransaction = await repository.BeginTransactionAsync(cancellationToken);
+        try
+        {
+            var storageConsumption = await repository.AccountConsumption.GetStorageConsumptionAsync(
+                note.UserId,
+                lockChanges: true,
+                trackChanges: true,
+                cancellationToken) ?? throw new AccountConsumptionNotFoundException(note.UserId);
+
+            var fileSizeInMbs = ((long)contentBytes.Length).ToMegabytes();
+
+            if (storageConsumption.RemainingSizeMb < fileSizeInMbs)
+                throw new InsufficientStorageCapacityException(
+                    storageConsumption.Used,
+                    storageConsumption.Total,
+                    additionalUsedMb: fileSizeInMbs);
+
+            var fileType = Tools.DefineFileType(_noteFileExtension);
+            var filePath = SelectFileDirectory(note.UserId, note.PocketId, fileType);
+
+            var fileMetadata = FileMetadata.Create(
+                note.UserId, note.Title, filePath, fileType, fileSizeInMbs, note.PocketId, note.FolderId);
+
+            var pocketAndMetadataTask = UpdateTargetPocketAndMetadata(fileMetadata);
+            var storageConsumptionTask = ChangeStorageConsumption(storageConsumption, fileMetadata.FileSize);
+            var writeContentToFileTask = WriteContentToFile(fileMetadata, contentBytes, WriteFileMode.Create, cancellationToken);
+
+            await Task.WhenAll(
+                pocketAndMetadataTask,
+                storageConsumptionTask,
+                writeContentToFileTask);
+
+            await repository.SaveChangesAsync(cancellationToken);
+            await writeContentTransaction.CommitAsync(cancellationToken);
+
+            return GetFileResponseModel(fileMetadata, FileResponseModelType.Create);
+        }
+        catch (Exception)
+        {
+            await writeContentTransaction.RollbackAsync(cancellationToken);
+            throw;
+        }
     }
 
-    private string SelectFileDirectory(Guid userId, Guid? pocketId, string fileExtension)
+    public async Task<FileResponseModel?> UpdateNoteContentFileAsync(NoteModel note, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(note);
+
+        var fileMetadata = await repository.FileMetadata.GetByIdAsync(note.UserId, note.Id, trackChanges: true)
+            ?? throw new FileMetadataNotFoundException(note.Id);
+
+        var contentBytes = await encryptionService.EncryptContent(note.UserId, note.PocketId, note.Content, cancellationToken);
+
+        await using var transaction = await repository.BeginTransactionAsync(cancellationToken);
+        try
+        {
+            var storageConsumption = await repository.AccountConsumption.GetStorageConsumptionAsync(
+                note.UserId,
+                lockChanges: true,
+                trackChanges: true,
+                cancellationToken) ?? throw new AccountConsumptionNotFoundException(note.UserId);
+
+            var newFileSizeInMbs = ((long)contentBytes.Length).ToMegabytes();
+            var sizeChangeInMbs = newFileSizeInMbs - fileMetadata.FileSize;
+
+            if (storageConsumption.RemainingSizeMb < sizeChangeInMbs)
+            {
+                throw new InsufficientStorageCapacityException(
+                    storageConsumption.Used,
+                    storageConsumption.Total,
+                    additionalUsedMb: sizeChangeInMbs);
+            }
+
+            var fileType = Tools.DefineFileType(_noteFileExtension);
+            var filePath = SelectFileDirectory(note.UserId, note.PocketId, fileType);
+
+            fileMetadata.OriginalName = note.Title;
+            fileMetadata.Path = filePath;
+            fileMetadata.FileSize = newFileSizeInMbs;
+            fileMetadata.PocketId = note.PocketId;
+            fileMetadata.FolderId = note.FolderId;
+
+            var pocketAndMetadataTask = UpdateTargetPocketAndMetadata(fileMetadata, sizeChangeInMbs);
+            var storageConsumptionTask = ChangeStorageConsumption(storageConsumption, sizeChangeInMbs);
+            var writeContentToFileTask = WriteContentToFile(fileMetadata, contentBytes, WriteFileMode.Override, cancellationToken);
+
+            await Task.WhenAll(
+                pocketAndMetadataTask,
+                storageConsumptionTask,
+                writeContentToFileTask);
+
+            await repository.SaveChangesAsync(cancellationToken);
+            await transaction.CommitAsync(cancellationToken);
+
+            return GetFileResponseModel(fileMetadata, FileResponseModelType.Update);
+        }
+        catch (Exception)
+        {
+            await transaction.RollbackAsync(cancellationToken);
+            throw;
+        }
+    }
+
+    public async Task<byte[]> ReadNoteContentFromFileAsync(Guid userId, Guid fileId)
+    {
+        var fileMetadata = await repository.FileMetadata.GetByIdAsync(userId, fileId, trackChanges: true)
+            ?? throw new FileMetadataNotFoundException(fileId);
+
+        var fullPath = Path.Combine(fileMetadata.Path, fileMetadata.ActualName);
+
+        fullPath.EnsureFileExistsOnDisk();
+
+        return await File.ReadAllBytesAsync(fullPath);
+    }
+
+    private string SelectFileDirectory(Guid userId, Guid? pocketId, FileTypes fileType)
     {
         var now = DateTime.UtcNow;
 
@@ -304,14 +447,14 @@ public class FileService(
 
 #if DEBUG
         fileDirectory = pocketId is not null
-            ? $"{_rootFolder}\\{userId}\\{pocketId}\\{now.Year}\\{now.Month}\\{Tools.DefineFileType(fileExtension)}s"
-            : $"{_rootFolder}\\{userId}\\{now.Year}\\{now.Month}\\{Tools.DefineFileType(fileExtension)}s";
+            ? $"{_rootFolder}\\{userId}\\{pocketId}\\{now.Year}\\{now.Month}\\{fileType}s"
+            : $"{_rootFolder}\\{userId}\\{now.Year}\\{now.Month}\\{fileType}s";
 #endif
 
 #if !DEBUG
         fileDirectory = pocketId is not null 
-            ? $"{_rootFolder}/{userId}/{pocketId}/{now.Year}/{now.Month}/{Tools.DefineFileType(fileExtension)}s"
-            : $"{_rootFolder}/{userId}/{now.Year}/{now.Month}/{Tools.DefineFileType(fileExtension)}s";
+            ? $"{_rootFolder}/{userId}/{pocketId}/{now.Year}/{now.Month}/{fileType}s"
+            : $"{_rootFolder}/{userId}/{now.Year}/{now.Month}/{fileType}s";
 #endif
 
         return fileDirectory;
@@ -319,7 +462,7 @@ public class FileService(
 
     private async Task<FileResponseModel> GetThumbnailInternalAsync(Guid userId, Guid id, int maxSize)
     {
-        var fileMetadata = await GetFileByIdAndPocketIdAsync(userId, id);
+        var fileMetadata = await repository.FileMetadata.GetByIdAsync(userId, id, true);
         var fullPath = fileMetadata.GetFullPath();
 
         fullPath.EnsureFileExistsOnDisk();
@@ -379,9 +522,105 @@ public class FileService(
             FileByteArray = thumbnailByteArray,
             OriginalName = fileMetadata.OriginalName,
             FileType = fileMetadata.FileType,
-            DateCreated = fileMetadata.CreatedAt,
+            CreatedAt = fileMetadata.CreatedAt,
             PocketId = fileMetadata.PocketId,
             FileSize = fileMetadata.FileSize,
         };
+    }
+
+    private async Task UpdateTargetPocketAndMetadata(FileMetadata fileMetadata, double sizeChange = 0)
+    {
+        var pocket = await repository.Pocket.GetByIdAsync(fileMetadata.UserId, fileMetadata.PocketId, trackChanges: true)
+            ?? throw new PocketNotFoundException(fileMetadata.PocketId);
+
+        if (sizeChange == 0)
+        {
+            pocket.UpdateDetails(fileMetadata);
+            repository.FileMetadata.CreateFileMetadata(fileMetadata);
+        }
+        else
+        {
+            pocket.UpdateDetails(sizeChange);
+            fileMetadata.UpdatedAt = DateTime.UtcNow;
+            repository.FileMetadata.UpdateFileMetadata(fileMetadata);
+        }
+    }
+
+    private Task ChangeStorageConsumption(StorageConsumption storageConsumption, double consumptionChangeValue)
+    {
+        if (consumptionChangeValue > 0)
+        {
+            storageConsumption.IncreaseUsage(consumptionChangeValue);
+        }
+        else if (consumptionChangeValue < 0)
+        {
+            storageConsumption.DecreaseUsage(Math.Abs(consumptionChangeValue));
+        }
+
+        repository.AccountConsumption.Update(storageConsumption);
+
+        return Task.CompletedTask;
+    }
+
+    private static FileResponseModel? GetFileResponseModel(FileMetadata? fileMetadata, FileResponseModelType responseType)
+    {
+        if (fileMetadata is null) return null;
+
+        if (responseType == FileResponseModelType.Create)
+            return new FileResponseModel
+            {
+                Id = fileMetadata.Id,
+                CreatedAt = fileMetadata.CreatedAt,
+            };
+
+        if (responseType == FileResponseModelType.Update)
+        {
+            var response = new FileResponseModel
+            {
+                UpdatedAt = fileMetadata.UpdatedAt!.Value,
+            };
+
+            return response;
+        }
+
+        return new FileResponseModel
+        {
+            Id = fileMetadata.Id,
+            UserId = fileMetadata.UserId,
+            PocketId = fileMetadata.PocketId,
+            FolderId = fileMetadata.FolderId,
+            FileSize = fileMetadata.FileSize.ToBytes(),
+            FileType = fileMetadata.FileType,
+            ActualName = fileMetadata.ActualName,
+            OriginalName = fileMetadata.OriginalName,
+            CreatedAt = fileMetadata.CreatedAt,
+        };
+    }
+
+    private static async Task WriteContentToFile(FileMetadata fileMetadata, byte[] content, WriteFileMode mode, CancellationToken cancellationToken)
+    {
+        fileMetadata.Path.CreateFolderIfDoesNotExist();
+
+        var fullPath = Path.Combine(fileMetadata.Path, fileMetadata.ActualName);
+
+        if (mode == WriteFileMode.Create)
+        {
+            fullPath.CheckIfFileNotExistsOnDisk();
+        }
+
+        await File.WriteAllBytesAsync(fullPath, content, cancellationToken);
+    }
+
+    private enum WriteFileMode
+    {
+        Create,
+        Override
+    }
+
+    private enum FileResponseModelType
+    {
+        Upload,
+        Create,
+        Update
     }
 }

@@ -16,7 +16,7 @@ namespace FilePocket.DataAccess.Migrations
                 table: "FilesMetadata");
 
             migrationBuilder.RenameColumn(
-                name: "DateCreated",
+                name: "CreatedAt",
                 table: "FilesMetadata",
                 newName: "CreatedAt");
 
@@ -116,7 +116,7 @@ namespace FilePocket.DataAccess.Migrations
             migrationBuilder.RenameColumn(
                 name: "CreatedAt",
                 table: "FilesMetadata",
-                newName: "DateCreated");
+                newName: "CreatedAt");
 
             migrationBuilder.AlterColumn<DateTime>(
                 name: "UpdatedAt",

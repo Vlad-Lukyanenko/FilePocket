@@ -5,6 +5,9 @@ using Microsoft.AspNetCore.Components;
 using FilePocket.BlazorClient.Features.Notes.Models;
 using Microsoft.AspNetCore.Components.Web;
 using FilePocket.BlazorClient.Features;
+using FilePocket.BlazorClient.Features.Storage.Requests;
+using FilePocket.BlazorClient.Features.Storage.Models;
+using FilePocket.BlazorClient.Helpers;
 
 namespace FilePocket.BlazorClient.Pages.Notes
 {
@@ -31,13 +34,19 @@ namespace FilePocket.BlazorClient.Pages.Notes
         [Inject]
         private IUserRequests UserRequests { get; set; } = default!;
 
+        [Inject] 
+        private IStorageRequests StorageRequests { get; set; } = default!;
+
+        [Inject] 
+        private StateContainer<StorageConsumptionModel> StorageStateContainer { get; set; } = default!;
+
         [Inject]
         private NavigationHistoryService NavigationHistory { get; set; } = default!;
 
         private NoteModel? _note;
         private Guid _userId = Guid.Empty;
         private bool _editTitle;
-        private const string DateTimePlaceholder = "--.--.-- --:--:--";
+        private const string DateTimePlaceholder = "--.--.---- --:--:--";
         private string? _createdAt;
         private string? _updatedAt;
 
@@ -59,8 +68,8 @@ namespace FilePocket.BlazorClient.Pages.Notes
             {
                 _note = await NoteRequests.GetByIdAsync(Id);
 
-                _createdAt = _note.UpdatedAt.ToString();
-                _updatedAt = _note.UpdatedAt.ToString();
+                _createdAt = _note.CreatedAt.ToString();
+                _updatedAt = GetUpdatedDateValue(_note.UpdatedAt);
             }
             else
             {
@@ -94,10 +103,10 @@ namespace FilePocket.BlazorClient.Pages.Notes
             {
                 _note.Id = result.Id;
                 _note.CreatedAt = result.CreatedAt;
-                _note.UpdatedAt = result.UpdatedAt;
+                _note.UpdatedAt = result?.UpdatedAt;
 
                 _createdAt = _note.CreatedAt.ToString();
-                _updatedAt = _note.UpdatedAt.ToString();
+                _updatedAt = GetUpdatedDateValue(_note.UpdatedAt);
             }
         }
 
@@ -108,8 +117,9 @@ namespace FilePocket.BlazorClient.Pages.Notes
             if (result.UpdatedAt != default)
             {
                 _note!.UpdatedAt = result.UpdatedAt;
+                _updatedAt = _note!.UpdatedAt.ToString();
 
-                _updatedAt = _note.UpdatedAt.ToString();
+                await InvokeAsync(StateHasChanged);
             }
         }
 
@@ -117,6 +127,9 @@ namespace FilePocket.BlazorClient.Pages.Notes
         {
             _note!.Content = content;
             await SaveOrUpdateNote();
+
+            var storageConsumption = await StorageRequests.GetStorageConsumption();
+            StorageStateContainer.SetValue(storageConsumption!);
         }
 
         private async Task SaveOrUpdateNote()
@@ -159,6 +172,11 @@ namespace FilePocket.BlazorClient.Pages.Notes
             {
                 _editTitle = false;
             }
+        }
+
+        private static string GetUpdatedDateValue(DateTime? updatedAt)
+        {
+            return (updatedAt == null ? DateTimePlaceholder : updatedAt.ToString())!;
         }
     }
 }
