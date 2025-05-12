@@ -8,7 +8,7 @@
     <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4 text-center justify-content-center">
         @foreach (var folder in Folders)
         {
-            <div class="" style="width: 8em;">
+            <div class="card shadow-sm me-2 pt-2" style="width: 8em;">
                 @{
                     var url = GetFolderUrl(PocketId, folder.Id, folder.FolderType);
                 }

@@ -54,7 +54,7 @@
             <div class="col-12 d-flex align-items-center mb-3">
 
                 <!-- Upload Button -->
-                <label class="btn btn-outline-primary py-0 px-2 me-2">
+                <label class="btn btn-outline-success py-0 px-2 me-2">
                     <i class="ps-2 pe-2 bi-cloud-arrow-up fs-4"></i>
                     <InputFile hidden id="fileInput" OnChange="UploadFiles" multiple />
                 </label>
@@ -65,7 +65,7 @@
                     var url = $"/pockets/{PocketId}/folders/{folderId}{(int)FolderType.Files}/new";
                 }
 
-                <a href="@url" class="btn btn-outline-primary py-0 px-3">
+                <a href="@url" class="btn btn-outline-warning py-0 px-3">
                     <i class="bi bi-folder-plus fs-4"></i>
                 </a>
 
@@ -83,7 +83,7 @@
                                     @onclick="DeleteFolderClick">
                                 <i class="bi-check-square fs-6"></i> Confirm
                             </button>
-                            <button class="btn btn-sm btn-outline-primary p-1"
+                            <button class="btn btn-sm btn-outline-secondary p-1"
                                     style="border-radius: 10px; min-width: 6em;"
                                     title="Cancel"
                                     @onclick="() => _removalProcessStarted = false">

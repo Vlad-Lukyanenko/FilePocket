@@ -184,8 +184,8 @@ aside{
 }
 
 .nav-link.active {
-    background-color: rgb(146 118 173 / 42%) important;
-    color: rgba(251, 251, 255, 1);
+    background-color: rgba(146, 118, 173, 1)!important;
+    color: rgba(251, 251, 255, 1) !important;
 }
 
 .avatar-image {
@@ -269,7 +269,7 @@ aside{
     }
 
         .nav-link.active {
-            background-color: rgba(146, 118, 173, 42%)!important;
+            background-color: rgba(146, 118, 173, 1)!important;
         }
 
         .nav-link i {

@@ -18,11 +18,11 @@
             <!-- Action Button Row -->
             <div class="row mb-3">
                 <div class="col-12 d-flex justify-content-start align-items-center">
-                    <button class="btn btn-outline-primary me-2 p-1 px-3" @onclick="DownloadFile">
+                    <button class="btn btn-outline-success me-2 p-1 px-3" @onclick="DownloadFile">
                         <i class="bi bi-download"></i>
                     </button>
 
-                    <a href="@ShareFileUrl()" class="btn btn-outline-primary p-1 px-3">
+                    <a href="@ShareFileUrl()" class="btn btn-outline-warning p-1 px-3">
                         <i class="bi bi-share"></i>
                     </a>
 
@@ -44,7 +44,7 @@
                                     @onclick="MoveToTrashClick">
                                 <i class="bi-check-square fs-6"></i> Confirm
                             </button>
-                            <button class="btn btn-sm btn-outline-primary p-1"
+                            <button class="btn btn-sm btn-outline-secondary p-1"
                                     style="border-radius: 0.4em; min-width: 6em;"
                                     title="Cancel"
                                     @onclick="() => _removalProcessStarted = false">
