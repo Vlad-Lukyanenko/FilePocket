@@ -14,4 +14,5 @@ public interface IFileRequests
     Task<FileModel> UploadFileAsync(MultipartFormDataContent content);
     Task<bool> DeleteFile(Guid fileId);
     Task<bool> UpdateFileAsync(UpdateFileInfoModel file);
+    Task <List<FileSearchResponseModel>> GetFilesByPartialNameAsync(string partialNameToSearch);
 }

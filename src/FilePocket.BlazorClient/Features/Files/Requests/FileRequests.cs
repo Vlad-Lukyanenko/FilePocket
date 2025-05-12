@@ -155,4 +155,13 @@ public class FileRequests : IFileRequests
 
         return JsonConvert.DeserializeObject<List<FileInfoModel>>(content)!;
     }
+
+    public async Task<List<FileSearchResponseModel>> GetFilesByPartialNameAsync(string partialNameToSearch)
+    {
+        var url = FileUrl.GetFilesByPartialName(partialNameToSearch);
+
+        var content = await _apiClient.GetAsync(url);
+
+        return JsonConvert.DeserializeObject<List<FileSearchResponseModel>>(content)!;
+    }
 }

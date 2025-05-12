@@ -91,6 +91,13 @@ public class FilesController : BaseController
         return Ok(fileMetadata);
     }
 
+    [HttpGet("files/search/{partialName}")]
+    public async Task<IActionResult> Search([FromRoute] string partialName)
+    {
+        var fileMetadata = await _service.FileService.SearchEverywhereAsync(UserId, partialName);
+        return Ok(fileMetadata);
+    }
+
     [HttpPost("files/thumbnails/{size}")]
     public async Task<IActionResult> GetImageThumbnails(
         [FromBody, Required] Guid[] imageIds,

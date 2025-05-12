@@ -138,10 +138,10 @@
                         <div class="collapse navbar-collapse">
                             <div class="d-flex flex-column flex-md-row align-items-center ms-auto gap-3">
                                 <!-- Search Form -->
-                                <form class="d-flex" role="search">
+                                <form class="d-flex" role="search" @onsubmit="FindAllByPartialName" >
                                     <div class="search-container">
-                                        <input class="search-box" type="text" />
-                                        <button class="search-button">
+                                        <input class="search-box" type="text" @bind-value="_parialNameToSearch"/>
+                                        <button class="search-button" type="submit">
                                             <i class="fas fa-search" style="color:rgba(65, 44, 168, 1)"></i>
                                         </button>
                                     </div>

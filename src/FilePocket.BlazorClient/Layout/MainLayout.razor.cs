@@ -25,6 +25,7 @@ public partial class MainLayout : IDisposable
     private string? _icon;
     private bool _render;
     List<FolderModel>? _folders;
+    private string _parialNameToSearch = string.Empty;
 
     private StorageConsumptionModel _storageConsumption = new();
     private string _occupiedStorageSpacePercentage = "0";
@@ -268,5 +269,16 @@ public partial class MainLayout : IDisposable
         var folderTypes = new List<FolderType> { FolderType.Files, FolderType.Documents };
         _folders = (await FolderRequests.GetAllAsync(defaulfPocket.Id, folderTypes, isSoftDeleted: false)).ToList();
         StateHasChanged();
+    }
+
+    private void FindAllByPartialName()
+    {
+        var searched = _parialNameToSearch.Trim();
+
+        if (!string.IsNullOrEmpty(searched))
+        {
+            Console.WriteLine(searched);
+            Navigation.NavigateTo($"/search-results/{searched}");
+        }
     }
 }
