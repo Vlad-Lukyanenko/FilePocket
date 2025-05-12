@@ -67,7 +67,6 @@ public partial class Profile : ComponentBase
             catch (Exception ex)
             {
                 Console.WriteLine($"Error loading thumbnail: {ex.Message}");
-                // возможно, задать дефолтный аватар:
                 _avatar = new FileModel { FileByteArray = null };
             }
 
