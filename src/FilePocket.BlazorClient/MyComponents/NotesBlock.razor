@@ -6,54 +6,6 @@
 @using System.Collections.Concurrent
 @using System.Collections.ObjectModel
 
-<style>
-    .title {
-    font-size: 0.875rem;
-    }
-
-    .title a {
-    line-height: 24px;
-    }
-
-    .controls-container button {
-    border: 0;
-    background-color: transparent;
-    color: #7F7F7F;
-    padding: 4px;
-    width: 24px;
-    height: 24px;
-    line-height: 16px;
-    }
-
-    .controls-container button:hover {
-    color: black;
-    }
-
-    .dialog-container {
-    position: fixed;
-    display: flex;
-    height: 100vh;
-    width: 100vw;
-    top: 0;
-    left: 0;
-    justify-content: center;
-    align-items: center;
-    align-content: stretch;
-    background-color: rgba(50, 50, 50, 0.25);
-    }
-
-    .dialog {
-    background-color: white;
-    border-color: silver;
-    }
-
-    .noteStyle{
-    background-image: url(../assets/img/note.png);
-    background-position: center;
-    background-size: cover;
-    aspect-ratio: 9 / 9.5;
-    }
-</style>
 
 <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4 text-center justify-content-center">
     @if (Notes != null)
@@ -61,13 +13,13 @@
         @foreach (var note in Notes)
         {
             <div class="py-4 px-3 noteStyle d-flex flex-column">
-                @* <div class="row d-flex flex-column"> *@
+                
                     <div class="col px-4 py-4 text-start title">
                         <a class="file-link text-decoration-none " title="@note.Title" href="@GetNoteUrl(note)">
                             @Tools.TruncateString(note.Title!, 24)
                         </a>
                     </div>
-                    <div class="col-3 px-3 controls-container d-flex w-100 justify-content-end">
+                    <div class="col-3 px-4 controls-container d-flex w-100 justify-content-end">
                         <button type="button" class="btn-outline-primary" aria-label="Edit note" data-bs-original-title="Edit note" @onclick="@(()=>NavigateToEdit(note))">
                             <i class="bi bi-pencil-square"></i>
                         </button>
@@ -75,7 +27,7 @@
                             <i class="bi bi-trash"></i>
                         </button>
                     </div>
-                @* </div> *@
+                
             </div>
         }
 

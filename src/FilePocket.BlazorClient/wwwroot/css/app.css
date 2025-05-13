@@ -19,6 +19,17 @@
 
 .btn-outline-primary {
     border: 2px solid #9b5cff;
+    padding-right: 10px;
+}
+
+.btn-outline-primary:hover {
+    background-color: transparent;
+    color: #9b5cff;
+}
+
+.btn-outline-primary.active{
+    background-color: transparent;
+    border: none;
 }
 
 .fs-4{

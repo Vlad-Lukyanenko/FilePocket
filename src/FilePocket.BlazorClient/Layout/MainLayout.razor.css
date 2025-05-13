@@ -33,6 +33,7 @@ main {
 aside{
     background-color: rgba(32, 38, 86, 1);
     padding-top: 45px;
+    width: 250px;
 }
 
 #offcanvasMenuRight, .offcanvasMenuRight, #offcanvasMenu, #rightOffcanvasMenu{

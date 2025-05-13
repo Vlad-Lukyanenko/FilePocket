@@ -1,24 +1,24 @@
 .title {
-    font-size: 0.875rem;
+        font-size: 0.875rem;
 }
 
 .title a {
-    line-height: 36px;
+    line-height: 24px;
 }
 
 .controls-container button {
     border: 0;
     background-color: transparent;
-    color: #7F7F7F;
+    color: #9b5cff;
     padding: 4px;
     width: 24px;
     height: 24px;
     line-height: 16px;
 }
 
-.controls-container button:hover {
+/* .controls-container button:hover {
     color: black;
-}
+}  */
 
 .dialog-container {
     position: fixed;
@@ -42,6 +42,5 @@
     background-image: url(../assets/img/note.png);
     background-position: center;
     background-size: cover;
-    background-position: center;
     aspect-ratio: 9 / 9.5;
 }
