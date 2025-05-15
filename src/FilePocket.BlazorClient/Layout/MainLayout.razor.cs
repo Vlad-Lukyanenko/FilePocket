@@ -271,14 +271,14 @@ public partial class MainLayout : IDisposable
         StateHasChanged();
     }
 
-    private void FindAllByPartialName()
+    private void SearchByPartialName()
     {
-        var searched = _parialNameToSearch?.Trim();
+        var partialName = _parialNameToSearch?.Trim();
 
-        if (!string.IsNullOrEmpty(searched))
+        if (!string.IsNullOrEmpty(partialName))
         {
-            Console.WriteLine(searched);
-            Navigation.NavigateTo($"/search-results/{searched}");
+            Console.WriteLine(partialName);
+            Navigation.NavigateTo($"/search-results/{partialName}");
             _parialNameToSearch = null;
         }
     }

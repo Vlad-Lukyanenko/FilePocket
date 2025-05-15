@@ -1,8 +1,8 @@
-﻿@page "/search-results/{partialNameToSearch}"
+﻿@page "/search-results/{partialName}"
 @using FilePocket.BlazorClient.Helpers
 
 <!-- Top SubMenu -->
-<TopSubMenu Title="@($"Search results for '{PartialNameToSearch}'")" ShowBackButton="true" />
+<TopSubMenu Title="@($"Search results for '{PartialName}'")" ShowBackButton="true" />
 
 @if (_files is not null && _files.Any())
 {

@@ -1,5 +1,6 @@
 ﻿using FilePocket.BlazorClient.Features.Files.Models;
-using FilePocket.BlazorClient.Services.Files.Requests;
+using FilePocket.BlazorClient.Features.FileSearch.Models;
+using FilePocket.BlazorClient.Features.FileSearch.Requests;
 using Microsoft.AspNetCore.Components;
 
 namespace FilePocket.BlazorClient.Pages
@@ -10,12 +11,12 @@ namespace FilePocket.BlazorClient.Pages
         private List<FileSearchResponseModel> _files = [];
 
         private readonly FileTypes[] _fileTypes = Enum.GetValues<FileTypes>();
-        [Parameter] public string PartialNameToSearch { get; set; } = string.Empty;
-        [Inject] private IFileRequests FileRequests { get; set; } = default!;
+        [Parameter] public string PartialName { get; set; } = string.Empty;
+        [Inject] private IFileSearchRequests FileSearchRequests { get; set; } = default!;
 
         protected override async Task OnParametersSetAsync()
         {
-            _files = await FileRequests.GetFilesByPartialNameAsync(PartialNameToSearch);
+            _files = await FileSearchRequests.GetFilesByPartialNameAsync(PartialName);
         }
     }
 }
