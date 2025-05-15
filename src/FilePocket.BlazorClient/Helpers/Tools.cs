@@ -131,5 +131,27 @@ namespace FilePocket.BlazorClient.Helpers
                 _ => "application/octet-stream", // Default MIME type
             };
         }
+
+        public static string GetFileUrl(Guid fileId, Guid? pocketId, Guid? folderId)
+        {
+            if (pocketId is null && folderId is null)
+            {
+                return $"/files/{fileId}";
+            }
+
+            if (pocketId is null)
+            {
+                return $"/folders/{folderId}/files/{fileId}";
+            }
+
+            if (folderId is null)
+            {
+                return $"/pockets/{pocketId}/files/{fileId}";
+            }
+
+            return $"/pockets/{pocketId}/folders/{folderId}/files/{fileId}";
+        }
     }
+
+
 }

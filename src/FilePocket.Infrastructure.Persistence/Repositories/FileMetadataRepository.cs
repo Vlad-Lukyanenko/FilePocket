@@ -64,6 +64,13 @@ public class FileMetadataRepository : RepositoryBase<FileMetadata>, IFileMetadat
         Delete(fileMetadata);
     }
 
+    public async  Task<List<FileMetadata>> GetFileMetadataByPartialNameAsync(Guid userId, string partialName, bool trackChanges = false)
+    {
+        return (await FindByCondition(f => f.UserId.Equals(userId) && f.OriginalName.ToLower().Contains(partialName.ToLower()), trackChanges)
+            .OrderBy(f=>f.FileType)
+            .ToListAsync());
+    }
+
     private static bool SelectByFileType(FileMetadata fileMetadata, FileTypes? fileType)
     {
         if (fileType != null)
@@ -73,3 +80,4 @@ public class FileMetadataRepository : RepositoryBase<FileMetadata>, IFileMetadat
         return fileMetadata.FileType != Domain.FileTypes.Note;
     }
 }
+

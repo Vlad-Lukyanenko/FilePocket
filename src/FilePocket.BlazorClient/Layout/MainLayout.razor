@@ -138,17 +138,16 @@
                         <div class="collapse navbar-collapse">
                             <div class="d-flex flex-column flex-md-row align-items-center ms-auto gap-3">
                                 <!-- Search Form -->
-                                <form class="d-flex" role="search">
+                                <form class="d-flex" role="search" @onsubmit="SearchByPartialName" >
                                     <div class="search-container">
-                                        <input class="search-box" type="text" />
-                                        <button class="search-button">
+                                        <input class="search-box" type="text" @bind-value="_parialNameToSearch" placeholder="Search for..."/>
+                                        <button class="search-button" type="submit">
                                             <i class="fas fa-search" style="color:rgba(65, 44, 168, 1)"></i>
                                         </button>
                                     </div>
                                 </form>
 
                             </div>
-
                         </div>
 
                         <!-- Mobile Header -->
@@ -159,9 +158,9 @@
                             </a>
 
                             <div class="d-flex justify-content-between align-items-center ">
-                                <form class="d-flex" role="search">
+                                <form class="d-flex" role="search" @onsubmit="SearchByPartialName">
                                     <div class="search-container">
-                                        <input class="search-box" type="text" />
+                                        <input class="search-box form-control" type="text" @bind-value="_parialNameToSearch" placeholder="Search for..."/>
                                         <button class="search-button">
                                             <i class="fas fa-search" style="color:rgba(65, 44, 168, 1)"></i>
                                         </button>
