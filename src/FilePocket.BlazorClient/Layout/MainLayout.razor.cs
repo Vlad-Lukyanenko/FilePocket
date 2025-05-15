@@ -25,7 +25,7 @@ public partial class MainLayout : IDisposable
     private string? _icon;
     private bool _render;
     List<FolderModel>? _folders;
-    private string _parialNameToSearch = string.Empty;
+    private string? _parialNameToSearch;
 
     private StorageConsumptionModel _storageConsumption = new();
     private string _occupiedStorageSpacePercentage = "0";
@@ -273,12 +273,13 @@ public partial class MainLayout : IDisposable
 
     private void FindAllByPartialName()
     {
-        var searched = _parialNameToSearch.Trim();
+        var searched = _parialNameToSearch?.Trim();
 
         if (!string.IsNullOrEmpty(searched))
         {
             Console.WriteLine(searched);
             Navigation.NavigateTo($"/search-results/{searched}");
+            _parialNameToSearch = null;
         }
     }
 }

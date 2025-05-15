@@ -17,7 +17,7 @@ namespace FilePocket.BlazorClient.MyComponents
         [Parameter]
         public Guid? UserId { get; set; }
 
-        [Parameter] 
+        [Parameter]
         public Guid? PocketId { get; set; }
 
 
@@ -42,15 +42,13 @@ namespace FilePocket.BlazorClient.MyComponents
         [Inject]
         private IJSRuntime JS { get; set; } = default!;
 
-        private bool _firstRender = true;
         private string _goBackUrl = string.Empty;
         private FolderModel? _currentFolder;
         private ObservableCollection<NoteModel>? _notes;
         private ObservableCollection<FolderModel>? _folders;
         private bool _removalProcessStarted;
 
-
-        protected override async Task OnInitializedAsync()
+        protected override async Task OnParametersSetAsync()
         {
             if (PocketId is null)
             {
@@ -59,42 +57,25 @@ namespace FilePocket.BlazorClient.MyComponents
                 PocketId = defaultPocket.Id;
             }
 
-            await InitPage();
-            StateHasChanged();
-        }
-
-        protected override async Task OnParametersSetAsync()
-        {
-            if (!_firstRender)
-            {
-                await OnInitializedAsync();
-            }
-            else
-            {
-                _firstRender = false;
-            }
-        }
-
-        private async Task InitPage()
-        {
             if (UserId == null)
             {
                 return;
             }
 
             var folderTypes = new List<FolderType> { FolderType.Notes };
-            _currentFolder = FolderId is null ? null : await FolderRequests.GetAsync(PocketId!.Value, FolderId.Value);
 
-            var folders =
-                (FolderId == null
-                    ? (await FolderRequests.GetAllAsync(PocketId, folderTypes, false))
-                    : (await FolderRequests.GetAllAsync(PocketId, FolderId.Value, folderTypes, false)))
-                ?? [];
+            if (FolderId == null)
+            {
+                _currentFolder = null;
+                _folders = [.. (await FolderRequests.GetAllAsync(PocketId, folderTypes, false))];
+            }
+            else
+            {
+                _currentFolder = await FolderRequests.GetAsync(PocketId!.Value, FolderId.Value);
+                _folders = [.. await FolderRequests.GetAllAsync(PocketId, FolderId.Value, folderTypes, false)];
+            }
 
-            var notes = (await NoteRequests.GetAllByUserIdAndFolderId(FolderId));
-
-            _folders = [.. folders];
-            _notes = [.. notes];
+            _notes = [.. await NoteRequests.GetAllByUserIdAndFolderId(FolderId)];
             _goBackUrl = GetGoBackUrl();
         }
 

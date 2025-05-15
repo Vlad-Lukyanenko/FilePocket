@@ -66,10 +66,11 @@ public class FileMetadataRepository : RepositoryBase<FileMetadata>, IFileMetadat
 
     public async  Task<List<FileMetadata>> GetFileMetadataByPartialNameAsync(Guid userId, string partialName, bool trackChanges = false)
     {
-        return (await FindByCondition(f => f.UserId.Equals(userId) && f.OriginalName.ToLower().Contains(partialName), trackChanges)
+        return (await FindByCondition(f => f.UserId.Equals(userId) && f.OriginalName.ToLower().Contains(partialName.ToLower()), trackChanges)
             .OrderBy(f=>f.FileType)
             .ToListAsync());
     }
+
     private static bool SelectByFileType(FileMetadata fileMetadata, FileTypes? fileType)
     {
         if (fileType != null)
