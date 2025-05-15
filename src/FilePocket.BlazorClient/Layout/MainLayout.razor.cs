@@ -279,7 +279,7 @@ public partial class MainLayout : IDisposable
         {
             Console.WriteLine(partialName);
             Navigation.NavigateTo($"/search-results/{partialName}");
-            _parialNameToSearch = null;
         }
+        _parialNameToSearch = null;
     }
 }

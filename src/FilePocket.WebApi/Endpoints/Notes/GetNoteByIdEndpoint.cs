@@ -1,7 +1,6 @@
 ﻿using FilePocket.Application.Interfaces.Services;
 using FilePocket.Domain.Models;
 using FilePocket.WebApi.Endpoints.Base;
-using static System.Net.WebRequestMethods;
 
 namespace FilePocket.WebApi.Endpoints.Notes
 {
@@ -15,8 +14,7 @@ namespace FilePocket.WebApi.Endpoints.Notes
 
         public override void Configure()
         {
-            Verbs(Http.Get);
-            Routes("api/notes/{id:guid}");
+            Get("api/notes/{id:guid}");
             AuthSchemes("Bearer");
         }
 

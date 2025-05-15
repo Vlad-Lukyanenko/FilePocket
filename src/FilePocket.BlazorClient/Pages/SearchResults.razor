@@ -4,7 +4,7 @@
 <!-- Top SubMenu -->
 <TopSubMenu Title="@($"Search results for '{PartialName}'")" ShowBackButton="true" />
 
-@if (_files is not null && _files.Any())
+@if (_files.Any())
 {
     foreach (var t in _fileTypes)
     {
@@ -31,6 +31,14 @@
             </div>
             <hr class="mt-4 mb-4" />
         }
+    }
+}
+else if (!_isLoading)
+{
+    {
+        <div class="text-center no-content">
+            <h6>@($"It looks like nothing was found for '{PartialName}'")</h6>
+        </div>
     }
 }
 

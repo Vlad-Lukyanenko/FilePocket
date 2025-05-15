@@ -2,5 +2,5 @@
 
 public static class FileSearchUrl
 {
-    public static string GetFilesByPartialName(string partialName) => $"api/files/search/{partialName}";
+    public static string GetFilesByPartialName(string partialName) => $"api/file-search/{partialName}";
 }
