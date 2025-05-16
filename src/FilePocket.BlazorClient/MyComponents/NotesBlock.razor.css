@@ -9,7 +9,6 @@
 .controls-container button {
     border: 0;
     background-color: transparent;
-    color: #9b5cff;
     padding: 4px;
     width: 24px;
     height: 24px;
@@ -43,4 +42,5 @@
     background-position: center;
     background-size: cover;
     aspect-ratio: 9 / 9.5;
+    max-width: 250px;
 }

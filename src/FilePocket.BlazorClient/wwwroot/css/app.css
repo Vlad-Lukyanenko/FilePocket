@@ -20,6 +20,7 @@
 .btn-outline-primary {
     border: 2px solid #9b5cff;
     padding-right: 10px;
+    /* color: #9b5cff; */
 }
 
 .btn-outline-primary:hover {
@@ -32,9 +33,9 @@
     border: none;
 }
 
-.fs-4{
+/* .fs-4{
     color: #9b5cff;
-}
+} */
 
 
 .nav-link:hover {

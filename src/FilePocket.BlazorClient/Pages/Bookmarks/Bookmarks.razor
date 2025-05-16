@@ -16,20 +16,18 @@
         <FoldersBlock Folders="_folders" PocketId="PocketId" />
 
         <!-- Action Button Row -->
-        <div class="row mx-auto">
-            <div class="col-12 d-flex align-items-center mb-3 gap-2">
+        <div class="row">
+            <div class="col-12 d-flex align-items-center mb-3">
                 <!-- New Bookmark Button -->
-                <div>
-                    <a href="@(GetCreateBookmarkUrl())" class="btn btn-lg btn-outline-success p-1">
-                        <i class="ps-2 pe-2 bi bi-bookmark-plus my-fs-4"></i>
-                    </a>
-                </div>
+                <a href="@(GetCreateBookmarkUrl())" class="btn btn-outline-primary py-0 px-2 me-2">
+                    <i class="ps-2 pe-2 bi-bookmark-plus fs-4"></i>
+                </a>
+                
                 <!-- New Folder Button -->
-                <div>
-                    <a href="@_createFolderUrl" class="btn btn-lg btn-outline-warning p-1">
-                        <i class="ps-2 pe-2 bi bi-folder-plus my-fs-4"></i>
-                    </a>
-                </div>
+                <a href="@_createFolderUrl" class="btn btn-outline-primary py-0 px-3">
+                    <i class="bi bi-folder-plus fs-4"></i>
+                </a>
+                
                 <!-- Delete Folder Button -->
                 <div style="margin-left: auto;">
                     @if (FolderId is not null)
