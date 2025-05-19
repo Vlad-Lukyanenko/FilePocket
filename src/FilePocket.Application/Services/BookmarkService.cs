@@ -91,10 +91,11 @@ public class BookmarkService : IBookmarkService
         return bookmark;
     }
 
-    public void DeleteAllBookmarks(Guid userId)
+    public async Task DeleteAllBookmarksAsync(Guid userId)
     {
-        var bookmarks = _repository.Bookmark.GetAll(userId, true, false);
+        var bookmarks = _repository.Bookmark.GetAll(userId, true, true);
 
         _repository.Bookmark.DeleteBookmarks(bookmarks);
+        await _repository.SaveChangesAsync();
     }
 }

@@ -19,8 +19,8 @@ public class TrashService : ITrashService
 
     public async Task ClearAllTrashAsync(Guid userId)
     {
-        _bookmarkService.DeleteAllBookmarks(userId);
-        _folderService.DeleteAllFolders(userId);
+        await _bookmarkService.DeleteAllBookmarksAsync(userId);
+        await _folderService.DeleteAllFoldersAsync(userId);
         await _fileService.RemoveAllFilesAsync(userId);
     }
 }

@@ -11,5 +11,5 @@ public interface IBookmarkService
     Task UpdateBookmarkAsync(UpdateBookmarkRequest bookmark);
     Task DeleteBookmarkAsync(Guid id);
     Task MoveToTrashAsync(Guid bookmarkId);
-    void DeleteAllBookmarks(Guid userId);
+    Task DeleteAllBookmarksAsync(Guid userId);
 }
