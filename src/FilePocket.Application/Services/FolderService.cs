@@ -84,6 +84,13 @@ public class FolderService : IFolderService
         return _mapper.Map<List<FolderModel>>(result);
     }
 
+    public void DeleteAllFolders(Guid userId)
+    {
+        var folders = _repository.Folder.GetAll(userId, true, false);
+
+        _repository.Folder.DeleteFolders(folders);
+    }
+
     private async Task<Folder> GetFolderAndCheckIfItExistsAsync(Guid id)
     {
         var folder = await _repository.Folder.GetAsync(id);

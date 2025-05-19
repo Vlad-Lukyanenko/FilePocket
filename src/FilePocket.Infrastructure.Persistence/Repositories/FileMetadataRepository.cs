@@ -1,7 +1,7 @@
-﻿using FilePocket.Domain.Entities;
-using Microsoft.EntityFrameworkCore;
-using FilePocket.Application.Interfaces.Repositories;
+﻿using FilePocket.Application.Interfaces.Repositories;
 using FilePocket.Domain;
+using FilePocket.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace FilePocket.Infrastructure.Persistence.Repositories;
 
@@ -17,6 +17,11 @@ public class FileMetadataRepository : RepositoryBase<FileMetadata>, IFileMetadat
         return await FindByCondition(f => f.PocketId.Equals(pocketId) && f.FolderId == null && !f.IsDeleted && f.FileType != Domain.FileTypes.Note, trackChanges).ToListAsync();
     }
 
+    public async Task<List<FileMetadata>> GetAllUserFilesAsync(Guid userId, bool isSoftDeleted, bool trackChanges)
+    {
+        return await FindByCondition(f => f.UserId.Equals(userId) && f.IsDeleted == isSoftDeleted, trackChanges).ToListAsync();
+    }
+
     public async Task<List<FileMetadata>> GetRecentFilesAsync(Guid userId, int numberOfFiles)
     {
         return await FindByCondition(f => f.UserId.Equals(userId) && !f.IsDeleted && f.FileType != Domain.FileTypes.Note, false).OrderByDescending(c => c.CreatedAt).Take(numberOfFiles).ToListAsync();
@@ -24,9 +29,9 @@ public class FileMetadataRepository : RepositoryBase<FileMetadata>, IFileMetadat
 
     public async Task<List<FileMetadata>> GetAllAsync(Guid userId, Guid pocketId, Guid? folderId, bool isSoftDeleted, bool trackChanges)
     {
-        return await FindByCondition(f => f.UserId.Equals(userId) 
-                                            && f.PocketId.Equals(pocketId) 
-                                            && f.FolderId.Equals(folderId) 
+        return await FindByCondition(f => f.UserId.Equals(userId)
+                                            && f.PocketId.Equals(pocketId)
+                                            && f.FolderId.Equals(folderId)
                                             && f.IsDeleted == isSoftDeleted
                                             && f.FileType != Domain.FileTypes.Note, trackChanges).ToListAsync();
     }

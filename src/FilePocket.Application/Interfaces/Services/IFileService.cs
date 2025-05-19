@@ -66,6 +66,8 @@ public interface IFileService : IFileProvider
         Guid fileId,
         CancellationToken cancellationToken = default);
 
+    Task RemoveAllFilesAsync(Guid userId);
+
     Task<bool> MoveToTrash(
         Guid userId,
         Guid fileId,

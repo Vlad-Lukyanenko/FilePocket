@@ -90,4 +90,11 @@ public class BookmarkService : IBookmarkService
 
         return bookmark;
     }
+
+    public void DeleteAllBookmarks(Guid userId)
+    {
+        var bookmarks = _repository.Bookmark.GetAll(userId, true, false);
+
+        _repository.Bookmark.DeleteBookmarks(bookmarks);
+    }
 }

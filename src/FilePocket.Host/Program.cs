@@ -131,6 +131,10 @@ builder.Services.AddScoped<IImageService, ImageService>();
 builder.Services.AddScoped<IEncryptionService, EncryptionService>();
 builder.Services.AddSingleton<IUploadService, UploadService>();
 builder.Services.AddScoped<IServiceManager, ServiceManager>();
+builder.Services.AddScoped<IBookmarkService, BookmarkService>();
+builder.Services.AddScoped<IFileService, FileService>();
+builder.Services.AddScoped<IFolderService, FolderService>();
+builder.Services.AddScoped<ITrashService, TrashService>();
 builder.Services.AddScoped<JwtOrApiKeyAuthorizeAttribute>();
 
 var app = builder.Build();

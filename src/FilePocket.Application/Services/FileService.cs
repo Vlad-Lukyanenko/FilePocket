@@ -6,11 +6,9 @@ using FilePocket.Domain;
 using FilePocket.Domain.Entities;
 using FilePocket.Domain.Entities.Consumption.Errors;
 using FilePocket.Domain.Models;
-using Mapster;
 using MapsterMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
-using System.Collections.Generic;
 using StorageConsumption = FilePocket.Domain.Entities.Consumption.StorageConsumption;
 
 namespace FilePocket.Application.Services;
@@ -33,7 +31,7 @@ public class FileService(
 
         return result;
     }
-    
+
     public async Task<IEnumerable<FileResponseModel>> GetAllFilesWithSoftDeletedAsync(Guid userId, Guid pocketId)
     {
         var fileMetadata = await repository.FileMetadata.GetAllWithSoftDeletedAsync(userId, pocketId);
@@ -286,6 +284,16 @@ public class FileService(
                 throw new FileDoesNotExistInFileSystemException(fileToRemove.Id);
 
             File.Delete(fullPath);
+        }
+    }
+
+    public async Task RemoveAllFilesAsync(Guid userId)
+    {
+        var filesToRemove = await repository.FileMetadata.GetAllUserFilesAsync(userId, true, false);
+
+        foreach (var file in filesToRemove)
+        {
+            await RemoveFileAsync(file.UserId, file.Id);
         }
     }
 

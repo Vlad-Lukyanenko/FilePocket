@@ -23,6 +23,11 @@ public class FolderRepository : RepositoryBase<Folder>, IFolderRepository
         return FindByCondition(f => f.ParentFolderId == parentFolderId, trackChanges);
     }
 
+    public IEnumerable<Folder> GetAll(Guid userId, bool isSoftDeleted, bool trackChanges)
+    {
+        return FindByCondition(b => b.UserId == userId && b.IsDeleted == isSoftDeleted, trackChanges).OrderByDescending(b => b.CreatedAt);
+    }
+
     public void Create(Folder folder)
     {
         DbContext.Set<Folder>().Add(folder);
@@ -69,6 +74,11 @@ public class FolderRepository : RepositoryBase<Folder>, IFolderRepository
                                                         && c.IsDeleted == isSoftDeleted);
 
         return await result.ToListAsync();
+    }
+
+    public void DeleteFolders(IEnumerable<Folder> folders)
+    {
+        DeleteAll(folders);
     }
 
     public Task<Folder?> GetAsync(Guid folderId)
