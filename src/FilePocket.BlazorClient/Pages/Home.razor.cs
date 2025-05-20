@@ -20,28 +20,74 @@ public partial class Home : ComponentBase
     [Inject] AuthenticationStateProvider AuthStateProvider { get; set; } = default!;
     [Inject] IUserRequests UserRequests { get; set; } = default!;
 
+    // protected override async Task OnInitializedAsync()
+    // {
+    //     var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+    //     var userName = authState.User.Identity?.Name!;
+    //     var user = await UserRequests.GetByUserNameAsync(userName)!;
+
+    //     var files = await FileRequests.GetRecentFilesAsync();
+
+    //     if (files is not null && files.Any())
+    //     {
+    //         if (user.Profile?.IconId != null && user.Profile.IconId != Guid.Empty)
+    //         {
+    //             _files = new ObservableCollection<FileInfoModel>(files.Where(f => f.Id != user.Profile!.IconId));
+    //         }
+    //         else
+    //         {
+    //             _files = new ObservableCollection<FileInfoModel>(files);
+    //         }               
+    //     }
+
+    //     _sharedFiles = await SharedFilesRequests.GetLatestAsync();
+    // }
+    
     protected override async Task OnInitializedAsync()
+{
+    try
     {
         var authState = await AuthStateProvider.GetAuthenticationStateAsync();
-        var userName = authState.User.Identity?.Name!;
-        var user = await UserRequests.GetByUserNameAsync(userName)!;
-
-        var files = await FileRequests.GetRecentFilesAsync();
-
-        if (files is not null && files.Any())
+        var userName = authState.User.Identity?.Name;
+        
+        if (string.IsNullOrEmpty(userName))
         {
-            if (user.Profile!.IconId is not null && user.Profile!.IconId != Guid.Empty)
+            return;
+        }
+
+        var user = await UserRequests.GetByUserNameAsync(userName);
+
+        if (user == null)
+        {
+            return;
+        }
+
+        if (user.Profile != null && user.Profile.IconId != null && user.Profile.IconId != Guid.Empty)
+        { 
+            var files = await FileRequests.GetRecentFilesAsync();
+            if (files != null && files.Any())
             {
-                _files = new ObservableCollection<FileInfoModel>(files.Where(f => f.Id != user.Profile!.IconId));
+                _files = new ObservableCollection<FileInfoModel>(files.Where(f => f.Id != user.Profile.IconId));
             }
-            else
+        }
+        else
+        {
+            var files = await FileRequests.GetRecentFilesAsync();
+
+            if (files != null && files.Any())
             {
                 _files = new ObservableCollection<FileInfoModel>(files);
-            }               
+            }
         }
 
         _sharedFiles = await SharedFilesRequests.GetLatestAsync();
     }
+    catch (Exception ex)
+    {
+        Console.Error.WriteLine($"Ошибка при инициализации: {ex.Message}");
+    }
+}
+
 
     public static FileTypes ParseEnum(string value)
     {

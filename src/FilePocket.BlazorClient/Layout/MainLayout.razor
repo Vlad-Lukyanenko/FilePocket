@@ -17,10 +17,10 @@
 
 <PageTitle>File Pocket Application</PageTitle>
 
-<div class="d-flex vh-100">
+<div class="d-flex" style="height: 100vh">
     <AuthorizeView>
         <Authorized>
-
+        
             <!-- Sidebar Menu Desktop-->
             <aside class="col-2 d-none d-md-block p-4">
 
@@ -106,6 +106,15 @@
                             </div>
                         </a>
                     </li>
+
+                    <li class="nav-item flex-fill flex-md-grow-0">
+                        <a href="/profile" class="nav-link text-dark px-2 @(IsActive("/profile"))">
+                            <div class="d-flex align-items-center justify-content-center justify-content-md-start">
+                                <i class="fs-4 bi bi-person-square"></i>
+                                <span class="ms-2 d-none d-md-inline">Profile</span>
+                            </div>
+                        </a>
+                    </li>
                         
                     <li class="nav-item flex-fill flex-md-grow-0">
                         <a href="/settings" class="nav-link text-dark px-2 @(IsActive("/settings"))">
@@ -125,11 +134,13 @@
                     </li>
                 </ul>
             </aside>
-
             <!-- Menu for Mobile -->
             <MobileMenu />
+            
 
-            <div class="col container-fluid">
+            
+
+            <div class="col container-fluid flex-grow-1 overflow-auto p-4">
                 <!-- Navbar -->
                 <header class="position-relative mb-2 navbar navbar-expand-md w-100 p-2">
                     <div class="d-flex justify-content-end align-items-center w-100">
@@ -207,10 +218,11 @@
                             <div class="d-flex justify-content-center align-items-center">
                                 <div class="d-flex align-items-center flex-column">
                                     <img class="rounded-circle avatar-image" 
-                                    src="@(_icon is null ? "../assets/img/man.png" : $"data:image/jpeg;base64,{_icon}")" 
-                                    alt="userPicture" 
-                                    @onclick="NavigateToProfile" 
+                                            src="@(_icon is null ? "../assets/img/man.png" : $"data:image/jpeg;base64,{_icon}")" 
+                                            alt="userPicture" 
+                                            @onclick="NavigateToProfile" 
                                     />
+    
 
                                     <div class="d-flex align-items-center flex-column">
                                         <span>@_user?.Email</span>
