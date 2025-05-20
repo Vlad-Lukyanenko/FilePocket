@@ -23,9 +23,9 @@ public class BookmarkRepository : RepositoryBase<Bookmark>, IBookmarkRepository
 
     public async Task<List<Bookmark>> GetAllAsync(Guid userId, Guid pocketId, Guid? folderId, bool isSoftDeleted, bool trackChanges)
     {
-        return await FindByCondition(b => b.UserId.Equals(userId) 
-                                            && b.PocketId.Equals(pocketId) 
-                                            && b.FolderId.Equals(folderId) 
+        return await FindByCondition(b => b.UserId.Equals(userId)
+                                            && b.PocketId.Equals(pocketId)
+                                            && b.FolderId.Equals(folderId)
                                             && b.IsDeleted == isSoftDeleted, trackChanges).ToListAsync();
     }
 
@@ -37,5 +37,10 @@ public class BookmarkRepository : RepositoryBase<Bookmark>, IBookmarkRepository
     public void DeleteBookmark(Bookmark bookmark)
     {
         Delete(bookmark);
+    }
+
+    public void DeleteBookmarks(IEnumerable<Bookmark> bookmarks)
+    { 
+        DeleteAll(bookmarks);
     }
 }

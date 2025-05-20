@@ -12,6 +12,10 @@ public class FileMetadataConfiguration : IEntityTypeConfiguration<FileMetadata>
 
     public void Configure(EntityTypeBuilder<FileMetadata> builder)
     {
+        builder.HasOne(fm => fm.Folder)
+              .WithMany(f => f.FileMetadata)
+              .OnDelete(DeleteBehavior.Cascade);
+
         builder.Property(f => f.UserId)
             .IsRequired();
 
