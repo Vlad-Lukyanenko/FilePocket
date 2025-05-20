@@ -18,4 +18,9 @@ public class TrashRequests : ITrashRequests
     {
         var _ = await _apiClient.PutAsync($"api/trash/pockets/{pocketId}", null);
     }
+
+    public async Task ClearAllTrashAsync()
+    {
+        await _apiClient.DeleteAsync($"api/trash/clearall");
+    }
 }
