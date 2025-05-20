@@ -58,8 +58,8 @@ public partial class FilesAndFolders
     {
         var authState = await AuthStateProvider.GetAuthenticationStateAsync();
         var userName = authState.User.Identity?.Name!;
-        var user = await UserRequests.GetByUserNameAsync(userName);
-            _iconId = user?.Profile?.IconId;
+        var user = await UserRequests.GetByUserNameAsync(userName)!;
+        _iconId = user.Profile!.IconId;
 
         if (PocketId is null)
         {
@@ -72,24 +72,17 @@ public partial class FilesAndFolders
         StateHasChanged();
     }
 
-    // protected override async Task OnParametersSetAsync()
-    // {
-    //     if (!_firstRender)
-    //     {
-    //         await OnInitializedAsync();
-    //     }
-    //     else
-    //     {
-    //         _firstRender = false;
-    //     }
-    // }
-    protected override void OnParametersSet()
-{
-    if (_firstRender)
+    protected override async Task OnParametersSetAsync()
     {
-        _firstRender = false;
+        if (!_firstRender)
+        {
+            await OnInitializedAsync();
+        }
+        else
+        {
+            _firstRender = false;
+        }
     }
-}
 
     private async Task InitPage()
     {
