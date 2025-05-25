@@ -106,8 +106,11 @@ public class FolderRepository : RepositoryBase<Folder>, IFolderRepository
             }
         }
     }
-    public async Task<bool> ExistsAsync(string folderName, Guid? pocketId, Guid? parentFolderId)
+    public async Task<bool> ExistsAsync(string folderName, Guid? pocketId, Guid? parentFolderId, FolderType folderType)
     {
-        return await DbContext.Folders.AsNoTracking().AnyAsync(f => f.Name == folderName && f.PocketId == pocketId && f.ParentFolderId == parentFolderId);
+        return await DbContext.Folders.AsNoTracking().AnyAsync(f => f.Name == folderName 
+        && f.PocketId == pocketId 
+        && f.ParentFolderId == parentFolderId 
+        && f.FolderType == folderType);
     }
 }
