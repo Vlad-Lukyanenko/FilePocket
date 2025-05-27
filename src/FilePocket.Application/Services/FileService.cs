@@ -441,10 +441,11 @@ public class FileService(
         return await File.ReadAllBytesAsync(fullPath);
     }
 
-    public async Task<IEnumerable<FileSearchResponseModel>> SearchEverywhereAsync(Guid userId, string partialName)
+    public async Task<IEnumerable<FileSearchResponseModel>> SearchAsync(Guid userId, string partialName)
     {
         var files = await repository.FileMetadata.GetFileMetadataByPartialNameAsync(userId, partialName);
-        return mapper.Map<List<FileSearchResponseModel>>(files);
+
+        return mapper.Map<IEnumerable<FileSearchResponseModel>>(files);
     }
 
     #endregion

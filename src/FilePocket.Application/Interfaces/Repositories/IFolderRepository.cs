@@ -12,4 +12,5 @@ public interface IFolderRepository
     Task<Folder?> GetAsync(Guid folderId);
     Task<bool> ExistsAsync(string folderName, Guid? pocketId, Guid? parentFolderId, FolderType folderType);
     Task<List<Folder>> GetAllAsync(Guid userId, Guid? pocketId, Guid? parentFolderId, List<FolderType> folderTypes, bool isSoftDeleted);
+    Task<List<Folder>> GetFoldersByPartialNameAsync(Guid userId, string partialName, bool trackChanges = false);
 }

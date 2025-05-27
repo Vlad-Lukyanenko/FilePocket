@@ -113,4 +113,11 @@ public class FolderRepository : RepositoryBase<Folder>, IFolderRepository
         && f.ParentFolderId == parentFolderId 
         && f.FolderType == folderType);
     }
+
+    public async Task<List<Folder>> GetFoldersByPartialNameAsync(Guid userId, string partialName, bool trackChanges = false)
+    {
+        return (await FindByCondition(f => f.UserId.Equals(userId) && f.Name.ToLower().Contains(partialName.ToLower()), trackChanges)
+            .OrderBy(f => f.FolderType)
+            .ToListAsync());
+    }
 }

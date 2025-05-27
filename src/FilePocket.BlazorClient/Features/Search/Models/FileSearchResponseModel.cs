@@ -1,4 +1,6 @@
-﻿namespace FilePocket.Domain.Models
+﻿using FilePocket.BlazorClient.Features.Files.Models;
+
+namespace FilePocket.BlazorClient.Features.Search.Models
 {
     public class FileSearchResponseModel : SearchResponseModel
     {

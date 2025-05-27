@@ -3,13 +3,13 @@ using FilePocket.Domain.Models;
 using FilePocket.WebApi.Endpoints.Base;
 using static System.Net.WebRequestMethods;
 
-namespace FilePocket.WebApi.Endpoints.FileSearch
+namespace FilePocket.WebApi.Endpoints.ContentItemsSearch
 {
-    public class FileSearchEndpoint : BaseEndpointWithoutRequest<IEnumerable<FileSearchResponseModel>>
+    public class FolderSearch : BaseEndpointWithoutRequest<IEnumerable<FolderSearchResponseModel>>
     {
         private readonly IServiceManager _service;
 
-        public FileSearchEndpoint(IServiceManager service)
+        public FolderSearch(IServiceManager service)
         {
             _service = service;
         }
@@ -17,7 +17,7 @@ namespace FilePocket.WebApi.Endpoints.FileSearch
         public override void Configure()
         {
             Verbs(Http.Get);
-            Routes("api/file-search/{partialName}");
+            Routes("api/folder-search/{partialName}");
             AuthSchemes("Bearer");
         }
 
@@ -31,14 +31,15 @@ namespace FilePocket.WebApi.Endpoints.FileSearch
                 return;
             }
 
-            var files = await _service.FileService.SearchEverywhereAsync(UserId, partialName);
+            var folders = await _service.FolderService.SearchAsync(UserId, partialName);
 
-            if (files == null || !files.Any())
+            if (folders == null || !folders.Any())
             {
                 await SendNotFoundAsync(cancellationToken);
                 return;
             }
-            await SendOkAsync(files, cancellationToken);
+
+            await SendOkAsync(folders, cancellationToken);
         }
     }
 }

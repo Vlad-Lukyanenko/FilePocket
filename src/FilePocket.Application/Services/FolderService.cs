@@ -126,4 +126,11 @@ public class FolderService : IFolderService
             }
         }
     }
+
+    public async Task<IEnumerable<FolderSearchResponseModel>> SearchAsync(Guid userId, string partialName)
+    {
+        var folders = await _repository.Folder.GetFoldersByPartialNameAsync(userId, partialName);
+
+        return _mapper.Map<IEnumerable<FolderSearchResponseModel>>(folders);
+    }
 }
