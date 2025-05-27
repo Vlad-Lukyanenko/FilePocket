@@ -254,7 +254,8 @@ public partial class Profile : ComponentBase
         { "LastName", false },
         { "PhoneNumber", false },
         { "BirthDate", false },
-        { "Language", false }
+        { "Language", false },
+        { "ProfileIcon", false }
     };
 
     private async Task ToggleEditState()

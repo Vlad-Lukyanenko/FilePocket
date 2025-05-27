@@ -26,13 +26,16 @@
                     <!-- Form Container -->
                     <div class="container d-flex flex-column align-items-center py-4" style="max-width: 600px;">
                         <div class="position-relative mb-4">
-                                <label class="img-container" title="Change avatar">
-                                    <img class="rounded-circle image border" src="@GetProfileIcon()" alt="userPicture" style="width: 130px; height: 130px; object-fit: cover;">
+                            <label class="img-container" title="Change avatar">
+                                <img class="rounded-circle image border" src="@GetProfileIcon()" alt="userPicture" style="width: 130px; height: 130px; object-fit: cover;">
+                                @if (editStates["ProfileIcon"])
+                                {
                                     <div class="position-absolute bottom-0 end-0 bg-white rounded-circle p-1 shadow-sm" style="width: 32px; height: 32px;">
                                         <i class="bi bi-pencil text-primary d-flex justify-content-center align-items-center" style="font-size: 16px;"></i>
                                     </div>
                                     <InputFile hidden id="fileInput" OnChange="UploadFilesAsync" accept=".png, .jpg, .jpeg" />
-                                </label>
+                                }
+                            </label>
                         </div>
 
                         <div class="d-flex flex-column justify-content-start">
