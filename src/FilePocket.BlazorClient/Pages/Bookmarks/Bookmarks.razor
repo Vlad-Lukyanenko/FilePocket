@@ -13,8 +13,6 @@
         <!-- Top SubMenu -->
         <TopSubMenu Title="@_pageTitle" ShowBackButton="@(FolderId is not null)" />
 
-        <FoldersBlock Folders="_folders" PocketId="PocketId" />
-
         <!-- Action Button Row -->
         <div class="row">
             <div class="col-12 d-flex align-items-center mb-3">
@@ -57,6 +55,8 @@
             </div>
         </div>
 
+        <FoldersBlock Folders="_folders" PocketId="PocketId" />
+        <div class="mb-4">&nbsp;</div>
         @if (_bookmarks.Any())
         {
             <div class="card-container">

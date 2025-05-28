@@ -21,7 +21,6 @@
     }
 </div>
 
-
 @code {
     [Parameter]
     public ObservableCollection<NoteModel>? Notes { get; set; }
@@ -33,7 +32,7 @@
     private NavigationManager Navigation { get; set; } = default!;
 
     private bool _dialogOpen;
-    private Guid? _noteToDeleteId;
+    private bool _isLoading = true;
 
     private string GetNoteUrl(NoteModel note)
     {
@@ -42,38 +41,10 @@
         : $"pockets/{note.PocketId}/folders/{note.FolderId}/notes/{note.Id}";
     }
 
-    private void OpenDialog(Guid id)
-    {
-        _dialogOpen = true;
-        _noteToDeleteId = id;
-    }
-
-    private void CloseDialog()
-    {
-        _noteToDeleteId = null;
-        _dialogOpen = false;
-    }
-
     private void NavigateToEdit(NoteModel note)
     {
         var url = GetNoteUrl(note) + "/edit";
 
         Navigation.NavigateTo(url);
-    }
-
-    private async Task DeleteNote()
-    {
-        if (_noteToDeleteId != null)
-        {
-            var noteToDelete = Notes!.First(n => n.Id == _noteToDeleteId);
-            var result = await NoteRequests.DeleteAsync(_noteToDeleteId.Value);
-
-            if (result)
-            {
-                Notes?.Remove(noteToDelete);
-
-                CloseDialog();
-            }
-        }
     }
 }

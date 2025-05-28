@@ -39,7 +39,6 @@ public partial class Profile : ComponentBase
 
     protected override async Task OnInitializedAsync()
     {
-
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var uri = Navigation != null ? new Uri(Navigation.Uri) : throw new InvalidOperationException("Navigation is null");
         var query = System.Web.HttpUtility.ParseQueryString(uri.Query);

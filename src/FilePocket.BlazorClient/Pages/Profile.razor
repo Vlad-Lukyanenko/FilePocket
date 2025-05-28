@@ -7,8 +7,8 @@
         <div class="container-fluid">
             <div class="container-fluid w-100 w-md-75">
 
-                <TopSubMenu Title="Profile" ShowBackButton="false"/>
-        
+                <TopSubMenu Title="Profile" ShowBackButton="false" />
+
                 <div class="alert alert-success alert-dismissible fade show" role="alert" style="@_alertStyle">
                     <strong>@_alertMessage</strong>
                     <button type="button" class="btn-close" aria-label="Close" @onclick="CloseAlert"></button>
@@ -22,7 +22,9 @@
                             <span class="visually-hidden">Loading...</span>
                         </div>
                     </div>
-                }else{
+                }
+                else
+                {
                     <!-- Form Container -->
                     <div class="container d-flex flex-column align-items-center py-4" style="max-width: 600px;">
                         <div class="position-relative mb-4">
@@ -40,65 +42,41 @@
 
                         <div class="d-flex flex-column justify-content-start">
                             <div class="row g-3">
-                                                <div class="col-md-6">
-                                                    <label class="form-label fw-semibold">E-mail</label>
-                                                    <input type="email" class="form-control rounded-3 border border-2" value="@_profile.Email" disabled />
-                                                </div>
-
-                                                <div class="col-md-6">
-                                                    <label class="form-label fw-semibold">Name</label>
-                                                    <input type="text" class="form-control rounded-3 border border-2" @bind="_profile.FirstName" disabled="@( !editStates["FirstName"] )" />
-                                                </div>
-
-                                                <div class="col-md-6">
-                                                    <label class="form-label fw-semibold">Phone number</label>
-                                                    <input type="tel" class="form-control rounded-3 border border-2" @bind="_profile.PhoneNumber" placeholder="+1 (555) 123-4567" disabled="@( !editStates["PhoneNumber"] )" />
-                                                </div>
-
-                                                <div class="col-md-6">
-                                                    <label class="form-label fw-semibold">Surname</label>
-                                                    <input type="text" class="form-control rounded-3 border border-2" @bind="_profile.LastName" disabled="@( !editStates["LastName"] )" />
-                                                </div>
-
-                                                <div class="col-md-6">
-                                                    <label class="form-label fw-semibold">Birthday</label>
-                                                    <input type="date" class="form-control rounded-3 border border-2" @bind="_profile.BirthDate" disabled="@( !editStates["BirthDate"] )" />
-                                                </div>
-
-                                        
-                            </div>
-
-                            @* <div class="col-md-6 mt-3">
-                                <label class="form-label fw-semibold d-block">Language</label>
-                                <div class="dropdown">
-
-                                        <button class="btn btn-outline-primary w-100 rounded-3 border-2 fw-semibold d-flex justify-content-between align-items-center" style="color:#6c63ff; border:1px solid linear-gradient(to right, #9b5cff, #6c63ff); background:transparent" type="button" data-bs-toggle="dropdown">
-                                            <span>@selectedLanguage</span>
-                                            <i class="bi bi-chevron-down ms-2"></i>
-                                        </button>
-                                        <ul class="dropdown-menu w-100">
-                                            @foreach (var lang in languages)
-                                            {
-                                                <li>
-                                                    <button class="dropdown-item" @onclick="() => SelectLanguage(lang.Key)">
-                                                        @lang.Value
-                                                    </button>
-                                                </li>
-                                            }
-                                        </ul>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">E-mail</label>
+                                    <input type="email" class="form-control rounded-3 border border-2" value="@_profile.Email" disabled />
                                 </div>
-                            </div> *@
-                        </div>
-                
 
-                        <!-- Кнопка редактирования -->
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">Name</label>
+                                    <input type="text" class="form-control rounded-3 border border-2" @bind="_profile.FirstName" disabled="@( !editStates["FirstName"] )" />
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">Phone number</label>
+                                    <input type="tel" class="form-control rounded-3 border border-2" @bind="_profile.PhoneNumber" placeholder="+1 (555) 123-4567" disabled="@( !editStates["PhoneNumber"] )" />
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">Surname</label>
+                                    <input type="text" class="form-control rounded-3 border border-2" @bind="_profile.LastName" disabled="@( !editStates["LastName"] )" />
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">Birthday</label>
+                                    <input type="date" class="form-control rounded-3 border border-2" @bind="_profile.BirthDate" disabled="@( !editStates["BirthDate"] )" />
+                                </div>
+
+
+                            </div>
+                        </div>
+
                         <div class="text-center mt-4">
                             <button class="btn btn-primary px-5 py-2 rounded-3 fw-semibold" @onclick='() => ToggleEditState()'>
                                 @(editStates.Values.Any(value => value == true) ? "Save" : "Edit")
                             </button>
                         </div>
                     </div>
-                        
                 }
 
                 <!-- Error Block -->
@@ -118,7 +96,7 @@
                         }
                     </div>
                 }
-        
+
             </div>
         </div>
     </Authorized>
@@ -126,24 +104,6 @@
         <SignInComponent />
     </NotAuthorized>
 </AuthorizeView>
-
-
-
-@code {
-    private string selectedLanguage = "English";
-    private Dictionary<string, string> languages = new()
-    {
-        { "en", "English" },
-        { "ua", "Ukrainian" },
-        { "ru", "Russian" }
-    };
-
-    private void SelectLanguage(string lang)
-    {
-        selectedLanguage = languages[lang];
-        // Логика для сохранения выбора (например, в localStorage или API)
-    }
-}
 
 <script>
     window.resetFileInput = function () {

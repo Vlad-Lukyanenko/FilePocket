@@ -108,8 +108,21 @@
     }
     else
     {
-        <FoldersBlock Folders="_folders" PocketId="PocketId" />
-        <NotesBlock Notes="_notes" NoteRequests="NoteRequests" />
+        @if (_isLoading)
+        {
+            <!-- Loading Spinner -->
+            <div class="container-fluid w-100 h-100 text-center p-4 d-flex justify-content-center align-items-center">
+                <div class="spinner-grow" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+        }
+        else
+        {
+            <FoldersBlock Folders="_folders" PocketId="PocketId" />
+            <div class="mb-4">&nbsp;</div>
+            <NotesBlock Notes="_notes" NoteRequests="NoteRequests" />
+        }
     }
 
 </div>

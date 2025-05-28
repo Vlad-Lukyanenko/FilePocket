@@ -102,17 +102,31 @@
 
         <br />
 
-        @if (!_folders.Any() && !_files.Any())
+        @if (_isLoading)
         {
-            <div class="text-center no-content">
-                <h6>It looks like you haven't uploaded any files yet. <br /> Would you like to upload one now?</h6>
+            <!-- Loading Spinner -->
+            <div class="container-fluid w-100 h-100 text-center p-4 d-flex justify-content-center align-items-center">
+                <div class="spinner-grow" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
             </div>
         }
         else
         {
-            <FoldersBlock Folders="_folders" PocketId="PocketId"></FoldersBlock>
-            <FilesBlock Files="_files" />
+            @if (!_folders.Any() && !_files.Any())
+            {
+                <div class="text-center no-content">
+                    <h6>It looks like you haven't uploaded any files yet. <br /> Would you like to upload one now?</h6>
+                </div>
+            }
+            else
+            {
+                <FoldersBlock Folders="_folders" PocketId="PocketId"></FoldersBlock>
+                <div class="mb-4">&nbsp;</div>
+                <FilesBlock Files="_files" />
+            }
         }
+
 
         <!-- Error Block -->
         @if (_fileUploadErrors.Any())
