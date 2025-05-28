@@ -1,6 +1,5 @@
 ﻿using FilePocket.BlazorClient.Features.SharedFiles.Models;
 using FilePocket.BlazorClient.Features.SharedFiles.Requests;
-using FilePocket.BlazorClient.Features.Users.Requests;
 using FilePocket.BlazorClient.Helpers;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
@@ -15,9 +14,6 @@ namespace FilePocket.BlazorClient.Pages.Files.Shared
         [Inject]
         private ISharedFilesRequests _sharedFilesRequests { get; set; } = default!;
         
-        [Inject] 
-        private IUserRequests _userRequests { get; set; } = default!;
-
         [Inject]
         private IJSRuntime JSRuntime { get; set; } = default!;
 
@@ -27,21 +23,20 @@ namespace FilePocket.BlazorClient.Pages.Files.Shared
         private SharedFileModel? _sharedFile = null;
 
         private bool _showLoader = false;
-        private bool _fileNotFound = false;
+        private bool _isLoading = true;
 
         protected override async Task OnInitializedAsync()
         {
             _sharedFileId = Guid.Parse(SharedFileId);
-
             _sharedFile = await _sharedFilesRequests.GetByIdAsync(_sharedFileId);
 
             if (_sharedFile is null)
             {
-                _fileNotFound = true;
                 return;
             }
 
-            _userName = $"{_sharedFile.FirstName} {_sharedFile.LastName}";            
+            _userName = $"{_sharedFile.FirstName} {_sharedFile.LastName}";
+            _isLoading = false;
         }
 
         private string GetUserName()
