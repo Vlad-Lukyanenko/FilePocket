@@ -14,12 +14,8 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 using System.Collections.ObjectModel;
 using System.Net.Http.Headers;
-using System.Threading.Tasks;
-
-
 
 namespace FilePocket.BlazorClient.Pages;
-
 public partial class Profile : ComponentBase
 {
     private ProfileModel _profile = new();
@@ -57,7 +53,7 @@ public partial class Profile : ComponentBase
             _profile = await ProfileRequests.GetByUserIdAsync(userId);
             _defaultPocketId = (await PocketRequests.GetDefaultAsync()).Id;
 
-           try
+            try
             {
                 if (_profile.IconId is not null && _profile.IconId != Guid.Empty)
                 {
@@ -69,52 +65,10 @@ public partial class Profile : ComponentBase
                 Console.WriteLine($"Error loading thumbnail: {ex.Message}");
                 _avatar = new FileModel { FileByteArray = null };
             }
-
         }
-    
-
+        
         _isLoading = false;
     }
-//     protected override async Task OnInitializedAsync()
-// {
-//     try
-//     {
-//         // Получение состояния аутентификации
-//         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-//         var userStringId = authState.User?.FindFirst(c => c.Type == "uid")?.Value;
-
-//         if (string.IsNullOrEmpty(userStringId))
-//         {
-//             throw new InvalidOperationException("User ID is null or empty.");
-//         }
-
-//         var userId = new Guid(userStringId);
-//         _profile = await ProfileRequests.GetByUserIdAsync(userId);
-
-//         if (_profile == null)
-//         {
-//             throw new InvalidOperationException("Profile not found.");
-//         }
-
-//         // Асинхронная загрузка аватара, если есть IconId
-//         if (_profile.IconId.HasValue)
-//         {
-//             _avatar = await FileRequests.GetImageThumbnailAsync(_profile.IconId.Value, 500);
-//         }
-//     }
-//     catch (Exception ex)
-//     {
-//         _alertMessage = $"Error: {ex.Message}";
-//         _alertStyle = "display: block;";
-//         Console.WriteLine($"Error: {ex.Message}");
-//     }
-//     finally
-//     {
-//         _isLoading = false;
-//         await InvokeAsync(StateHasChanged);
-//     }
-// }
-
 
     private async Task SaveChangesAsync(MouseEventArgs e)
     {
@@ -125,7 +79,7 @@ public partial class Profile : ComponentBase
             UserName = authState.User.Identity?.Name!,
             FirstName = _profile.FirstName,
             LastName = _profile.LastName,
-            PhoneNumber = _profile.PhoneNumber,  
+            PhoneNumber = _profile.PhoneNumber,
             BirthDate = _profile.BirthDate,
             Language = _profile.Language ?? string.Empty,
         };
@@ -143,7 +97,7 @@ public partial class Profile : ComponentBase
             FirstName = _profile.FirstName,
             LastName = _profile.LastName,
             IconId = _profile.IconId,
-            PhoneNumber = _profile.PhoneNumber,  
+            PhoneNumber = _profile.PhoneNumber,
             BirthDate = _profile.BirthDate,
             Language = _profile.Language,
         };
@@ -156,7 +110,6 @@ public partial class Profile : ComponentBase
             var user = await UserRequests.GetByUserNameAsync(request.UserName);
             UserStateContainer.SetValue(user!);
         }
-        
 
         foreach (var key in editStates.Keys.ToList())
         {
@@ -308,26 +261,25 @@ public partial class Profile : ComponentBase
     };
 
     private async Task ToggleEditState()
-{
-    if (editStates.Values.Any(v => v))
     {
-
-       await SaveChangesAsync(new MouseEventArgs());
-
-        var keys = editStates.Keys.ToList();
-        foreach (var key in keys)
+        if (editStates.Values.Any(v => v))
         {
-            editStates[key] = false;
+            await SaveChangesAsync(new MouseEventArgs());
+
+            var keys = editStates.Keys.ToList();
+            foreach (var key in keys)
+            {
+                editStates[key] = false;
+            }
         }
-    }
-    else
-    {
-        var keys = editStates.Keys.ToList();
-        foreach (var key in keys)
+        else
         {
-            editStates[key] = true;
+            var keys = editStates.Keys.ToList();
+            foreach (var key in keys)
+            {
+                editStates[key] = true;
+            }
         }
+        StateHasChanged();
     }
-    StateHasChanged();
-}
 }
