@@ -105,9 +105,6 @@
             </aside>
             <!-- Menu for Mobile -->
             <MobileMenu />
-            
-
-            
 
             <div class="col container-fluid flex-grow-1 overflow-auto p-4">
                 <!-- Navbar -->
@@ -162,9 +159,7 @@
                 <main class="w-100 p-2">
                     @Body
                 </main>
-
             </div>
-
 
             <!-- Right Offcanvas Menu -->
             <div class="offcanvasMenuRight p-3">
@@ -180,8 +175,6 @@
                     </div>
                     
                     <div class="offcanvas-scrollable">
-                        @* <div class="offcanvas-body"> *@
-                    
                         <div class="controls-container">
                             <!-- Signing In User Info Button -->
                             <div class="d-flex justify-content-center align-items-center">
@@ -189,14 +182,12 @@
                                     <img class="rounded-circle avatar-image" 
                                             src="@(_icon is null ? "../assets/img/man.png" : $"data:image/jpeg;base64,{_icon}")" 
                                             alt="userPicture" 
-                                            @onclick="NavigateToProfile" 
-                                    />
-    
+                                            @onclick="NavigateToProfile" />
 
                                     <div class="d-flex align-items-center flex-column">
                                         <span>@_user?.Email</span>
                                         <h5 class="card-title">
-                                            @GetDisplayedName()
+                                            @_displayUserName
                                         </h5>
                                     </div>
                                 </div>
