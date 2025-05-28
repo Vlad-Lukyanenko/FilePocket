@@ -62,7 +62,7 @@
                 var url = $"/pockets/{PocketId}/folders/{folderId}{(int)FolderType.Notes}/new";
             }
 
-            <a href="@url" class="btn btn-outline-warning py-0 px-3">
+            <a href="@url" class="btn btn-outline-primary py-0 px-3">
                 <i class="bi bi-folder-plus fs-4"></i>
             </a>
 
@@ -104,6 +104,7 @@
     {
         <div class="text-center no-content">
             <h6>It looks like you haven't uploaded or created any notes yet. <br /> Would you like to upload or create one now?</h6>
+            <img src="./assets/img/cat.png" class="d-block mx-auto mb-1" alt="Note icon" />
         </div>
     }
     else
