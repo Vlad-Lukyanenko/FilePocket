@@ -49,37 +49,6 @@
                             </a>
                     </li>
 
-
-                    @* <li class="nav-item flex-fill flex-md-grow-0">
-                        <a href="/files" class="nav-link text-dark px-2 d-flex align-items-center justify-content-between @(IsActive("/files"))"
-                        @onclick="ToggleFilesMenu">
-                            <div class="d-flex align-items-center justify-content-between">
-                                <i class="fs-4 bi-file-earmark"></i>
-                                <span class="ms-2 d-none d-md-inline">Files</span>                                
-                            </div>
-                            <i class="bi @( _isFilesMenuOpen ? "bi-chevron-up" : "bi-chevron-down")"></i>
-                        </a>
-                        <ul class="submenu @( _isFilesMenuOpen ? "show" : "" )">
-                            @if(_folders is not null && _folders.Count > 0)
-                            {
-                                foreach (var folder in _folders)
-                                {
-                                    <li class="nav-item flex-fill flex-md-grow-0">
-                                        <a href="@($"/pockets/{folder.PocketId}/folders/{folder.Id}/files")" class="nav-link text-dark px-2">@Tools.TruncateString(folder.Name, 25)</a>
-                                    </li>
-                                }                                
-                            }
-                        </ul>
-                    </li> *@
-
-                    @* <li class="nav-item flex-fill flex-md-grow-0">
-                            <a href="/pockets" class="nav-link text-dark px-2 @(IsActive("/pockets"))">
-                                <div class="d-flex align-items-center justify-content-center justify-content-md-start">
-                                    <i class="fs-4 bi-archive"></i>
-                                    <span class="ms-2 d-none d-md-inline">Pockets</span>
-                                </div>
-                            </a>
-                        </li> *@
                     <li class="nav-item flex-fill flex-md-grow-0">
                         <a href="/bookmarks" class="nav-link text-dark px-2 @(IsActive("/bookmarks"))">
                             <div class="d-flex align-items-center justify-content-center justify-content-md-start">

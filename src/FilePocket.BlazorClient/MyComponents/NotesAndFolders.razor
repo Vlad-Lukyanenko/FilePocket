@@ -4,33 +4,33 @@
 
 <style>
     @@media (max-width: 768px) {
-    .table-responsive {
-    overflow-x: auto;
-    }
+        .table-responsive {
+            overflow-x: auto;
+        }
 
-    .table th, .table td {
-    padding: 0.5rem;
-    }
+        .table th, .table td {
+            padding: 0.5rem;
+        }
 
-    .btn-outline-success, .btn-outline-warning, .btn-outline-danger {
-    padding: 0.25rem 0.5rem;
-    }
+        .btn-outline-success, .btn-outline-warning, .btn-outline-danger {
+            padding: 0.25rem 0.5rem;
+        }
 
-    .fs-4 {
-    font-size: 1.5rem;
-    }
+        .fs-4 {
+            font-size: 1.5rem;
+        }
 
-    .w-md-75 {
-    width: 100% !important;
-    }
+        .w-md-75 {
+            width: 100% !important;
+        }
 
-    .form-check-input {
-    margin-right: 0.5rem;
-    }
+        .form-check-input {
+            margin-right: 0.5rem;
+        }
 
-    .link-dark {
-    font-size: 0.9rem;
-    }
+        .link-dark {
+            font-size: 0.9rem;
+        }
     }
 </style>
 
@@ -52,7 +52,7 @@
         <div class="col-12 d-flex align-items-center mb-3">
 
             <!-- Create Or Edit Note Button -->
-            <button class="btn btn-outline-primary py-0 px-2 me-2" @onclick="@OpenEditor">
+            <button class="btn btn-outline-success py-0 px-2 me-2" @onclick="@OpenEditor">
                 <i class="ps-2 pe-2 bi-file-earmark-plus fs-4"></i>
             </button>
 
@@ -62,7 +62,7 @@
                 var url = $"/pockets/{PocketId}/folders/{folderId}{(int)FolderType.Notes}/new";
             }
 
-            <a href="@url" class="btn btn-outline-primary py-0 px-3">
+            <a href="@url" class="btn btn-outline-warning py-0 px-3">
                 <i class="bi bi-folder-plus fs-4"></i>
             </a>
 
@@ -103,8 +103,7 @@
     @if (_folders != null && !_folders.Any() && _notes != null && !_notes.Any())
     {
         <div class="text-center no-content">
-            <h6>It looks like you haven't uploaded or created any notes yet. <br /> Would you like to upload or create one now?</h6>
-            <img src="./assets/img/cat.png" class="d-block mx-auto mb-1" alt="Note icon" />
+            <h6>It looks like you haven't created any notes yet. <br /> Would you like to create one now?</h6>
         </div>
     }
     else

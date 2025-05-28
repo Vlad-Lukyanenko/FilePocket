@@ -54,7 +54,7 @@
             <div class="col-12 d-flex align-items-center mb-3">
 
                 <!-- Upload Button -->
-                <label class="btn btn-outline-primary py-0 px-2 me-2">
+                <label class="btn btn-outline-success py-0 px-2 me-2">
                     <i class="ps-2 pe-2 bi-cloud-arrow-up fs-4"></i>
                     <InputFile hidden id="fileInput" OnChange="UploadFiles" multiple />
                 </label>
@@ -65,13 +65,10 @@
                     var url = $"/pockets/{PocketId}/folders/{folderId}{(int)FolderType.Files}/new";
                 }
 
-                <a href="@url" class="btn btn-outline-primary py-0 px-3">
+                <a href="@url" class="btn btn-outline-warning py-0 px-3">
                     <i class="bi bi-folder-plus fs-4"></i>
                 </a>
 
-                @* <button class="btn @(_rmBtnDisabled ? "btn-outline-secondary" : "btn-outline-danger") ms-auto p-0 ps-2 pe-2" disabled="@_rmBtnDisabled" @onclick="DeleteSelectedFiles">
-                    <i class="bi bi-trash fs-4"></i>
-                </button> *@
                 <div style="display: flex; justify-content: flex-end; width: 100%; gap: 8px;">
                     @if (FolderId is not null)
                     {

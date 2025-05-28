@@ -17,15 +17,6 @@
     font-weight: 600;
 }
 
-.btn-outline-primary {
-    border: 2px solid #9b5cff;
-}
-
-.fs-4{
-    color: #9b5cff;
-}
-
-
 .nav-link:hover {
     background-color:rgba(146, 118, 173, 0.385) important;
     color: rgba(251, 251, 255, 1);
@@ -71,21 +62,12 @@ h1:focus {
     color: #0071c1;
 } */
 
-.btn-primary {
+/*.btn:hover, .btn:active:focus{
     color: #fff;
     background-color: #452EAA;
     border-color: #452EAA;
     border-radius: 10px;
-    font-size: 20px;
-    font-weight: 700;
-}
-
-.btn:hover, .btn:active:focus{
-    color: #fff;
-    background-color: #452EAA;
-    border-color: #452EAA;
-    border-radius: 10px;
-}
+}*/
 
 .btn:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
     box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #452EAA;
@@ -179,14 +161,14 @@ code {
     width: 100%;
 }
 
-.search-box {
+/*.search-box {
     width: 100%;
     padding: 8px 40px 8px 12px;
     border: 1px solid #ddd;
-    border-radius: 6px;
+    border-radius: 0.4em;
     outline: none;
     transition: border-color 0.2s;
-}
+}*/
 
 .search-button {
     position: absolute;

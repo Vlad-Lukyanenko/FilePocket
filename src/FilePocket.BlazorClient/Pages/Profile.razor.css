@@ -8,13 +8,6 @@
     cursor: pointer;
 }
 
-.btn-primary{
-    background: linear-gradient(to right, #9b5cff, #6c63ff);
-    border: none;
-    width: 300px;
-}
-
-
 /* .btn-close {
     position: absolute;
     top: 15px;

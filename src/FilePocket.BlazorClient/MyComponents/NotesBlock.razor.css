@@ -1,10 +1,10 @@
 .title {
-        font-size: 0.875rem;
+    font-size: 0.875rem;
 }
 
-.title a {
-    line-height: 24px;
-}
+    .title a {
+        line-height: 24px;
+    }
 
 .controls-container button {
     border: 0;
@@ -37,7 +37,7 @@
     border-color: silver;
 }
 
-.noteStyle{
+.noteStyle {
     background-image: url(../assets/img/note.png);
     background-position: center;
     background-size: cover;
