@@ -57,7 +57,7 @@ namespace FilePocket.BlazorClient.Pages.Notes
             }
         }
 
-        protected override async Task OnParametersSetAsync()
+        protected override async Task OnInitializedAsync()
         {
             var authState = await AuthStateProvider.GetAuthenticationStateAsync();
             var userName = authState.User.Identity?.Name!;

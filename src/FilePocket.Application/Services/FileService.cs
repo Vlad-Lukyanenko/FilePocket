@@ -25,6 +25,8 @@ public class FileService(
     private readonly string _rootFolder = configuration.GetValue<string>("AppRootFolder")!;
     private readonly string _noteFileExtension = configuration.GetValue<string>("NoteContentFileExtension")!;
 
+    #region Implementation of IFileService
+
     public async Task<IEnumerable<FileResponseModel>> GetAllFilesMetadataAsync(Guid userId, Guid pocketId, Guid? folderId, bool isSoftDeleted)
     {
         var fileMetadata = await repository.FileMetadata.GetAllAsync(userId, pocketId, folderId, isSoftDeleted);
@@ -439,6 +441,17 @@ public class FileService(
         return await File.ReadAllBytesAsync(fullPath);
     }
 
+    public async Task<IEnumerable<FileSearchResponseModel>> SearchAsync(Guid userId, string partialName)
+    {
+        var files = await repository.FileMetadata.GetFileMetadataByPartialNameAsync(userId, partialName);
+
+        return mapper.Map<IEnumerable<FileSearchResponseModel>>(files);
+    }
+
+    #endregion
+
+    #region Private Methods
+
     private string SelectFileDirectory(Guid userId, Guid? pocketId, FileTypes fileType)
     {
         var now = DateTime.UtcNow;
@@ -610,6 +623,8 @@ public class FileService(
 
         await File.WriteAllBytesAsync(fullPath, content, cancellationToken);
     }
+
+    #endregion
 
     private enum WriteFileMode
     {

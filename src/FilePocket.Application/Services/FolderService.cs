@@ -21,7 +21,7 @@ public class FolderService : IFolderService
 
     public async Task<FolderModel> CreateAsync(FolderModel folder)
     {
-        var folderExists = await _repository.Folder.ExistsAsync(folder.Name, folder.PocketId, folder.ParentFolderId);
+        var folderExists = await _repository.Folder.ExistsAsync(folder.Name, folder.PocketId, folder.ParentFolderId, folder.FolderType);
         if (folderExists)
         {
             throw new InvalidOperationException("A folder with the same name already exists.");
@@ -125,5 +125,12 @@ public class FolderService : IFolderService
                 folderToUpdate.RestoreFromDeleted();
             }
         }
+    }
+
+    public async Task<IEnumerable<FolderSearchResponseModel>> SearchAsync(Guid userId, string partialName)
+    {
+        var folders = await _repository.Folder.GetFoldersByPartialNameAsync(userId, partialName);
+
+        return _mapper.Map<IEnumerable<FolderSearchResponseModel>>(folders);
     }
 }

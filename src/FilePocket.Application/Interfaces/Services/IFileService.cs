@@ -82,4 +82,6 @@ public interface IFileService : IFileProvider
         CancellationToken cancellationToken = default);
 
     Task<byte[]> ReadNoteContentFromFileAsync(Guid userId, Guid fileId);
+
+    Task<IEnumerable<FileSearchResponseModel>> SearchAsync(Guid userId, string partialName);
 }

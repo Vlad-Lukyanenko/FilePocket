@@ -11,7 +11,7 @@
         foreach (var f in Files)
         {
             <div class="card h-100 shadow-sm me-2 pt-2" style="width: 8em;">
-                <a class="file-link text-decoration-none" title="@f.OriginalName" href="@GetFileUrl(f.Id, f.PocketId, f.FolderId)">
+                <a class="file-link text-decoration-none" title="@f.OriginalName" href="@Tools.GetFileUrl(f.Id, f.PocketId, f.FolderId)">
 
                     @if (f.IsLoaded)
                     {
@@ -34,24 +34,4 @@
 
     [Parameter] 
     public ObservableCollection<FileInfoModel>? Files { get; set; }
-
-    private string GetFileUrl(Guid fileId, Guid? pocketId, Guid? folderId)
-    {
-        if (pocketId is null && folderId is null)
-        {
-            return $"/files/{fileId}";
-        }
-
-        if (pocketId is null)
-        {
-            return $"/folders/{folderId}/files/{fileId}";
-        }
-
-        if (folderId is null)
-        {
-            return $"/pockets/{pocketId}/files/{fileId}";
-        }
-
-        return $"/pockets/{pocketId}/folders/{folderId}/files/{fileId}";
-    }
 }
