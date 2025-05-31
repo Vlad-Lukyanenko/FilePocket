@@ -151,8 +151,8 @@ namespace FilePocket.BlazorClient.Pages.Notes
 
         private void CloseEditor()
         {
-            var prevUrl = NavigationHistory.GetPreviousUrl() ?? "/notes";
-            Navigation.NavigateTo(prevUrl);
+            //var prevUrl = NavigationHistory.GetPreviousUrl() ?? "/notes";
+            Navigation.NavigateTo("/notes");
         }
 
         private void EditTile()

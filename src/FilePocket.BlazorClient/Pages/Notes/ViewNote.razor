@@ -4,6 +4,9 @@
 @using FilePocket.BlazorClient.Features.Notes
 @using FilePocket.BlazorClient.Features.Notes.Models
 @using FilePocket.BlazorClient.Features.Notes.Requests
+@using FilePocket.BlazorClient.Features.Storage.Models
+@using FilePocket.BlazorClient.Features.Storage.Requests
+@using FilePocket.BlazorClient.Features.Trash
 @using FilePocket.BlazorClient.Features.Users.Requests
 @using FilePocket.BlazorClient.Helpers
 @using Microsoft.AspNetCore.Authorization
@@ -54,27 +57,51 @@
 
     @if (_note != null)
     {
-        <div class="row">
-            <div class="col-sm-5 d-flex align-items-center mb-3">
-                <div class="title-text-container">
-                    <span class="align-middle">@(Tools.TruncateString(_note?.Title!, 36))</span>
+        <div class="row note-header align-items-center mb-3">
+            <!-- Title -->
+            <div class="col-md-5">
+                <div class="note-header__title text-truncate" title="@_note?.Title">
+                    @Tools.TruncateString(_note?.Title!, 36)
                 </div>
             </div>
-            <div class="col-sm-6 align-items-center justify-content-evenly d-flex mb-3 note-attributes">
 
+            <!-- Timestamps -->
+            <div class="col-md-4 d-flex justify-content-evenly note-header__timestamps text-muted small">
                 <div>
-                    <strong>Created:</strong>@($" {_note!.CreatedAt}")
+                    <strong>Created:</strong> @_note!.CreatedAt.ToString("g")
                 </div>
                 <div>
-                    <strong>Updated:</strong>@($" {GetUpdatedDateValue(_note.UpdatedAt)}")
+                    <strong>Updated:</strong> @GetUpdatedDateValue(_note.UpdatedAt)
                 </div>
             </div>
-            <div class="col-sm-1 d-flex align-items-center justify-content-end mb-3 controls-container">
-                <button type="button" aria-label="Edit note" data-bs-original-title="Edit note" @onclick=@NavigateToEdit>
-                    <i class="bi bi-pencil-square"></i>
-                </button>
+
+            <!-- Controls -->
+            <div class="col-md-3 d-flex justify-content-end gap-2 note-header__controls">
+                @if (!_removalProcessStarted)
+                {
+                    <button class="btn btn-outline-primary btn-sm" title="Edit"
+                            @onclick="NavigateToEdit">
+                        <i class="bi bi-pencil-square"></i> Edit
+                    </button>
+                    <button class="btn btn-outline-danger btn-sm" title="Delete"
+                            @onclick="() => _removalProcessStarted = true">
+                        <i class="bi bi-trash"></i> Delete
+                    </button>
+                }
+                else
+                {
+                    <button class="btn btn-outline-danger btn-sm" title="Confirm"
+                            @onclick="MoveToTrashClick">
+                        <i class="bi bi-check-square"></i> Confirm
+                    </button>
+                    <button class="btn btn-outline-secondary btn-sm" title="Cancel"
+                            @onclick="() => _removalProcessStarted = false">
+                        <i class="bi bi-x-square"></i> Cancel
+                    </button>
+                }
             </div>
         </div>
+
         <div class="card py-3">
             <div class="card-body note-view" @ondblclick=@NavigateToEdit>
                 @((MarkupString)_note.Content)
@@ -107,13 +134,23 @@
     [Inject]
     private IUserRequests UserRequests { get; set; } = default!;
 
+    [Inject]
+    private ITrashRequests TrashRequests { get; set; } = default!;
+
+    [Inject]
+    private IStorageRequests StorageRequests { get; set; } = default!;
+
+    [Inject]
+    private StateContainer<StorageConsumptionModel> StorageStateContainer { get; set; } = default!;
+
+    public string _goBackUrl { get; set; }
     private NoteModel? _note;
     private Guid _userId = Guid.Empty;
     private const string DateTimePlaceholder = "--.--.---- --:--:--";
+    private bool _removalProcessStarted = false;
 
     protected override async Task OnParametersSetAsync()
     {
-
         var authState = await AuthStateProvider.GetAuthenticationStateAsync();
         var userName = authState.User.Identity?.Name!;
 
@@ -129,6 +166,15 @@
         {
             _note = await NoteRequests.GetByIdAsync(Id);
         }
+
+        InitGoBackUrl();
+    }
+
+    private void InitGoBackUrl()
+    {
+        _goBackUrl = FolderId is null
+               ? $"/pockets/{PocketId}/notes"
+               : $"/pockets/{PocketId}/folders/{FolderId}/notes";
     }
 
     private void NavigateToEdit()
@@ -141,5 +187,18 @@
     private static string GetUpdatedDateValue(DateTime? updatedAt)
     {
         return (updatedAt == null ? DateTimePlaceholder : updatedAt.ToString())!;
+    }
+
+    private async void MoveToTrashClick()
+    {
+
+        var result = await NoteRequests.DeleteAsync(Id);
+
+        if (result)
+        {
+            var storageConsumption = await StorageRequests.GetStorageConsumption();
+            StorageStateContainer.SetValue(storageConsumption!);
+            Navigation.NavigateTo(_goBackUrl);
+        }
     }
 }

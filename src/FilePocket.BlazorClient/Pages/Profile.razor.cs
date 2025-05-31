@@ -14,12 +14,8 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 using System.Collections.ObjectModel;
 using System.Net.Http.Headers;
-using System.Threading.Tasks;
-
-
 
 namespace FilePocket.BlazorClient.Pages;
-
 public partial class Profile : ComponentBase
 {
     private ProfileModel _profile = new();
@@ -43,7 +39,6 @@ public partial class Profile : ComponentBase
 
     protected override async Task OnInitializedAsync()
     {
-
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var uri = Navigation != null ? new Uri(Navigation.Uri) : throw new InvalidOperationException("Navigation is null");
         var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
@@ -57,13 +52,20 @@ public partial class Profile : ComponentBase
             _profile = await ProfileRequests.GetByUserIdAsync(userId);
             _defaultPocketId = (await PocketRequests.GetDefaultAsync()).Id;
 
-            if (_profile.IconId is not null && _profile.IconId != Guid.Empty)
+            try
             {
-                _avatar = await FileRequests.GetImageThumbnailAsync((Guid)_profile.IconId, 500);
+                if (_profile.IconId is not null && _profile.IconId != Guid.Empty)
+                {
+                    _avatar = await FileRequests.GetImageThumbnailAsync((Guid)_profile.IconId, 500);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error loading thumbnail: {ex.Message}");
+                _avatar = new FileModel { FileByteArray = null };
             }
         }
-    
-
+        
         _isLoading = false;
     }
 
@@ -76,7 +78,7 @@ public partial class Profile : ComponentBase
             UserName = authState.User.Identity?.Name!,
             FirstName = _profile.FirstName,
             LastName = _profile.LastName,
-            PhoneNumber = _profile.PhoneNumber,  
+            PhoneNumber = _profile.PhoneNumber,
             BirthDate = _profile.BirthDate,
             Language = _profile.Language ?? string.Empty,
         };
@@ -94,7 +96,7 @@ public partial class Profile : ComponentBase
             FirstName = _profile.FirstName,
             LastName = _profile.LastName,
             IconId = _profile.IconId,
-            PhoneNumber = _profile.PhoneNumber,  
+            PhoneNumber = _profile.PhoneNumber,
             BirthDate = _profile.BirthDate,
             Language = _profile.Language,
         };
@@ -107,7 +109,6 @@ public partial class Profile : ComponentBase
             var user = await UserRequests.GetByUserNameAsync(request.UserName);
             UserStateContainer.SetValue(user!);
         }
-        
 
         foreach (var key in editStates.Keys.ToList())
         {
@@ -254,30 +255,30 @@ public partial class Profile : ComponentBase
         { "LastName", false },
         { "PhoneNumber", false },
         { "BirthDate", false },
-        { "Language", false }
+        { "Language", false },
+        { "ProfileIcon", false }
     };
 
     private async Task ToggleEditState()
-{
-    if (editStates.Values.Any(v => v))
     {
-
-       await SaveChangesAsync(new MouseEventArgs());
-
-        var keys = editStates.Keys.ToList();
-        foreach (var key in keys)
+        if (editStates.Values.Any(v => v))
         {
-            editStates[key] = false;
+            await SaveChangesAsync(new MouseEventArgs());
+
+            var keys = editStates.Keys.ToList();
+            foreach (var key in keys)
+            {
+                editStates[key] = false;
+            }
         }
-    }
-    else
-    {
-        var keys = editStates.Keys.ToList();
-        foreach (var key in keys)
+        else
         {
-            editStates[key] = true;
+            var keys = editStates.Keys.ToList();
+            foreach (var key in keys)
+            {
+                editStates[key] = true;
+            }
         }
+        StateHasChanged();
     }
-    StateHasChanged();
-}
 }
