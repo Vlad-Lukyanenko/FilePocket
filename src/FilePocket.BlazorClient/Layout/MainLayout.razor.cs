@@ -21,15 +21,10 @@ public partial class MainLayout : IDisposable
 {
     private string? _iconName;
     LoggedInUserModel? _user;
-    private bool _menuOpen;
     private string? _icon;
-    private bool _render;
-    List<FolderModel>? _folders;
     private string? _parialNameToSearch;
-
     private StorageConsumptionModel _storageConsumption = new();
     private string _occupiedStorageSpacePercentage = "0";
-
     public required Dictionary<FileTypes, double> _occupiedSpaceByFileType;
 
     [Inject] AuthenticationStateProvider AuthStateProvider { get; set; } = default!;
@@ -72,20 +67,16 @@ public partial class MainLayout : IDisposable
                 var avatar = await FileRequests.GetImageThumbnailAsync((Guid)_user.Profile.IconId, 500);
                 _icon = Convert.ToBase64String(avatar.FileByteArray!);
             }
-
-            await GetDefaultFoldersAsync();
         }
 
         Navigation.LocationChanged += OnLocationChanged;
         UserStateContainer.OnStateChange += async () => await UpdateUserStateAsync();
         StorageStateContainer.OnStateChange += async () => await UpdateStorageStateAsync();
-        AppState.OnStateChange += async () => await GetDefaultFoldersAsync();
         NavigationHistory.AddToHistory(Navigation.Uri);
     }
 
     private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
     {
-        _menuOpen = false;
         NavigationHistory.AddToHistory(e.Location);
     }
 
@@ -94,7 +85,6 @@ public partial class MainLayout : IDisposable
         Navigation.LocationChanged -= OnLocationChanged;
         UserStateContainer.OnStateChange -= async () => await UpdateUserStateAsync();
         StorageStateContainer.OnStateChange -= async () => await UpdateStorageStateAsync();
-        AppState.OnStateChange -= async () => await GetDefaultFoldersAsync();
         GC.SuppressFinalize(this);
     }
 
@@ -156,14 +146,6 @@ public partial class MainLayout : IDisposable
         await JS.InvokeVoidAsync("destroyStorageChart");
         await DrawDoughnutChart();
         await InvokeAsync(StateHasChanged);
-    }
-
-    private bool _isFilesMenuOpen = true;
-
-    private void ToggleFilesMenu()
-    {
-        _isFilesMenuOpen = !_isFilesMenuOpen;
-        StateHasChanged();
     }
 
     private async Task GetOccupiedSpaceByFileType()
@@ -261,14 +243,6 @@ public partial class MainLayout : IDisposable
             {FileTypes.Note, 0.0},
             {FileTypes.Other, 0.0},
         };
-    }
-
-    private async Task GetDefaultFoldersAsync()
-    {
-        var defaulfPocket = await PocketRequests.GetDefaultAsync();
-        var folderTypes = new List<FolderType> { FolderType.Files, FolderType.Documents };
-        _folders = (await FolderRequests.GetAllAsync(defaulfPocket.Id, folderTypes, isSoftDeleted: false)).ToList();
-        StateHasChanged();
     }
 
     private void SearchByPartialName()
