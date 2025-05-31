@@ -4,16 +4,17 @@
 <!-- Top SubMenu -->
 <TopSubMenu Title="@($"Search results for '{PartialName}'")" ShowBackButton="true" />
 
-@if (_files.Any())
+@if (_files.Any() || _folders.Any() || _bookmarks.Any())
 {
     foreach (var t in _fileTypes)
     {
         var filesOfType = _files.Where(f => f.FileType == t);
+        var itemsCount = filesOfType.Count();
 
-        if (filesOfType.Count() > 0)
+        if (itemsCount > 0)
         {
             <div class="row  row-cols-1 text-center">
-                <h5 class="file-type-text-header">@($"{t.ToString()}s: {filesOfType.Count()}")</h5>
+                <h5 class="file-type-text-header">@($"{t.ToString()}s: {itemsCount}")</h5>
             </div>
             <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4 text-center justify-content-center">
 
@@ -21,16 +22,61 @@
                 {
                     <div class="card h-100 shadow-sm me-2 pt-2" style="width: 8em;">
                         <a class="file-link text-decoration-none" title="@f.OriginalName" href="@Tools.GetFileUrl(f.Id, f.PocketId, f.FolderId)">
-
                             <img src="./assets/img/fileTypes/@Tools.GetIconName(f.FileType!)" width="56" class="d-block mx-auto mb-3" alt="File icon" />
-
-                            <h6 class="card-title" style="font-size: 0.8em">@Tools.TruncateString(f.OriginalName!)</h6>
+                            <h6 class="card-title" style="font-size: 0.8em">
+                                @Tools.TruncateString(f.OriginalName!)
+                            </h6>
                         </a>
                     </div>
                 }
             </div>
             <hr class="mt-4 mb-4" />
         }
+    }
+
+    foreach (var t in _folderTypes)
+    {
+        var foldersOfType = _folders.Where(f => f.FolderType == t);
+        var itemsCount = foldersOfType.Count();
+
+        if (itemsCount > 0)
+        {
+            <div class="row  row-cols-1 text-center">
+                <h5 class="file-type-text-header">@($"Folders with {t.ToString()}: {itemsCount}")</h5>
+            </div>
+            <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4 text-center justify-content-center">
+
+                @foreach (var f in foldersOfType)
+                {
+                    <div class="card h-100 shadow-sm me-2 pt-2" style="width: 8em;">
+                        <a class="file-link text-decoration-none" title="@f.Name" href="@Tools.GetFolderUrl(f.PocketId, f.Id, f.FolderType)">
+                            <img src="./assets/img/folder.png" width="56" class="d-block mx-auto mb-3" alt="File icon" />
+                            <h6 class="card-title" style="font-size: 0.8em">
+                                @Tools.TruncateString(f.Name!)
+                            </h6>
+                        </a>
+                    </div>
+                }
+            </div>
+            <hr class="mt-4 mb-4" />
+        }
+    }
+
+    foreach (var b in _bookmarks)
+    {
+        <div class="row  row-cols-1 text-center">
+            <h5 class="file-type-text-header">@($"Bookmarks: {_bookmarks.Count()}")</h5>
+        </div>
+        <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4 text-center justify-content-center">
+            <div class="card h-100 shadow-sm me-2 pt-2" style="width: 8em;">
+                <a class="file-link text-decoration-none" title="@b.Title" href="@b.Url" target="_blank" rel="noreferrer">
+                    <img src="./assets/img/bookmark.png" width="56" class="d-block mx-auto mb-3" alt="File icon" />
+                    <h6 class="card-title" style="font-size: 0.8em">
+                        @Tools.TruncateString(b.Title!)
+                    </h6>
+                </a>
+            </div>
+        </div>
     }
 }
 else if (!_isLoading)
@@ -43,7 +89,7 @@ else if (!_isLoading)
 }
 
 <style>
-    .file-type-text-header{
+    .file-type-text-header {
         color: #6c63ff;
         font-weight: 600;
         font-size: 1.25em;

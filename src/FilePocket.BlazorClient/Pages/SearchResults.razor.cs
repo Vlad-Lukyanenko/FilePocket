@@ -2,6 +2,7 @@
 using FilePocket.BlazorClient.Features.Search.Enums;
 using FilePocket.BlazorClient.Features.Search.Models;
 using FilePocket.BlazorClient.Features.Search.Requests;
+using FilePocket.BlazorClient.Shared.Enums;
 using Microsoft.AspNetCore.Components;
 
 namespace FilePocket.BlazorClient.Pages
@@ -13,6 +14,7 @@ namespace FilePocket.BlazorClient.Pages
         private List<FolderSearchResponseModel> _folders = [];
         private List<BookmarkSearchResponseModel> _bookmarks = [];
         private readonly FileTypes[] _fileTypes = Enum.GetValues<FileTypes>();
+        private readonly FolderType[] _folderTypes = Enum.GetValues<FolderType>();
         private bool _isLoading = true;
 
         [Parameter] public string PartialName { get; set; } = string.Empty;

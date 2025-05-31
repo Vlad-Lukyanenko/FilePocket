@@ -10,7 +10,7 @@
         {
             <div class="card shadow-sm me-2 pt-2" style="width: 8em;">
                 @{
-                    var url = GetFolderUrl(PocketId, folder.Id, folder.FolderType);
+                    var url = Tools.GetFolderUrl(PocketId, folder.Id!.Value, folder.FolderType, IsSoftDeleted);
                 }
                 <a class="file-link text-decoration-none" title="@folder.Name" href="@url">
                     <img src="./assets/img/folder.png" width="64" class="d-block mx-auto mb-1" alt="Folder icon" />
@@ -32,35 +32,4 @@
 
     [Parameter]
     public bool IsSoftDeleted { get; set; }
-
-    private string GetFolderUrl(Guid? pocketId, Guid? folderId, FolderType folderType)
-    {
-        if (pocketId is null)
-        {
-            if (IsSoftDeleted)
-            {
-                return $"/folders/{folderId}/{GetEntitiesName(folderType)}/trash";
-            }
-
-            return $"/folders/{folderId}/{GetEntitiesName(folderType)}";
-        }
-
-        if (IsSoftDeleted)
-        {
-            return $"/pockets/{pocketId}/folders/{folderId}/{GetEntitiesName(folderType)}/trash";
-        }
-
-        return $"/pockets/{pocketId}/folders/{folderId}/{GetEntitiesName(folderType)}";
-
-    }
-
-    private string GetEntitiesName(FolderType folderType)
-    {
-        return folderType switch
-        {
-            FolderType.Bookmarks => "bookmarks",
-            FolderType.Notes => "notes",
-            _ => "files"
-        };
-    }
 }
