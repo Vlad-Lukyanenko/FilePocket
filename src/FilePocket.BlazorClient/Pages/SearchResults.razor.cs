@@ -16,6 +16,7 @@ namespace FilePocket.BlazorClient.Pages
         private readonly FileTypes[] _fileTypes = Enum.GetValues<FileTypes>();
         private readonly FolderType[] _folderTypes = Enum.GetValues<FolderType>();
         private bool _isLoading = true;
+        private const int ItemsToShowThreshold = 5;
 
         [Parameter] public string PartialName { get; set; } = string.Empty;
         [Inject] private ISearchRequests FileSearchRequests { get; set; } = default!;
@@ -27,6 +28,11 @@ namespace FilePocket.BlazorClient.Pages
             _folders = await FileSearchRequests.GetItemsByPartialNameAsync<FolderSearchResponseModel>(SearchItemType.Folder, PartialName) ?? [];
             _bookmarks = await FileSearchRequests.GetItemsByPartialNameAsync<BookmarkSearchResponseModel>(SearchItemType.Bookmark, PartialName) ?? [];
             _isLoading = false;
+        }
+
+        private static string GetCollapseClass(int itemsCount)
+        {
+            return itemsCount > ItemsToShowThreshold ? "collapse" : "collapse show";
         }
     }
 }
