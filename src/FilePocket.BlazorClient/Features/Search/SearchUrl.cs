@@ -5,5 +5,5 @@ namespace FilePocket.BlazorClient.Features.Search;
 public static class SearchUrl
 {
     public static string GeItemsByPartialName(SearchItemType itemType,  string partialName) 
-        => $"api/{itemType}-search/{partialName}";
+        => $"api/{itemType.ToString().ToLower()}-search/{partialName}";
 }
