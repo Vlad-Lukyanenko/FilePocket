@@ -17,7 +17,7 @@ namespace FilePocket.BlazorClient.MyComponents
         [Parameter]
         public Guid? UserId { get; set; }
 
-        [Parameter] 
+        [Parameter]
         public Guid? PocketId { get; set; }
 
 

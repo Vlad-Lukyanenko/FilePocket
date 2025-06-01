@@ -18,8 +18,7 @@ namespace FilePocket.WebApi.Endpoints.Notes
         public override void Configure()
         {
             Verbs(Http.Get);
-            Routes("api/folders/{folderId:guid}/notes");
-            Routes("api/notes");
+            Routes("api/folders/{folderId:guid}/notes", "api/notes");
             AuthSchemes("Bearer");
         }
 

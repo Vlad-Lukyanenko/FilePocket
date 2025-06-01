@@ -20,10 +20,9 @@ public partial class MainLayout : IDisposable
     private string? _iconName;
     LoggedInUserModel? _user;
     private string? _icon;
-
+    private string? _parialNameToSearch;
     private StorageConsumptionModel _storageConsumption = new();
     private string _occupiedStorageSpacePercentage = "0";
-
     public required Dictionary<FileTypes, double> _occupiedSpaceByFileType;
 
     [Inject] AuthenticationStateProvider AuthStateProvider { get; set; } = default!;
@@ -274,5 +273,17 @@ public partial class MainLayout : IDisposable
             {FileTypes.Note, 0.0},
             {FileTypes.Other, 0.0},
         };
+    }
+
+    private void SearchByPartialName()
+    {
+        var partialName = _parialNameToSearch?.Trim();
+
+        if (!string.IsNullOrEmpty(partialName))
+        {
+            Console.WriteLine(partialName);
+            Navigation.NavigateTo($"/search-results/{partialName}");
+        }
+        _parialNameToSearch = null;
     }
 }

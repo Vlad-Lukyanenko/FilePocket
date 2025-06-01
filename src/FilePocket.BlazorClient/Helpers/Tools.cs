@@ -1,4 +1,5 @@
 ﻿using FilePocket.BlazorClient.Features.Files.Models;
+using FilePocket.BlazorClient.Shared.Enums;
 
 namespace FilePocket.BlazorClient.Helpers
 {
@@ -131,5 +132,58 @@ namespace FilePocket.BlazorClient.Helpers
                 _ => "application/octet-stream", // Default MIME type
             };
         }
+
+        public static string GetFileUrl(Guid fileId, Guid? pocketId, Guid? folderId)
+        {
+            if (pocketId is null && folderId is null)
+            {
+                return $"/files/{fileId}";
+            }
+
+            if (pocketId is null)
+            {
+                return $"/folders/{folderId}/files/{fileId}";
+            }
+
+            if (folderId is null)
+            {
+                return $"/pockets/{pocketId}/files/{fileId}";
+            }
+
+            return $"/pockets/{pocketId}/folders/{folderId}/files/{fileId}";
+        }
+
+        public static string GetFolderUrl(Guid? pocketId, Guid folderId, FolderType folderType, bool isSoftDeleted = false)
+        {
+            if (pocketId is null)
+            {
+                if (isSoftDeleted)
+                {
+                    return $"/folders/{folderId}/{GetEntitiesName(folderType)}/trash";
+                }
+
+                return $"/folders/{folderId}/{GetEntitiesName(folderType)}";
+            }
+
+            if (isSoftDeleted)
+            {
+                return $"/pockets/{pocketId}/folders/{folderId}/{GetEntitiesName(folderType)}/trash";
+            }
+
+            return $"/pockets/{pocketId}/folders/{folderId}/{GetEntitiesName(folderType)}";
+
+        }
+
+        private static string GetEntitiesName(FolderType folderType)
+        {
+            return folderType switch
+            {
+                FolderType.Bookmarks => "bookmarks",
+                FolderType.Notes => "notes",
+                _ => "files"
+            };
+        }
     }
+
+
 }
