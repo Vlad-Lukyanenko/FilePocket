@@ -84,7 +84,7 @@
                                 <strong class="body-main-text">Url:</strong>
                                 @if (bookmark.Id != _bookmarkIdToBeUpdated)
                                 {
-                                    <a href="@(bookmark.Url)" class="body-text">@Tools.TruncateString(bookmark.Url)</a>
+                                    <a href="@(Tools.CompleteUrl(bookmark.Url))" class="body-text" target="_blank" rel="noreferrer">@Tools.TruncateString(bookmark.Url)</a>
                                 } 
                                 else
                                 {

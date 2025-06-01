@@ -1,5 +1,6 @@
 ﻿using FilePocket.BlazorClient.Features.Files.Models;
 using FilePocket.BlazorClient.Shared.Enums;
+using System.Text.RegularExpressions;
 
 namespace FilePocket.BlazorClient.Helpers
 {
@@ -178,6 +179,13 @@ namespace FilePocket.BlazorClient.Helpers
 
             return $"/pockets/{pocketId}/folders/{folderId}/{GetEntitiesName(folderType)}";
 
+        }
+
+        public static string CompleteUrl(string url)
+        {
+            var match = Regex.IsMatch(url, @"^[a-zA-Z]*:\/\/");
+            
+            return match ? url : string.Concat("https://", url);
         }
 
         private static string GetEntitiesName(FolderType folderType)
