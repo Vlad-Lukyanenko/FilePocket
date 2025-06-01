@@ -133,7 +133,7 @@ namespace FilePocket.BlazorClient.Helpers
             };
         }
 
-        public static string GetFileUrl(Guid fileId, Guid? pocketId, Guid? folderId)
+        public static string GetFileUrl(Guid fileId, Guid? pocketId, Guid? folderId, FileTypes? type = default)
         {
             if (pocketId is null && folderId is null)
             {
@@ -145,12 +145,18 @@ namespace FilePocket.BlazorClient.Helpers
                 return $"/folders/{folderId}/files/{fileId}";
             }
 
+            var fileType = type switch
+            {
+                FileTypes.Note => "notes",
+                _ => "files"
+            };
+
             if (folderId is null)
             {
-                return $"/pockets/{pocketId}/files/{fileId}";
+                return $"/pockets/{pocketId}/{fileType}/{fileId}";
             }
 
-            return $"/pockets/{pocketId}/folders/{folderId}/files/{fileId}";
+            return $"/pockets/{pocketId}/folders/{folderId}/{fileType}/{fileId}";
         }
 
         public static string GetFolderUrl(Guid? pocketId, Guid folderId, FolderType folderType, bool isSoftDeleted = false)
