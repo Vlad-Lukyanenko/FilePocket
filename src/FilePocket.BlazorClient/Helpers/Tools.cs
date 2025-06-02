@@ -45,6 +45,7 @@ namespace FilePocket.BlazorClient.Helpers
                 FileTypes.Font => "font.png",
                 FileTypes.Other => "other.png",
                 FileTypes.Text => "txt-file.png",
+                FileTypes.Note => "note.png",
                 _ => "other.png",
             };
         }
