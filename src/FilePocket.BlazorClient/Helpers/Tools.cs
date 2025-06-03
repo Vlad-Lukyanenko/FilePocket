@@ -1,5 +1,6 @@
 ﻿using FilePocket.BlazorClient.Features.Files.Models;
 using FilePocket.BlazorClient.Shared.Enums;
+using System.Text.RegularExpressions;
 
 namespace FilePocket.BlazorClient.Helpers
 {
@@ -44,6 +45,7 @@ namespace FilePocket.BlazorClient.Helpers
                 FileTypes.Font => "font.png",
                 FileTypes.Other => "other.png",
                 FileTypes.Text => "txt-file.png",
+                FileTypes.Note => "note.png",
                 _ => "other.png",
             };
         }
@@ -133,7 +135,7 @@ namespace FilePocket.BlazorClient.Helpers
             };
         }
 
-        public static string GetFileUrl(Guid fileId, Guid? pocketId, Guid? folderId)
+        public static string GetFileUrl(Guid fileId, Guid? pocketId, Guid? folderId, FileTypes? type = default)
         {
             if (pocketId is null && folderId is null)
             {
@@ -145,12 +147,18 @@ namespace FilePocket.BlazorClient.Helpers
                 return $"/folders/{folderId}/files/{fileId}";
             }
 
+            var fileType = type switch
+            {
+                FileTypes.Note => "notes",
+                _ => "files"
+            };
+
             if (folderId is null)
             {
-                return $"/pockets/{pocketId}/files/{fileId}";
+                return $"/pockets/{pocketId}/{fileType}/{fileId}";
             }
 
-            return $"/pockets/{pocketId}/folders/{folderId}/files/{fileId}";
+            return $"/pockets/{pocketId}/folders/{folderId}/{fileType}/{fileId}";
         }
 
         public static string GetFolderUrl(Guid? pocketId, Guid folderId, FolderType folderType, bool isSoftDeleted = false)
@@ -172,6 +180,13 @@ namespace FilePocket.BlazorClient.Helpers
 
             return $"/pockets/{pocketId}/folders/{folderId}/{GetEntitiesName(folderType)}";
 
+        }
+
+        public static string CompleteUrl(string url)
+        {
+            var match = Regex.IsMatch(url, @"^[a-zA-Z]*:\/\/");
+            
+            return match ? url : string.Concat("https://", url);
         }
 
         private static string GetEntitiesName(FolderType folderType)

@@ -6,7 +6,6 @@ using FilePocket.BlazorClient.Features.Users.Requests;
 using FilePocket.BlazorClient.Helpers;
 using FilePocket.BlazorClient.Services.Files.Models;
 using FilePocket.BlazorClient.Services.Files.Requests;
-using FilePocket.BlazorClient.Services.Folders.Requests;
 using FilePocket.BlazorClient.Services.Pockets.Requests;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -24,18 +23,15 @@ public partial class MainLayout : IDisposable
     private StorageConsumptionModel _storageConsumption = new();
     private string _occupiedStorageSpacePercentage = "0";
     public required Dictionary<FileTypes, double> _occupiedSpaceByFileType;
+    private string _displayUserName = string.Empty;
 
     [Inject] AuthenticationStateProvider AuthStateProvider { get; set; } = default!;
     [Inject] IUserRequests UserRequests { get; set; } = default!;
     [Inject] private IFileRequests FileRequests { get; set; } = default!;
     [Inject] private IPocketRequests PocketRequests { get; set; } = default!;
-    [Inject] private IFolderRequests FolderRequests { get; set; } = default!;
     [Inject] private IStorageRequests StorageRequests { get; set; } = default!;
     [Inject] private StateContainer<LoggedInUserModel> UserStateContainer { get; set; } = default!;
     [Inject] private StateContainer<StorageConsumptionModel> StorageStateContainer { get; set; } = default!;
-    [Inject] private AppState AppState { get; set; } = default!;
-
-    private string _displayUserName = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
@@ -69,7 +65,7 @@ public partial class MainLayout : IDisposable
 
     private async Task ShowAvatar()
     {
-        var firstName = string.IsNullOrEmpty(_user.FirstName) ? string.Empty : _user.FirstName.AsSpan(0, 1);
+        var firstName = string.IsNullOrEmpty(_user!.FirstName) ? string.Empty : _user.FirstName.AsSpan(0, 1);
         var lastName = string.IsNullOrEmpty(_user.LastName) ? string.Empty : _user.LastName.AsSpan(0, 1);
         _iconName = string.Concat(firstName, lastName).ToUpper();
 

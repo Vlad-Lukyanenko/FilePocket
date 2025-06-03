@@ -31,7 +31,7 @@
                     @foreach (var f in filesOfType)
                     {
                         <div class="card h-100 shadow-sm me-2 pt-2" style="width: 8em;">
-                            <a class="file-link text-decoration-none" title="@f.OriginalName" href="@Tools.GetFileUrl(f.Id, f.PocketId, f.FolderId)">
+                            <a class="file-link text-decoration-none" title="@f.OriginalName" href="@Tools.GetFileUrl(f.Id, f.PocketId, f.FolderId, f.FileType)">
                                 <img src="./assets/img/fileTypes/@Tools.GetIconName(f.FileType!)" width="56" class="d-block mx-auto mb-3" alt="File icon" />
                                 <h6 class="card-title" style="font-size: 0.8em">
                                     @Tools.TruncateString(f.OriginalName!)
@@ -102,7 +102,7 @@
         <div class="@GetCollapseClass(_bookmarks.Count())" id="@($"collapseBookmarks")">
             <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4 text-center justify-content-center">
                 <div class="card h-100 shadow-sm me-2 pt-2" style="width: 8em;">
-                    <a class="file-link text-decoration-none" title="@b.Title" href="@b.Url" target="_blank" rel="noreferrer">
+                    <a class="file-link text-decoration-none" title="@b.Title" href="@Tools.CompleteUrl(b.Url)" target="_blank" rel="noreferrer">
                         <img src="./assets/img/bookmark.png" width="56" class="d-block mx-auto mb-3" alt="File icon" />
                         <h6 class="card-title" style="font-size: 0.8em">
                             @Tools.TruncateString(b.Title!)
