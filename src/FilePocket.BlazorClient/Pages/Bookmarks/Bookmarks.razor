@@ -60,6 +60,7 @@
         @if (_bookmarks.Any())
         {
             <div class="card-container">
+                
                 @foreach (var bookmark in _bookmarks)
                 {
                     <div class="my-card mb-3 shadow">
@@ -69,6 +70,7 @@
                                 <i class="fs-4 bi-bookmark"></i>
                                 @if (bookmark.Id != _bookmarkIdToBeUpdated)
                                 {
+                                    @* <img src="./assets/img/bookmark.png" width="56" class="d-block mx-auto mb-3" alt="File icon" /> *@
                                     <span class="me-2">@Tools.TruncateString(bookmark.Title)</span>
                                 }
                                 else

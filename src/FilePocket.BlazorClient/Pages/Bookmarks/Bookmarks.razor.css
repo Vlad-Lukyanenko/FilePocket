@@ -1,6 +1,12 @@
-﻿.my-card {
+﻿
+.my-card {
+    background-image: url(../assets/img/bookmark.png);
+    background-position: center;
+    background-size: cover;
+    aspect-ratio: 9 / 9.5;
+    max-width: 250px;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-    background-color: #ffffff;
+    /* background-color: #ffffff; */
     border: none;
     border-radius: 0.8em;
     overflow: hidden;
@@ -12,14 +18,14 @@
     }
 
 .my-card-header {
-    background-color: #165887;
-    color: #ffffff;
+    /* background-color: #165887;
+    color: #ffffff; */
     text-align: center;
     padding: 0.5rem;
 }
 
 .my-card-body {
-    background-color: #ffffff;
+    /* background-color: #ffffff; */
     padding: 1rem;
 }
 
@@ -47,7 +53,7 @@
 
 .card-footer {
     border-top: 1px solid #f0f0f0;
-    background-color: #ffffff;
+    /* background-color: #ffffff; */
     padding: 1rem;
 }
 
