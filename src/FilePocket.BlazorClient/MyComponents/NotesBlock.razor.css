@@ -37,10 +37,10 @@
     border-color: silver;
 }
 
-.noteStyle {
+/* .noteStyle {
     background-image: url(../assets/img/note.png);
     background-position: center;
     background-size: cover;
     aspect-ratio: 9 / 9.5;
     max-width: 250px;
-}
+} */
