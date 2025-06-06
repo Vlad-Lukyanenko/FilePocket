@@ -40,7 +40,6 @@
 
                         </a>
                     </li>
-
                     <li class="nav-item flex-fill flex-md-grow-0">
                             <a href="/files" class="nav-link text-dark px-2 @(IsActive("/files"))">
                                 <div class="d-flex align-items-center justify-content-center justify-content-md-start">
@@ -94,7 +93,6 @@
                             </div>
                         </a>
                     </li>
-
                     <li class="nav-item flex-fill flex-md-grow-0">
                         <a href="/trash" class="nav-link text-dark px-2 @(IsActive("/trash"))">
                             <div class="d-flex align-items-center justify-content-center justify-content-md-start">
@@ -117,7 +115,7 @@
                         <div class="collapse navbar-collapse">
                             <div class="d-flex flex-column flex-md-row align-items-center ms-auto gap-3">
                                 <!-- Search Form -->
-                                <form class="d-flex" role="search" @onsubmit="SearchByPartialName" >
+				                <form class="d-flex" role="search" @onsubmit="SearchByPartialName" >
                                     <div class="search-container">
                                         <input class="search-box" type="text" @bind-value="_parialNameToSearch" placeholder="Search for..."/>
                                         <button class="search-button" type="submit">
@@ -136,7 +134,7 @@
                             </a>
 
                             <div class="d-flex justify-content-between align-items-center ">
-                                <form class="d-flex" role="search" @onsubmit="SearchByPartialName">
+				                <form class="d-flex" role="search" @onsubmit="SearchByPartialName">
                                     <div class="search-container">
                                         <input class="search-box form-control" type="text" @bind-value="_parialNameToSearch" placeholder="Search for..."/>
                                         <button class="search-button">
@@ -149,9 +147,7 @@
                                     <span class="navbar-toggler-icon"></span>
                                 </button>
                             </div>
-
                         </div>
-
                     </div>
                 </header>
 
