@@ -69,9 +69,6 @@
                     <i class="bi bi-folder-plus fs-4"></i>
                 </a>
 
-                @* <button class="btn @(_rmBtnDisabled ? "btn-outline-secondary" : "btn-outline-danger") ms-auto p-0 ps-2 pe-2" disabled="@_rmBtnDisabled" @onclick="DeleteSelectedFiles">
-                    <i class="bi bi-trash fs-4"></i>
-                </button> *@
                 <div style="display: flex; justify-content: flex-end; width: 100%; gap: 8px;">
                     @if (FolderId is not null)
                     {
@@ -83,7 +80,7 @@
                                     @onclick="DeleteFolderClick">
                                 <i class="bi-check-square fs-6"></i> Confirm
                             </button>
-                            <button class="btn btn-sm btn-outline-secondary p-1"
+                            <button class="btn btn-sm btn-outline-primary p-1"
                                     style="border-radius: 10px; min-width: 6em;"
                                     title="Cancel"
                                     @onclick="() => _removalProcessStarted = false">
@@ -105,17 +102,30 @@
 
         <br />
 
-        @if (!_folders.Any() && !_files.Any())
+        @if (_isLoading)
         {
-            <div class="text-center no-content">
-                <h6>It looks like you haven't uploaded any files yet. <br /> Would you like to upload one now?</h6>
+            <div class="container-fluid w-100 h-100 text-center p-4 d-flex justify-content-center align-items-center">
+                <div class="spinner-grow" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
             </div>
         }
         else
         {
-            <FoldersBlock Folders="_folders" PocketId="PocketId"></FoldersBlock>
-            <FilesBlock Files="_files" />
+            @if (!_folders.Any() && !_files.Any())
+            {
+                <div class="text-center no-content">
+                    <h6>It looks like you haven't uploaded any files yet. <br /> Would you like to upload one now?</h6>
+                </div>
+            }
+            else
+            {
+                <FoldersBlock Folders="_folders" PocketId="PocketId"></FoldersBlock>
+                <div class="mb-4">&nbsp;</div>
+                <FilesBlock Files="_files" />
+            }
         }
+
 
         <!-- Error Block -->
         @if (_fileUploadErrors.Any())

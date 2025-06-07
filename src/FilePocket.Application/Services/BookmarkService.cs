@@ -91,6 +91,13 @@ public class BookmarkService : IBookmarkService
         return bookmark;
     }
 
+    public async Task<IEnumerable<BookmarkSearchResponseModel>> SearchAsync(Guid userId, string partialName)
+    {
+        var bookmarks = await _repository.Bookmark.GetBookmarksByPartialNameAsync(userId, partialName, trackChanges: false);
+
+        return _mapper.Map<List<BookmarkSearchResponseModel>>(bookmarks);
+    }
+
     public async Task DeleteAllBookmarksAsync(Guid userId)
     {
         var bookmarks = _repository.Bookmark.GetAll(userId, true, true);

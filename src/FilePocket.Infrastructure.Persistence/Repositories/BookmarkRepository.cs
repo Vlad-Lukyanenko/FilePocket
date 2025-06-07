@@ -43,4 +43,10 @@ public class BookmarkRepository : RepositoryBase<Bookmark>, IBookmarkRepository
     { 
         DeleteAll(bookmarks);
     }
+
+    public async Task<List<Bookmark>> GetBookmarksByPartialNameAsync(Guid userId, string partialName, bool trackChanges = false)
+    {
+        return (await FindByCondition(f => f.UserId.Equals(userId) && f.Title.ToLower().Contains(partialName.ToLower()), trackChanges)
+            .ToListAsync());
+    }
 }

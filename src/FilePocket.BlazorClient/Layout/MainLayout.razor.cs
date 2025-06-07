@@ -1,5 +1,4 @@
-using FilePocket.BlazorClient.Features.Files.Models;
-using FilePocket.BlazorClient.Features.Folders.Models;
+﻿using FilePocket.BlazorClient.Features.Files.Models;
 using FilePocket.BlazorClient.Features.Storage.Models;
 using FilePocket.BlazorClient.Features.Storage.Requests;
 using FilePocket.BlazorClient.Features.Users.Models;
@@ -7,9 +6,7 @@ using FilePocket.BlazorClient.Features.Users.Requests;
 using FilePocket.BlazorClient.Helpers;
 using FilePocket.BlazorClient.Services.Files.Models;
 using FilePocket.BlazorClient.Services.Files.Requests;
-using FilePocket.BlazorClient.Services.Folders.Requests;
 using FilePocket.BlazorClient.Services.Pockets.Requests;
-using FilePocket.BlazorClient.Shared.Enums;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Routing;
@@ -21,70 +18,91 @@ public partial class MainLayout : IDisposable
 {
     private string? _iconName;
     LoggedInUserModel? _user;
-    private bool _menuOpen;
     private string? _icon;
-    private bool _render;
-    List<FolderModel>? _folders;
-
+    private string? _parialNameToSearch;
     private StorageConsumptionModel _storageConsumption = new();
     private string _occupiedStorageSpacePercentage = "0";
-
     public required Dictionary<FileTypes, double> _occupiedSpaceByFileType;
+    private string _displayUserName = string.Empty;
 
     [Inject] AuthenticationStateProvider AuthStateProvider { get; set; } = default!;
     [Inject] IUserRequests UserRequests { get; set; } = default!;
     [Inject] private IFileRequests FileRequests { get; set; } = default!;
     [Inject] private IPocketRequests PocketRequests { get; set; } = default!;
-    [Inject] private IFolderRequests FolderRequests { get; set; } = default!;
     [Inject] private IStorageRequests StorageRequests { get; set; } = default!;
     [Inject] private StateContainer<LoggedInUserModel> UserStateContainer { get; set; } = default!;
     [Inject] private StateContainer<StorageConsumptionModel> StorageStateContainer { get; set; } = default!;
-    [Inject] private AppState AppState { get; set; } = default!;
 
     protected override async Task OnInitializedAsync()
     {
         var authState = await AuthStateProvider.GetAuthenticationStateAsync();
-        var userName = authState.User.Identity?.Name!;
+        var user = authState.User;
 
-        _user = await UserRequests.GetByUserNameAsync(userName);
+        if (user.Identity is { IsAuthenticated: true })
+        {
+            var userName = user.Identity?.Name;
 
-        if (_user is not null)
+            if (!string.IsNullOrEmpty(userName))
+            {
+                _user = await UserRequests.GetByUserNameAsync(userName);
+
+                if (_user is not null)
+                {
+                    _displayUserName = GetDisplayedName();
+                    StateHasChanged();
+
+                    _ = ShowAvatar();
+                    _ = LoadStorageAndDrawChartAsync();
+                }
+            }
+        }
+
+        Navigation.LocationChanged += OnLocationChanged;
+        UserStateContainer.OnStateChange += async () => await UpdateUserStateAsync();
+        StorageStateContainer.OnStateChange += async () => await UpdateStorageStateAsync();
+        NavigationHistory.AddToHistory(Navigation.Uri);
+    }
+
+    private async Task ShowAvatar()
+    {
+        var firstName = string.IsNullOrEmpty(_user!.FirstName) ? string.Empty : _user.FirstName.AsSpan(0, 1);
+        var lastName = string.IsNullOrEmpty(_user.LastName) ? string.Empty : _user.LastName.AsSpan(0, 1);
+        _iconName = string.Concat(firstName, lastName).ToUpper();
+
+        if (_iconName.Length == 0 && !string.IsNullOrEmpty(_user.UserName))
+        {
+            _iconName = _user.UserName[..1].ToUpper();
+        }
+
+        if (_user.Profile is not null && _user.Profile.IconId is not null && _user.Profile.IconId != Guid.Empty)
+        {
+            var avatar = await FileRequests.GetImageThumbnailAsync((Guid)_user.Profile.IconId, 500);
+            _icon = Convert.ToBase64String(avatar.FileByteArray!);
+        }
+
+        StateHasChanged();
+    }
+
+    private async Task LoadStorageAndDrawChartAsync()
+    {
+        try
         {
             _storageConsumption = await StorageRequests.GetStorageConsumption();
             GetStorageConsumptionInPercantage();
             await GetOccupiedSpaceByFileType();
             GetSizeForStorageItems();
             await DrawDoughnutChart();
-            StateHasChanged();
-
-            var fisrtName = string.IsNullOrEmpty(_user.FirstName) ? string.Empty : _user.FirstName.AsSpan(0, 1);
-            var lastName = string.IsNullOrEmpty(_user.LastName) ? string.Empty : _user.LastName.AsSpan(0, 1);
-            _iconName = string.Concat(fisrtName, lastName).ToUpper();
-
-            if (_iconName.Length == 0)
-            {
-                _iconName = _user!.UserName![..1].ToUpper();
-            }
-
-            if (_user.Profile!.IconId is not null && _user.Profile!.IconId != Guid.Empty)
-            {
-                var avatar = await FileRequests.GetImageThumbnailAsync((Guid)_user.Profile.IconId, 500);
-                _icon = Convert.ToBase64String(avatar.FileByteArray!);
-            }
-
-            await GetDefaultFoldersAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"Failed to Draw Doughnut Chart: {ex.Message}");
         }
 
-        Navigation.LocationChanged += OnLocationChanged;
-        UserStateContainer.OnStateChange += async () => await UpdateUserStateAsync();
-        StorageStateContainer.OnStateChange += async () => await UpdateStorageStateAsync();
-        AppState.OnStateChange += async () => await GetDefaultFoldersAsync();
-        NavigationHistory.AddToHistory(Navigation.Uri);
+        StateHasChanged();
     }
 
     private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
     {
-        _menuOpen = false;
         NavigationHistory.AddToHistory(e.Location);
     }
 
@@ -93,7 +111,6 @@ public partial class MainLayout : IDisposable
         Navigation.LocationChanged -= OnLocationChanged;
         UserStateContainer.OnStateChange -= async () => await UpdateUserStateAsync();
         StorageStateContainer.OnStateChange -= async () => await UpdateStorageStateAsync();
-        AppState.OnStateChange -= async () => await GetDefaultFoldersAsync();
         GC.SuppressFinalize(this);
     }
 
@@ -126,7 +143,7 @@ public partial class MainLayout : IDisposable
             return $"{_user.FirstName} {_user.LastName}";
         }
 
-        return string.IsNullOrEmpty(_user.FirstName) ? _user.LastName! : _user.FirstName;
+        return _user.Email!;
     }
 
     private async Task UpdateUserStateAsync()
@@ -155,14 +172,6 @@ public partial class MainLayout : IDisposable
         await JS.InvokeVoidAsync("destroyStorageChart");
         await DrawDoughnutChart();
         await InvokeAsync(StateHasChanged);
-    }
-
-    private bool _isFilesMenuOpen = true;
-
-    private void ToggleFilesMenu()
-    {
-        _isFilesMenuOpen = !_isFilesMenuOpen;
-        StateHasChanged();
     }
 
     private async Task GetOccupiedSpaceByFileType()
@@ -262,11 +271,15 @@ public partial class MainLayout : IDisposable
         };
     }
 
-    private async Task GetDefaultFoldersAsync()
+    private void SearchByPartialName()
     {
-        var defaulfPocket = await PocketRequests.GetDefaultAsync();
-        var folderTypes = new List<FolderType> { FolderType.Files, FolderType.Documents };
-        _folders = (await FolderRequests.GetAllAsync(defaulfPocket.Id, folderTypes, isSoftDeleted: false)).ToList();
-        StateHasChanged();
+        var partialName = _parialNameToSearch?.Trim();
+
+        if (!string.IsNullOrEmpty(partialName))
+        {
+            Console.WriteLine(partialName);
+            Navigation.NavigateTo($"/search-results/{partialName}");
+        }
+        _parialNameToSearch = null;
     }
 }

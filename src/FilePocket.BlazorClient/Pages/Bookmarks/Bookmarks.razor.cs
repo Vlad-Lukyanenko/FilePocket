@@ -43,10 +43,10 @@ public partial class Bookmarks
         }
 
         _currentFolder = FolderId is null ? null : await FolderRequests.GetAsync(PocketId, FolderId.Value);
-        var currentFolderName = _currentFolder is null ? string.Empty : $" - {_currentFolder.Name}";
+        var currentFolderName = _currentFolder is null ? string.Empty : $" / {_currentFolder.Name}";
         var currentFolderUrl = FolderId is null ? "" : $"{FolderId}/";
 
-        _pageTitle = $"My bookmarks{currentFolderName}";
+        _pageTitle = $"Bookmarks{currentFolderName}";
 
         _createFolderUrl = $"/pockets/{PocketId}/folders/{currentFolderUrl}{(int)FolderType.Bookmarks}/new";
 

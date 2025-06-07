@@ -17,7 +17,7 @@ namespace FilePocket.BlazorClient.MyComponents
         [Parameter]
         public Guid? UserId { get; set; }
 
-        [Parameter] 
+        [Parameter]
         public Guid? PocketId { get; set; }
 
 
@@ -48,7 +48,7 @@ namespace FilePocket.BlazorClient.MyComponents
         private ObservableCollection<NoteModel>? _notes;
         private ObservableCollection<FolderModel>? _folders;
         private bool _removalProcessStarted;
-
+        private bool _isLoading = true;
 
         protected override async Task OnInitializedAsync()
         {
@@ -60,6 +60,9 @@ namespace FilePocket.BlazorClient.MyComponents
             }
 
             await InitPage();
+
+            _isLoading = false;
+
             StateHasChanged();
         }
 

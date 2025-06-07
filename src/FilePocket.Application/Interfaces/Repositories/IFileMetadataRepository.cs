@@ -23,4 +23,6 @@ public interface IFileMetadataRepository
     void CreateFileMetadata(FileMetadata fileMetadata);
 
     void DeleteFileMetadata(FileMetadata fileMetadata);
+
+    Task<List<FileMetadata>> GetFileMetadataByPartialNameAsync(Guid userId, string partialName, bool trackChanges = false);
 }

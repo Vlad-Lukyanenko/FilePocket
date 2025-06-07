@@ -1,0 +1,143 @@
+﻿@page "/search-results/{partialName}"
+@using FilePocket.BlazorClient.Helpers
+
+<!-- Top SubMenu -->
+<TopSubMenu Title="@($"Search results for '{PartialName}'")" ShowBackButton="true" />
+
+@if (_files.Any() || _folders.Any() || _bookmarks.Any())
+{
+    <!-- Search results for Files / Notes -->
+    foreach (var t in _fileTypes)
+    {
+        var filesOfType = _files.Where(f => f.FileType == t);
+        var itemsCount = filesOfType.Count();
+
+        if (itemsCount > 0)
+        {
+            <div class="row row-cols-1 text-center">
+                <h5 class="file-type-text-header">
+                    <a class="collapse-toggle"
+                       data-bs-toggle="collapse"
+                       role="button"
+                       aria-expanded="false"
+                       aria-controls="@($"collapse{t}s")"
+                       href="@($"#collapse{t}s")">
+                        @($"{t.ToString()}s: {itemsCount}")
+                    </a>
+                </h5>
+            </div>
+            <div class="@GetCollapseClass(itemsCount)" id="@($"collapse{t}s")">
+                <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4 text-center justify-content-center">
+                    @foreach (var f in filesOfType)
+                    {
+                        <div class="card h-100 shadow-sm me-2 pt-2" style="width: 8em;">
+                            <a class="file-link text-decoration-none" title="@f.OriginalName" href="@Tools.GetFileUrl(f.Id, f.PocketId, f.FolderId, f.FileType)">
+                                <img src="./assets/img/fileTypes/@Tools.GetIconName(f.FileType!)" width="56" class="d-block mx-auto mb-3" alt="File icon" />
+                                <h6 class="card-title" style="font-size: 0.8em">
+                                    @Tools.TruncateString(f.OriginalName!)
+                                </h6>
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+            <hr class="mt-4 mb-4" />
+        }
+    }
+
+    <!-- Search results for Folders -->
+    foreach (var t in _folderTypes)
+    {
+        var foldersOfType = _folders.Where(f => f.FolderType == t);
+        var itemsCount = foldersOfType.Count();
+
+        if (itemsCount > 0)
+        {
+            <div class="row  row-cols-1 text-center">
+                <h5 class="file-type-text-header">
+                    <a class="collapse-toggle"
+                       data-bs-toggle="collapse"
+                       role="button"
+                       aria-expanded="false"
+                       aria-controls="@($"collapse{t}")"
+                       href="@($"#collapse{t}")">
+                        @($"Folders with {t.ToString()}: {itemsCount}")
+                    </a>
+                </h5>
+            </div>
+            <div class="@GetCollapseClass(itemsCount)" id="@($"collapse{t}")">
+                <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4 text-center justify-content-center">
+                    @foreach (var f in foldersOfType)
+                    {
+                        <div class="card h-100 shadow-sm me-2 pt-2" style="width: 8em;">
+                            <a class="file-link text-decoration-none" title="@f.Name" href="@Tools.GetFolderUrl(f.PocketId, f.Id, f.FolderType)">
+                                <img src="./assets/img/folder.png" width="56" class="d-block mx-auto mb-3" alt="File icon" />
+                                <h6 class="card-title" style="font-size: 0.8em">
+                                    @Tools.TruncateString(f.Name!)
+                                </h6>
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+            <hr class="mt-4 mb-4" />
+        }
+    }
+
+    <!-- Search results for Bookmarks -->
+    foreach (var b in _bookmarks)
+    {
+        <div class="row  row-cols-1 text-center">
+            <h5 class="file-type-text-header">
+                <a class="collapse-toggle"
+                   data-bs-toggle="collapse"
+                   role="button"
+                   aria-expanded="false"
+                   aria-controls="@($"collapseBookmarks")"
+                   href="@($"#collapseBookmarks")">
+                    @($"Bookmarks: {_bookmarks.Count()}")
+                </a>
+            </h5>
+        </div>
+        <div class="@GetCollapseClass(_bookmarks.Count())" id="@($"collapseBookmarks")">
+            <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4 text-center justify-content-center">
+                <div class="card h-100 shadow-sm me-2 pt-2" style="width: 8em;">
+                    <a class="file-link text-decoration-none" title="@b.Title" href="@Tools.CompleteUrl(b.Url)" target="_blank" rel="noreferrer">
+                        <img src="./assets/img/bookmark.png" width="56" class="d-block mx-auto mb-3" alt="File icon" />
+                        <h6 class="card-title" style="font-size: 0.8em">
+                            @Tools.TruncateString(b.Title!)
+                        </h6>
+                    </a>
+                </div>
+            </div>
+        </div>
+    }
+}
+else if (!_isLoading)
+{
+    {
+        <div class="text-center no-content">
+            <h6>@($"It looks like nothing was found for '{PartialName}'")</h6>
+        </div>
+    }
+}
+
+<style>
+    .file-type-text-header {
+        color: #6c63ff;
+        font-weight: 600;
+        font-size: 1.25em;
+    }
+
+    .collapse-toggle {
+        text-decoration: none;
+        color: inherit
+    }
+
+    @@media (max-width: 768px) {
+
+        .file-type-text-header {
+            font-size: 1.125rem;
+        }
+    }
+</style>

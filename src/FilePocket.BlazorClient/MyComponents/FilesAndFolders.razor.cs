@@ -39,7 +39,7 @@ public partial class FilesAndFolders
 
     private bool _firstRender = true;
     private Guid? _iconId;
-
+    private bool _isLoading = true;
     [Parameter] public Guid? PocketId { get; set; }
     [Parameter] public Guid? FolderId { get; set; } = null;
 
@@ -67,8 +67,11 @@ public partial class FilesAndFolders
 
             PocketId = defaultPocket.Id;
         }
-
+            
         await InitPage();
+
+        _isLoading = false;
+
         StateHasChanged();
     }
 
@@ -113,6 +116,7 @@ public partial class FilesAndFolders
             _files = new ObservableCollection<FileInfoModel>(files);
         }
 
+        _files = new ObservableCollection<FileInfoModel>(files);
         _folders = new ObservableCollection<FolderModel>(folders);
         _fileUploadErrors = [];
 

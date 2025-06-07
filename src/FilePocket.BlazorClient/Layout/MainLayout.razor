@@ -17,10 +17,10 @@
 
 <PageTitle>File Pocket Application</PageTitle>
 
-<div class="d-flex vh-100">
+<div class="d-flex" style="height: 100vh">
     <AuthorizeView>
         <Authorized>
-
+        
             <!-- Sidebar Menu Desktop-->
             <aside class="col-2 d-none d-md-block p-4">
 
@@ -49,37 +49,6 @@
                             </a>
                     </li>
 
-
-                    @* <li class="nav-item flex-fill flex-md-grow-0">
-                        <a href="/files" class="nav-link text-dark px-2 d-flex align-items-center justify-content-between @(IsActive("/files"))"
-                        @onclick="ToggleFilesMenu">
-                            <div class="d-flex align-items-center justify-content-between">
-                                <i class="fs-4 bi-file-earmark"></i>
-                                <span class="ms-2 d-none d-md-inline">Files</span>                                
-                            </div>
-                            <i class="bi @( _isFilesMenuOpen ? "bi-chevron-up" : "bi-chevron-down")"></i>
-                        </a>
-                        <ul class="submenu @( _isFilesMenuOpen ? "show" : "" )">
-                            @if(_folders is not null && _folders.Count > 0)
-                            {
-                                foreach (var folder in _folders)
-                                {
-                                    <li class="nav-item flex-fill flex-md-grow-0">
-                                        <a href="@($"/pockets/{folder.PocketId}/folders/{folder.Id}/files")" class="nav-link text-dark px-2">@Tools.TruncateString(folder.Name, 25)</a>
-                                    </li>
-                                }                                
-                            }
-                        </ul>
-                    </li> *@
-
-                    @* <li class="nav-item flex-fill flex-md-grow-0">
-                            <a href="/pockets" class="nav-link text-dark px-2 @(IsActive("/pockets"))">
-                                <div class="d-flex align-items-center justify-content-center justify-content-md-start">
-                                    <i class="fs-4 bi-archive"></i>
-                                    <span class="ms-2 d-none d-md-inline">Pockets</span>
-                                </div>
-                            </a>
-                        </li> *@
                     <li class="nav-item flex-fill flex-md-grow-0">
                         <a href="/bookmarks" class="nav-link text-dark px-2 @(IsActive("/bookmarks"))">
                             <div class="d-flex align-items-center justify-content-center justify-content-md-start">
@@ -106,6 +75,15 @@
                             </div>
                         </a>
                     </li>
+
+                    <li class="nav-item flex-fill flex-md-grow-0">
+                        <a href="/profile" class="nav-link text-dark px-2 @(IsActive("/profile"))">
+                            <div class="d-flex align-items-center justify-content-center justify-content-md-start">
+                                <i class="fs-4 bi bi-person-square"></i>
+                                <span class="ms-2 d-none d-md-inline">Profile</span>
+                            </div>
+                        </a>
+                    </li>
                         
                     <li class="nav-item flex-fill flex-md-grow-0">
                         <a href="/settings" class="nav-link text-dark px-2 @(IsActive("/settings"))">
@@ -125,11 +103,10 @@
                     </li>
                 </ul>
             </aside>
-
             <!-- Menu for Mobile -->
             <MobileMenu />
 
-            <div class="col container-fluid">
+            <div class="col container-fluid flex-grow-1 overflow-auto p-4">
                 <!-- Navbar -->
                 <header class="position-relative mb-2 navbar navbar-expand-md w-100 p-2">
                     <div class="d-flex justify-content-end align-items-center w-100">
@@ -138,17 +115,15 @@
                         <div class="collapse navbar-collapse">
                             <div class="d-flex flex-column flex-md-row align-items-center ms-auto gap-3">
                                 <!-- Search Form -->
-                                <form class="d-flex" role="search">
+				                <form class="d-flex" role="search" @onsubmit="SearchByPartialName" >
                                     <div class="search-container">
-                                        <input class="search-box" type="text" />
-                                        <button class="search-button">
+                                        <input class="search-box" type="text" @bind-value="_parialNameToSearch" placeholder="Search for..."/>
+                                        <button class="search-button" type="submit">
                                             <i class="fas fa-search" style="color:rgba(65, 44, 168, 1)"></i>
                                         </button>
                                     </div>
                                 </form>
-
                             </div>
-
                         </div>
 
                         <!-- Mobile Header -->
@@ -159,9 +134,9 @@
                             </a>
 
                             <div class="d-flex justify-content-between align-items-center ">
-                                <form class="d-flex" role="search">
+				                <form class="d-flex" role="search" @onsubmit="SearchByPartialName">
                                     <div class="search-container">
-                                        <input class="search-box" type="text" />
+                                        <input class="search-box form-control" type="text" @bind-value="_parialNameToSearch" placeholder="Search for..."/>
                                         <button class="search-button">
                                             <i class="fas fa-search" style="color:rgba(65, 44, 168, 1)"></i>
                                         </button>
@@ -172,9 +147,7 @@
                                     <span class="navbar-toggler-icon"></span>
                                 </button>
                             </div>
-
                         </div>
-
                     </div>
                 </header>
 
@@ -182,9 +155,7 @@
                 <main class="w-100 p-2">
                     @Body
                 </main>
-
             </div>
-
 
             <!-- Right Offcanvas Menu -->
             <div class="offcanvasMenuRight p-3">
@@ -200,22 +171,19 @@
                     </div>
                     
                     <div class="offcanvas-scrollable">
-                        @* <div class="offcanvas-body"> *@
-                    
                         <div class="controls-container">
                             <!-- Signing In User Info Button -->
                             <div class="d-flex justify-content-center align-items-center">
                                 <div class="d-flex align-items-center flex-column">
                                     <img class="rounded-circle avatar-image" 
-                                    src="@(_icon is null ? "../assets/img/man.png" : $"data:image/jpeg;base64,{_icon}")" 
-                                    alt="userPicture" 
-                                    @onclick="NavigateToProfile" 
-                                    />
+                                            src="@(_icon is null ? "../assets/img/man.png" : $"data:image/jpeg;base64,{_icon}")" 
+                                            alt="userPicture" 
+                                            @onclick="NavigateToProfile" />
 
                                     <div class="d-flex align-items-center flex-column">
                                         <span>@_user?.Email</span>
                                         <h5 class="card-title">
-                                            @GetDisplayedName()
+                                            @_displayUserName
                                         </h5>
                                     </div>
                                 </div>

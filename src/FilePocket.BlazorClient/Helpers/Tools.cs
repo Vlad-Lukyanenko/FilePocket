@@ -1,4 +1,6 @@
 ﻿using FilePocket.BlazorClient.Features.Files.Models;
+using FilePocket.BlazorClient.Shared.Enums;
+using System.Text.RegularExpressions;
 
 namespace FilePocket.BlazorClient.Helpers
 {
@@ -43,6 +45,7 @@ namespace FilePocket.BlazorClient.Helpers
                 FileTypes.Font => "font.png",
                 FileTypes.Other => "other.png",
                 FileTypes.Text => "txt-file.png",
+                FileTypes.Note => "note.png",
                 _ => "other.png",
             };
         }
@@ -131,5 +134,71 @@ namespace FilePocket.BlazorClient.Helpers
                 _ => "application/octet-stream", // Default MIME type
             };
         }
+
+        public static string GetFileUrl(Guid fileId, Guid? pocketId, Guid? folderId, FileTypes? type = default)
+        {
+            if (pocketId is null && folderId is null)
+            {
+                return $"/files/{fileId}";
+            }
+
+            if (pocketId is null)
+            {
+                return $"/folders/{folderId}/files/{fileId}";
+            }
+
+            var fileType = type switch
+            {
+                FileTypes.Note => "notes",
+                _ => "files"
+            };
+
+            if (folderId is null)
+            {
+                return $"/pockets/{pocketId}/{fileType}/{fileId}";
+            }
+
+            return $"/pockets/{pocketId}/folders/{folderId}/{fileType}/{fileId}";
+        }
+
+        public static string GetFolderUrl(Guid? pocketId, Guid folderId, FolderType folderType, bool isSoftDeleted = false)
+        {
+            if (pocketId is null)
+            {
+                if (isSoftDeleted)
+                {
+                    return $"/folders/{folderId}/{GetEntitiesName(folderType)}/trash";
+                }
+
+                return $"/folders/{folderId}/{GetEntitiesName(folderType)}";
+            }
+
+            if (isSoftDeleted)
+            {
+                return $"/pockets/{pocketId}/folders/{folderId}/{GetEntitiesName(folderType)}/trash";
+            }
+
+            return $"/pockets/{pocketId}/folders/{folderId}/{GetEntitiesName(folderType)}";
+
+        }
+
+        public static string CompleteUrl(string url)
+        {
+            var match = Regex.IsMatch(url, @"^[a-zA-Z]*:\/\/");
+            
+            return match ? url : string.Concat("https://", url);
+        }
+
+        private static string GetEntitiesName(FolderType folderType)
+        {
+            return folderType switch
+            {
+                FolderType.Bookmarks => "bookmarks",
+                FolderType.Notes => "notes",
+                _ => "files"
+            };
+        }
     }
+
+
 }

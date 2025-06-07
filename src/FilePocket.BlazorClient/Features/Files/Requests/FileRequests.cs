@@ -111,7 +111,8 @@ public class FileRequests : IFileRequests
 
     public async Task<bool> DeleteFile(Guid fileId)
     {
-        var response = await _apiClient.DeleteAsync(FileUrl.DeleteFile(fileId));
+        var url = FileUrl.DeleteFile(fileId);
+        var response = await _apiClient.DeleteAsync(url);
 
         response.EnsureSuccessStatusCode();
 

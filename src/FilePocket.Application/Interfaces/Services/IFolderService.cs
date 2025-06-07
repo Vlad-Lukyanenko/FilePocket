@@ -12,5 +12,6 @@ public interface IFolderService
     Task DeleteByPocketIdAsync(Guid pocketId);
     Task MoveToTrashAsync(Guid folderId);
     Task RestoreFromTrashAsync(Guid folderId);
+    Task<IEnumerable<FolderSearchResponseModel>> SearchAsync(Guid userId, string partialName);
     Task DeleteAllFoldersAsync(Guid userId);
 }
