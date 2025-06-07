@@ -1,4 +1,4 @@
-﻿using FilePocket.BlazorClient.Features.Files.Models;
+﻿using FilePocket.BlazorClient.Shared.Enums;
 
 namespace FilePocket.BlazorClient.Services.Files.Models
 {

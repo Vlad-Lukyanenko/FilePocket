@@ -10,5 +10,6 @@ public interface IBookmarkRepository
     void CreateBookmark(Bookmark bookmark);
     void DeleteBookmark(Bookmark bookmark);
     Task<List<Bookmark>> GetBookmarksByPartialNameAsync(Guid userId, string partialName, bool trackChanges = false);
+    Task<List<Bookmark>> GetAllSoftdeletedAsync(Guid userId, bool trackChanges = false);
     void DeleteBookmarks(IEnumerable<Bookmark> bookmarks);
 }

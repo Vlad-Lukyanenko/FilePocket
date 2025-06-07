@@ -39,14 +39,19 @@ public class BookmarkRepository : RepositoryBase<Bookmark>, IBookmarkRepository
         Delete(bookmark);
     }
 
-    public void DeleteBookmarks(IEnumerable<Bookmark> bookmarks)
-    { 
-        DeleteAll(bookmarks);
-    }
-
     public async Task<List<Bookmark>> GetBookmarksByPartialNameAsync(Guid userId, string partialName, bool trackChanges = false)
     {
-        return (await FindByCondition(f => f.UserId.Equals(userId) && f.Title.ToLower().Contains(partialName.ToLower()), trackChanges)
-            .ToListAsync());
+        return await FindByCondition(f => f.UserId.Equals(userId) && f.Title.ToLower().Contains(partialName.ToLower()), trackChanges)
+            .ToListAsync();
+    }
+
+    public async Task<List<Bookmark>> GetAllSoftdeletedAsync(Guid userId, bool trackChanges = false)
+    {
+        return await FindByCondition(f => f.UserId.Equals(userId) && f.IsDeleted == true, trackChanges)
+            .ToListAsync();
+    }
+    public void DeleteBookmarks(IEnumerable<Bookmark> bookmarks)
+    {
+        DeleteAll(bookmarks);
     }
 }

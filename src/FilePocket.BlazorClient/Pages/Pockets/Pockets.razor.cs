@@ -1,4 +1,4 @@
-﻿using FilePocket.BlazorClient.Features.Trash;
+﻿using FilePocket.BlazorClient.Features.Trash.Requests;
 using FilePocket.BlazorClient.Services.Pockets.Models;
 using FilePocket.BlazorClient.Services.Pockets.Requests;
 using Microsoft.AspNetCore.Components;

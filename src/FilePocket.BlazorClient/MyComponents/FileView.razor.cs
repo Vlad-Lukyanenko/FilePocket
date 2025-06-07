@@ -1,11 +1,11 @@
-﻿using FilePocket.BlazorClient.Features.Files.Models;
-using FilePocket.BlazorClient.Features.Storage.Models;
+﻿using FilePocket.BlazorClient.Features.Storage.Models;
 using FilePocket.BlazorClient.Features.Storage.Requests;
-using FilePocket.BlazorClient.Features.Trash;
+using FilePocket.BlazorClient.Features.Trash.Requests;
 using FilePocket.BlazorClient.Helpers;
 using FilePocket.BlazorClient.Services.Files.Models;
 using FilePocket.BlazorClient.Services.Files.Requests;
 using FilePocket.BlazorClient.Services.Folders.Requests;
+using FilePocket.BlazorClient.Shared.Enums;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 

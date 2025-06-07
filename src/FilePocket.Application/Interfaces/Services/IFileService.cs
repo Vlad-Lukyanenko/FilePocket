@@ -86,4 +86,7 @@ public interface IFileService : IFileProvider
     Task<byte[]> ReadNoteContentFromFileAsync(Guid userId, Guid fileId);
 
     Task<IEnumerable<FileSearchResponseModel>> SearchAsync(Guid userId, string partialName);
+
+    Task<IEnumerable<DeletedFileModel>> GetAllSoftdeletedAsync(Guid userId);
+
 }

@@ -451,9 +451,16 @@ public class FileService(
 
     public async Task<IEnumerable<FileSearchResponseModel>> SearchAsync(Guid userId, string partialName)
     {
-        var files = await repository.FileMetadata.GetFileMetadataByPartialNameAsync(userId, partialName);
+        var files = await repository.FileMetadata.GetFileMetadataByPartialNameAsync(userId, partialName) ?? [];
 
         return mapper.Map<IEnumerable<FileSearchResponseModel>>(files);
+    }
+
+    public async Task<IEnumerable<DeletedFileModel>> GetAllSoftdeletedAsync(Guid userId)
+    {
+        var files = await repository.FileMetadata.GetAllSoftDeletedAsync(userId, default) ?? [];
+
+        return mapper.Map<IEnumerable<DeletedFileModel>>(files);
     }
 
     #endregion
@@ -631,7 +638,6 @@ public class FileService(
 
         await File.WriteAllBytesAsync(fullPath, content, cancellationToken);
     }
-
     #endregion
 
     private enum WriteFileMode

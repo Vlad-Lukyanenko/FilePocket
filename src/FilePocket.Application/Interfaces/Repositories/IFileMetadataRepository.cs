@@ -25,4 +25,6 @@ public interface IFileMetadataRepository
     void DeleteFileMetadata(FileMetadata fileMetadata);
 
     Task<List<FileMetadata>> GetFileMetadataByPartialNameAsync(Guid userId, string partialName, bool trackChanges = false);
+
+    Task<List<FileMetadata>> GetAllSoftDeletedAsync(Guid userId, bool trackChanges);
 }

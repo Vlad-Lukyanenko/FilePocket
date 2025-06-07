@@ -3,12 +3,13 @@ using FilePocket.Domain.Models;
 using FilePocket.WebApi.Endpoints.Base;
 using static System.Net.WebRequestMethods;
 
-namespace FilePocket.WebApi.Endpoints.ContentItemsSearch
+namespace FilePocket.WebApi.Endpoints.Trash
 {
-    public class SearchEndpoint : BaseEndpointWithoutRequest<IEnumerable<SearchResponseModel>>
+    public class GetAllSoftDeletedEndpoint : BaseEndpointWithoutRequest<IEnumerable<SearchResponseModel>>
     {
         private readonly IServiceManager _service;
-        public SearchEndpoint(IServiceManager service)
+
+        public GetAllSoftDeletedEndpoint(IServiceManager service)
         {
             _service = service;
         }
@@ -16,20 +17,13 @@ namespace FilePocket.WebApi.Endpoints.ContentItemsSearch
         public override void Configure()
         {
             Verbs(Http.Get);
-            Routes("api/search/{itemType}/{partialName}");
+            Routes("api/trash/{itemType}");
             AuthSchemes("Bearer");
         }
 
         public override async Task HandleAsync(CancellationToken cancellationToken)
         {
-            var partialName = Route<string>("partialName");
             var itemType = Route<string>("itemType");
-
-            if (string.IsNullOrWhiteSpace(partialName))
-            {
-                await SendNotFoundAsync(cancellationToken);
-                return;
-            }
 
             if (string.IsNullOrWhiteSpace(itemType))
             {
@@ -39,9 +33,9 @@ namespace FilePocket.WebApi.Endpoints.ContentItemsSearch
 
             IEnumerable<SearchResponseModel> items = itemType.ToLower() switch
             {
-                "file" => _service.FileService.SearchAsync(UserId, partialName).Result.Cast<FileSearchResponseModel>(),
-                "bookmark" => _service.BookmarkService.SearchAsync(UserId, partialName).Result.Cast<BookmarkSearchResponseModel>(),
-                "folder" => _service.FolderService.SearchAsync(UserId, partialName).Result.Cast<FolderSearchResponseModel>(),
+                "file" => _service.FileService.GetAllSoftdeletedAsync(UserId).Result.Cast<DeletedFileModel>(),
+                "bookmark" => _service.BookmarkService.GetAllSoftdeletedAsync(UserId).Result.Cast<DeletedBookmarkModel>(),
+                "folder" => _service.FolderService.GetAllSoftdeletedAsync(UserId).Result.Cast<DeletedFolderModel>(),
                 _ => throw new NotSupportedException($"Item type '{itemType}' is not supported.")
             };
 

@@ -5,6 +5,7 @@ using FilePocket.BlazorClient.Services.Files.Requests;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using FilePocket.BlazorClient.Services.Files.Models;
+using FilePocket.BlazorClient.Shared.Enums;
 
 namespace FilePocket.BlazorClient.Pages.Files.Shared
 {
@@ -36,7 +37,7 @@ namespace FilePocket.BlazorClient.Pages.Files.Shared
 
             _sharedFile = await _sharedFilesRequests.GetByIdAsync(_sharedFileId);
 
-            if (_sharedFile is not null && _sharedFile.FileType == Features.Files.Models.FileTypes.Image)
+            if (_sharedFile is not null && _sharedFile.FileType == FileTypes.Image)
             {
                 _file = await FileRequests.GetImageThumbnailAsync(_sharedFile.FileId, 500);
 

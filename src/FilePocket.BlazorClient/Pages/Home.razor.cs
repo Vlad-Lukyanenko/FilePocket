@@ -1,9 +1,9 @@
-﻿using FilePocket.BlazorClient.Features.Files.Models;
-using FilePocket.BlazorClient.Features.SharedFiles.Models;
+﻿using FilePocket.BlazorClient.Features.SharedFiles.Models;
 using FilePocket.BlazorClient.Features.SharedFiles.Requests;
 using FilePocket.BlazorClient.Features.Users.Requests;
 using FilePocket.BlazorClient.Services.Files.Models;
 using FilePocket.BlazorClient.Services.Files.Requests;
+using FilePocket.BlazorClient.Shared.Enums;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using System.Collections.ObjectModel;

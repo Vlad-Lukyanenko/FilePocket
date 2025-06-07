@@ -34,7 +34,7 @@ namespace FilePocket.BlazorClient.Features.Notes.Requests
             return response.IsSuccessStatusCode;
         }
 
-        public async Task<List<NoteModel>> GetAllByUserIdAndFolderId(Guid? folderId)
+        public async Task<List<NoteModel>> GetAllByFolderId(Guid? folderId)
         {
             var content = await _apiClient.GetAsync(NoteUrl.GetAllByUserIdAndFolderId(folderId));
             var notes = JsonConvert.DeserializeObject<List<NoteModel>>(content) ?? [];

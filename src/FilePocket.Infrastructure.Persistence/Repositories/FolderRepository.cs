@@ -11,7 +11,7 @@ public class FolderRepository : RepositoryBase<Folder>, IFolderRepository
     protected FilePocketDbContext DbContext;
     private readonly IServiceScopeFactory _scopeFactory;
 
-    public FolderRepository(FilePocketDbContext repositoryContext, IServiceScopeFactory scopeFactory) 
+    public FolderRepository(FilePocketDbContext repositoryContext, IServiceScopeFactory scopeFactory)
         : base(repositoryContext)
     {
         DbContext = repositoryContext;
@@ -118,16 +118,22 @@ public class FolderRepository : RepositoryBase<Folder>, IFolderRepository
     }
     public async Task<bool> ExistsAsync(string folderName, Guid? pocketId, Guid? parentFolderId, FolderType folderType)
     {
-        return await DbContext.Folders.AsNoTracking().AnyAsync(f => f.Name == folderName 
-        && f.PocketId == pocketId 
-        && f.ParentFolderId == parentFolderId 
+        return await DbContext.Folders.AsNoTracking().AnyAsync(f => f.Name == folderName
+        && f.PocketId == pocketId
+        && f.ParentFolderId == parentFolderId
         && f.FolderType == folderType);
     }
 
     public async Task<List<Folder>> GetFoldersByPartialNameAsync(Guid userId, string partialName, bool trackChanges = false)
     {
-        return (await FindByCondition(f => f.UserId.Equals(userId) && f.Name.ToLower().Contains(partialName.ToLower()), trackChanges)
+        return await FindByCondition(f => f.UserId.Equals(userId) && f.Name.ToLower().Contains(partialName.ToLower()), trackChanges)
             .OrderBy(f => f.FolderType)
-            .ToListAsync());
+            .ToListAsync();
+    }
+
+    public async Task<List<Folder>> GetAllSoftDeletedAsync(Guid userId, bool trackChanges)
+    {
+        return await FindByCondition(f => f.UserId.Equals(userId), trackChanges)
+            .ToListAsync();
     }
 }

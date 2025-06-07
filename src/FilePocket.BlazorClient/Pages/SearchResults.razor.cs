@@ -1,5 +1,4 @@
-﻿using FilePocket.BlazorClient.Features.Files.Models;
-using FilePocket.BlazorClient.Features.Search.Enums;
+﻿using FilePocket.BlazorClient.Features.Search.Enums;
 using FilePocket.BlazorClient.Features.Search.Models;
 using FilePocket.BlazorClient.Features.Search.Requests;
 using FilePocket.BlazorClient.Shared.Enums;
@@ -36,17 +35,17 @@ namespace FilePocket.BlazorClient.Pages
 
         private async Task SetFiles()
         {
-            _files = await SearchRequests.GetItemsByPartialNameAsync<FileSearchResponseModel>(SearchItemType.File, PartialName) ?? [];
+            _files = await SearchRequests.GetItemsByPartialNameAsync<FileSearchResponseModel>(RequestedItemType.File, PartialName) ?? [];
         }
 
         private async Task SetFolders()
         {
-            _folders = await SearchRequests.GetItemsByPartialNameAsync<FolderSearchResponseModel>(SearchItemType.Folder, PartialName) ?? [];
+            _folders = await SearchRequests.GetItemsByPartialNameAsync<FolderSearchResponseModel>(RequestedItemType.Folder, PartialName) ?? [];
         }
 
         private async Task SetBookmarks()
         {
-            _bookmarks = await SearchRequests.GetItemsByPartialNameAsync<BookmarkSearchResponseModel>(SearchItemType.Bookmark, PartialName) ?? [];
+            _bookmarks = await SearchRequests.GetItemsByPartialNameAsync<BookmarkSearchResponseModel>(RequestedItemType.Bookmark, PartialName) ?? [];
         }
 
         private static string GetCollapseClass(int itemsCount)

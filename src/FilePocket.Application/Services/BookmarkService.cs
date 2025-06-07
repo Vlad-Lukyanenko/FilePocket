@@ -98,6 +98,13 @@ public class BookmarkService : IBookmarkService
         return _mapper.Map<List<BookmarkSearchResponseModel>>(bookmarks);
     }
 
+    public async Task<IEnumerable<DeletedBookmarkModel>> GetAllSoftdeletedAsync(Guid userId)
+    {
+        var bookmarks = await _repository.Bookmark.GetAllSoftdeletedAsync(userId, default) ?? [];
+
+        return _mapper.Map<List<DeletedBookmarkModel>>(bookmarks);
+    }
+
     public async Task DeleteAllBookmarksAsync(Guid userId)
     {
         var bookmarks = _repository.Bookmark.GetAll(userId, true, true);

@@ -71,18 +71,15 @@ public class FileMetadataRepository : RepositoryBase<FileMetadata>, IFileMetadat
 
     public async  Task<List<FileMetadata>> GetFileMetadataByPartialNameAsync(Guid userId, string partialName, bool trackChanges = false)
     {
-        return (await FindByCondition(f => f.UserId.Equals(userId) && f.OriginalName.ToLower().Contains(partialName.ToLower()), trackChanges)
+        return await FindByCondition(f => f.UserId.Equals(userId) && f.OriginalName.ToLower().Contains(partialName.ToLower()), trackChanges)
             .OrderBy(f=>f.FileType)
-            .ToListAsync());
+            .ToListAsync();
     }
 
-    private static bool SelectByFileType(FileMetadata fileMetadata, FileTypes? fileType)
+    public async Task<List<FileMetadata>> GetAllSoftDeletedAsync(Guid userId, bool trackChanges)
     {
-        if (fileType != null)
-        {
-            return fileMetadata.FileType == fileType;
-        }
-        return fileMetadata.FileType != Domain.FileTypes.Note;
+        return await FindByCondition(f => f.UserId.Equals(userId) && f.IsDeleted == true, trackChanges)
+            .ToListAsync();
     }
 }
 

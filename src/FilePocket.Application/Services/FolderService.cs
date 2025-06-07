@@ -137,8 +137,15 @@ public class FolderService : IFolderService
 
     public async Task<IEnumerable<FolderSearchResponseModel>> SearchAsync(Guid userId, string partialName)
     {
-        var folders = await _repository.Folder.GetFoldersByPartialNameAsync(userId, partialName);
+        var folders = await _repository.Folder.GetFoldersByPartialNameAsync(userId, partialName) ?? [];
 
         return _mapper.Map<IEnumerable<FolderSearchResponseModel>>(folders);
+    }
+
+    public async Task<IEnumerable<DeletedFolderModel>> GetAllSoftdeletedAsync(Guid userId)
+    {
+        var folders = await _repository.Folder.GetAllSoftDeletedAsync(userId, default) ?? [];
+
+        return _mapper.Map<IEnumerable<DeletedFolderModel>>(folders);
     }
 }

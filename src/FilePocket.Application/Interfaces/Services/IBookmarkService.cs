@@ -12,5 +12,6 @@ public interface IBookmarkService
     Task DeleteBookmarkAsync(Guid id);
     Task MoveToTrashAsync(Guid bookmarkId);
     Task<IEnumerable<BookmarkSearchResponseModel>> SearchAsync(Guid userId, string partialName);
+    Task<IEnumerable<DeletedBookmarkModel>> GetAllSoftdeletedAsync(Guid userId);
     Task DeleteAllBookmarksAsync(Guid userId);
 }

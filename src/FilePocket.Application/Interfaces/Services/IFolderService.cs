@@ -13,5 +13,6 @@ public interface IFolderService
     Task MoveToTrashAsync(Guid folderId);
     Task RestoreFromTrashAsync(Guid folderId);
     Task<IEnumerable<FolderSearchResponseModel>> SearchAsync(Guid userId, string partialName);
+    Task<IEnumerable<DeletedFolderModel>> GetAllSoftdeletedAsync(Guid userId);
     Task DeleteAllFoldersAsync(Guid userId);
 }
