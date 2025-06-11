@@ -1,6 +1,6 @@
 ﻿namespace FilePocket.BlazorClient.Features.Search.Enums
 {
-    public enum SearchItemType
+    public enum RequestedItemType
     {
         File = 0,
         Folder,

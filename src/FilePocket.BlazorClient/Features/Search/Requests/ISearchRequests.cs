@@ -5,6 +5,6 @@ namespace FilePocket.BlazorClient.Features.Search.Requests
 {
     public interface ISearchRequests
     {
-        Task<List<T>> GetItemsByPartialNameAsync<T>(SearchItemType itemType, string partialNameToSearch);
+        Task<List<T>> GetItemsByPartialNameAsync<T>(RequestedItemType itemType, string partialNameToSearch);
     }
 }

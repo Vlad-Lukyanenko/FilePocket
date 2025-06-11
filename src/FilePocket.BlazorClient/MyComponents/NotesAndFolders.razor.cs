@@ -6,8 +6,8 @@ using FilePocket.BlazorClient.Services.Folders.Requests;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using System.Collections.ObjectModel;
-using FilePocket.BlazorClient.Features.Trash;
 using FilePocket.BlazorClient.Services.Pockets.Requests;
+using FilePocket.BlazorClient.Features.Trash.Requests;
 
 namespace FilePocket.BlazorClient.MyComponents
 {
@@ -94,7 +94,7 @@ namespace FilePocket.BlazorClient.MyComponents
                     : (await FolderRequests.GetAllAsync(PocketId, FolderId.Value, folderTypes, false)))
                 ?? [];
 
-            var notes = (await NoteRequests.GetAllByUserIdAndFolderId(FolderId));
+            var notes = (await NoteRequests.GetAllByFolderId(FolderId));
 
             _folders = [.. folders];
             _notes = [.. notes];

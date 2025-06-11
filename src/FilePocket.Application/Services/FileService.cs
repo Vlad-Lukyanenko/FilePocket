@@ -6,11 +6,9 @@ using FilePocket.Domain;
 using FilePocket.Domain.Entities;
 using FilePocket.Domain.Entities.Consumption.Errors;
 using FilePocket.Domain.Models;
-using Mapster;
 using MapsterMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
-using System.Collections.Generic;
 using StorageConsumption = FilePocket.Domain.Entities.Consumption.StorageConsumption;
 
 namespace FilePocket.Application.Services;
@@ -35,7 +33,7 @@ public class FileService(
 
         return result;
     }
-    
+
     public async Task<IEnumerable<FileResponseModel>> GetAllFilesWithSoftDeletedAsync(Guid userId, Guid pocketId)
     {
         var fileMetadata = await repository.FileMetadata.GetAllWithSoftDeletedAsync(userId, pocketId);
@@ -291,6 +289,16 @@ public class FileService(
         }
     }
 
+    public async Task RemoveAllFilesAsync(Guid userId)
+    {
+        var filesToRemove = await repository.FileMetadata.GetAllUserFilesAsync(userId, true, false);
+
+        foreach (var file in filesToRemove)
+        {
+            await RemoveFileAsync(file.UserId, file.Id);
+        }
+    }
+
     public async Task<bool> MoveToTrash(Guid userId, Guid fileId, CancellationToken cancellationToken = default)
     {
         var fileMetadata = await repository.FileMetadata.GetByIdAsync(userId, fileId, trackChanges: true);
@@ -443,9 +451,16 @@ public class FileService(
 
     public async Task<IEnumerable<FileSearchResponseModel>> SearchAsync(Guid userId, string partialName)
     {
-        var files = await repository.FileMetadata.GetFileMetadataByPartialNameAsync(userId, partialName);
+        var files = await repository.FileMetadata.GetFileMetadataByPartialNameAsync(userId, partialName) ?? [];
 
         return mapper.Map<IEnumerable<FileSearchResponseModel>>(files);
+    }
+
+    public async Task<IEnumerable<DeletedFileModel>> GetAllSoftdeletedAsync(Guid userId)
+    {
+        var files = await repository.FileMetadata.GetAllSoftDeletedAsync(userId, default) ?? [];
+
+        return mapper.Map<IEnumerable<DeletedFileModel>>(files);
     }
 
     #endregion
@@ -623,7 +638,6 @@ public class FileService(
 
         await File.WriteAllBytesAsync(fullPath, content, cancellationToken);
     }
-
     #endregion
 
     private enum WriteFileMode

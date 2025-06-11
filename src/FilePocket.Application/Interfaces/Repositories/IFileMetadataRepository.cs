@@ -8,6 +8,8 @@ public interface IFileMetadataRepository
 
     Task<List<FileMetadata>> GetAllAsync(Guid pocketId, bool trackChanges = false);
 
+    Task<List<FileMetadata>> GetAllUserFilesAsync(Guid userId, bool isSoftDeleted, bool trackChanges);
+
     Task<List<FileMetadata>> GetAllWithSoftDeletedAsync(Guid userID, Guid pocketId, bool trackChanges = false);
 
     Task<List<FileMetadata>> GetAllAsync(Guid userId, Guid pocketId, Guid? folderId, bool isSofDeleted, bool trackChanges = false);
@@ -23,4 +25,6 @@ public interface IFileMetadataRepository
     void DeleteFileMetadata(FileMetadata fileMetadata);
 
     Task<List<FileMetadata>> GetFileMetadataByPartialNameAsync(Guid userId, string partialName, bool trackChanges = false);
+
+    Task<List<FileMetadata>> GetAllSoftDeletedAsync(Guid userId, bool trackChanges);
 }

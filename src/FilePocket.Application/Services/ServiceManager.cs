@@ -42,5 +42,4 @@ public class ServiceManager(
     public IBookmarkService BookmarkService => _bookmarkService.Value;
 
     public IProfileService ProfileService => _profileService.Value;
-
 }

@@ -84,6 +84,14 @@ public class FolderService : IFolderService
         return _mapper.Map<List<FolderModel>>(result);
     }
 
+    public async Task DeleteAllFoldersAsync(Guid userId)
+    {
+        var folders = _repository.Folder.GetAll(userId, true, false);
+
+        _repository.Folder.DeleteFolders(folders);
+        await _repository.SaveChangesAsync();
+    }
+
     private async Task<Folder> GetFolderAndCheckIfItExistsAsync(Guid id)
     {
         var folder = await _repository.Folder.GetAsync(id);
@@ -129,8 +137,15 @@ public class FolderService : IFolderService
 
     public async Task<IEnumerable<FolderSearchResponseModel>> SearchAsync(Guid userId, string partialName)
     {
-        var folders = await _repository.Folder.GetFoldersByPartialNameAsync(userId, partialName);
+        var folders = await _repository.Folder.GetFoldersByPartialNameAsync(userId, partialName) ?? [];
 
         return _mapper.Map<IEnumerable<FolderSearchResponseModel>>(folders);
+    }
+
+    public async Task<IEnumerable<DeletedFolderModel>> GetAllSoftdeletedAsync(Guid userId)
+    {
+        var folders = await _repository.Folder.GetAllSoftDeletedAsync(userId, default) ?? [];
+
+        return _mapper.Map<IEnumerable<DeletedFolderModel>>(folders);
     }
 }

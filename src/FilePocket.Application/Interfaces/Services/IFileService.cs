@@ -66,6 +66,8 @@ public interface IFileService : IFileProvider
         Guid fileId,
         CancellationToken cancellationToken = default);
 
+    Task RemoveAllFilesAsync(Guid userId);
+
     Task<bool> MoveToTrash(
         Guid userId,
         Guid fileId,
@@ -84,4 +86,7 @@ public interface IFileService : IFileProvider
     Task<byte[]> ReadNoteContentFromFileAsync(Guid userId, Guid fileId);
 
     Task<IEnumerable<FileSearchResponseModel>> SearchAsync(Guid userId, string partialName);
+
+    Task<IEnumerable<DeletedFileModel>> GetAllSoftdeletedAsync(Guid userId);
+
 }
