@@ -4,5 +4,6 @@ namespace FilePocket.BlazorClient.Features.Trash.Models
 {
     public class DeletedBookmarkModel : BookmarkSearchResponseModel
     {
+        public override string ItemName => Title;
     }
 }

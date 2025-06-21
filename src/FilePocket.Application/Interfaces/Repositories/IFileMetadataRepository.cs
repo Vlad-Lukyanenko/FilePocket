@@ -16,7 +16,9 @@ public interface IFileMetadataRepository
 
     Task<List<FileMetadata>> GetAllNotesAsync(Guid userId, Guid? folderId, bool isSoftDeleted, bool trackChanges = false);
 
-    Task<FileMetadata> GetByIdAsync(Guid userId, Guid fileId, bool trackChanges = false);
+    Task<FileMetadata> GetByUserIdAndIdAsync(Guid userId, Guid fileId, bool trackChanges = false);
+
+    Task<FileMetadata> GetByIdAsync(Guid fileId, bool trackChanges = false);
 
     void UpdateFileMetadata(FileMetadata fileMetadata);
 

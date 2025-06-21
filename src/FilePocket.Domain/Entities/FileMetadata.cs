@@ -56,6 +56,12 @@ public class FileMetadata : IAmSoftDeletedEntity
         DeletedAt = deletedAt ?? DateTime.UtcNow;
     }
 
+    public void RestoreFromDeleted()
+    {
+        IsDeleted = false;
+        DeletedAt = null;
+    }
+
     public static FileMetadata Create(
         Guid userId, string originalFileName,
         string filePath, FileTypes fileType,

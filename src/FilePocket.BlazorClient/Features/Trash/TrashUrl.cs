@@ -12,14 +12,22 @@ namespace FilePocket.BlazorClient.Features.Trash
         {
             return $"api/trash/pockets/{pocketId}";
         }
+
+        public static string RestoreFromTrash(string itemType, string itemId)
+        {
+            return $"api/trash/{itemType.ToLower()}/{itemId}/restore";
+        }
         public static string ClearAllTrash()
         {
             return "api/trash/clearall";
         }
-
-        public static string GetAllSoftdeleted(RequestedItemType itemType)
+        public static string GetAllDeletedItems(RequestedItemType itemType)
         {
             return $"api/trash/{itemType.ToString().ToLower()}";
+        }
+        public static string GetDeletedItem(string itemType, string itemId)
+        {
+            return $"api/trash/{itemType.ToLower()}/{itemId}";
         }
     }
 }

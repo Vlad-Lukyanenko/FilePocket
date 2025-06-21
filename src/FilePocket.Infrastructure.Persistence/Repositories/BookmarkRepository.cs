@@ -47,9 +47,10 @@ public class BookmarkRepository : RepositoryBase<Bookmark>, IBookmarkRepository
 
     public async Task<List<Bookmark>> GetAllSoftdeletedAsync(Guid userId, bool trackChanges = false)
     {
-        return await FindByCondition(f => f.UserId.Equals(userId) && f.IsDeleted == true, trackChanges)
+        return await FindByCondition(f => f.UserId.Equals(userId) && f.IsDeleted, trackChanges)
             .ToListAsync();
     }
+
     public void DeleteBookmarks(IEnumerable<Bookmark> bookmarks)
     {
         DeleteAll(bookmarks);

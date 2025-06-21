@@ -69,6 +69,15 @@ public class BookmarkService : IBookmarkService
         await _repository.SaveChangesAsync();
     }
 
+    public async Task RestoreFromTrashAsync(Guid id)
+    {
+        var bookmark = await GetBookmarkAndCheckIfItExistsAsync(id);
+
+        bookmark.RestoreFromDeleted();
+
+        await _repository.SaveChangesAsync();
+    }
+
     private async Task AttachBookmarkToPocketAsync(BookmarkModel bookmark)
     {
         var pocket = await _repository.Pocket.GetByIdAsync(bookmark.UserId, bookmark.PocketId, trackChanges: true);
@@ -98,11 +107,20 @@ public class BookmarkService : IBookmarkService
         return _mapper.Map<List<BookmarkSearchResponseModel>>(bookmarks);
     }
 
-    public async Task<IEnumerable<DeletedBookmarkModel>> GetAllSoftdeletedAsync(Guid userId)
+    public async Task<IEnumerable<DeletedBookmarkModel>> GetAllSoftDeletedAsync(Guid userId)
     {
         var bookmarks = await _repository.Bookmark.GetAllSoftdeletedAsync(userId, default) ?? [];
 
         return _mapper.Map<List<DeletedBookmarkModel>>(bookmarks);
+    }
+
+    public async Task<DeletedBookmarkModel> GetSoftDeletedAsync(Guid id)
+    {
+        var bookmark = await _repository.Bookmark.GetByIdAsync(id);
+
+        return bookmark is null
+            ? throw new BookmarkNotFoundException(id)
+            : _mapper.Map<DeletedBookmarkModel>(bookmark);
     }
 
     public async Task DeleteAllBookmarksAsync(Guid userId)

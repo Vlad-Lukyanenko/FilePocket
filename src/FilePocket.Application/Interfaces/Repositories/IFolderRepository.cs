@@ -10,7 +10,7 @@ public interface IFolderRepository
     void Create(Folder folder);
     Task Delete(Guid folderId);
     void DeleteByPocketId(Guid pocketId);
-    Task<Folder?> GetAsync(Guid folderId);
+    Task<Folder?> GetByIdAsync(Guid folderId);
     Task<bool> ExistsAsync(string folderName, Guid? pocketId, Guid? parentFolderId, FolderType folderType);
     Task<List<Folder>> GetAllAsync(Guid userId, Guid? pocketId, Guid? parentFolderId, List<FolderType> folderTypes, bool isSoftDeleted);
     Task<List<Folder>> GetFoldersByPartialNameAsync(Guid userId, string partialName, bool trackChanges = false);

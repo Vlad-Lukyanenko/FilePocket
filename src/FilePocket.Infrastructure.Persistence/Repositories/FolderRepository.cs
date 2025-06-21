@@ -81,7 +81,7 @@ public class FolderRepository : RepositoryBase<Folder>, IFolderRepository
         DeleteAll(folders);
     }
 
-    public Task<Folder?> GetAsync(Guid folderId)
+    public Task<Folder?> GetByIdAsync(Guid folderId)
     {
         return DbContext.Set<Folder>().FirstOrDefaultAsync(x => x.Id == folderId);
     }
@@ -133,7 +133,7 @@ public class FolderRepository : RepositoryBase<Folder>, IFolderRepository
 
     public async Task<List<Folder>> GetAllSoftDeletedAsync(Guid userId, bool trackChanges)
     {
-        return await FindByCondition(f => f.UserId.Equals(userId), trackChanges)
+        return await FindByCondition(f => f.UserId.Equals(userId) && f.IsDeleted, trackChanges)
             .ToListAsync();
     }
 }

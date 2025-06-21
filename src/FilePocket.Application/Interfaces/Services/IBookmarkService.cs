@@ -10,8 +10,10 @@ public interface IBookmarkService
     Task<IEnumerable<BookmarkModel>> GetAllAsync(Guid userId, Guid pocketId, Guid? folderId, bool isSoftDeleted, bool trackChanges);
     Task UpdateBookmarkAsync(UpdateBookmarkRequest bookmark);
     Task DeleteBookmarkAsync(Guid id);
-    Task MoveToTrashAsync(Guid bookmarkId);
+    Task MoveToTrashAsync(Guid id);
+    Task RestoreFromTrashAsync(Guid id);
     Task<IEnumerable<BookmarkSearchResponseModel>> SearchAsync(Guid userId, string partialName);
-    Task<IEnumerable<DeletedBookmarkModel>> GetAllSoftdeletedAsync(Guid userId);
+    Task<IEnumerable<DeletedBookmarkModel>> GetAllSoftDeletedAsync(Guid userId);
     Task DeleteAllBookmarksAsync(Guid userId);
+    Task<DeletedBookmarkModel> GetSoftDeletedAsync(Guid id);
 }

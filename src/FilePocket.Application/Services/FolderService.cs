@@ -94,7 +94,7 @@ public class FolderService : IFolderService
 
     private async Task<Folder> GetFolderAndCheckIfItExistsAsync(Guid id)
     {
-        var folder = await _repository.Folder.GetAsync(id);
+        var folder = await _repository.Folder.GetByIdAsync(id);
 
         if (folder is null)
         {
@@ -142,10 +142,19 @@ public class FolderService : IFolderService
         return _mapper.Map<IEnumerable<FolderSearchResponseModel>>(folders);
     }
 
-    public async Task<IEnumerable<DeletedFolderModel>> GetAllSoftdeletedAsync(Guid userId)
+    public async Task<IEnumerable<DeletedFolderModel>> GetAllSoftDeletedAsync(Guid userId)
     {
         var folders = await _repository.Folder.GetAllSoftDeletedAsync(userId, default) ?? [];
 
         return _mapper.Map<IEnumerable<DeletedFolderModel>>(folders);
+    }
+
+    public async Task<DeletedFolderModel> GetSoftDeletedAsync(Guid id)
+    {
+        var deletedFolder = await _repository.Folder.GetByIdAsync(id);
+
+        return deletedFolder is null
+            ? throw new FolderNotFoundException(id)
+            : _mapper.Map<DeletedFolderModel>(deletedFolder);
     }
 }

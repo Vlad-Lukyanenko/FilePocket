@@ -43,15 +43,21 @@ public class FileMetadataRepository : RepositoryBase<FileMetadata>, IFileMetadat
                                     && f.IsDeleted == isSoftDeleted
                                     && f.FileType == Domain.FileTypes.Note, trackChanges).ToListAsync();
     }
+
     public async Task<List<FileMetadata>> GetAllWithSoftDeletedAsync(Guid userId, Guid pocketId, bool trackChanges)
     {
         return await FindByCondition(f => f.UserId.Equals(userId)
                                             && f.PocketId.Equals(pocketId), trackChanges).ToListAsync();
     }
 
-    public async Task<FileMetadata> GetByIdAsync(Guid userId, Guid fileId, bool trackChanges = false)
+    public async Task<FileMetadata> GetByUserIdAndIdAsync(Guid userId, Guid fileId, bool trackChanges = false)
     {
         return (await FindByCondition(f => f.UserId.Equals(userId) && f.Id.Equals(fileId), trackChanges).SingleOrDefaultAsync())!;
+    }
+
+    public async Task<FileMetadata> GetByIdAsync(Guid fileId, bool trackChanges = false)
+    {
+        return (await FindByCondition(f => f.Id.Equals(fileId), trackChanges).SingleOrDefaultAsync())!;
     }
 
     public void CreateFileMetadata(FileMetadata fileMetadataId)
@@ -78,7 +84,7 @@ public class FileMetadataRepository : RepositoryBase<FileMetadata>, IFileMetadat
 
     public async Task<List<FileMetadata>> GetAllSoftDeletedAsync(Guid userId, bool trackChanges)
     {
-        return await FindByCondition(f => f.UserId.Equals(userId) && f.IsDeleted == true, trackChanges)
+        return await FindByCondition(f => f.UserId.Equals(userId) && f.IsDeleted, trackChanges)
             .ToListAsync();
     }
 }

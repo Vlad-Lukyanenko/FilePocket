@@ -44,8 +44,7 @@ public class Folder : IAmSoftDeletedEntity
         {
             Bookmarks?.ForEach(b =>
             {
-                b.DeletedAt = null;
-                b.IsDeleted = false;
+                b.RestoreFromDeleted();
             });
         }
 
@@ -53,8 +52,7 @@ public class Folder : IAmSoftDeletedEntity
         {
             FileMetadata?.ForEach(f =>
             {
-                f.DeletedAt = null;
-                f.IsDeleted = false;
+                f.RestoreFromDeleted();
             });
         }
     }

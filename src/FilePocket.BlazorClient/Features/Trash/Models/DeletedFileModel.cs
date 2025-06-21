@@ -4,5 +4,6 @@ namespace FilePocket.BlazorClient.Features.Trash.Models
 {
     public class DeletedFileModel : FileSearchResponseModel
     {
+        public override string ItemName => OriginalName;
     }
 }

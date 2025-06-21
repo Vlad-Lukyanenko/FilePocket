@@ -33,9 +33,9 @@ namespace FilePocket.WebApi.Endpoints.Trash
 
             IEnumerable<SearchResponseModel> items = itemType.ToLower() switch
             {
-                "file" => _service.FileService.GetAllSoftdeletedAsync(UserId).Result.Cast<DeletedFileModel>(),
-                "bookmark" => _service.BookmarkService.GetAllSoftdeletedAsync(UserId).Result.Cast<DeletedBookmarkModel>(),
-                "folder" => _service.FolderService.GetAllSoftdeletedAsync(UserId).Result.Cast<DeletedFolderModel>(),
+                "file" => _service.FileService.GetAllSoftDeletedAsync(UserId).Result.Cast<DeletedFileModel>(),
+                "bookmark" => _service.BookmarkService.GetAllSoftDeletedAsync(UserId).Result.Cast<DeletedBookmarkModel>(),
+                "folder" => _service.FolderService.GetAllSoftDeletedAsync(UserId).Result.Cast<DeletedFolderModel>(),
                 _ => throw new NotSupportedException($"Item type '{itemType}' is not supported.")
             };
 
