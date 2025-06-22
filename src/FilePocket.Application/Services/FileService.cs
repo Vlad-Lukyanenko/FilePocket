@@ -17,6 +17,7 @@ public class FileService(
     IRepositoryManager repository,
     IConfiguration configuration,
     IImageService imageService,
+    IFolderService folderService,
     IEncryptionService encryptionService,
     IMapper mapper) : IFileService
 {
@@ -301,7 +302,7 @@ public class FileService(
 
     public async Task<bool> MoveToTrash(Guid userId, Guid fileId, CancellationToken cancellationToken = default)
     {
-        var fileMetadata = await repository.FileMetadata.GetByUserIdAndIdAsync(userId, fileId, trackChanges: true) 
+        var fileMetadata = await repository.FileMetadata.GetByUserIdAndIdAsync(userId, fileId, trackChanges: true)
             ?? throw new FileMetadataNotFoundException(fileId);
 
         fileMetadata.MarkAsDeleted();
@@ -313,8 +314,13 @@ public class FileService(
 
     public async Task RestoreFromTrashAsync(Guid userId, Guid fileId, CancellationToken cancellationToken = default)
     {
-        var fileMetadata = await repository.FileMetadata.GetByUserIdAndIdAsync(userId, fileId, trackChanges: true) 
+        var fileMetadata = await repository.FileMetadata.GetByUserIdAndIdAsync(userId, fileId, trackChanges: true)
             ?? throw new FileMetadataNotFoundException(fileId);
+
+        if (fileMetadata.FolderId != null)
+        {
+            await folderService.RestoreParentFoldersFromTrashAsync(fileMetadata.FolderId.Value);
+        }
 
         fileMetadata.RestoreFromDeleted();
 
@@ -466,8 +472,25 @@ public class FileService(
     public async Task<IEnumerable<DeletedFileModel>> GetAllSoftDeletedAsync(Guid userId)
     {
         var files = await repository.FileMetadata.GetAllSoftDeletedAsync(userId, default) ?? [];
+        var directlyDeletedFiles = new List<DeletedFileModel>();
 
-        return mapper.Map<IEnumerable<DeletedFileModel>>(files);
+        foreach (var file in files)
+        {
+            if (file.FolderId == null)
+            {
+                directlyDeletedFiles.Add(mapper.Map<DeletedFileModel>(file));
+                continue;
+            }
+
+            var parentFolder = await repository.Folder.GetByIdAsync(file.FolderId.Value);
+
+            if (!parentFolder!.IsDeleted || file.DeletedAt!.Value != parentFolder.DeletedAt!.Value)
+            {
+                directlyDeletedFiles.Add(mapper.Map<DeletedFileModel>(file));
+            }
+        }
+
+        return directlyDeletedFiles;
     }
 
     public async Task<DeletedFileModel> GetSoftDeletedAsync(Guid id)

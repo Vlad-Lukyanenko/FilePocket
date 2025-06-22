@@ -58,23 +58,36 @@ public class FolderService : IFolderService
     public async Task MoveToTrashAsync(Guid folderId)
     {
         var folder = await GetFolderAndCheckIfItExistsAsync(folderId);
+
         await IterateAndMarkAsDeletedOrRestoredThroughChildFoldersAsync(folder, isDeleted: true);
-
-        folder.MarkAsDeleted();
-        folder.ParentFolderId = null;
-
         await _repository.SaveChangesAsync();
     }
 
     public async Task RestoreFromTrashAsync(Guid folderId)
     {
         var folder = await GetFolderAndCheckIfItExistsAsync(folderId);
-        await IterateAndMarkAsDeletedOrRestoredThroughChildFoldersAsync(folder, isDeleted: false);
 
-        folder.RestoreFromDeleted();
-        folder.ParentFolderId = null;
+        await IterateAndMarkAsDeletedOrRestoredThroughChildFoldersAsync(folder, isDeleted: false);
+        await _repository.SaveChangesAsync();
+    }
+
+    public async Task RestoreParentFoldersFromTrashAsync(Guid lastChildFolderId)
+    {
+        var folder = await GetFolderAndCheckIfItExistsAsync(lastChildFolderId);
+
+        if (!folder.IsDeleted)
+        {
+            return;
+        }
+
+        folder.RestoreFromDeletedWithoutContent();
 
         await _repository.SaveChangesAsync();
+
+        if (folder?.ParentFolderId != null)
+        {
+            await RestoreParentFoldersFromTrashAsync(folder.ParentFolderId.Value);
+        }
     }
 
     public async Task<List<FolderModel>> GetAllAsync(Guid userId, Guid? pocketId, Guid? parentFolderId, List<FolderType> folderTypes, bool isSoftDeleted)
@@ -112,7 +125,7 @@ public class FolderService : IFolderService
         while (stack.Count > 0)
         {
             var currentFolderId = stack.Pop();
-            var childFolders = _repository.Folder.GetChildFolders(currentFolderId, true).Where(f => f.IsDeleted == folder.IsDeleted);
+            var childFolders = _repository.Folder.GetChildFolders(currentFolderId, true);
 
             if (childFolders is not null && childFolders.Any())
             {
@@ -145,8 +158,25 @@ public class FolderService : IFolderService
     public async Task<IEnumerable<DeletedFolderModel>> GetAllSoftDeletedAsync(Guid userId)
     {
         var folders = await _repository.Folder.GetAllSoftDeletedAsync(userId, default) ?? [];
+        var directlyDeletedFolders = new List<DeletedFolderModel>();
 
-        return _mapper.Map<IEnumerable<DeletedFolderModel>>(folders);
+        foreach (var folder in folders)
+        {
+            if (folder.ParentFolderId == null)
+            {
+                directlyDeletedFolders.Add(_mapper.Map<DeletedFolderModel>(folder));
+                continue;
+            }
+
+            var parentFolder = await _repository.Folder.GetByIdAsync(folder.ParentFolderId.Value);
+
+            if (!parentFolder!.IsDeleted || DeletedSeparately(folder.DeletedAt!.Value, parentFolder.DeletedAt!.Value))
+            {
+                directlyDeletedFolders.Add(_mapper.Map<DeletedFolderModel>(folder));
+            }
+        }
+
+        return directlyDeletedFolders;
     }
 
     public async Task<DeletedFolderModel> GetSoftDeletedAsync(Guid id)
@@ -156,5 +186,11 @@ public class FolderService : IFolderService
         return deletedFolder is null
             ? throw new FolderNotFoundException(id)
             : _mapper.Map<DeletedFolderModel>(deletedFolder);
+    }
+
+    private bool DeletedSeparately(DateTime childDeletedDateTime, DateTime parentDeletedDateTime)
+    {
+        return childDeletedDateTime > parentDeletedDateTime.AddSeconds(5)
+            || childDeletedDateTime < parentDeletedDateTime;
     }
 }

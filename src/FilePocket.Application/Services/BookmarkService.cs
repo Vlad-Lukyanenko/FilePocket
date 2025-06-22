@@ -11,11 +11,13 @@ namespace FilePocket.Application.Services;
 public class BookmarkService : IBookmarkService
 {
     private readonly IRepositoryManager _repository;
+    private readonly IFolderService _folderService;
     private readonly IMapper _mapper;
 
-    public BookmarkService(IRepositoryManager repository, IMapper mapper)
+    public BookmarkService(IRepositoryManager repository, IFolderService folderService,  IMapper mapper)
     {
         _repository = repository;
+        _folderService = folderService;
         _mapper = mapper;
     }
 
@@ -73,6 +75,11 @@ public class BookmarkService : IBookmarkService
     {
         var bookmark = await GetBookmarkAndCheckIfItExistsAsync(id);
 
+        if (bookmark.FolderId != null)
+        {
+            await _folderService.RestoreParentFoldersFromTrashAsync(bookmark.FolderId.Value);
+        }
+
         bookmark.RestoreFromDeleted();
 
         await _repository.SaveChangesAsync();
@@ -110,8 +117,25 @@ public class BookmarkService : IBookmarkService
     public async Task<IEnumerable<DeletedBookmarkModel>> GetAllSoftDeletedAsync(Guid userId)
     {
         var bookmarks = await _repository.Bookmark.GetAllSoftdeletedAsync(userId, default) ?? [];
+        var directlyDeletedBookmarks = new List<DeletedBookmarkModel>();
 
-        return _mapper.Map<List<DeletedBookmarkModel>>(bookmarks);
+        foreach (var bookmark in bookmarks)
+        {
+            if (bookmark.FolderId == null)
+            {
+                directlyDeletedBookmarks.Add(_mapper.Map<DeletedBookmarkModel>(bookmark));
+                continue;
+            }
+
+            var parentFolder = await _repository.Folder.GetByIdAsync(bookmark.FolderId.Value);
+
+            if (!parentFolder!.IsDeleted || bookmark.DeletedAt!.Value != parentFolder.DeletedAt!.Value)
+            {
+                directlyDeletedBookmarks.Add(_mapper.Map<DeletedBookmarkModel>(bookmark));
+            }
+        }
+
+        return directlyDeletedBookmarks;
     }
 
     public async Task<DeletedBookmarkModel> GetSoftDeletedAsync(Guid id)
