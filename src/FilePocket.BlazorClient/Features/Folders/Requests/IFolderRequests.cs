@@ -10,7 +10,7 @@ public interface IFolderRequests
     Task<IEnumerable<FolderModel>> GetAllAsync(Guid? pocketId, List<FolderType> folderTypes, bool isSoftDeleted);
     Task<bool> CreateAsync(FolderModel folder);
     Task<bool> DeleteAsync(Guid folderId);
-    Task<bool> SoftDeleteAsync(Guid folderId);
+    Task<bool> MoveToTrashAsync(Guid folderId);
     Task<bool> RestoreAsync(Guid folderId);
     Task<bool> UpdateAsync(FolderModel folder);
 }

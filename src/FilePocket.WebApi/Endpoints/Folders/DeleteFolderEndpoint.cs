@@ -3,11 +3,11 @@ using FilePocket.WebApi.Endpoints.Base;
 
 namespace FilePocket.WebApi.Endpoints.Folders;
 
-public class DeleteEndpoint : BaseEndpointWithoutRequestAndResponse
+public class DeleteFolderEndpoint : BaseEndpointWithoutRequestAndResponse
 {
     private readonly IServiceManager _service;
 
-    public DeleteEndpoint(IServiceManager service)
+    public DeleteFolderEndpoint(IServiceManager service)
     {
         _service = service;
     }

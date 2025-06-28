@@ -109,10 +109,20 @@ public class FileRequests : IFileRequests
         return result!;
     }
 
-    public async Task<bool> DeleteFile(Guid fileId)
+    public async Task<bool> DeleteFileAsync(Guid fileId)
     {
         var url = FileUrl.DeleteFile(fileId);
         var response = await _apiClient.DeleteAsync(url);
+
+        response.EnsureSuccessStatusCode();
+
+        return response.IsSuccessStatusCode;
+    }
+
+    public async Task<bool> MoveToTrashAsync(Guid fileId)
+    {
+        var url = FileUrl.MoveFileToTrash(fileId);
+        var response = await _apiClient.PutAsync(url);
 
         response.EnsureSuccessStatusCode();
 

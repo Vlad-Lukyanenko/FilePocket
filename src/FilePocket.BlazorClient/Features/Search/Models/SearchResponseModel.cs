@@ -15,5 +15,7 @@
         public Guid? FolderId { get; set; }
 
         public Guid UserId { get; set; }
+
+        public virtual string ItemName { get; set; } = string.Empty;
     }
 }

@@ -1,0 +1,80 @@
+﻿@page "/trash/{ItemType}/{Id}"
+@using FilePocket.BlazorClient.Helpers
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
+
+<style>
+    .item-info-container {
+        width: 100%;
+        padding-right: var(--bs-gutter-x, 0.75rem);
+        padding-left: var(--bs-gutter-x, 0.75rem);
+        margin-right: auto;
+        margin-left: auto;
+        border: 1px solid #CCC;
+        border-radius: 0.4em;
+        font-size: 0.9em;
+    }
+</style>
+
+<div>
+    <TopSubMenu Title="Deleted Item" ShowBackButton="true" />
+
+    @if (_deletedItem != null)
+    {
+        <div class="row mb-3">
+            <div class="col-12 d-flex justify-content-start align-items-center">
+                <button class="btn btn-outline-primary p-1"
+                        style="border-radius: 0.4em; min-width: 6em;"
+                        @onclick="RestoreClick">
+                    <i class="bi bi-arrow-repeat me-1" style="font-style: normal" />Restore
+                </button>
+
+                <!-- Delete Button aligned to right -->
+                <div style="display: flex; justify-content: flex-end; width: 100%; gap: 8px;">
+                    @if (!_removalProcessStarted)
+                    {
+                        <button class="btn btn-outline-danger p-1"
+                                style="border-radius: 0.4em; min-width: 6em;"
+                                @onclick="() => _removalProcessStarted = true">
+                            <i class="bi bi-trash fs-6" />Delete
+                        </button>
+                    }
+                    else
+                    {
+                        <button class="btn btn-sm btn-outline-danger p-1"
+                                style="border-radius: 0.4em; min-width: 6em;"
+                                @onclick="ConfirmDeleteClick"
+                                title="Confirm">
+                            <i class="bi-check-square fs-6" /> Confirm
+                        </button>
+                        <button class="btn btn-sm btn-outline-primary p-1"
+                                style="border-radius: 0.4em; min-width: 6em;"
+                                title="Cancel"
+                                @onclick="() => _removalProcessStarted = false">
+                            <i class="bi bi-x-square fs-6" /> Cancel
+                        </button>
+                    }
+                </div>
+            </div>
+
+
+        </div>
+
+        <div class="item-info-container text-center shadow-sm mt-2">
+            <div class="row p-2">
+                <div class="col">
+                    <p class="fw-bold mb-1">name:</p>
+                    <label>@Tools.TruncateString(_deletedItem.ItemName)</label>
+                </div>
+                <div class="col">
+                    <p class="fw-bold mb-1">type:</p>
+                    <label>@ItemType</label>
+                </div>
+                <div class="col">
+                    <p class="fw-bold mb-1">deleted at:</p>
+                    <label>@_deletedItem.DeletedAt</label>
+                </div>
+            </div>
+        </div>
+    }
+</div>

@@ -3,16 +3,16 @@ using FilePocket.WebApi.Endpoints.Base;
 
 namespace FilePocket.WebApi.Endpoints.Notes
 {
-    public class SoftDeleteNoteEndpoint: BaseEndpointWithoutRequestAndResponse
+    public class MoveNoteToTrashEndpoint: BaseEndpointWithoutRequestAndResponse
     {
         private readonly IServiceManager _service;
-        public SoftDeleteNoteEndpoint(IServiceManager service)
+        public MoveNoteToTrashEndpoint(IServiceManager service)
         {
             _service = service;
         }
         public override void Configure()
         {
-            Delete("api/notes/{id:guid}");
+            Put("api/notes/{id:guid}");
             AuthSchemes("Bearer");
         }
         public override async Task HandleAsync(CancellationToken cancellationToken)

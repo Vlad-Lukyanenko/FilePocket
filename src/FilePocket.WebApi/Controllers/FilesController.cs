@@ -58,7 +58,7 @@ public class FilesController : BaseController
     [HttpGet("files/{fileId:guid}")]
     public async Task<IActionResult> Get(Guid fileId)
     {
-        var file = await _service.FileService.GetFileByUserIdIdAsync(UserId, fileId);
+        var file = await _service.FileService.GetFileByUserIdAndIdAsync(UserId, fileId);
 
         return Ok(file);
     }

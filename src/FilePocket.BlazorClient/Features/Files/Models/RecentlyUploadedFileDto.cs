@@ -1,4 +1,6 @@
-﻿namespace FilePocket.BlazorClient.Features.Files.Models
+﻿using FilePocket.BlazorClient.Shared.Enums;
+
+namespace FilePocket.BlazorClient.Features.Files.Models
 {
     public class RecentlyUploadedFileDto
     {

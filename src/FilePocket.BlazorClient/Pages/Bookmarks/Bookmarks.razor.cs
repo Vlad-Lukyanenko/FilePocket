@@ -184,7 +184,7 @@ public partial class Bookmarks
     {
         if (FolderId is not null)
         {
-            await FolderRequests.SoftDeleteAsync(FolderId.Value);
+            await FolderRequests.MoveToTrashAsync(FolderId.Value);
         }
 
         _deleteFolderStarted = false;

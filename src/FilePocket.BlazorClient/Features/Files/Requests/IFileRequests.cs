@@ -12,6 +12,7 @@ public interface IFileRequests
     Task<FileModel> GetImageThumbnailAsync(Guid imageId, int size);
     Task<FileModel> GetFileInfoAsync(Guid fileId);
     Task<FileModel> UploadFileAsync(MultipartFormDataContent content);
-    Task<bool> DeleteFile(Guid fileId);
+    Task<bool> DeleteFileAsync(Guid fileId);
+    Task<bool> MoveToTrashAsync(Guid fileId);
     Task<bool> UpdateFileAsync(UpdateFileInfoModel file);
 }

@@ -1,46 +1,35 @@
-﻿using FilePocket.BlazorClient.Shared.Enums;
-using FilePocket.BlazorClient.Features.Folders.Models;
+﻿using FilePocket.BlazorClient.Features.Folders.Models;
 using FilePocket.BlazorClient.Features.Notes.Models;
 using FilePocket.BlazorClient.Features.Notes.Requests;
+using FilePocket.BlazorClient.Features.Storage.Models;
+using FilePocket.BlazorClient.Features.Storage.Requests;
+using FilePocket.BlazorClient.Features.Trash.Requests;
+using FilePocket.BlazorClient.Helpers;
 using FilePocket.BlazorClient.Services.Folders.Requests;
+using FilePocket.BlazorClient.Services.Pockets.Requests;
+using FilePocket.BlazorClient.Shared.Enums;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using System.Collections.ObjectModel;
-using FilePocket.BlazorClient.Features.Trash;
-using FilePocket.BlazorClient.Services.Pockets.Requests;
 
 namespace FilePocket.BlazorClient.MyComponents
 {
     public partial class NotesAndFolders
     {
 
-        [Parameter]
-        public Guid? UserId { get; set; }
+        [Parameter] public Guid? UserId { get; set; }
+        [Parameter] public Guid? PocketId { get; set; }
+        [Parameter] public Guid? FolderId { get; set; }
 
-        [Parameter]
-        public Guid? PocketId { get; set; }
-
-
-        [Parameter]
-        public Guid? FolderId { get; set; }
-
-        [Inject]
-        private INoteRequests NoteRequests { get; set; } = default!;
-
-        [Inject]
-        private IFolderRequests FolderRequests { get; set; } = default!;
-
-        [Inject]
-        private IPocketRequests PocketRequests { get; set; } = default!;
-
-        [Inject]
-        private ITrashRequests TrashRequests { get; set; } = default!;
-
-        [Inject]
-        private NavigationManager Navigation { get; set; } = default!;
-
-        [Inject]
-        private IJSRuntime JS { get; set; } = default!;
+        [Inject] private INoteRequests NoteRequests { get; set; } = default!;
+        [Inject] private IFolderRequests FolderRequests { get; set; } = default!;
+        [Inject] private IPocketRequests PocketRequests { get; set; } = default!;
+        [Inject] private ITrashRequests TrashRequests { get; set; } = default!;
+        [Inject] private NavigationManager Navigation { get; set; } = default!;
+        [Inject] private IJSRuntime JS { get; set; } = default!;
+        [Inject] private IStorageRequests StorageRequests { get; set; } = default!;
+        [Inject] private StateContainer<StorageConsumptionModel> StorageStateContainer { get; set; } = default!;
+        [Inject] private AppState AppState { get; set; } = default!;
 
         private bool _firstRender = true;
         private string _goBackUrl = string.Empty;
@@ -94,7 +83,7 @@ namespace FilePocket.BlazorClient.MyComponents
                     : (await FolderRequests.GetAllAsync(PocketId, FolderId.Value, folderTypes, false)))
                 ?? [];
 
-            var notes = (await NoteRequests.GetAllByUserIdAndFolderId(FolderId));
+            var notes = (await NoteRequests.GetAllByFolderIdAsync(FolderId));
 
             _folders = [.. folders];
             _notes = [.. notes];
@@ -110,16 +99,18 @@ namespace FilePocket.BlazorClient.MyComponents
             Navigation.NavigateTo(url);
         }
 
-        private async Task DeleteFolderClick()
+        private async Task MoveToTrash()
         {
             if (FolderId is not null)
             {
-                //MoveFolderToTrash does not exist
-                //await TrashRequests.MoveFolderToTrash(FolderId.Value);
+                await FolderRequests.MoveToTrashAsync(FolderId.Value);
             }
 
             _removalProcessStarted = false;
 
+            var storageConsumption = await StorageRequests.GetStorageConsumption();
+            StorageStateContainer.SetValue(storageConsumption!);
+            AppState.NotifyStateChanged();
             Navigation.NavigateTo(_goBackUrl);
         }
 

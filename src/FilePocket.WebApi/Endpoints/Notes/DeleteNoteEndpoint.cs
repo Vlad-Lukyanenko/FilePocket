@@ -12,7 +12,7 @@ namespace FilePocket.WebApi.Endpoints.Notes
         }
         public override void Configure()
         {
-            Delete("api/notes/{id:guid}/delete-irreversibly");
+            Delete("api/notes/{id:guid}");
             AuthSchemes("Bearer");
         }
         public override async Task HandleAsync(CancellationToken cancellationToken)
