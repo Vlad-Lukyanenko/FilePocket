@@ -5,8 +5,6 @@ namespace FilePocket.BlazorClient.Features.Trash.Requests;
 
 public interface ITrashRequests
 {
-    Task MoveFileToTrash(Guid fileId);
-    Task MovePocketToTrash(Guid pocketId);
     Task RestoreFromTrash(string itemType, string itemId);
     Task ClearAllTrashAsync();
     Task<List<T>> GetAllSoftdelted<T>(RequestedItemType itemType);

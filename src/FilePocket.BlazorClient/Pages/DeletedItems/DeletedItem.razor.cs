@@ -1,5 +1,4 @@
 ﻿using FilePocket.BlazorClient.Features.Bookmarks.Requests;
-using FilePocket.BlazorClient.Features.Search.Enums;
 using FilePocket.BlazorClient.Features.Search.Models;
 using FilePocket.BlazorClient.Features.Storage.Models;
 using FilePocket.BlazorClient.Features.Storage.Requests;
@@ -9,7 +8,6 @@ using FilePocket.BlazorClient.Helpers;
 using FilePocket.BlazorClient.Services.Files.Requests;
 using FilePocket.BlazorClient.Services.Folders.Requests;
 using Microsoft.AspNetCore.Components;
-using System.Runtime.InteropServices;
 
 namespace FilePocket.BlazorClient.Pages.DeletedItems
 {
@@ -66,7 +64,7 @@ namespace FilePocket.BlazorClient.Pages.DeletedItems
             switch (ItemType.ToLower())
             {
                 case "file":
-                    await FileRequests.DeleteFile(Guid.Parse(Id));
+                    await FileRequests.DeleteFileAsync(Guid.Parse(Id));
                     break;
                 case "folder":
                     await FolderRequests.DeleteAsync(Guid.Parse(Id));

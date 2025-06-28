@@ -6,12 +6,12 @@ using FilePocket.Contracts.Folders.Requests;
 
 namespace FilePocket.WebApi.Endpoints.Folders
 {
-    public class CreateEndpoint : BaseEndpointWithoutResponse<CreateEndpointRequest>
+    public class CreateFolderEndpoint : BaseEndpointWithoutResponse<CreateEndpointRequest>
     {
         private readonly IServiceManager _service;
         private readonly IMapper _mapper;
 
-        public CreateEndpoint(IServiceManager service, IMapper mapper)
+        public CreateFolderEndpoint(IServiceManager service, IMapper mapper)
         {
             _service = service;
             _mapper = mapper;

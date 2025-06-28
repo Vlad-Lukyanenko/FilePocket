@@ -13,16 +13,6 @@ public class TrashRequests : ITrashRequests
         _apiClient = apiClient;
     }
 
-    public async Task MoveFileToTrash(Guid fileId)
-    {
-        var _ = await _apiClient.PutAsync(TrashUrl.MoveFileToTrash(fileId), null);
-    }
-
-    public async Task MovePocketToTrash(Guid pocketId)
-    {
-        var _ = await _apiClient.PutAsync(TrashUrl.MovePocketToTrash(pocketId), null);
-    }
-
     public async Task RestoreFromTrash(string itemType, string itemId)
     {
         var url = TrashUrl.RestoreFromTrash(itemType, itemId);

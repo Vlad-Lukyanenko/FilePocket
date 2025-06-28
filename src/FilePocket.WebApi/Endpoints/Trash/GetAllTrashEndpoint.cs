@@ -5,11 +5,11 @@ using static System.Net.WebRequestMethods;
 
 namespace FilePocket.WebApi.Endpoints.Trash
 {
-    public class GetAllSoftDeletedEndpoint : BaseEndpointWithoutRequest<IEnumerable<SearchResponseModel>>
+    public class GetAllTrashEndpoint : BaseEndpointWithoutRequest<IEnumerable<SearchResponseModel>>
     {
         private readonly IServiceManager _service;
 
-        public GetAllSoftDeletedEndpoint(IServiceManager service)
+        public GetAllTrashEndpoint(IServiceManager service)
         {
             _service = service;
         }

@@ -3,27 +3,27 @@ using FilePocket.Application.Interfaces.Services;
 using FilePocket.WebApi.EndpointProcessors;
 using FilePocket.WebApi.Endpoints.Base;
 
-namespace FilePocket.WebApi.Endpoints.Trash;
+namespace FilePocket.WebApi.Endpoints.Pocket;
 
-public class MoveFileToTrashEndpoint : BaseEndpointWithoutRequestAndResponse
+public class MovePocketToTrashEndpoint : BaseEndpointWithoutRequestAndResponse
 {
     private readonly IServiceManager _service;
 
-    public MoveFileToTrashEndpoint(IServiceManager service)
+    public MovePocketToTrashEndpoint(IServiceManager service)
     {
         _service = service;
     }
 
     public override void Configure()
     {
-        Put("api/trash/files/{fileId:guid}");
+        Put("api/pockets/{pocketId:guid}");
         PreProcessor<AuthorizationProcessor<EmptyRequest>>();
     }
 
     public override async Task HandleAsync(CancellationToken cancellationToken)
     {
-        var fileId = Route<Guid>("fileId");
-        await _service.FileService.MoveToTrash(UserId, fileId);
+        var pocketId = Route<Guid>("pocketId");
+        await _service.PocketService.MoveToTrash(UserId, pocketId);
 
         await SendNoContentAsync();
     }

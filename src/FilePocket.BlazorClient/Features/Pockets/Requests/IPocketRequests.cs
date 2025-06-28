@@ -9,6 +9,7 @@ namespace FilePocket.BlazorClient.Services.Pockets.Requests
         Task<PocketModel> GetInfoAsync(Guid id);
         Task<bool> CreateAsync(CreatePocketModel pocket);
         Task<bool> DeleteAsync(Guid id);
+        Task<bool> MoveToTrashAsync(Guid id);
         Task<bool> UpdateAsync(PocketModel pocket);
         Task<bool> CheckPocketCapacityAsync(Guid pocket, long fileSize);
     }

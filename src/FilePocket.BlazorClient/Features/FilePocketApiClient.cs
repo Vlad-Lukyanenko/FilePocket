@@ -49,7 +49,7 @@ namespace FilePocket.BlazorClient.Features
             return await _httpClient.PostAsync(endpoint, content);
         }
 
-        public async Task<HttpResponseMessage> PutAsync(string endpoint, StringContent? content)
+        public async Task<HttpResponseMessage> PutAsync(string endpoint, StringContent? content = null)
         {
             await AuthAsync();
 

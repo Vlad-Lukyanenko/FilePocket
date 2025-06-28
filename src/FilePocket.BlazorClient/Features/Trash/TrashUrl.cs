@@ -4,15 +4,6 @@ namespace FilePocket.BlazorClient.Features.Trash
 {
     public static class TrashUrl
     {
-        public static string MoveFileToTrash(Guid fileId)
-        {
-            return $"api/trash/files/{fileId}";
-        }
-        public static string MovePocketToTrash(Guid pocketId)
-        {
-            return $"api/trash/pockets/{pocketId}";
-        }
-
         public static string RestoreFromTrash(string itemType, string itemId)
         {
             return $"api/trash/{itemType.ToLower()}/{itemId}/restore";

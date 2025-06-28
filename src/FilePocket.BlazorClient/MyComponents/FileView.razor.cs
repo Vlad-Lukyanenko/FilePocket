@@ -113,11 +113,15 @@ namespace FilePocket.BlazorClient.MyComponents
         private async void MoveToTrashClick()
         {
             _removalProcessStarted = true;
-            await TrashRequests.MoveFileToTrash(_fileId);
 
-            var storageConsumption = await StorageRequests.GetStorageConsumption();
-            StorageStateContainer.SetValue(storageConsumption!);
-            Navigation.NavigateTo(_goBackUrl);
+            var result = await FileRequests.MoveToTrashAsync(_fileId);
+
+            if (result)
+            {
+                var storageConsumption = await StorageRequests.GetStorageConsumption();
+                StorageStateContainer.SetValue(storageConsumption!);
+                Navigation.NavigateTo(_goBackUrl);
+            }
         }
     }
 }

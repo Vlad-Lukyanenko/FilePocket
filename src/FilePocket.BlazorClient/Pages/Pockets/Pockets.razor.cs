@@ -59,7 +59,8 @@ namespace FilePocket.BlazorClient.Pages.Pockets
                 _pockets.Remove(pocket);
                 _removalProcessStarted = false;
 
-                await TrashRequests.MovePocketToTrash(_pocketIdToBeChanged);
+                _ = await PocketRequests.MoveToTrashAsync(_pocketIdToBeChanged);
+
                 _pocketIdToBeChanged = default;
             }
         }
