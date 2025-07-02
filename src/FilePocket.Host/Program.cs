@@ -11,6 +11,8 @@ using FilePocket.Infrastructure.Persistence.Repositories;
 using FilePocket.Shared.Extensions;
 using FilePocket.WebApi;
 using FilePocket.WebApi.Attributes;
+using Hangfire;
+using Hangfire.PostgreSql;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
@@ -116,11 +118,23 @@ builder.Services.AddSwaggerGen(s =>
     });
 });
 
+builder.Services.AddHangfire(config =>
+{
+    config.UseSimpleAssemblyNameTypeSerializer()
+        .UseRecommendedSerializerSettings()
+        .UsePostgreSqlStorage(options => options.UseNpgsqlConnection(builder.Configuration.GetConnectionString("PostgreDb")));
+});
+builder.Services.AddHangfireServer();
+
 builder.Services.AddScoped<IRepositoryManager, RepositoryManager>();
 builder.Services.AddScoped<IImageService, ImageService>();
 builder.Services.AddScoped<IEncryptionService, EncryptionService>();
 builder.Services.AddSingleton<IUploadService, UploadService>();
 builder.Services.AddScoped<IServiceManager, ServiceManager>();
+builder.Services.AddScoped<IBookmarkService, BookmarkService>();
+builder.Services.AddScoped<IFileService, FileService>();
+builder.Services.AddScoped<IFolderService, FolderService>();
+builder.Services.AddScoped<ITrashService, TrashService>();
 builder.Services.AddScoped<JwtOrApiKeyAuthorizeAttribute>();
 
 var app = builder.Build();
@@ -143,6 +157,7 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.UseHangfireDashboard();
 app.MapControllers();
 app.UseFastEndpoints();
 

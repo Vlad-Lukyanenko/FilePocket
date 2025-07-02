@@ -184,7 +184,7 @@ public partial class Profile : ComponentBase
 
                     if (_profile.IconId is not null && _profile.IconId != Guid.Empty)
                     {
-                        await FileRequests.DeleteFile((Guid)_profile.IconId);
+                        await FileRequests.DeleteFileAsync((Guid)_profile.IconId);
                     }
 
                     if (uploadedFile is not null)

@@ -12,6 +12,7 @@ public static class FileUrl
     public static string GetAll() => $"api/files";
     public static string Update() => "api/files";
     public static string GetRecentFiles() => $"api/home/files/recent";
+    public static string MoveFileToTrash(Guid fileId) => $"api/files/{fileId}";
     public static string DeleteFile(Guid fileId) => $"api/files/{fileId}";
     public static string GetAllFilesWithSoftDeleted(Guid pocketId) => $"api/pockets/{pocketId}/files";
 }

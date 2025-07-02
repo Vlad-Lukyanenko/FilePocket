@@ -125,11 +125,11 @@ public partial class FilesAndFolders
         _goBackUrl = GetGoBackUrl();
     }
 
-    private async Task DeleteFolderClick()
+    private async Task MoveToTrash()
     {
         if (FolderId is not null)
         {
-            await FolderRequests.SoftDeleteAsync(FolderId.Value);
+            await FolderRequests.MoveToTrashAsync(FolderId.Value);
         }
 
         _removalProcessStarted = false;
@@ -341,7 +341,7 @@ public partial class FilesAndFolders
         {
             await Parallel.ForEachAsync(selectedFiles, async (file, cancellation) =>
             {
-                await FileRequests.DeleteFile(file.Id);
+                await FileRequests.DeleteFileAsync(file.Id);
             });
 
             var tmp = new ObservableCollection<FileInfoModel>();

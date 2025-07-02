@@ -63,6 +63,13 @@ namespace FilePocket.BlazorClient.Services.Pockets.Requests
             return response.IsSuccessStatusCode;
         }
 
+        public async Task<bool> MoveToTrashAsync(Guid pocketId)
+        {
+            var response = await _apiClient.PutAsync(PocketUrl.MoveToTrash(pocketId));
+
+            return response.IsSuccessStatusCode;
+        }
+
         public Task<bool> CheckPocketCapacityAsync(Guid pocket, long fileSize)
         {
             throw new NotImplementedException();

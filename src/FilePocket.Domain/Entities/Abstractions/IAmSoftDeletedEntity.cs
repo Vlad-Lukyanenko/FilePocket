@@ -6,4 +6,6 @@ public interface IAmSoftDeletedEntity
     DateTime? DeletedAt { get; }
 
     void MarkAsDeleted(DateTime? deletedAt);
+
+    void RestoreFromDeleted();
 }

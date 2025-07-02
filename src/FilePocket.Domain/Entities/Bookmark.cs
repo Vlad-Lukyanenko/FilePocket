@@ -26,4 +26,10 @@ public class Bookmark : IAmSoftDeletedEntity
         IsDeleted = true;
         DeletedAt = deletedAt ?? DateTime.UtcNow;
     }
+
+    public void RestoreFromDeleted()
+    {
+        IsDeleted = false;
+        DeletedAt = null;
+    }
 }

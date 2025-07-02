@@ -12,7 +12,7 @@ namespace FilePocket.BlazorClient.Features.Search.Requests
             _apiClient = apiClient;
         }
 
-        public async Task<List<T>> GetItemsByPartialNameAsync<T>(SearchItemType itemType, string partialNameToSearch)
+        public async Task<List<T>> GetItemsByPartialNameAsync<T>(RequestedItemType itemType, string partialNameToSearch)
         {
             var url = SearchUrl.GeItemsByPartialName(itemType, partialNameToSearch);
             var content = await _apiClient.GetAsync(url);
