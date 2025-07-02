@@ -3,11 +3,6 @@ using FilePocket.Application.Interfaces.Services;
 using FilePocket.Domain.Models;
 using FilePocket.WebApi.EndpointProcessors;
 using FilePocket.WebApi.Endpoints.Base;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FilePocket.WebApi.Endpoints.Trash
 {
@@ -39,7 +34,13 @@ namespace FilePocket.WebApi.Endpoints.Trash
             switch (itemType)
             {
                 case "file":
-                    await _service.FileService.RestoreFromTrashAsync(UserId, itemId);
+                    var folderId = await _service.FileService.RestoreFromTrashAsync(UserId, itemId);
+
+                    if (folderId != null)
+                    {
+                        await _service.FolderService.RestoreParentFolderFromTrashAsync(folderId.Value);
+                    }
+
                     break;
                 case "bookmark":
                     await _service.BookmarkService.RestoreFromTrashAsync(itemId);

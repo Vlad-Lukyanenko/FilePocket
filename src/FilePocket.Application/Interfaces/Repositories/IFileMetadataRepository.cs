@@ -8,6 +8,8 @@ public interface IFileMetadataRepository
 
     Task<List<FileMetadata>> GetAllAsync(Guid pocketId, bool trackChanges = false);
 
+    IEnumerable<FileMetadata> GetAllByFoldertId(Guid folderId, bool trackChanges = false);
+
     Task<List<FileMetadata>> GetAllUserFilesAsync(Guid userId, bool isSoftDeleted, bool trackChanges);
 
     Task<List<FileMetadata>> GetAllWithSoftDeletedAsync(Guid userID, Guid pocketId, bool trackChanges = false);

@@ -51,7 +51,7 @@ public class Folder : IAmSoftDeletedEntity
     {
         var deletedAt = DeletedAt;
 
-        RestoreFromDeletedWithoutContent();
+        RestoreFolderFromDeleted();
 
         if (Bookmarks is not null && Bookmarks.Any())
         {
@@ -76,7 +76,7 @@ public class Folder : IAmSoftDeletedEntity
         }
     }
 
-    public void RestoreFromDeletedWithoutContent()
+    public void RestoreFolderFromDeleted()
     {
         IsDeleted = false;
         DeletedAt = null;

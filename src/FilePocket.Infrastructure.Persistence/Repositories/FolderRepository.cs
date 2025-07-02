@@ -8,7 +8,6 @@ namespace FilePocket.Infrastructure.Persistence.Repositories;
 
 public class FolderRepository : RepositoryBase<Folder>, IFolderRepository
 {
-    protected FilePocketDbContext DbContext;
     private readonly IServiceScopeFactory _scopeFactory;
 
     public FolderRepository(FilePocketDbContext repositoryContext, IServiceScopeFactory scopeFactory)
@@ -18,7 +17,7 @@ public class FolderRepository : RepositoryBase<Folder>, IFolderRepository
         _scopeFactory = scopeFactory;
     }
 
-    public IEnumerable<Folder> GetChildFolders(Guid parentFolderId, bool trackChanges)
+    public IEnumerable<Folder> GetChildFolders(Guid parentFolderId, bool trackChanges = false)
     {
         return FindByCondition(f => f.ParentFolderId == parentFolderId, trackChanges);
     }
@@ -28,31 +27,45 @@ public class FolderRepository : RepositoryBase<Folder>, IFolderRepository
         return FindByCondition(b => b.UserId == userId && b.IsDeleted == isSoftDeleted, trackChanges).OrderByDescending(b => b.CreatedAt);
     }
 
-    public void Create(Folder folder)
+    public new void Create(Folder folder)
     {
         DbContext.Set<Folder>().Add(folder);
     }
 
+    public new void Update(Folder folder)
+    {
+        DbContext.Set<Folder>().Update(folder);
+    }
+
     public async Task Delete(Guid folderId)
     {
-        using (var scope = _scopeFactory.CreateScope())
-        {
-            var dbContext = scope.ServiceProvider.GetRequiredService<FilePocketDbContext>();
 
-            using (var transaction = await dbContext.Database.BeginTransactionAsync())
-            {
-                try
-                {
-                    await DeleteFolderIterative(folderId, dbContext);
-                    await transaction.CommitAsync();
-                }
-                catch
-                {
-                    await transaction.RollbackAsync();
-                    throw;
-                }
-            }
+        var folderToDelete = await DbContext.Set<Folder>().FindAsync(folderId);
+
+        if (folderToDelete != null)
+        {
+            DbContext.Set<Folder>().Remove(folderToDelete);
+            await DbContext.SaveChangesAsync();
         }
+
+        //using (var scope = _scopeFactory.CreateScope())
+        //{
+        //    var dbContext = scope.ServiceProvider.GetRequiredService<FilePocketDbContext>();
+
+        //    using (var transaction = await dbContext.Database.BeginTransactionAsync())
+        //    {
+        //        try
+        //        {
+        //            await DeleteFolderIterative(folderId, dbContext);
+        //            await transaction.CommitAsync();
+        //        }
+        //        catch
+        //        {
+        //            await transaction.RollbackAsync();
+        //            throw;
+        //        }
+        //    }
+        //}
     }
 
     public void DeleteByPocketId(Guid pocketId)
@@ -88,13 +101,13 @@ public class FolderRepository : RepositoryBase<Folder>, IFolderRepository
 
     private async Task DeleteFolderIterative(Guid folderId, FilePocketDbContext dbContext)
     {
+
         var stack = new Stack<Guid>();
         stack.Push(folderId);
 
         while (stack.Count > 0)
         {
             var currentFolderId = stack.Pop();
-
             var files = await dbContext.FilesMetadata.Where(c => c.FolderId == currentFolderId).ToListAsync();
             var childFolders = await dbContext.Folders.Where(f => f.ParentFolderId == currentFolderId).ToListAsync();
 

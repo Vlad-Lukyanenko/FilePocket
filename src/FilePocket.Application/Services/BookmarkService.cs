@@ -77,7 +77,7 @@ public class BookmarkService : IBookmarkService
 
         if (bookmark.FolderId != null)
         {
-            await _folderService.RestoreParentFoldersFromTrashAsync(bookmark.FolderId.Value);
+            await _folderService.RestoreParentFolderFromTrashAsync(bookmark.FolderId.Value);
         }
 
         bookmark.RestoreFromDeleted();

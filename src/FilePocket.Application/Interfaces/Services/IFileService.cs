@@ -73,7 +73,7 @@ public interface IFileService : IFileProvider
         Guid fileId,
         CancellationToken cancellationToken = default);
 
-    Task RestoreFromTrashAsync(
+    Task<Guid?> RestoreFromTrashAsync(
         Guid userId, 
         Guid fileId, 
         CancellationToken cancellationToken = default);

@@ -29,9 +29,19 @@ public class BookmarkRepository : RepositoryBase<Bookmark>, IBookmarkRepository
                                             && b.IsDeleted == isSoftDeleted, trackChanges).ToListAsync();
     }
 
+    public IEnumerable<Bookmark> GetAllByFolderId(Guid folderId, bool trackChanges = false)
+    {
+        return FindByCondition(b => b.FolderId.Equals(folderId), trackChanges);
+    }
+
     public void CreateBookmark(Bookmark bookmark)
     {
         Create(bookmark);
+    }
+
+    public void UpdateBookmark(Bookmark bookmark)
+    {
+        Update(bookmark);
     }
 
     public void DeleteBookmark(Bookmark bookmark)

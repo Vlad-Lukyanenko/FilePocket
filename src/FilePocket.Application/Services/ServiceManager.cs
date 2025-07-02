@@ -19,13 +19,14 @@ public class ServiceManager(
     IOptions<AccountConsumptionConfigurationModel> consumptionOptions,
     IImageService imageService,
     IFolderService folderService,
+    IFileService fileService,
     IEncryptionService encryptionService)
     : IServiceManager
 {
     private readonly Lazy<IPocketService> _pocketService = new(() => new PocketService(repositoryManager, mapper, configuration));
     private readonly Lazy<ISharedFileService> _sharedFileService = new(() => new SharedFileService(repositoryManager, mapper));
-    private readonly Lazy<IFileService> _fileService = new(() => new FileService(repositoryManager, configuration, imageService, folderService, encryptionService, mapper));
-    private readonly Lazy<IFolderService> _folderService = new(() => new FolderService(repositoryManager, mapper));
+    private readonly Lazy<IFileService> _fileService = new(() => new FileService(repositoryManager, configuration, imageService, encryptionService, mapper));
+    private readonly Lazy<IFolderService> _folderService = new(() => new FolderService(repositoryManager, fileService, mapper));
     private readonly Lazy<IAuthenticationService> _authenticationService = new(() => new AuthenticationService(logger, userManager, options, consumptionOptions, mapper));
     private readonly Lazy<IBookmarkService> _bookmarkService = new(() => new BookmarkService(repositoryManager, folderService, mapper));
     private readonly Lazy<IProfileService> _profileService = new(() => new ProfileService(repositoryManager, mapper));

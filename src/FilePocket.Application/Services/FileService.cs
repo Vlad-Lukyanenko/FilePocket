@@ -11,13 +11,13 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using StorageConsumption = FilePocket.Domain.Entities.Consumption.StorageConsumption;
 
+
 namespace FilePocket.Application.Services;
 
 public class FileService(
     IRepositoryManager repository,
     IConfiguration configuration,
     IImageService imageService,
-    IFolderService folderService,
     IEncryptionService encryptionService,
     IMapper mapper) : IFileService
 {
@@ -312,19 +312,15 @@ public class FileService(
         return true;
     }
 
-    public async Task RestoreFromTrashAsync(Guid userId, Guid fileId, CancellationToken cancellationToken = default)
+    public async Task<Guid?> RestoreFromTrashAsync(Guid userId, Guid fileId, CancellationToken cancellationToken = default)
     {
         var fileMetadata = await repository.FileMetadata.GetByUserIdAndIdAsync(userId, fileId, trackChanges: true)
             ?? throw new FileMetadataNotFoundException(fileId);
 
-        if (fileMetadata.FolderId != null)
-        {
-            await folderService.RestoreParentFoldersFromTrashAsync(fileMetadata.FolderId.Value);
-        }
-
         fileMetadata.RestoreFromDeleted();
 
         await repository.SaveChangesAsync(cancellationToken);
+        return fileMetadata.FolderId;
     }
 
     public async Task UpdateFileAsync(UpdateFileModel file)

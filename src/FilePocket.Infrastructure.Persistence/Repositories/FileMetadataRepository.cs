@@ -22,6 +22,11 @@ public class FileMetadataRepository : RepositoryBase<FileMetadata>, IFileMetadat
         return await FindByCondition(f => f.UserId.Equals(userId) && f.IsDeleted == isSoftDeleted, trackChanges).ToListAsync();
     }
 
+    public IEnumerable<FileMetadata> GetAllByFoldertId(Guid folderId, bool trackChanges = false)
+    {
+        return FindByCondition(f => f.FolderId.Equals(folderId), trackChanges);
+    }
+
     public async Task<List<FileMetadata>> GetRecentFilesAsync(Guid userId, int numberOfFiles)
     {
         return await FindByCondition(f => f.UserId.Equals(userId) && !f.IsDeleted && f.FileType != Domain.FileTypes.Note, false).OrderByDescending(c => c.CreatedAt).Take(numberOfFiles).ToListAsync();
