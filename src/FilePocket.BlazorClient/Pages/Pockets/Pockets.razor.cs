@@ -1,4 +1,4 @@
-﻿using FilePocket.BlazorClient.Features.Trash;
+﻿using FilePocket.BlazorClient.Features.Trash.Requests;
 using FilePocket.BlazorClient.Services.Pockets.Models;
 using FilePocket.BlazorClient.Services.Pockets.Requests;
 using Microsoft.AspNetCore.Components;
@@ -59,7 +59,8 @@ namespace FilePocket.BlazorClient.Pages.Pockets
                 _pockets.Remove(pocket);
                 _removalProcessStarted = false;
 
-                await TrashRequests.MovePocketToTrash(_pocketIdToBeChanged);
+                _ = await PocketRequests.MoveToTrashAsync(_pocketIdToBeChanged);
+
                 _pocketIdToBeChanged = default;
             }
         }

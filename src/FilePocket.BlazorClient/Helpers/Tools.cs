@@ -1,4 +1,4 @@
-﻿using FilePocket.BlazorClient.Features.Files.Models;
+﻿using FilePocket.BlazorClient.Features.Search.Enums;
 using FilePocket.BlazorClient.Shared.Enums;
 using System.Text.RegularExpressions;
 
@@ -197,6 +197,11 @@ namespace FilePocket.BlazorClient.Helpers
                 FolderType.Notes => "notes",
                 _ => "files"
             };
+        }
+
+        public static string GetSoftDeletedItemUrl(RequestedItemType itemType, Guid id)
+        {
+            return $"/trash/{itemType}/{id}";
         }
     }
 

@@ -9,7 +9,6 @@ using FilePocket.BlazorClient.Features.Profiles.Requests;
 using FilePocket.BlazorClient.Features.SharedFiles.Requests;
 using FilePocket.BlazorClient.Features.Storage.Models;
 using FilePocket.BlazorClient.Features.Storage.Requests;
-using FilePocket.BlazorClient.Features.Trash;
 using FilePocket.BlazorClient.Features.Users.Models;
 using FilePocket.BlazorClient.Features.Users.Requests;
 using FilePocket.BlazorClient.Helpers;
@@ -20,6 +19,7 @@ using FilePocket.BlazorClient.Services.Pockets.Requests;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using FilePocket.BlazorClient.Features.Trash.Requests;
 
 namespace FilePocket.Client;
 

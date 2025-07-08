@@ -45,4 +45,24 @@ public class Pocket : IAmSoftDeletedEntity
             Folders?.ForEach(b => b.MarkAsDeleted(DeletedAt));
         }
     }
+
+    public void RestoreFromDeleted()
+    {
+        IsDeleted = false;
+        DeletedAt = null;
+        if (FileMetadata is not null && FileMetadata.Any())
+        {
+            FileMetadata?.ForEach(f =>
+            {
+                f.RestoreFromDeleted();
+            });
+        }
+        if (Folders is not null && Folders.Any())
+        {
+            Folders?.ForEach(f =>
+            {
+                f.RestoreFromDeleted();
+            });
+        }
+    }
 }

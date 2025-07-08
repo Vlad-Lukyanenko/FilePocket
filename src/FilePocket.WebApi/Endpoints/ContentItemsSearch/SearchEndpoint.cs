@@ -16,7 +16,7 @@ namespace FilePocket.WebApi.Endpoints.ContentItemsSearch
         public override void Configure()
         {
             Verbs(Http.Get);
-            Routes("api/{itemType}-search/{partialName}");
+            Routes("api/search/{itemType}/{partialName}");
             AuthSchemes("Bearer");
         }
 
@@ -44,12 +44,6 @@ namespace FilePocket.WebApi.Endpoints.ContentItemsSearch
                 "folder" => _service.FolderService.SearchAsync(UserId, partialName).Result.Cast<FolderSearchResponseModel>(),
                 _ => throw new NotSupportedException($"Item type '{itemType}' is not supported.")
             };
-
-            if (items == null || !items.Any())
-            {
-                await SendNotFoundAsync(cancellationToken);
-                return;
-            }
 
             await SendOkAsync(items, cancellationToken);
         }

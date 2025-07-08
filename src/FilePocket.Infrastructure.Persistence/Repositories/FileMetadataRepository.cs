@@ -1,7 +1,7 @@
-﻿using FilePocket.Domain.Entities;
-using Microsoft.EntityFrameworkCore;
-using FilePocket.Application.Interfaces.Repositories;
+﻿using FilePocket.Application.Interfaces.Repositories;
 using FilePocket.Domain;
+using FilePocket.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace FilePocket.Infrastructure.Persistence.Repositories;
 
@@ -17,6 +17,16 @@ public class FileMetadataRepository : RepositoryBase<FileMetadata>, IFileMetadat
         return await FindByCondition(f => f.PocketId.Equals(pocketId) && f.FolderId == null && !f.IsDeleted && f.FileType != Domain.FileTypes.Note, trackChanges).ToListAsync();
     }
 
+    public async Task<List<FileMetadata>> GetAllUserFilesAsync(Guid userId, bool isSoftDeleted, bool trackChanges)
+    {
+        return await FindByCondition(f => f.UserId.Equals(userId) && f.IsDeleted == isSoftDeleted, trackChanges).ToListAsync();
+    }
+
+    public IEnumerable<FileMetadata> GetAllByFoldertId(Guid folderId, bool trackChanges = false)
+    {
+        return FindByCondition(f => f.FolderId.Equals(folderId), trackChanges);
+    }
+
     public async Task<List<FileMetadata>> GetRecentFilesAsync(Guid userId, int numberOfFiles)
     {
         return await FindByCondition(f => f.UserId.Equals(userId) && !f.IsDeleted && f.FileType != Domain.FileTypes.Note, false).OrderByDescending(c => c.CreatedAt).Take(numberOfFiles).ToListAsync();
@@ -24,9 +34,9 @@ public class FileMetadataRepository : RepositoryBase<FileMetadata>, IFileMetadat
 
     public async Task<List<FileMetadata>> GetAllAsync(Guid userId, Guid pocketId, Guid? folderId, bool isSoftDeleted, bool trackChanges)
     {
-        return await FindByCondition(f => f.UserId.Equals(userId) 
-                                            && f.PocketId.Equals(pocketId) 
-                                            && f.FolderId.Equals(folderId) 
+        return await FindByCondition(f => f.UserId.Equals(userId)
+                                            && f.PocketId.Equals(pocketId)
+                                            && f.FolderId.Equals(folderId)
                                             && f.IsDeleted == isSoftDeleted
                                             && f.FileType != Domain.FileTypes.Note, trackChanges).ToListAsync();
     }
@@ -38,15 +48,21 @@ public class FileMetadataRepository : RepositoryBase<FileMetadata>, IFileMetadat
                                     && f.IsDeleted == isSoftDeleted
                                     && f.FileType == Domain.FileTypes.Note, trackChanges).ToListAsync();
     }
+
     public async Task<List<FileMetadata>> GetAllWithSoftDeletedAsync(Guid userId, Guid pocketId, bool trackChanges)
     {
         return await FindByCondition(f => f.UserId.Equals(userId)
                                             && f.PocketId.Equals(pocketId), trackChanges).ToListAsync();
     }
 
-    public async Task<FileMetadata> GetByIdAsync(Guid userId, Guid fileId, bool trackChanges = false)
+    public async Task<FileMetadata> GetByUserIdAndIdAsync(Guid userId, Guid fileId, bool trackChanges = false)
     {
         return (await FindByCondition(f => f.UserId.Equals(userId) && f.Id.Equals(fileId), trackChanges).SingleOrDefaultAsync())!;
+    }
+
+    public async Task<FileMetadata> GetByIdAsync(Guid fileId, bool trackChanges = false)
+    {
+        return (await FindByCondition(f => f.Id.Equals(fileId), trackChanges).SingleOrDefaultAsync())!;
     }
 
     public void CreateFileMetadata(FileMetadata fileMetadataId)
@@ -66,18 +82,15 @@ public class FileMetadataRepository : RepositoryBase<FileMetadata>, IFileMetadat
 
     public async  Task<List<FileMetadata>> GetFileMetadataByPartialNameAsync(Guid userId, string partialName, bool trackChanges = false)
     {
-        return (await FindByCondition(f => f.UserId.Equals(userId) && f.OriginalName.ToLower().Contains(partialName.ToLower()), trackChanges)
+        return await FindByCondition(f => f.UserId.Equals(userId) && f.OriginalName.ToLower().Contains(partialName.ToLower()), trackChanges)
             .OrderBy(f=>f.FileType)
-            .ToListAsync());
+            .ToListAsync();
     }
 
-    private static bool SelectByFileType(FileMetadata fileMetadata, FileTypes? fileType)
+    public async Task<List<FileMetadata>> GetAllSoftDeletedAsync(Guid userId, bool trackChanges)
     {
-        if (fileType != null)
-        {
-            return fileMetadata.FileType == fileType;
-        }
-        return fileMetadata.FileType != Domain.FileTypes.Note;
+        return await FindByCondition(f => f.UserId.Equals(userId) && f.IsDeleted, trackChanges)
+            .ToListAsync();
     }
 }
 

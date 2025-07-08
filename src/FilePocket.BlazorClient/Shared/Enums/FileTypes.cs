@@ -1,4 +1,4 @@
-﻿namespace FilePocket.BlazorClient.Features.Files.Models
+﻿namespace FilePocket.BlazorClient.Shared.Enums
 {
     public enum FileTypes
     {

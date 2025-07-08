@@ -217,7 +217,7 @@ namespace FilePocket.DataAccess.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<DateTime>("CreatedAt")
+                    b.Property<DateTime>("DateCreated")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime?>("DeletedAt")
@@ -574,9 +574,10 @@ namespace FilePocket.DataAccess.Migrations
 
             modelBuilder.Entity("FilePocket.Domain.Entities.FileMetadata", b =>
                 {
-                    b.HasOne("FilePocket.Domain.Entities.Folder", null)
+                    b.HasOne("FilePocket.Domain.Entities.Folder", "Folder")
                         .WithMany("FileMetadata")
-                        .HasForeignKey("FolderId");
+                        .HasForeignKey("FolderId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("FilePocket.Domain.Entities.Pocket", null)
                         .WithMany("FileMetadata")
@@ -589,6 +590,8 @@ namespace FilePocket.DataAccess.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Folder");
                 });
 
             modelBuilder.Entity("FilePocket.Domain.Entities.Folder", b =>

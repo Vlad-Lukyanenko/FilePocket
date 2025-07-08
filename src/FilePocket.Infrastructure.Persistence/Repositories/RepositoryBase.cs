@@ -44,4 +44,9 @@ public abstract class RepositoryBase<T> : IRepositoryBase<T> where T : class
     {
         DbContext.Set<T>().Remove(entity);
     }
+
+    public void DeleteAll(IEnumerable<T> entities)
+    {
+        DbContext.Set<T>().RemoveRange(entities);
+    }
 }

@@ -24,7 +24,7 @@ public interface IFileProvider
         Guid? folderId,
         bool isSoftDeleted);
 
-    Task<FileResponseModel> GetFileByUserIdIdAsync(
+    Task<FileResponseModel> GetFileByUserIdAndIdAsync(
         Guid userId,
         Guid fileId);
 
@@ -66,9 +66,16 @@ public interface IFileService : IFileProvider
         Guid fileId,
         CancellationToken cancellationToken = default);
 
+    Task RemoveAllFilesAsync(Guid userId);
+
     Task<bool> MoveToTrash(
         Guid userId,
         Guid fileId,
+        CancellationToken cancellationToken = default);
+
+    Task<Guid?> RestoreFromTrashAsync(
+        Guid userId, 
+        Guid fileId, 
         CancellationToken cancellationToken = default);
 
     Task UpdateFileAsync(UpdateFileModel file);
@@ -84,4 +91,8 @@ public interface IFileService : IFileProvider
     Task<byte[]> ReadNoteContentFromFileAsync(Guid userId, Guid fileId);
 
     Task<IEnumerable<FileSearchResponseModel>> SearchAsync(Guid userId, string partialName);
+
+    Task<IEnumerable<DeletedFileModel>> GetAllSoftDeletedAsync(Guid userId);
+
+    Task<DeletedFileModel> GetSoftDeletedAsync(Guid id);
 }

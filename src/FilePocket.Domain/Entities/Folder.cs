@@ -22,30 +22,16 @@ public class Folder : IAmSoftDeletedEntity
     public void MarkAsDeleted(DateTime? deletedAt = null)
     {
         IsDeleted = true;
-        DeletedAt = deletedAt ?? DateTime.UtcNow;       
-
-        if (Bookmarks is not null && Bookmarks.Any())
-        {
-            Bookmarks?.ForEach(b => b.MarkAsDeleted(DeletedAt));
-        }
-
-        if (FileMetadata is not null && FileMetadata.Any())
-        {
-            FileMetadata?.ForEach(b => b.MarkAsDeleted(DeletedAt));
-        }
-    }
-
-    public void RestoreFromDeleted()
-    {
-        IsDeleted = false;
-        DeletedAt = null;
+        DeletedAt = deletedAt ?? DateTime.UtcNow;
 
         if (Bookmarks is not null && Bookmarks.Any())
         {
             Bookmarks?.ForEach(b =>
             {
-                b.DeletedAt = null;
-                b.IsDeleted = false;
+                if (!b.IsDeleted)
+                {
+                    b.MarkAsDeleted(DeletedAt);
+                }
             });
         }
 
@@ -53,9 +39,46 @@ public class Folder : IAmSoftDeletedEntity
         {
             FileMetadata?.ForEach(f =>
             {
-                f.DeletedAt = null;
-                f.IsDeleted = false;
+                if (!f.IsDeleted)
+                {
+                    f.MarkAsDeleted(DeletedAt);
+                }
             });
         }
+    }
+
+    public void RestoreFromDeleted()
+    {
+        var deletedAt = DeletedAt;
+
+        RestoreFolderFromDeleted();
+
+        if (Bookmarks is not null && Bookmarks.Any())
+        {
+            Bookmarks?.ForEach(b =>
+            {
+                if (b.DeletedAt == deletedAt)
+                {
+                    b.RestoreFromDeleted();
+                }
+            });
+        }
+
+        if (FileMetadata is not null && FileMetadata.Any())
+        {
+            FileMetadata?.ForEach(f =>
+            {
+                if (f.DeletedAt == deletedAt)
+                {
+                    f.RestoreFromDeleted();
+                }
+            });
+        }
+    }
+
+    public void RestoreFolderFromDeleted()
+    {
+        IsDeleted = false;
+        DeletedAt = null;
     }
 }

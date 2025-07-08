@@ -27,14 +27,14 @@ namespace FilePocket.BlazorClient.Features.Notes.Requests
             return new NoteCreateResponse();
         }
 
-        public async Task<bool> DeleteAsync(Guid noteId)
+        public async Task<bool> MoveToTrashAsync(Guid noteId)
         {
-            var response = await _apiClient.DeleteAsync(NoteUrl.Delete(noteId));
+            var response = await _apiClient.PutAsync(NoteUrl.MoveToTrash(noteId));
 
             return response.IsSuccessStatusCode;
         }
 
-        public async Task<List<NoteModel>> GetAllByUserIdAndFolderId(Guid? folderId)
+        public async Task<List<NoteModel>> GetAllByFolderIdAsync(Guid? folderId)
         {
             var content = await _apiClient.GetAsync(NoteUrl.GetAllByUserIdAndFolderId(folderId));
             var notes = JsonConvert.DeserializeObject<List<NoteModel>>(content) ?? [];
@@ -50,9 +50,9 @@ namespace FilePocket.BlazorClient.Features.Notes.Requests
             return note;
         }
 
-        public async Task<bool> IrreversiblyDeleteAsync(Guid noteId)
+        public async Task<bool> DeleteAsync(Guid noteId)
         {
-            var response = await _apiClient.DeleteAsync(NoteUrl.IrreversiblyDelete(noteId));
+            var response = await _apiClient.DeleteAsync(NoteUrl.Delete(noteId));
 
             return response.IsSuccessStatusCode;
         }

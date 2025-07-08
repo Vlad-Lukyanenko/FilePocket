@@ -8,5 +8,7 @@
         public static string GetInfo(Guid pocketId) => $"{BaseUrl}/{pocketId}/info";
         public static string Update(Guid pocketId) => $"{BaseUrl}/{pocketId}";
         public static string Delete(Guid pocketId) => $"{BaseUrl}/{pocketId}";
+        public static string MoveToTrash(Guid pocketId) => $"{BaseUrl}/{pocketId}";
+
     }
 }

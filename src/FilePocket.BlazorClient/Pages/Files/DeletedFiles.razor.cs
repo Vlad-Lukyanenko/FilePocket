@@ -85,7 +85,7 @@ public partial class DeletedFiles
 
         if (file is not null)
         {
-            var isDeleted = await FileRequests.DeleteFile(file.Id);
+            var isDeleted = await FileRequests.DeleteFileAsync(file.Id);
 
             if (isDeleted)
             {

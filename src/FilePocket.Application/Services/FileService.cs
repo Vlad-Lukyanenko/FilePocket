@@ -6,12 +6,11 @@ using FilePocket.Domain;
 using FilePocket.Domain.Entities;
 using FilePocket.Domain.Entities.Consumption.Errors;
 using FilePocket.Domain.Models;
-using Mapster;
 using MapsterMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
-using System.Collections.Generic;
 using StorageConsumption = FilePocket.Domain.Entities.Consumption.StorageConsumption;
+
 
 namespace FilePocket.Application.Services;
 
@@ -35,7 +34,7 @@ public class FileService(
 
         return result;
     }
-    
+
     public async Task<IEnumerable<FileResponseModel>> GetAllFilesWithSoftDeletedAsync(Guid userId, Guid pocketId)
     {
         var fileMetadata = await repository.FileMetadata.GetAllWithSoftDeletedAsync(userId, pocketId);
@@ -53,9 +52,9 @@ public class FileService(
         return result;
     }
 
-    public async Task<FileResponseModel> GetFileByUserIdIdAsync(Guid userId, Guid fileId)
+    public async Task<FileResponseModel> GetFileByUserIdAndIdAsync(Guid userId, Guid fileId)
     {
-        var fileMetadata = await repository.FileMetadata.GetByIdAsync(userId, fileId, true);
+        var fileMetadata = await repository.FileMetadata.GetByUserIdAndIdAsync(userId, fileId, true);
 
         var fullPath = fileMetadata.GetFullPath();
 
@@ -78,7 +77,7 @@ public class FileService(
 
     public async Task<FileResponseModel> GetFileMetadataByUserIdAndIdAsync(Guid userId, Guid fileId)
     {
-        var fileMetadata = await repository.FileMetadata.GetByIdAsync(userId, fileId);
+        var fileMetadata = await repository.FileMetadata.GetByUserIdAndIdAsync(userId, fileId);
 
         return new FileResponseModel
         {
@@ -241,7 +240,7 @@ public class FileService(
         Guid fileId,
         CancellationToken cancellationToken = default)
     {
-        var fileMetadata = await repository.FileMetadata.GetByIdAsync(userId, fileId, trackChanges: true);
+        var fileMetadata = await repository.FileMetadata.GetByUserIdAndIdAsync(userId, fileId, trackChanges: true);
         if (fileMetadata is null)
             throw new FileMetadataNotFoundException(fileId);
 
@@ -291,13 +290,20 @@ public class FileService(
         }
     }
 
+    public async Task RemoveAllFilesAsync(Guid userId)
+    {
+        var filesToRemove = await repository.FileMetadata.GetAllUserFilesAsync(userId, true, false);
+
+        foreach (var file in filesToRemove)
+        {
+            await RemoveFileAsync(file.UserId, file.Id);
+        }
+    }
+
     public async Task<bool> MoveToTrash(Guid userId, Guid fileId, CancellationToken cancellationToken = default)
     {
-        var fileMetadata = await repository.FileMetadata.GetByIdAsync(userId, fileId, trackChanges: true);
-        if (fileMetadata is null)
-        {
-            throw new FileMetadataNotFoundException(fileId);
-        }
+        var fileMetadata = await repository.FileMetadata.GetByUserIdAndIdAsync(userId, fileId, trackChanges: true)
+            ?? throw new FileMetadataNotFoundException(fileId);
 
         fileMetadata.MarkAsDeleted();
 
@@ -306,9 +312,20 @@ public class FileService(
         return true;
     }
 
+    public async Task<Guid?> RestoreFromTrashAsync(Guid userId, Guid fileId, CancellationToken cancellationToken = default)
+    {
+        var fileMetadata = await repository.FileMetadata.GetByUserIdAndIdAsync(userId, fileId, trackChanges: true)
+            ?? throw new FileMetadataNotFoundException(fileId);
+
+        fileMetadata.RestoreFromDeleted();
+
+        await repository.SaveChangesAsync(cancellationToken);
+        return fileMetadata.FolderId;
+    }
+
     public async Task UpdateFileAsync(UpdateFileModel file)
     {
-        var fileMetadataToUpdate = await repository.FileMetadata.GetByIdAsync(file.UserId, file.Id, trackChanges: true);
+        var fileMetadataToUpdate = await repository.FileMetadata.GetByUserIdAndIdAsync(file.UserId, file.Id, trackChanges: true);
 
         if (fileMetadataToUpdate is null)
         {
@@ -374,7 +391,7 @@ public class FileService(
     {
         ArgumentNullException.ThrowIfNull(note);
 
-        var fileMetadata = await repository.FileMetadata.GetByIdAsync(note.UserId, note.Id, trackChanges: true)
+        var fileMetadata = await repository.FileMetadata.GetByUserIdAndIdAsync(note.UserId, note.Id, trackChanges: true)
             ?? throw new FileMetadataNotFoundException(note.Id);
 
         var contentBytes = await encryptionService.EncryptContent(note.UserId, note.PocketId, note.Content, cancellationToken);
@@ -431,7 +448,7 @@ public class FileService(
 
     public async Task<byte[]> ReadNoteContentFromFileAsync(Guid userId, Guid fileId)
     {
-        var fileMetadata = await repository.FileMetadata.GetByIdAsync(userId, fileId, trackChanges: true)
+        var fileMetadata = await repository.FileMetadata.GetByUserIdAndIdAsync(userId, fileId, trackChanges: true)
             ?? throw new FileMetadataNotFoundException(fileId);
 
         var fullPath = Path.Combine(fileMetadata.Path, fileMetadata.ActualName);
@@ -443,9 +460,42 @@ public class FileService(
 
     public async Task<IEnumerable<FileSearchResponseModel>> SearchAsync(Guid userId, string partialName)
     {
-        var files = await repository.FileMetadata.GetFileMetadataByPartialNameAsync(userId, partialName);
+        var files = await repository.FileMetadata.GetFileMetadataByPartialNameAsync(userId, partialName) ?? [];
 
         return mapper.Map<IEnumerable<FileSearchResponseModel>>(files);
+    }
+
+    public async Task<IEnumerable<DeletedFileModel>> GetAllSoftDeletedAsync(Guid userId)
+    {
+        var files = await repository.FileMetadata.GetAllSoftDeletedAsync(userId, default) ?? [];
+        var directlyDeletedFiles = new List<DeletedFileModel>();
+
+        foreach (var file in files)
+        {
+            if (file.FolderId == null)
+            {
+                directlyDeletedFiles.Add(mapper.Map<DeletedFileModel>(file));
+                continue;
+            }
+
+            var parentFolder = await repository.Folder.GetByIdAsync(file.FolderId.Value);
+
+            if (!parentFolder!.IsDeleted || file.DeletedAt!.Value != parentFolder.DeletedAt!.Value)
+            {
+                directlyDeletedFiles.Add(mapper.Map<DeletedFileModel>(file));
+            }
+        }
+
+        return directlyDeletedFiles;
+    }
+
+    public async Task<DeletedFileModel> GetSoftDeletedAsync(Guid id)
+    {
+        var deletedFile = await repository.FileMetadata.GetByIdAsync(id);
+
+        return deletedFile is null
+            ? throw new FileMetadataNotFoundException(id)
+            : mapper.Map<DeletedFileModel>(deletedFile);
     }
 
     #endregion
@@ -475,7 +525,7 @@ public class FileService(
 
     private async Task<FileResponseModel> GetThumbnailInternalAsync(Guid userId, Guid id, int maxSize)
     {
-        var fileMetadata = await repository.FileMetadata.GetByIdAsync(userId, id, true);
+        var fileMetadata = await repository.FileMetadata.GetByUserIdAndIdAsync(userId, id, true);
         var fullPath = fileMetadata.GetFullPath();
 
         fullPath.EnsureFileExistsOnDisk();
@@ -623,7 +673,6 @@ public class FileService(
 
         await File.WriteAllBytesAsync(fullPath, content, cancellationToken);
     }
-
     #endregion
 
     private enum WriteFileMode

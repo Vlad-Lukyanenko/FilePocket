@@ -1,11 +1,11 @@
-﻿using FilePocket.BlazorClient.Features.Files.Models;
-using FilePocket.BlazorClient.Features.Storage.Models;
+﻿using FilePocket.BlazorClient.Features.Storage.Models;
 using FilePocket.BlazorClient.Features.Storage.Requests;
-using FilePocket.BlazorClient.Features.Trash;
+using FilePocket.BlazorClient.Features.Trash.Requests;
 using FilePocket.BlazorClient.Helpers;
 using FilePocket.BlazorClient.Services.Files.Models;
 using FilePocket.BlazorClient.Services.Files.Requests;
 using FilePocket.BlazorClient.Services.Folders.Requests;
+using FilePocket.BlazorClient.Shared.Enums;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 
@@ -113,11 +113,15 @@ namespace FilePocket.BlazorClient.MyComponents
         private async void MoveToTrashClick()
         {
             _removalProcessStarted = true;
-            await TrashRequests.MoveFileToTrash(_fileId);
 
-            var storageConsumption = await StorageRequests.GetStorageConsumption();
-            StorageStateContainer.SetValue(storageConsumption!);
-            Navigation.NavigateTo(_goBackUrl);
+            var result = await FileRequests.MoveToTrashAsync(_fileId);
+
+            if (result)
+            {
+                var storageConsumption = await StorageRequests.GetStorageConsumption();
+                StorageStateContainer.SetValue(storageConsumption!);
+                Navigation.NavigateTo(_goBackUrl);
+            }
         }
     }
 }

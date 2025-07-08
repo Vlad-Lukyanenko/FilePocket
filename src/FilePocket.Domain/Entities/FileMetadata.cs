@@ -1,4 +1,5 @@
 ﻿using FilePocket.Domain.Entities.Abstractions;
+using System.Text.Json.Serialization;
 
 namespace FilePocket.Domain.Entities;
 
@@ -46,10 +47,19 @@ public class FileMetadata : IAmSoftDeletedEntity
     public DateTime? DeletedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
 
+    [JsonIgnore]
+    public virtual Folder Folder { get; init; }
+
     public void MarkAsDeleted(DateTime? deletedAt = null)
     {
         IsDeleted = true;
         DeletedAt = deletedAt ?? DateTime.UtcNow;
+    }
+
+    public void RestoreFromDeleted()
+    {
+        IsDeleted = false;
+        DeletedAt = null;
     }
 
     public static FileMetadata Create(
