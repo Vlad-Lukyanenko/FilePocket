@@ -1,25 +1,77 @@
-﻿.my-card {
+﻿
+.info-hover-wrapper {
+    position: relative;
+}
+
+.long-url {
+    display: inline-block;
+    max-width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    vertical-align: bottom;
+}
+
+
+.info-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.4);
+    z-index: 998;
+}
+
+.info-popup {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.95);
+    background-color: #fff;
+    padding: 1rem 1.25rem;
+    border-radius: 12px;
+    z-index: 999;
+    opacity: 0;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+    max-width: 245px;
+}
+
+.info-hover-wrapper:hover .info-popup {
+    display: block;
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.info-hover-wrapper:hover .info-overlay {
+    display: block;
+}
+
+
+.my-card {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-    background-color: #ffffff;
     border: none;
     border-radius: 0.8em;
     overflow: hidden;
+    max-width: 250px;
+    color: #6c757d;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
-    .my-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-    }
+.my-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
 
 .my-card-header {
-    background-color: #165887;
-    color: #ffffff;
     text-align: center;
     padding: 0.5rem;
+    color: #6c63ff;
 }
 
 .my-card-body {
-    background-color: #ffffff;
     padding: 1rem;
 }
 
@@ -32,22 +84,22 @@
 }
 
 .body-icon {
-    color: #2c638f;
+    color: #6c63ff;
     font-size: 1.2em;
 }
 
 .body-main-text {
-    color: #333;
+    color: #6c757d;
+    font-weight: 600;
 }
 
 .body-text {
-    color: #555;
+    color: #6c757d;
     margin-left: 0.5em;
 }
 
 .card-footer {
     border-top: 1px solid #f0f0f0;
-    background-color: #ffffff;
     padding: 1rem;
 }
 
