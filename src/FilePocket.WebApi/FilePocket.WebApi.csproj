@@ -14,6 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Controllers\FilesController.cs" />
     <Compile Remove="Controllers\NotesController.cs" />
   </ItemGroup>
 

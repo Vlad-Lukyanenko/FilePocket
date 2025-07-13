@@ -7,7 +7,7 @@ namespace FilePocket.Application.IntegrationTests.Api.Files.Upload;
 
 internal static class UploadFileEndpointTestsAssertions
 {
-    internal static void ShouldBeEquivalentTo(this FileResponseModel actualFileResponse, FileInformationUnderTest fileUnderTest)
+    internal static void ShouldBeEquivalentTo(this FileResponseModel actualFileResponse, FileInformationModelUnderTest fileUnderTest)
     {
         actualFileResponse.Should().NotBeNull();
 
@@ -26,14 +26,14 @@ internal static class UploadFileEndpointTestsAssertions
         }, options => options.ExcludingMissingMembers());
     }
 
-    internal static void ShouldBeEquivalentTo(this PocketModel actualPocket, params FileInformationUnderTest[] filesUnderTest)
+    internal static void ShouldBeEquivalentTo(this PocketModel actualPocket, params FileInformationModelUnderTest[] filesUnderTest)
     {
         actualPocket.Should().NotBeNull();
         actualPocket.NumberOfFiles.Should().Be(filesUnderTest.Length);
         actualPocket.TotalSize.Should().Be(filesUnderTest.Sum(x => x.FileSizeInBytes));
     }
     
-    internal static void ShouldBeEquivalentTo(this PocketDetailsModel actualPocketDetails, params FileInformationUnderTest[] filesUnderTest)
+    internal static void ShouldBeEquivalentTo(this PocketDetailsModel actualPocketDetails, params FileInformationModelUnderTest[] filesUnderTest)
     {
         actualPocketDetails.Should().NotBeNull();
         actualPocketDetails.NumberOfFiles.Should().Be(filesUnderTest.Length);
