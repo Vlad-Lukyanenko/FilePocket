@@ -203,6 +203,13 @@ namespace FilePocket.BlazorClient.Helpers
         {
             return $"/trash/{itemType}/{id}";
         }
+
+        public static string GetSoftDeletedItemUrl(int itemTypeValue, Guid id)
+        {
+            var itemType = (RequestedItemType)itemTypeValue;
+
+            return $"/trash/{itemType}/{id}";
+        }
     }
 
 

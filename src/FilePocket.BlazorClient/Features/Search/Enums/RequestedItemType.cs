@@ -3,7 +3,7 @@
     public enum RequestedItemType
     {
         File = 0,
-        Folder,
-        Bookmark
+        Folder = 1,
+        Bookmark = 2
     }
 }
