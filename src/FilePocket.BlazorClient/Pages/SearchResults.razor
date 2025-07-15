@@ -1,5 +1,6 @@
 ﻿@page "/search-results/{partialName}"
 @using FilePocket.BlazorClient.Helpers
+@using FilePocket.BlazorClient.Shared.Enums
 
 <!-- Top SubMenu -->
 <TopSubMenu Title="@($"Search results for '{PartialName}'")" ShowBackButton="true" />
@@ -36,7 +37,7 @@
                                                                                               ?
                                                                                               Tools.GetFileUrl(f.Id, f.PocketId, f.FolderId, f.FileType)
                                                                                               :
-                                                                                              Tools.GetSoftDeletedItemUrl(0, f.Id))">
+                                                                                              Tools.GetSoftDeletedItemUrl(RequestedItemType.File, f.Id))">
                 <img src="./assets/img/fileTypes/@Tools.GetIconName(f.FileType!)" width="56" class="d-block mx-auto mb-3" alt="File icon" />
                 <h6 class="card-title" style="font-size: 0.8em">
                     @Tools.TruncateString(f.OriginalName!)
@@ -76,10 +77,10 @@
                     {
                         <div class="card h-100 shadow-sm me-2 pt-2" style="width: 8em;">
                             <a class="file-link text-decoration-none" title="@f.Name" href="@(f.DeletedAt == null
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        ?
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        Tools.GetFolderUrl(f.PocketId, f.Id, f.FolderType)
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        :
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        Tools.GetSoftDeletedItemUrl(1, f.Id))">
+                                                                                                    ?
+                                                                                                    Tools.GetFolderUrl(f.PocketId, f.Id, f.FolderType)
+                                                                                                    :
+                                                                                                    Tools.GetSoftDeletedItemUrl(RequestedItemType.Folder, f.Id))">
                 <img src="./assets/img/folder.png" width="56" class="d-block mx-auto mb-3" alt="File icon" />
                 <h6 class="card-title" style="font-size: 0.8em">
                     @Tools.TruncateString(f.Name!)
@@ -122,7 +123,7 @@
                     }
                     else
                     {
-                        <a class="file-link text-decoration-none" title="@b.Title" href="@Tools.GetSoftDeletedItemUrl(2, b.Id)">
+                        <a class="file-link text-decoration-none" title="@b.Title" href="@Tools.GetSoftDeletedItemUrl(RequestedItemType.Bookmark, b.Id)">
                             <img src="./assets/img/bookmark.png" width="56" class="d-block mx-auto mb-3" alt="File icon" />
                             <h6 class="card-title" style="font-size: 0.8em">
                                 @Tools.TruncateString(b.Title!)

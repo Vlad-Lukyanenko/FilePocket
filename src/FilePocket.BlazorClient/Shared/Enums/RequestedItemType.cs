@@ -1,4 +1,4 @@
-﻿namespace FilePocket.BlazorClient.Features.Search.Enums
+﻿namespace FilePocket.BlazorClient.Shared.Enums
 {
     public enum RequestedItemType
     {

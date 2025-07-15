@@ -1,4 +1,4 @@
-﻿using FilePocket.BlazorClient.Features.Search.Enums;
+﻿using FilePocket.BlazorClient.Shared.Enums;
 
 namespace FilePocket.BlazorClient.Features.Trash
 {

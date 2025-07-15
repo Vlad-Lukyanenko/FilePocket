@@ -1,10 +1,9 @@
 ﻿using FilePocket.BlazorClient.Features.Bookmarks.Requests;
-using FilePocket.BlazorClient.Features.Search.Enums;
+using FilePocket.BlazorClient.Shared.Enums;
 using FilePocket.BlazorClient.Features.Trash.Models;
 using FilePocket.BlazorClient.Features.Trash.Requests;
 using FilePocket.BlazorClient.Services.Files.Requests;
 using FilePocket.BlazorClient.Services.Folders.Requests;
-using FilePocket.BlazorClient.Shared.Enums;
 using Microsoft.AspNetCore.Components;
 
 namespace FilePocket.BlazorClient.Pages;

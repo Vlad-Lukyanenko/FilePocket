@@ -1,7 +1,6 @@
-﻿using FilePocket.BlazorClient.Features.Search.Enums;
+﻿using FilePocket.BlazorClient.Shared.Enums;
 using FilePocket.BlazorClient.Features.Search.Models;
 using FilePocket.BlazorClient.Features.Search.Requests;
-using FilePocket.BlazorClient.Shared.Enums;
 using Microsoft.AspNetCore.Components;
 
 namespace FilePocket.BlazorClient.Pages
