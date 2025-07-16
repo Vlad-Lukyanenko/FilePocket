@@ -11,7 +11,7 @@ namespace FilePocket.Application.IntegrationTests.Api.Files.Upload;
 
 public abstract class UploadFileEndpointTests(FilePocketWebAppFactory factory) : FilePocketWebAppTest(factory)
 {
-    protected static async Task<FileResponseModel> UploadFileAsync(HttpClient httpClient, FileInformationUnderTest fileUnderTest)
+    protected static async Task<FileResponseModel> UploadFileAsync(HttpClient httpClient, FileInformationModelUnderTest fileUnderTest)
     {
         var response = await httpClient.PostAsync(ApiFilesEndpointUri, fileUnderTest.MultipartFormDataContent);
         return await response.ReadResponseMessageAsync<FileResponseModel>();

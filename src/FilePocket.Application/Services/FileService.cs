@@ -35,7 +35,7 @@ public class FileService(
         return result;
     }
 
-    public async Task<IEnumerable<FileResponseModel>> GetAllFilesWithSoftDeletedAsync(Guid userId, Guid pocketId)
+    public async Task<IEnumerable<FileResponseModel>> GetAllFilesIncludingDeletedAsync(Guid userId, Guid pocketId)
     {
         var fileMetadata = await repository.FileMetadata.GetAllWithSoftDeletedAsync(userId, pocketId);
 
@@ -137,6 +137,9 @@ public class FileService(
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(file);
+
+        if (file.Length == 0)
+            throw new ArgumentException("File is empty");
 
         await using var fileUploadTransaction = await repository.BeginTransactionAsync(cancellationToken);
         try
@@ -240,9 +243,8 @@ public class FileService(
         Guid fileId,
         CancellationToken cancellationToken = default)
     {
-        var fileMetadata = await repository.FileMetadata.GetByUserIdAndIdAsync(userId, fileId, trackChanges: true);
-        if (fileMetadata is null)
-            throw new FileMetadataNotFoundException(fileId);
+        var fileMetadata = await repository.FileMetadata.GetByUserIdAndIdAsync(userId, fileId, trackChanges: true) 
+            ?? throw new FileMetadataNotFoundException(fileId);
 
         await using var transaction = await repository.BeginTransactionAsync(cancellationToken);
         try
@@ -325,12 +327,8 @@ public class FileService(
 
     public async Task UpdateFileAsync(UpdateFileModel file)
     {
-        var fileMetadataToUpdate = await repository.FileMetadata.GetByUserIdAndIdAsync(file.UserId, file.Id, trackChanges: true);
-
-        if (fileMetadataToUpdate is null)
-        {
-            throw new FileMetadataNotFoundException(file.Id);
-        }
+        var fileMetadataToUpdate = await repository.FileMetadata.GetByUserIdAndIdAsync(file.UserId, file.Id, trackChanges: true)
+           ?? throw new FileMetadataNotFoundException(file.Id);
 
         mapper.Map(file, fileMetadataToUpdate);
 

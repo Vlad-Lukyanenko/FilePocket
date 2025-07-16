@@ -1,5 +1,4 @@
-﻿using FilePocket.BlazorClient.Features.Search.Enums;
-using FilePocket.BlazorClient.Features.Trash.Models;
+﻿using FilePocket.BlazorClient.Shared.Enums;
 using Newtonsoft.Json;
 
 namespace FilePocket.BlazorClient.Features.Trash.Requests;

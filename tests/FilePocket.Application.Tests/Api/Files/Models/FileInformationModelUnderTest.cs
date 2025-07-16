@@ -1,11 +1,11 @@
-﻿using FilePocket.WebApi.Controllers;
+﻿using FilePocket.Domain.Models;
 
 namespace FilePocket.Application.IntegrationTests.Api.Files.Models;
 
 /// <summary>
 /// To scrape the data from the files to be uploaded, and use it for assertions.
 /// </summary>
-public class FileInformationUnderTest : FilesController.FileInformation
+public class FileInformationModelUnderTest : FileInformationModel
 {
     public Guid UserId { get; init; }
     public string FileName { get; init; }

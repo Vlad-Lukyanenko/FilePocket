@@ -1,38 +1,37 @@
 ﻿using FilePocket.Application.Interfaces.Services;
 using FilePocket.Domain.Models;
 using FilePocket.WebApi.Endpoints.Base;
-using static System.Net.WebRequestMethods;
-
 
 
 namespace FilePocket.WebApi.Endpoints.Notes
 {
-    public class GetAllNotesByUserIdAndFolderIdEndpoint : BaseEndpointWithoutRequest<IEnumerable<NoteModel>>
+    public class GetNoteEndpoint : BaseEndpointWithoutRequest<NoteModel>
     {
         private readonly IServiceManager _service;
-        public GetAllNotesByUserIdAndFolderIdEndpoint(IServiceManager service)
+        public GetNoteEndpoint(IServiceManager service)
         {
             _service = service;
         }
 
         public override void Configure()
         {
-            Verbs(Http.Get);
-            Routes("api/folders/{folderId:guid}/notes", "api/notes");
+            Get("api/notes/{id:guid}");
             AuthSchemes("Bearer");
         }
 
         public override async Task HandleAsync(CancellationToken cancellationToken)
         {
-            var notes = await _service.FileService.GetAllNotesMetadataAsync(UserId, FolderId, false);
 
-            if (notes == null)
+            var id = Route<Guid>("id");
+            var note = await _service.FileService.GetNoteByUserIdAndIdAsync(UserId, id);
+
+            if (note == null)
             {
                 await SendNotFoundAsync(cancellationToken);
                 return;
             }
 
-            await SendOkAsync(notes, cancellationToken);
+            await SendOkAsync(note, cancellationToken);
         }
     }
 }

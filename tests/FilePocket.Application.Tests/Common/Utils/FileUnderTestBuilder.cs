@@ -1,12 +1,13 @@
 ﻿using System.Net.Http.Headers;
 using FilePocket.Application.IntegrationTests.Api.Files.Models;
+using FilePocket.Domain.Models;
 using FilePocket.WebApi.Controllers;
 
 namespace FilePocket.Application.IntegrationTests.Common.Utils;
 
 public static class FileUnderTestBuilder
 {
-    public static FileInformationUnderTest[] CreateMany(
+    public static FileInformationModelUnderTest[] CreateMany(
         long totalStorageCapacityInMegabytes,
         int filesAmount,
         string fileName,
@@ -25,7 +26,7 @@ public static class FileUnderTestBuilder
         if (sizeInBytesPerFile * filesAmount < totalStorageCapacityInMegabytes.GetFileSizeInBytes())
             throw new ArgumentException("The total storage capacity must be divisible by the files amount.", nameof(totalStorageCapacityInMegabytes));
 
-        var files = new FileInformationUnderTest[filesAmount];
+        var files = new FileInformationModelUnderTest[filesAmount];
         for (var i = 0; i < filesAmount; i++)
         {
             var sequentialFileName = $"[{i}]-{fileName}";
@@ -40,7 +41,7 @@ public static class FileUnderTestBuilder
     /// </summary>
     /// <param name="fileSizeInBytes">The size of the file in bytes.</param>
     /// <returns>A MultipartFormDataContent object that can be used in an HTTP POST.</returns>
-    public static FileInformationUnderTest CreateOne(
+    public static FileInformationModelUnderTest CreateOne(
         double fileSizeInBytes,
         string fileName,
         string fileExtension,
@@ -51,7 +52,7 @@ public static class FileUnderTestBuilder
         var multipartContent = CreateMultipartFormDataContent(
             fileSizeInBytes, fileName, fileExtension,pocketId, folderId);
 
-        var fileUnderTest = new FileInformationUnderTest
+        var fileUnderTest = new FileInformationModelUnderTest
         {
             UserId = userId,
             FileName = fileName,
@@ -85,7 +86,7 @@ public static class FileUnderTestBuilder
         var fullyQualifiedFileName = $"{fileName}.{fileExtension}";
         fileContent.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data")
         {
-            Name = $"\"{nameof(FilesController.FileInformation.File)}\"",   // This must match the parameter name in <code>FileInformation</code>.
+            Name = $"\"{nameof(FileInformationModel.File)}\"",   // This must match the parameter name in <code>FileInformationModel</code>.
             FileName = $"\"{fullyQualifiedFileName}\"" // The file name can be arbitrary.
         };
 
@@ -96,20 +97,20 @@ public static class FileUnderTestBuilder
         var multipartContent = new MultipartFormDataContent();
 
         // 6. Add the file content to the multipart container.
-        multipartContent.Add(fileContent, name: $"{nameof(FilesController.FileInformation.File)}");
+        multipartContent.Add(fileContent, name: $"{nameof(FileInformationModel.File)}");
         
         // 7. Add the additional fields to the multipart container.
 
         if (pocketId.HasValue)
         {
             multipartContent.Add(new StringContent(pocketId.ToString()!),
-                $"{nameof(FilesController.FileInformation.PocketId)}");
+                $"{nameof(FileInformationModel.PocketId)}");
         }
 
         if (folderId.HasValue)
         {
             multipartContent.Add(new StringContent(folderId.ToString()!),
-                $"{nameof(FilesController.FileInformation.FolderId)}");
+                $"{nameof(FileInformationModel.FolderId)}");
         }
 
         return multipartContent;

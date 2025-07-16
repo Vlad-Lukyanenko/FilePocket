@@ -2,35 +2,38 @@
 using FilePocket.Domain.Models;
 using FilePocket.WebApi.Endpoints.Base;
 
-namespace FilePocket.WebApi.Endpoints.Notes
+
+namespace FilePocket.WebApi.Endpoints.Files
 {
-    public class GetNoteByIdEndpoint : BaseEndpointWithoutRequest<NoteModel>
+    public class GetInfoEndpoint : BaseEndpointWithoutRequest<FileResponseModel>
     {
         private readonly IServiceManager _service;
-        public GetNoteByIdEndpoint(IServiceManager service)
+        public GetInfoEndpoint(IServiceManager service)
         {
             _service = service;
         }
 
         public override void Configure()
         {
-            Get("api/notes/{id:guid}");
+            Get("api/files/{fileId:guid}/info");
             AuthSchemes("Bearer");
         }
 
         public override async Task HandleAsync(CancellationToken cancellationToken)
         {
+            var fileId = Route<Guid>("fileId");
 
-            var id = Route<Guid>("id");
-            var note = await _service.FileService.GetNoteByUserIdAndIdAsync(UserId, id);
+            var file = await _service.FileService.GetFileByUserIdAndIdAsync(UserId, fileId);
 
-            if (note == null)
+            if (file == null)
             {
                 await SendNotFoundAsync(cancellationToken);
                 return;
             }
 
-            await SendOkAsync(note, cancellationToken);
+            await SendOkAsync(file, cancellationToken);
         }
     }
+
+
 }

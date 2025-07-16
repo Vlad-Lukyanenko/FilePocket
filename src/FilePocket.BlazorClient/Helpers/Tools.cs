@@ -1,5 +1,4 @@
-﻿using FilePocket.BlazorClient.Features.Search.Enums;
-using FilePocket.BlazorClient.Shared.Enums;
+﻿using FilePocket.BlazorClient.Shared.Enums;
 using System.Text.RegularExpressions;
 
 namespace FilePocket.BlazorClient.Helpers
@@ -204,6 +203,4 @@ namespace FilePocket.BlazorClient.Helpers
             return $"/trash/{itemType}/{id}";
         }
     }
-
-
 }
