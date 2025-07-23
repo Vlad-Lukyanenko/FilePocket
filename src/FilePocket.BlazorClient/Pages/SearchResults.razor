@@ -32,19 +32,25 @@
                     @foreach (var f in filesOfType)
                     {
                         <div class="card h-100 shadow-sm me-2 pt-2" style="width: 8em;">
-                            <a class="file-link text-decoration-none" title="@f.OriginalName" href="@(
+                            <a class="file-link text-decoration-none link-container" title="@f.OriginalName" href="@(
                                                                                               f.DeletedAt == null
                                                                                               ?
                                                                                               Tools.GetFileUrl(f.Id, f.PocketId, f.FolderId, f.FileType)
                                                                                               :
                                                                                               Tools.GetSoftDeletedItemUrl(RequestedItemType.File, f.Id))">
-                <img src="./assets/img/fileTypes/@Tools.GetIconName(f.FileType!)" width="56" class="d-block mx-auto mb-3" alt="File icon" />
-                <h6 class="card-title" style="font-size: 0.8em">
-                    @Tools.TruncateString(f.OriginalName!)
-                </h6>
-            </a>
-        </div>
-                }
+                                <img src="./assets/img/fileTypes/@Tools.GetIconName(f.FileType!)" width="56" class="d-block mx-auto mb-3" alt="File icon" />
+                                <h6 class="card-title" style="font-size: 0.8em">
+                                    @Tools.TruncateString(f.OriginalName!)
+                                </h6>
+                                @if (f.DeletedAt != null)
+                                    {
+                                        <div class="trash-item">
+                                            <i class="bi bi-trash fs-6"/>
+                                        </div>
+                                    }
+                            </a>
+                        </div>
+                    }
                 </div>
             </div>
             <hr class="mt-4 mb-4" />
@@ -76,18 +82,24 @@
                     @foreach (var f in foldersOfType)
                     {
                         <div class="card h-100 shadow-sm me-2 pt-2" style="width: 8em;">
-                            <a class="file-link text-decoration-none" title="@f.Name" href="@(f.DeletedAt == null
-                                                                                                    ?
-                                                                                                    Tools.GetFolderUrl(f.PocketId, f.Id, f.FolderType)
-                                                                                                    :
-                                                                                                    Tools.GetSoftDeletedItemUrl(RequestedItemType.Folder, f.Id))">
-                <img src="./assets/img/folder.png" width="56" class="d-block mx-auto mb-3" alt="File icon" />
-                <h6 class="card-title" style="font-size: 0.8em">
-                    @Tools.TruncateString(f.Name!)
-                </h6>
-            </a>
-        </div>
-                }
+                            <a class="file-link text-decoration-none link-container" title="@f.Name" href="@(f.DeletedAt == null
+                                            ?
+                                            Tools.GetFolderUrl(f.PocketId, f.Id, f.FolderType)
+                                            :
+                                            Tools.GetSoftDeletedItemUrl(RequestedItemType.Folder, f.Id))">
+                                <img src="./assets/img/folder.png" width="56" class="d-block mx-auto mb-3" alt="File icon" />
+                                <h6 class="card-title" style="font-size: 0.8em">
+                                    @Tools.TruncateString(f.Name!)
+                                </h6>
+                                @if (f.DeletedAt != null)
+                                    {
+                                        <div class="trash-item">
+                                            <i class="bi bi-trash fs-6" />
+                                        </div>
+                                    }
+                            </a>
+                        </div>
+                    }
                 </div>
             </div>
             <hr class="mt-4 mb-4" />
@@ -123,11 +135,17 @@
                     }
                     else
                     {
-                        <a class="file-link text-decoration-none" title="@b.Title" href="@Tools.GetSoftDeletedItemUrl(RequestedItemType.Bookmark, b.Id)">
+                        <a class="file-link text-decoration-none link-container" title="@b.Title" href="@Tools.GetSoftDeletedItemUrl(RequestedItemType.Bookmark, b.Id)">
                             <img src="./assets/img/bookmark.png" width="56" class="d-block mx-auto mb-3" alt="File icon" />
                             <h6 class="card-title" style="font-size: 0.8em">
                                 @Tools.TruncateString(b.Title!)
                             </h6>
+                            @if (b.DeletedAt != null)
+                            {
+                                <div class="trash-item">
+                                    <i class="bi bi-trash fs-6" />
+                                </div>
+                            }
                         </a>
                     }
                 </div>
@@ -161,5 +179,17 @@ else if (!_isLoading)
         .file-type-text-header {
             font-size: 1.125rem;
         }
+    }
+
+    .link-container{
+        position: relative;
+    }
+
+    .trash-item{
+        width: 16px;
+        color: rgba(108, 117, 125, 0.5);
+        position: absolute;
+        right: -4px;
+        top: -3px;
     }
 </style>

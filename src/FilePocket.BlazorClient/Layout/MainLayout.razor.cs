@@ -103,7 +103,13 @@ public partial class MainLayout : IDisposable
 
     private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
     {
+        if (SkipAddToHistory(e.Location)) return;
         NavigationHistory.AddToHistory(e.Location);
+    }
+
+    private bool SkipAddToHistory(string url)
+    {
+        return url.Contains("search-results", StringComparison.OrdinalIgnoreCase);
     }
 
     public void Dispose()
