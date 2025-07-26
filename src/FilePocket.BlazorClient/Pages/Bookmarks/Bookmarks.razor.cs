@@ -1,6 +1,7 @@
 ﻿using FilePocket.BlazorClient.Features.Bookmarks.Models;
 using FilePocket.BlazorClient.Features.Bookmarks.Requests;
 using FilePocket.BlazorClient.Features.Folders.Models;
+using FilePocket.BlazorClient.Features.HtmlParser.Requests;
 using FilePocket.BlazorClient.Services.Folders.Requests;
 using FilePocket.BlazorClient.Services.Pockets.Requests;
 using FilePocket.BlazorClient.Shared.Enums;
@@ -30,6 +31,8 @@ public partial class Bookmarks
     [Inject] private IBookmarkRequests BookmarkRequests { get; set; } = default!;
     [Inject] private IFolderRequests FolderRequests { get; set; } = default!;
     [Inject] private IJSRuntime JSRuntime { get; set; } = default!;
+
+    [Inject] private IHtmlParserService HtmlParserService { get; set; } = default!;
 
     protected override async Task OnParametersSetAsync()
     {
@@ -61,6 +64,13 @@ public partial class Bookmarks
 
         _folders = new ObservableCollection<FolderModel>(folders);
         _bookmarks = await BookmarkRequests.GetAllAsync(PocketId, FolderId, isSoftDeleted: false);
+
+        foreach (var bookmark in _bookmarks)
+        {
+            bookmark.ImageUrl = await HtmlParserService.GetWebSitePreviewAsync(bookmark.Url)
+                .ContinueWith(t => t.Result.ImageUrl, TaskContinuationOptions.NotOnFaulted);
+        }
+
         _loading = false;
     }
 

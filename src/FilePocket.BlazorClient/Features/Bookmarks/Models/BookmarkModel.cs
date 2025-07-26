@@ -12,4 +12,7 @@ public class BookmarkModel
     public string Url { get; set; } = string.Empty;
     public bool IsDeleted { get; set; }
     public DateTime CreatedAt { get; set; }
+    public string ImageUrl { get; set; } = string.Empty;
+    public string OriginalTitle { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
 }

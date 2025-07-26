@@ -67,7 +67,8 @@
                     <div class="my-card shadow mb-3 text-center" title="@bookmark.Url">
                         @if (bookmark.Id != _bookmarkIdToBeUpdated)
                         {   <a href="@bookmark.Url" target="_blank" class="my-card-header">
-                                <img src="./assets/img/Bookmark-ex.png" width="24" class="d-block me-2 card-img-top" alt="Bookmark image" />
+                                @* <img src="./assets/img/Bookmark-ex.png" width="24" class="d-block me-2 card-img-top" alt="Bookmark image" /> *@
+                                <img src="@bookmark.ImageUrl" width="24" class="d-inline-block me-2 card-img-top" alt="Bookmark image" />
                             </a>
                         }
                         else

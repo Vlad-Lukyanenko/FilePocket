@@ -79,6 +79,13 @@ namespace FilePocket.BlazorClient.Features
             return await response.Content.ReadAsStringAsync();
         }
 
+        public async Task<T?> GetFromJsonAsync<T>(string endpoint)
+        {
+            await AuthAsync();
+
+            return await _httpClient.GetFromJsonAsync<T>(endpoint);
+        }
+
         public void CleanUpAuthorizationHeader()
         {
             _httpClient.DefaultRequestHeaders.Authorization = null;
