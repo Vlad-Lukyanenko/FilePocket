@@ -20,7 +20,6 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using FilePocket.BlazorClient.Features.Trash.Requests;
-using FilePocket.BlazorClient.Features.HtmlParser.Requests;
 
 namespace FilePocket.Client;
 
@@ -57,7 +56,6 @@ public class Program
         builder.Services.AddScoped<IStorageRequests, StorageRequests> ();
         builder.Services.AddScoped<IProfileRequests, ProfileRequests>();
         builder.Services.AddScoped<INoteRequests, NoteRequests>();
-        builder.Services.AddScoped<IHtmlParserService, HtmlParserService>();
 
         builder.Services.AddSingleton<StateContainer<LoggedInUserModel>>();
         builder.Services.AddSingleton<StateContainer<StorageConsumptionModel>>();

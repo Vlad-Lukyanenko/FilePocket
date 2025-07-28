@@ -15,7 +15,7 @@ namespace FilePocket.Application.Services
 
             if (metaTags is null)
             {
-                return new WebsitePreviewModel() { ShowPreview = false };
+                return new WebsitePreviewModel() { };
             }
 
             var siteMetaData = InitializeWebsitePreview(metaTags);

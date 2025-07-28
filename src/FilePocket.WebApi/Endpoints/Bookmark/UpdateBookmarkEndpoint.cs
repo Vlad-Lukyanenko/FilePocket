@@ -1,10 +1,11 @@
 ﻿using FilePocket.Application.Interfaces.Services;
 using FilePocket.Contracts.Bookmark;
+using FilePocket.Domain.Models;
 using FilePocket.WebApi.Endpoints.Base;
 
 namespace FilePocket.WebApi.Endpoints.Bookmark;
 
-public class UpdateBookmarkEndpoint : BaseEndpointWithoutResponse<UpdateBookmarkRequest>
+public class UpdateBookmarkEndpoint : BaseEndpoint<UpdateBookmarkRequest, BookmarkUpdateResponseModel>
 {
     private readonly IServiceManager _service;
 
@@ -21,8 +22,8 @@ public class UpdateBookmarkEndpoint : BaseEndpointWithoutResponse<UpdateBookmark
 
     public override async Task HandleAsync(UpdateBookmarkRequest bookmark, CancellationToken cancellationToken)
     {
-        await _service.BookmarkService.UpdateBookmarkAsync(bookmark);
+        var response = await _service.BookmarkService.UpdateBookmarkAsync(bookmark);
 
-        await SendNoContentAsync();
+        await SendOkAsync(response, cancellationToken);
     }
 }

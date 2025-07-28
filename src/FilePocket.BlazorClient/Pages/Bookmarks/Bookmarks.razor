@@ -20,12 +20,12 @@
                 <a href="@(GetCreateBookmarkUrl())" class="btn btn-outline-success py-0 px-2 me-2">
                     <i class="ps-2 pe-2 bi-bookmark-plus fs-4"></i>
                 </a>
-                
+
                 <!-- New Folder Button -->
                 <a href="@_createFolderUrl" class="btn btn-outline-warning py-0 px-3">
                     <i class="bi bi-folder-plus fs-4"></i>
                 </a>
-                
+
                 <!-- Delete Folder Button -->
                 <div style="margin-left: auto;">
                     @if (FolderId is not null)
@@ -60,19 +60,31 @@
         @if (_bookmarks.Any())
         {
             <div class="card-container">
-                
+
                 @foreach (var bookmark in _bookmarks)
                 {
 
                     <div class="my-card shadow mb-3 text-center" title="@bookmark.Url">
                         @if (bookmark.Id != _bookmarkIdToBeUpdated)
-                        {   <a href="@bookmark.Url" target="_blank" class="my-card-header">
-                                @* <img src="./assets/img/Bookmark-ex.png" width="24" class="d-block me-2 card-img-top" alt="Bookmark image" /> *@
-                                <img src="@bookmark.ImageUrl" width="24" class="d-inline-block me-2 card-img-top" alt="Bookmark image" />
+                        {
+                            <a href="@bookmark.Url" target="_blank" class="my-card-header">
+                                <div class="img-container">
+                                    @if (ImageUrlIsSet(bookmark))
+                                    {
+                                        <div style="@($"background-image: url('{bookmark.ImageUrl}'); background-position: center")" class="img-background">
+                                            <img src="@bookmark.ImageUrl" class="d-inline-block me-2 card-img-top img relevant" target="_blank" alt="Bookmark image" />
+                                        </div>
+
+                                    }
+                                    else
+                                    {
+                                        <img src="./assets/img/Bookmark-ex.png" class="d-inline-block me-2 card-img-top img placeholder" target="_blank" alt="Bookmark image" />
+                                    }
+                                </div>
                             </a>
                         }
                         else
-                        { 
+                        {
                             <div class="my-card-header">
                                 <strong class="body-main-text">Title:</strong>
                                 <input type="text" @bind="bookmark.Title" class="form-control form-control-sm me-2 w-100 w-md-50 @(string.IsNullOrEmpty(bookmark.Title) && bookmark.Id == _bookmarkIdToBeUpdated ? "validation-error" : "")" />
@@ -81,11 +93,11 @@
                         <div class="border-top my-2"></div>
 
                         <div class="my-card-body p-3">
-                          
+
                             @if (bookmark.Id != _bookmarkIdToBeUpdated)
                             {
                                 <div class="position-relative">
-                                    
+
                                     <div class="info-hover-wrapper d-inline-block">
                                         <h5 class="card-title">@Tools.TruncateString(bookmark.Title)</h5>
 
@@ -145,22 +157,22 @@
                                 </button>
                             }
                         </div>
-                    </div>   
+                    </div>
 
                 }
             </div>
-           
+
         }
         else
         {
             if (!_loading)
-            {                
+            {
                 <div class="mx-auto w-100 text-center fw-semibold mt-4">
                     <img src="./assets/img/oops.png" width="100" class="mb-3 opacity-75">
 
                     <div class="text-center no-content">
                         <h6>
-                            Looks like you do not have any bookmarks yet.<br /> 
+                            Looks like you do not have any bookmarks yet.<br />
                             Let's create the first one.
                         </h6>
                     </div>
@@ -180,3 +192,34 @@
         }
     </div>
 </div>
+
+<style>
+    .img-container {
+        height: 234px;
+        width: 234px;
+        overflow: hidden
+    }
+
+    .img {
+        width: 234px;
+        height: 234px;
+
+    }
+
+    .relevant{
+        object-fit: contain;
+        backdrop-filter: blur(10px) brightness(150%) saturate(50%);
+    }
+
+    img-background{
+        width: 243px;
+        height: 234px;
+    }
+
+    .placeholder {
+        object-fit: cover;
+        filter: saturate(0%) blur(2px);
+        transform: translateY(-6.5%) scale(1.25);
+    }
+
+</style>

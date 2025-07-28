@@ -6,7 +6,7 @@ public interface IBookmarkRequests
 {
     Task<List<BookmarkModel>> GetAllAsync(Guid? pocketId, Guid? folderId, bool isSoftDeleted);
     Task<bool> CreateAsync(CreateBookmarkModel bookmark);
-    Task<bool> UpdateAsync(UpdateBookmarkModel bookmark);
+    Task<UpdateBookmarkResponseModel> UpdateAsync(UpdateBookmarkModel bookmark);
     Task<bool> DeleteAsync(Guid id);
     Task<bool> SoftDeleteAsync(Guid id);
 }

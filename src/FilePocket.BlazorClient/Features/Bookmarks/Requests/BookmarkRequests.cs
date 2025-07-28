@@ -1,5 +1,6 @@
 ﻿using FilePocket.BlazorClient.Features.Bookmarks.Models;
 using Newtonsoft.Json;
+using System.Net.Http.Json;
 using System.Text;
 
 namespace FilePocket.BlazorClient.Features.Bookmarks.Requests;
@@ -45,13 +46,18 @@ public class BookmarkRequests : IBookmarkRequests
         return response.IsSuccessStatusCode;
     }
 
-    public async Task<bool> UpdateAsync(UpdateBookmarkModel bookmark)
+    public async Task<UpdateBookmarkResponseModel> UpdateAsync(UpdateBookmarkModel bookmark)
     {
-        var content = GetStringContent(bookmark);
+        var response = await _apiClient.PutAsJsonAsync(BaseUrl, bookmark);
 
-        var response = await _apiClient.PutAsync(BaseUrl, content);
+        if (response.IsSuccessStatusCode)
+        {
+            var result = await response.Content.ReadFromJsonAsync<UpdateBookmarkResponseModel>();
+            result!.UpdateIsSucceed = true;
+            return result;
+        }
 
-        return response.IsSuccessStatusCode;
+        return new UpdateBookmarkResponseModel();
     }
 
     public async Task<bool> DeleteAsync(Guid id)

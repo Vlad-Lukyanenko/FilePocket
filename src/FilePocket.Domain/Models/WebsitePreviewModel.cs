@@ -9,7 +9,5 @@
         public string PageUrl { get; set; } = string.Empty;
 
         public string ImageUrl { get; set; } = string.Empty;
-
-        public bool ShowPreview { get; set; } = true;
     }
 }
