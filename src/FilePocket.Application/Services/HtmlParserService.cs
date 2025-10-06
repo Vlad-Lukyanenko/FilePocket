@@ -1,6 +1,8 @@
 ﻿using FilePocket.Application.Interfaces.Services;
 using FilePocket.Domain.Models;
 using HtmlAgilityPack;
+using System.Text;
+using System.Web;
 
 namespace FilePocket.Application.Services
 {
@@ -87,6 +89,8 @@ namespace FilePocket.Application.Services
                     }
                 }
             }
+
+            websitePreviewModel.ImageUrl = HttpUtility.HtmlDecode(websitePreviewModel.ImageUrl);
 
             return websitePreviewModel;
         }
