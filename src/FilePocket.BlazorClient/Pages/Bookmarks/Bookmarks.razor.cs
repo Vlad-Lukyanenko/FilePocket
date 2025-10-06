@@ -61,6 +61,7 @@ public partial class Bookmarks
 
         _folders = new ObservableCollection<FolderModel>(folders);
         _bookmarks = await BookmarkRequests.GetAllAsync(PocketId, FolderId, isSoftDeleted: false);
+
         _loading = false;
     }
 
@@ -100,6 +101,7 @@ public partial class Bookmarks
 
         _oldbookMarkValues.Add($"{bookmark.Id}title", bookmark.Title);
         _oldbookMarkValues.Add($"{bookmark.Id}url", bookmark.Url);
+        _oldbookMarkValues.Add($"{bookmark.Id}imageUrl", bookmark.ImageUrl);
         _bookmarkIdToBeUpdated = bookmark.Id;
         _bookmarkIdToBeDeleted = default;
     }
@@ -142,12 +144,13 @@ public partial class Bookmarks
                 IsDeleted = bookmark.IsDeleted
             };
 
-            var isUpdated = await BookmarkRequests.UpdateAsync(bookmarkToUpdate);
+            var updateResponse = await BookmarkRequests.UpdateAsync(bookmarkToUpdate);
 
-            if (isUpdated)
+            if (updateResponse.UpdateIsSucceed)
             {
                 _bookmarkIdToBeUpdated = default;
                 RemoveOldBookmarkValues(bookmark.Id);
+                _bookmarks.Where(b => b.Id == bookmark.Id).First().ImageUrl = updateResponse.ImageUrl;
             }
         }
     }
@@ -170,14 +173,17 @@ public partial class Bookmarks
     {
         _oldbookMarkValues.Remove($"{id}title");
         _oldbookMarkValues.Remove($"{id}url");
+        _oldbookMarkValues.Remove($"{id}imageUrl");
     }
 
     private void ReturnOldBookmarkValues(BookmarkModel bookmark)
     {
         var oldBookmarkTitle = _oldbookMarkValues.First(b => b.Key.Equals($"{bookmark.Id}title")).Value;
         var oldBookmarkUrl = _oldbookMarkValues.First(b => b.Key.Equals($"{bookmark.Id}url")).Value;
+        var oldBookmarkImageUrl = _oldbookMarkValues.First(b => b.Key.Equals($"{bookmark.Id}imageUrl")).Value;
         bookmark.Title = oldBookmarkTitle;
         bookmark.Url = oldBookmarkUrl;
+        bookmark.ImageUrl = oldBookmarkImageUrl;
     }
 
     private async Task DeleteFolderClickAsync()
@@ -190,5 +196,10 @@ public partial class Bookmarks
         _deleteFolderStarted = false;
 
         await JSRuntime.InvokeVoidAsync("history.back");
+    }
+
+    private static bool ImageUrlIsSet (BookmarkModel bookmark)
+    {
+        return !string.IsNullOrEmpty(bookmark.ImageUrl);
     }
 }

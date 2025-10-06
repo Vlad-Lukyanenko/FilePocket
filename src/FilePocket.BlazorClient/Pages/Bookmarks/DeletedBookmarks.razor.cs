@@ -108,7 +108,7 @@ public partial class DeletedBookmarks
 
             var isRestored = await BookmarkRequests.UpdateAsync(bookmarkToUpdate);
 
-            if (isRestored)
+            if (isRestored.UpdateIsSucceed)
             {
                 _bookmarkIdToBeRestored = default;
                 _bookmarks.Remove(bookmark);

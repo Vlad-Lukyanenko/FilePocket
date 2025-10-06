@@ -135,6 +135,7 @@ builder.Services.AddScoped<IBookmarkService, BookmarkService>();
 builder.Services.AddScoped<IFileService, FileService>();
 builder.Services.AddScoped<IFolderService, FolderService>();
 builder.Services.AddScoped<ITrashService, TrashService>();
+builder.Services.AddScoped<IHtmlParserService, HtmlParserService>();
 builder.Services.AddScoped<JwtOrApiKeyAuthorizeAttribute>();
 
 var app = builder.Build();

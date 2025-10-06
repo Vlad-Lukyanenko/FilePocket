@@ -12,13 +12,15 @@ public class BookmarkService : IBookmarkService
 {
     private readonly IRepositoryManager _repository;
     private readonly IFolderService _folderService;
+    private readonly IHtmlParserService _htmlParserService;
     private readonly IMapper _mapper;
 
-    public BookmarkService(IRepositoryManager repository, IFolderService folderService,  IMapper mapper)
+    public BookmarkService(IRepositoryManager repository, IFolderService folderService, IHtmlParserService htmlParserService, IMapper mapper)
     {
         _repository = repository;
         _folderService = folderService;
         _mapper = mapper;
+        _htmlParserService = htmlParserService;
     }
 
     public IEnumerable<BookmarkModel> GetAll(Guid userId, bool isSoftDeleted, bool trackChanges)
@@ -40,26 +42,36 @@ public class BookmarkService : IBookmarkService
         await AttachBookmarkToPocketAsync(bookmark);
         var bookmarkEntity = _mapper.Map<Bookmark>(bookmark);
 
+        bookmarkEntity.ImageUrl = _htmlParserService.GetSiteMetaData(bookmarkEntity.Url).ImageUrl;
+
         _repository.Bookmark.CreateBookmark(bookmarkEntity);
         await _repository.SaveChangesAsync();
 
         return _mapper.Map<BookmarkModel>(bookmarkEntity);
     }
 
-    public async Task UpdateBookmarkAsync(UpdateBookmarkRequest bookmark)
+    public async Task<BookmarkUpdateResponseModel> UpdateBookmarkAsync(UpdateBookmarkRequest bookmark)
     {
         var bookmarkToUpdate = await GetBookmarkAndCheckIfItExistsAsync(bookmark.Id);
 
         _mapper.Map(bookmark, bookmarkToUpdate);
-        await _repository.SaveChangesAsync();        
+
+        bookmarkToUpdate.ImageUrl = _htmlParserService.GetSiteMetaData(bookmark.Url).ImageUrl;
+
+        await _repository.SaveChangesAsync();
+
+        return new BookmarkUpdateResponseModel()
+        {
+            ImageUrl = bookmarkToUpdate.ImageUrl,
+        };
     }
 
     public async Task DeleteBookmarkAsync(Guid id)
     {
         var bookmarkToDelete = await GetBookmarkAndCheckIfItExistsAsync(id);
-        
+
         _repository.Bookmark.DeleteBookmark(bookmarkToDelete);
-        await _repository.SaveChangesAsync();        
+        await _repository.SaveChangesAsync();
     }
 
     public async Task MoveToTrashAsync(Guid id)

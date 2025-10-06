@@ -29,7 +29,13 @@ public class CreateBookmarkEndpoint : BaseEndpoint<CreateBookmarkRequest, Create
         bookmarkToCreate.UserId = UserId;
 
         var createdBookmark = await _service.BookmarkService.CreateBookmarkAsync(bookmarkToCreate);
-        var response = new CreateBookmarkResponse() { Id = createdBookmark.Id, Title = createdBookmark.Title, Url = createdBookmark.Url };
+        var response = new CreateBookmarkResponse()
+        {
+            Id = createdBookmark.Id,
+            Title = createdBookmark.Title,
+            Url = createdBookmark.Url,
+            ImageUrl = createdBookmark.ImageUrl
+        };
 
         await SendOkAsync(response, cancellationToken);
     }

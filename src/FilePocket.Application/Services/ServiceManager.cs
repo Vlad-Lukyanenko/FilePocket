@@ -20,7 +20,8 @@ public class ServiceManager(
     IImageService imageService,
     IFolderService folderService,
     IFileService fileService,
-    IEncryptionService encryptionService)
+    IEncryptionService encryptionService,
+    IHtmlParserService htmlParserService)
     : IServiceManager
 {
     private readonly Lazy<IPocketService> _pocketService = new(() => new PocketService(repositoryManager, mapper, configuration));
@@ -28,7 +29,7 @@ public class ServiceManager(
     private readonly Lazy<IFileService> _fileService = new(() => new FileService(repositoryManager, configuration, imageService, encryptionService, mapper));
     private readonly Lazy<IFolderService> _folderService = new(() => new FolderService(repositoryManager, fileService, mapper));
     private readonly Lazy<IAuthenticationService> _authenticationService = new(() => new AuthenticationService(logger, userManager, options, consumptionOptions, mapper));
-    private readonly Lazy<IBookmarkService> _bookmarkService = new(() => new BookmarkService(repositoryManager, folderService, mapper));
+    private readonly Lazy<IBookmarkService> _bookmarkService = new(() => new BookmarkService(repositoryManager, folderService, htmlParserService, mapper));
     private readonly Lazy<IProfileService> _profileService = new(() => new ProfileService(repositoryManager, mapper));
 
     public IPocketService PocketService => _pocketService.Value;
