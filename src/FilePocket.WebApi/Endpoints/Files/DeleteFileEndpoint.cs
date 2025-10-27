@@ -6,10 +6,13 @@ namespace FilePocket.WebApi.Endpoints.Files
     public class DeleteFileEndpoint : BaseEndpointWithoutRequestAndResponse
     {
         private readonly IServiceManager _service;
+        private readonly IMinioService _minioService;
 
-        public DeleteFileEndpoint(IServiceManager service)
+
+        public DeleteFileEndpoint(IServiceManager service, IMinioService minioService)
         {
             _service = service;
+            _minioService = minioService;
         }
 
         public override void Configure()
@@ -24,7 +27,9 @@ namespace FilePocket.WebApi.Endpoints.Files
 
             try
             {
+                await _minioService.RemoveFileAsync(UserId, fileId, cancellationToken);
                 await _service.FileService.RemoveFileAsync(UserId, fileId, cancellationToken);
+
                 await SendNoContentAsync(cancellationToken);
             }
             catch

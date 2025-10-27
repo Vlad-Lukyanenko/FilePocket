@@ -1,4 +1,5 @@
 ﻿using FilePocket.Application.Interfaces.Services;
+using FilePocket.Application.Services;
 using FilePocket.Domain.Models;
 using FilePocket.WebApi.Endpoints.Base;
 
@@ -7,9 +8,11 @@ namespace FilePocket.WebApi.Endpoints.Files
     public class UploadFileEndpoint : BaseEndpoint<FileInformationModel, FileResponseModel>
     {
         private readonly IServiceManager _service;
-        public UploadFileEndpoint(IServiceManager service)
+        private readonly IMinioService _minioService;
+        public UploadFileEndpoint(IServiceManager service, IMinioService minioService)
         {
             _service = service;
+            _minioService = minioService;
         }
 
         public override void Configure()
@@ -25,14 +28,23 @@ namespace FilePocket.WebApi.Endpoints.Files
             {
                 request.FolderId = null;
             }
-            {
-                request.FolderId = null;
-            }
 
             try
             {
                 var fileMetadata = await _service.FileService.UploadFileAsync(
-                    UserId, request.File!, request.PocketId, request.FolderId, cancellationToken);
+                    UserId, 
+                    request.File!, 
+                    request.PocketId, 
+                    request.FolderId, 
+                    cancellationToken);
+
+                await _minioService.UploadFileAsync(
+                    request.File!, 
+                    UserId, 
+                    request.PocketId, 
+                    fileMetadata!.FileType!.Value, 
+                    fileMetadata.Id, 
+                    cancellationToken);
 
                 await SendOkAsync(fileMetadata!, cancellationToken);
             }

@@ -243,7 +243,7 @@ public class FileService(
         Guid fileId,
         CancellationToken cancellationToken = default)
     {
-        var fileMetadata = await repository.FileMetadata.GetByUserIdAndIdAsync(userId, fileId, trackChanges: true) 
+        var fileMetadata = await repository.FileMetadata.GetByUserIdAndIdAsync(userId, fileId, trackChanges: true)
             ?? throw new FileMetadataNotFoundException(fileId);
 
         await using var transaction = await repository.BeginTransactionAsync(cancellationToken);
