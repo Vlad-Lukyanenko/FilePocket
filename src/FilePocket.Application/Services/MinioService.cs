@@ -3,7 +3,9 @@ using FilePocket.Application.Interfaces.Repositories;
 using FilePocket.Application.Interfaces.Services;
 using FilePocket.Domain;
 using FilePocket.Domain.Models;
+using FilePocket.Domain.Models.Configuration;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
 using Minio;
 using Minio.DataModel.Args;
 using System.IO;
@@ -12,25 +14,13 @@ using System.Net;
 
 namespace FilePocket.Application.Services
 {
-    public class MinioService : IMinioService
+    public class MinioService(IRepositoryManager repository,
+        IMinioClient minioClient,
+        IOptions<MinioConfigurationModel> options) : IMinioService
     {
-        private readonly string _endpoint = "localhost:9000";
-        private readonly string _accessKey = "myminioadmin";
-        private readonly string _secretKey = "minio-secret-key";
-        private readonly string _bucketName = "file-pocket";
-
-        private readonly IMinioClient? _minioClient;
-        private readonly IRepositoryManager _repository;
-
-        public MinioService(IRepositoryManager repositoryManager)
-        {
-            _minioClient = new MinioClient()
-                .WithEndpoint(_endpoint)
-                .WithCredentials(_accessKey, _secretKey)
-                .Build();
-
-            _repository = repositoryManager;
-        }
+        private readonly string _bucketName = options.Value.BucketName;
+        private readonly IMinioClient _minioClient = minioClient;
+        private readonly IRepositoryManager _repository = repository;
 
         public Task CreateBucketIfNotExistsAsync(string bucketName, CancellationToken cancellationToken = default)
         {
