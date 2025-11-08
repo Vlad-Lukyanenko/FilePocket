@@ -6,11 +6,12 @@ namespace FilePocket.WebApi.Endpoints.Files
 {
     public class GetImageThumbnailEndpoint : BaseEndpointWithoutRequest<FileResponseModel>
     {
-        private readonly IServiceManager _service;
+        private readonly IFileService _minioFileService;
 
-        public GetImageThumbnailEndpoint(IServiceManager service)
+
+        public GetImageThumbnailEndpoint(IFileService minioFileService)
         {
-            _service = service;
+            _minioFileService = minioFileService;
         }
 
         public override void Configure()
@@ -24,7 +25,7 @@ namespace FilePocket.WebApi.Endpoints.Files
             var imageId = Route<Guid>("imageId");
             var size = Route<int>("size");
 
-            var thumbnail = await _service.FileService.GetThumbnailAsync(UserId, imageId, size);
+            var thumbnail = await _minioFileService.GetThumbnailAsync(UserId, imageId, size);
 
             if (thumbnail == null)
             {

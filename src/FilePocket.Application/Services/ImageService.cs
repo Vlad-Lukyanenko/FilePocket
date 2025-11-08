@@ -15,6 +15,12 @@ namespace FilePocket.Application.Services
             return Image.Load(path);
         }
 
+        public Image GetImage(byte[] imageBytes)
+        {
+            using var ms = new MemoryStream(imageBytes);
+            return Image.Load(ms);
+        }
+
         public byte[] ResizeImage(byte[] imageBytes, int width, int height)
         {
             using var image = Image.Load<Rgba32>(imageBytes);

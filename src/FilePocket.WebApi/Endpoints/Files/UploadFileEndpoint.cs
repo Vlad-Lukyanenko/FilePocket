@@ -8,11 +8,11 @@ namespace FilePocket.WebApi.Endpoints.Files
     public class UploadFileEndpoint : BaseEndpoint<FileInformationModel, FileResponseModel>
     {
         private readonly IServiceManager _service;
-        private readonly IMinioService _minioService;
-        public UploadFileEndpoint(IServiceManager service, IMinioService minioService)
+        private readonly IFileService _minioFileService;
+        public UploadFileEndpoint(IServiceManager service, IFileService minioFileService)
         {
             _service = service;
-            _minioService = minioService;
+            _minioFileService = minioFileService;
         }
 
         public override void Configure()
@@ -31,22 +31,14 @@ namespace FilePocket.WebApi.Endpoints.Files
 
             try
             {
-                var fileMetadata = await _service.FileService.UploadFileAsync(
-                    UserId, 
-                    request.File!, 
-                    request.PocketId, 
-                    request.FolderId, 
+                var minioFMetadata = await _minioFileService.UploadFileAsync(
+                    UserId,
+                    request.File!,
+                    request.PocketId,
+                    request.FolderId,
                     cancellationToken);
 
-                await _minioService.UploadFileAsync(
-                    request.File!, 
-                    UserId, 
-                    request.PocketId, 
-                    fileMetadata!.FileType!.Value, 
-                    fileMetadata.Id, 
-                    cancellationToken);
-
-                await SendOkAsync(fileMetadata!, cancellationToken);
+                await SendOkAsync(minioFMetadata!, cancellationToken);
             }
             catch
             {

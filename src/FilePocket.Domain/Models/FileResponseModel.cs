@@ -1,4 +1,6 @@
-﻿namespace FilePocket.Domain.Models;
+﻿using FilePocket.Domain.Entities.Abstractions;
+
+namespace FilePocket.Domain.Models;
 
 public class FileResponseModel
 {

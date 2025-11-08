@@ -2,53 +2,61 @@
 using FilePocket.Application.Interfaces.Repositories;
 using FilePocket.Application.Interfaces.Services;
 using FilePocket.Domain;
+using FilePocket.Domain.Entities;
 using FilePocket.Domain.Models;
 using FilePocket.Domain.Models.Configuration;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Minio;
 using Minio.DataModel.Args;
-using System.IO;
-using System.Net;
-
 
 namespace FilePocket.Application.Services
 {
-    public class MinioService(IRepositoryManager repository,
-        IMinioClient minioClient,
+    public class MinioService(IMinioClient minioClient,
         IOptions<MinioConfigurationModel> options) : IMinioService
     {
         private readonly string _bucketName = options.Value.BucketName;
         private readonly IMinioClient _minioClient = minioClient;
-        private readonly IRepositoryManager _repository = repository;
+
+        public IMinioClient Client { get => _minioClient; }
+
+        public string BucketName { get => _bucketName; }
 
         public Task CreateBucketIfNotExistsAsync(string bucketName, CancellationToken cancellationToken = default)
         {
             throw new NotImplementedException();
         }
 
-        public async Task<bool> RemoveFileAsync(Guid userId, Guid fileId, CancellationToken cancellationToken = default)
+        public async Task<byte[]> GetObjectAsBytesAsync(string bucketName, string objectName)
         {
-            var fileMetadata = await _repository.FileMetadata.GetByUserIdAndIdAsync(userId, fileId, trackChanges: true)
-                ?? throw new FileMetadataNotFoundException(fileId);
+            using var memoryStream = new MemoryStream();
 
-            var objectPath = Path.Combine(fileMetadata.Path, fileMetadata.Id.ToString()).Replace("C:\\FilePocket\\", ""); // temporary for compatibility with current Path value
+            var args = new GetObjectArgs()
+                .WithBucket(bucketName)
+                .WithObject(objectName)
+                .WithCallbackStream(stream =>
+                {
+                    stream.CopyTo(memoryStream);
+                });
 
-            var objectName = objectPath.Replace(Path.DirectorySeparatorChar, '/') // temporary for compatibility with current Path value
-                .Replace(Path.AltDirectorySeparatorChar, '/');
+            await Client.GetObjectAsync(args).ConfigureAwait(false);
 
+            return memoryStream.ToArray();
+        }
+
+        public async Task<bool> DeleteObjectAsync(string bucketName, 
+            string objectName, 
+            CancellationToken cancellationToken = default)
+        {
             try
             {
-                var bktExistArgs = new BucketExistsArgs()
-                    .WithBucket(_bucketName);
-
-                var args = new RemoveObjectArgs()
-                    .WithBucket(_bucketName)
+                var removeArgs = new RemoveObjectArgs()
+                    .WithBucket(bucketName)
                     .WithObject(objectName);
 
                 // versionId could be passed here laiter to delete specific object version
 
-                await _minioClient!.RemoveObjectAsync(args, cancellationToken);
+                await _minioClient!.RemoveObjectAsync(removeArgs, cancellationToken);
                 return true;
             }
             catch (Exception e)
@@ -63,77 +71,50 @@ namespace FilePocket.Application.Services
             throw new NotImplementedException();
         }
 
-        public Task<FileResponseModel> DownloadFileAsync(string bucketName, string objectName, CancellationToken cancellationToken = default)
+        public async Task<long> CreateObjectAsync(
+            IFormFile file,
+            string bucketName, 
+            string objectName,
+            CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
-        }
-
-        public async Task<FileResponseModel> UploadFileAsync(
-                                                        IFormFile file,
-                                                        Guid userId,
-                                                        Guid? pocketId,
-                                                        FileTypes fileType,
-                                                        Guid fileId,
-                                                        CancellationToken cancellationToken = default)
-        {
+            long uploadedFileSize = 0;
 
             try
             {
                 var bktExistArgs = new BucketExistsArgs()
-                    .WithBucket(_bucketName);
+                    .WithBucket(bucketName);
 
                 var found = await _minioClient!.BucketExistsAsync(bktExistArgs, cancellationToken).ConfigureAwait(false);
+                
                 if (!found)
                 {
                     var mkBktArgs = new MakeBucketArgs()
-                        .WithBucket(_bucketName);
+                        .WithBucket(bucketName);
                     await _minioClient.MakeBucketAsync(mkBktArgs, cancellationToken).ConfigureAwait(false);
                 }
 
-                var objectName = SelectObjectName(userId, pocketId, fileType, fileId);
                 var contentType = file.ContentType;
                 var contentLength = file.Length;
 
                 using var stream = file.OpenReadStream();
 
                 var putObjectArgs = new PutObjectArgs()
-                    .WithBucket(_bucketName)
+                    .WithBucket(bucketName)
                     .WithObject(objectName)
                     .WithStreamData(stream)
                     .WithContentType(contentType)
                     .WithObjectSize(contentLength);
 
-                _ = await _minioClient.PutObjectAsync(putObjectArgs, cancellationToken).ConfigureAwait(false);
+                var response = await _minioClient.PutObjectAsync(putObjectArgs, cancellationToken).ConfigureAwait(false);
+                uploadedFileSize = response.Size;
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
             }
 
-            var fileResponse = new FileResponseModel
-            {
-                Id = fileId,
-                UserId = userId,
-                PocketId = pocketId,
-                FileSize = file.Length / 1024,
-                FileType = fileType,
-                ActualName = "not implemented",
-                OriginalName = file.FileName,
-                CreatedAt = DateTime.UtcNow
-            };
-
-            return fileResponse;
+            return uploadedFileSize;
         }
 
-        private static string SelectObjectName(Guid userId, Guid? pocketId, FileTypes fileType, Guid fileId)
-        {
-            var now = DateTime.UtcNow;
-
-            var objectName = pocketId is not null
-                ? $"{userId}/{pocketId}/{now.Year}/{now.Month}/{fileType}s/{fileId}"
-                : $"{userId}/{now.Year}/{now.Month}/{fileType}s/{fileId}";
-
-            return objectName;
-        }
     }
 }
