@@ -7,10 +7,10 @@ namespace FilePocket.WebApi.Endpoints.Files
 {
     public class GetImageThumbnailsEndpoint : BaseEndpoint<GetImageThumbnailsRequest, IEnumerable<FileResponseModel>>
     {
-        private readonly IServiceManager _service;
-        public GetImageThumbnailsEndpoint(IServiceManager service)
+        private readonly IFileService _minioFileService;
+        public GetImageThumbnailsEndpoint(IFileService minioFileService)
         {
-            _service = service;
+            _minioFileService = minioFileService;
         }
         public override void Configure()
         {
@@ -19,7 +19,7 @@ namespace FilePocket.WebApi.Endpoints.Files
         }
         public override async Task HandleAsync(GetImageThumbnailsRequest request, CancellationToken cancellationToken)
         {
-            var thumbnails = await _service.FileService.GetThumbnailsAsync(UserId, request.ImageIds, request.Size);
+            var thumbnails = await _minioFileService.GetThumbnailsAsync(UserId, request.ImageIds, request.Size);
 
             if (thumbnails == null || !thumbnails.Any())
             {

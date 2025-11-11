@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Minio;
 using Minio.DataModel.Args;
+using Minio.Exceptions;
 
 namespace FilePocket.Application.Services
 {
@@ -44,8 +45,8 @@ namespace FilePocket.Application.Services
             return memoryStream.ToArray();
         }
 
-        public async Task<bool> DeleteObjectAsync(string bucketName, 
-            string objectName, 
+        public async Task<bool> DeleteObjectAsync(string bucketName,
+            string objectName,
             CancellationToken cancellationToken = default)
         {
             try
@@ -66,14 +67,26 @@ namespace FilePocket.Application.Services
             }
         }
 
-        public Task<bool> DoesObjectExistAsync(string bucketName, string objectName, CancellationToken cancellationToken = default)
+        public async Task<bool> ObjectExistsAsync(string bucketName, string objectName, CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var statObjectArgs = new StatObjectArgs()
+                    .WithBucket(bucketName)
+                    .WithObject(objectName);
+
+                var statObject = await _minioClient.StatObjectAsync(statObjectArgs, cancellationToken);
+                return !statObject.ExtraHeaders.TryGetValue("x-amz-error-code", out var error) || error != "NoSuchKey";
+            }
+            catch (Exception e)
+            {
+                throw new InvalidOperationException("Error checking object existence", e);
+            }
         }
 
-        public async Task<long> CreateObjectAsync(
+        public async Task<long> WriteObjectAsync(
             IFormFile file,
-            string bucketName, 
+            string bucketName,
             string objectName,
             CancellationToken cancellationToken = default)
         {
@@ -85,7 +98,7 @@ namespace FilePocket.Application.Services
                     .WithBucket(bucketName);
 
                 var found = await _minioClient!.BucketExistsAsync(bktExistArgs, cancellationToken).ConfigureAwait(false);
-                
+
                 if (!found)
                 {
                     var mkBktArgs = new MakeBucketArgs()
@@ -97,6 +110,51 @@ namespace FilePocket.Application.Services
                 var contentLength = file.Length;
 
                 using var stream = file.OpenReadStream();
+
+                var putObjectArgs = new PutObjectArgs()
+                    .WithBucket(bucketName)
+                    .WithObject(objectName)
+                    .WithStreamData(stream)
+                    .WithContentType(contentType)
+                    .WithObjectSize(contentLength);
+
+                var response = await _minioClient.PutObjectAsync(putObjectArgs, cancellationToken).ConfigureAwait(false);
+                uploadedFileSize = response.Size;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+
+            return uploadedFileSize;
+        }
+
+        public async Task<long> WriteObjectAsync(
+            byte[] fileBytes,
+            string contentType,
+            string bucketName,
+            string objectName,
+            CancellationToken cancellationToken = default)
+        {
+            long uploadedFileSize = 0;
+
+            try
+            {
+                var bktExistArgs = new BucketExistsArgs()
+                    .WithBucket(bucketName);
+
+                var found = await _minioClient!.BucketExistsAsync(bktExistArgs, cancellationToken).ConfigureAwait(false);
+
+                if (!found)
+                {
+                    var mkBktArgs = new MakeBucketArgs()
+                        .WithBucket(bucketName);
+                    await _minioClient.MakeBucketAsync(mkBktArgs, cancellationToken).ConfigureAwait(false);
+                }
+
+                var contentLength = fileBytes.Length;
+
+                using var stream = new MemoryStream(fileBytes);
 
                 var putObjectArgs = new PutObjectArgs()
                     .WithBucket(bucketName)

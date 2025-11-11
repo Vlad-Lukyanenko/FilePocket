@@ -8,7 +8,6 @@ namespace FilePocket.WebApi.Endpoints.Files
     {
         private readonly IFileService _minioFileService;
 
-
         public GetImageThumbnailEndpoint(IFileService minioFileService)
         {
             _minioFileService = minioFileService;

@@ -7,14 +7,12 @@ namespace FilePocket.WebApi.Endpoints.Home
 {
     public class GetRecentlySharedFilesEndpoint : BaseEndpointWithoutRequest<List<GetRecentlySharedFilesResponse>>
     {
-        private readonly IServiceManager _service;
         private readonly IMapper _mapper;
         private readonly IFileService _minioFileService;
 
 
-        public GetRecentlySharedFilesEndpoint(IServiceManager service, IMapper mapper, IFileService minioFileService)
+        public GetRecentlySharedFilesEndpoint(IMapper mapper, IFileService minioFileService)
         {
-            _service = service;
             _mapper = mapper;
             _minioFileService = minioFileService;
         }

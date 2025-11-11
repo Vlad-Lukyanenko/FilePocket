@@ -7,12 +7,10 @@ namespace FilePocket.WebApi.Endpoints.Files
 {
     public class GetInfoEndpoint : BaseEndpointWithoutRequest<FileResponseModel>
     {
-        private readonly IServiceManager _service;
         private readonly IFileService _minioFileService;
 
-        public GetInfoEndpoint(IServiceManager service, IFileService minioFileService)
+        public GetInfoEndpoint(IFileService minioFileService)
         {
-            _service = service;
             _minioFileService = minioFileService;
         }
 

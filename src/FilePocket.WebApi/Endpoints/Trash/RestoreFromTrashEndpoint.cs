@@ -9,10 +9,13 @@ namespace FilePocket.WebApi.Endpoints.Trash
     public class RestoreFromTrashEndpoint : BaseEndpointWithoutRequest<SearchResponseModel>
     {
         private readonly IServiceManager _service;
+        private readonly IFileService _minioFileService;
 
-        public RestoreFromTrashEndpoint(IServiceManager service)
+
+        public RestoreFromTrashEndpoint(IServiceManager service, IFileService minioFileService)
         {
             _service = service;
+            _minioFileService = minioFileService;
         }
 
         public override void Configure()
@@ -34,7 +37,7 @@ namespace FilePocket.WebApi.Endpoints.Trash
             switch (itemType)
             {
                 case "file":
-                    var folderId = await _service.FileService.RestoreFromTrashAsync(UserId, itemId);
+                    var folderId = await _minioFileService.RestoreFromTrashAsync(UserId, itemId);
 
                     if (folderId != null)
                     {

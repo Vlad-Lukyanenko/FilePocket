@@ -7,11 +7,9 @@ namespace FilePocket.WebApi.Endpoints.Files
 {
     public class UploadFileEndpoint : BaseEndpoint<FileInformationModel, FileResponseModel>
     {
-        private readonly IServiceManager _service;
         private readonly IFileService _minioFileService;
-        public UploadFileEndpoint(IServiceManager service, IFileService minioFileService)
+        public UploadFileEndpoint(IFileService minioFileService)
         {
-            _service = service;
             _minioFileService = minioFileService;
         }
 

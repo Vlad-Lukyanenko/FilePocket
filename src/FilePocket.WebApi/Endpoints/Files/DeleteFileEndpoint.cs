@@ -5,13 +5,11 @@ namespace FilePocket.WebApi.Endpoints.Files
 {
     public class DeleteFileEndpoint : BaseEndpointWithoutRequestAndResponse
     {
-        private readonly IServiceManager _service;
         private readonly IFileService _minioFileService;
 
 
-        public DeleteFileEndpoint(IServiceManager service, IFileService minioFileService)
+        public DeleteFileEndpoint(IFileService minioFileService)
         {
-            _service = service;
             _minioFileService = minioFileService;
         }
 

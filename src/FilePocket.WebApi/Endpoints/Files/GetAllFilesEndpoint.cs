@@ -8,10 +8,10 @@ namespace FilePocket.WebApi.Endpoints.Files
 {
     public class GetAllFilesEndpoint : BaseEndpoint<GetFilesRequest, IEnumerable<FileResponseModel>>
     {
-        private readonly IServiceManager _service;
-        public GetAllFilesEndpoint(IServiceManager service)
+        private readonly IFileService _minioFileService;
+        public GetAllFilesEndpoint(IFileService minioFileService)
         {
-            _service = service;
+            _minioFileService = minioFileService;
         }
 
         public override void Configure()
@@ -23,7 +23,7 @@ namespace FilePocket.WebApi.Endpoints.Files
 
         public override async Task HandleAsync(GetFilesRequest request, CancellationToken cancellationToken)
         {
-            var fileMetadata = await _service.FileService.GetAllFilesMetadataAsync(UserId, 
+            var fileMetadata = await _minioFileService.GetAllFilesMetadataAsync(UserId, 
                 request.PocketId, 
                 request.FolderId, 
                 request.IsSoftDeleted);

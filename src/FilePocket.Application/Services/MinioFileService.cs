@@ -16,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace FilePocket.Application.Services
@@ -218,7 +219,7 @@ namespace FilePocket.Application.Services
             {
                 var args = metadata.GetObjectArgs();
 
-                await minioService.CreateObjectAsync(file, args.BucketName, args.ObjectName, cancellationToken);
+                await minioService.WriteObjectAsync(file, args.BucketName, args.ObjectName, cancellationToken);
             }
 
             FileResponseModel? CreateFileResponseModel(FileMetadata? fileMetadata)
@@ -439,16 +440,9 @@ namespace FilePocket.Application.Services
             }
         }
 
-        public async Task<byte[]> ReadNoteContentFromFileAsync(Guid userId, Guid fileId)
+        public Task<byte[]> ReadNoteContentFromFileAsync(Guid userId, Guid fileId)
         {
-            var fileMetadata = await repository.FileMetadata.GetByUserIdAndIdAsync(userId, fileId, trackChanges: true)
-                ?? throw new FileMetadataNotFoundException(fileId);
-
-            var fullPath = Path.Combine(fileMetadata.Path, fileMetadata.ActualName);
-
-            fullPath.EnsureFileExistsOnDisk();
-
-            return await File.ReadAllBytesAsync(fullPath);
+            throw new NotImplementedException(message: "Method not implemented in MinioFileService");
         }
 
         public async Task<IEnumerable<FileSearchResponseModel>> SearchAsync(Guid userId, string partialName)
@@ -506,25 +500,28 @@ namespace FilePocket.Application.Services
             return path;
         }
 
-
         private async Task<FileResponseModel> GetThumbnailInternalAsync(Guid userId, Guid id, int maxSize)
         {
             var fileMetadata = await repository.FileMetadata.GetByUserIdAndIdAsync(userId, id, true);
-            var fullPath = fileMetadata.GetFullPath();
 
-            fullPath.EnsureFileExistsOnDisk();
+            var args = fileMetadata.GetObjectArgs();
+            var exists = await minioService.ObjectExistsAsync(args.BucketName, args.ObjectName);
+
+            if (!exists)
+            {
+                throw new FileMetadataNotFoundException(id);
+            }
 
             if (fileMetadata.FileType == FileTypes.Image)
             {
-                var args = fileMetadata.GetObjectArgs();
                 var fileBytes = await minioService.GetObjectAsBytesAsync(args.BucketName, args.ObjectName);
                 var image = imageService.GetImage(fileBytes);
 
-                return GetResizedThumbnail(maxSize, fileMetadata, image.Width, image.Height, File.ReadAllBytes(fullPath));
+                return GetResizedThumbnail(maxSize, fileMetadata, image.Width, image.Height, fileBytes);
             }
             if (fileMetadata.FileType == FileTypes.Video)
             {
-                var frame = imageService.ExtractFirstFrame(fullPath);
+                var frame = imageService.ExtractFirstFrame(string.Empty); // TODO: implement video frame extraction
 
                 if (frame.FrameBytes.Length == 0)
                 {
@@ -642,19 +639,24 @@ namespace FilePocket.Application.Services
             };
         }
 
-        private static async Task WriteContentToFile(FileMetadata fileMetadata, byte[] content, WriteFileMode mode, CancellationToken cancellationToken)
+        private async Task WriteContentToFile(FileMetadata fileMetadata, byte[] content, WriteFileMode mode, CancellationToken cancellationToken)
         {
-            fileMetadata.Path.CreateFolderIfDoesNotExist();
-
-            var fullPath = Path.Combine(fileMetadata.Path, fileMetadata.ActualName);
+            var args = fileMetadata.GetObjectArgs();
+            var contentType = "application/octet-stream";
 
             if (mode == WriteFileMode.Create)
             {
-                fullPath.CheckIfFileNotExistsOnDisk();
+                var exists = await minioService.ObjectExistsAsync(args.BucketName, args.ObjectName, cancellationToken);
+
+                if (exists)
+                {
+                    throw new FileAlreadyUploadedException(fileMetadata.Path);
+                }
             }
 
-            await File.WriteAllBytesAsync(fullPath, content, cancellationToken);
+            await minioService.WriteObjectAsync(content, contentType, args.BucketName, args.ObjectName, cancellationToken);
         }
+
         #endregion
 
         private enum WriteFileMode

@@ -19,7 +19,6 @@ public class GetProfileByUserIdEndpoint : BaseEndpointWithoutRequest<GetProfileR
     public override void Configure()
     {
         Get("api/profile/userId/{userId:guid}");
-
         AuthSchemes("Bearer");
     }
 

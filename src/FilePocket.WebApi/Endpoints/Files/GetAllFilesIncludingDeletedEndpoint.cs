@@ -6,10 +6,10 @@ namespace FilePocket.WebApi.Endpoints.Files
 {
     public class GetAllFilesIncludingDeletedEndpoint :BaseEndpointWithoutRequest<IEnumerable<FileResponseModel>>
     {
-        private readonly IServiceManager _service;
-        public GetAllFilesIncludingDeletedEndpoint(IServiceManager service)
+        private readonly IFileService _minioFileService;
+        public GetAllFilesIncludingDeletedEndpoint(IFileService minioFileService)
         {
-            _service = service;
+            _minioFileService = minioFileService;
         }
         public override void Configure()
         {
@@ -20,7 +20,7 @@ namespace FilePocket.WebApi.Endpoints.Files
         {
             var pocketId = Route<Guid>("pocketId");
 
-            var files = await _service.FileService.GetAllFilesIncludingDeletedAsync(UserId, pocketId);
+            var files = await _minioFileService.GetAllFilesIncludingDeletedAsync(UserId, pocketId);
 
             if (files == null)
             {

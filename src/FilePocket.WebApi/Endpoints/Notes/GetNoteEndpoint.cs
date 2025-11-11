@@ -7,10 +7,10 @@ namespace FilePocket.WebApi.Endpoints.Notes
 {
     public class GetNoteEndpoint : BaseEndpointWithoutRequest<NoteModel>
     {
-        private readonly IServiceManager _service;
-        public GetNoteEndpoint(IServiceManager service)
+        private readonly IFileService _minioFileService;
+        public GetNoteEndpoint(IFileService minioFileService)
         {
-            _service = service;
+            _minioFileService = minioFileService;
         }
 
         public override void Configure()
@@ -21,9 +21,8 @@ namespace FilePocket.WebApi.Endpoints.Notes
 
         public override async Task HandleAsync(CancellationToken cancellationToken)
         {
-
             var id = Route<Guid>("id");
-            var note = await _service.FileService.GetNoteByUserIdAndIdAsync(UserId, id);
+            var note = await _minioFileService.GetNoteByUserIdAndIdAsync(UserId, id);
 
             if (note == null)
             {

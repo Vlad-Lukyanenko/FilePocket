@@ -12,15 +12,22 @@ namespace FilePocket.Application.Interfaces.Services
 
         string BucketName { get; }
 
-        Task<long> CreateObjectAsync(
+        Task<long> WriteObjectAsync(
             IFormFile file,
             string bucketName, 
             string objectName,
             CancellationToken cancellationToken = default);
 
+        Task<long> WriteObjectAsync(
+            byte[] data,
+            string contentType,
+            string bucketName,
+            string objectName,
+            CancellationToken cancellationToken = default);
+
         Task<byte[]> GetObjectAsBytesAsync(string bucketName, string objectName);
         Task<bool> DeleteObjectAsync(string bucketName, string objectName, CancellationToken cancellationToken = default);
-        Task<bool> DoesObjectExistAsync(string bucketName, string objectName, CancellationToken cancellationToken = default);
+        Task<bool> ObjectExistsAsync(string bucketName, string objectName, CancellationToken cancellationToken = default);
         Task CreateBucketIfNotExistsAsync(string bucketName, CancellationToken cancellationToken = default);
     }
 }
