@@ -1,4 +1,5 @@
-﻿using FilePocket.Application.Interfaces.Repositories;
+﻿using FilePocket.Application.Extensions;
+using FilePocket.Application.Interfaces.Repositories;
 using FilePocket.Application.Interfaces.Services;
 using FilePocket.Domain.Entities;
 using FilePocket.Domain.Models;
@@ -10,11 +11,13 @@ namespace FilePocket.Application.Services
     {
         private readonly IRepositoryManager _repository;
         private readonly IMapper _mapper;
+        private readonly IMinioService _minioService;
 
-        public SharedFileService(IRepositoryManager repository, IMapper mapper)
+        public SharedFileService(IRepositoryManager repository, IMapper mapper, IMinioService minioService)
         {
             _repository = repository;
             _mapper = mapper;
+            _minioService = minioService;
         }
 
         public async Task CreateAsync(Guid userId, SharedFileModel sharedFile)
@@ -53,14 +56,16 @@ namespace FilePocket.Application.Services
 
         public async Task<byte[]?> DownloadFileAsync(Guid sharedFileId)
         {
-            var sharedFileBody = await _repository.SharedFile.GetFileBodyAsync(sharedFileId);
+            var fileMetadata = await _repository.SharedFile.GetFileBaseMetadataAsync(sharedFileId);
 
-            if (sharedFileBody is null)
+            if (fileMetadata is null)
             {
                 return null;
             }
 
-            return sharedFileBody.File;
+            var args = fileMetadata.GetObjectArgs();
+
+            return await _minioService.GetObjectAsBytesAsync(args);
         }
 
         public async Task<List<SharedFileView>> GetLatestAsync(Guid userId, int number)

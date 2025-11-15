@@ -14,20 +14,18 @@ namespace FilePocket.Application.Interfaces.Services
 
         Task<long> WriteObjectAsync(
             IFormFile file,
-            string bucketName, 
-            string objectName,
+            MinioActionArgs args,
             CancellationToken cancellationToken = default);
 
         Task<long> WriteObjectAsync(
             byte[] data,
             string contentType,
-            string bucketName,
-            string objectName,
+            MinioActionArgs args,
             CancellationToken cancellationToken = default);
 
-        Task<byte[]> GetObjectAsBytesAsync(string bucketName, string objectName);
-        Task<bool> DeleteObjectAsync(string bucketName, string objectName, CancellationToken cancellationToken = default);
-        Task<bool> ObjectExistsAsync(string bucketName, string objectName, CancellationToken cancellationToken = default);
+        Task<byte[]> GetObjectAsBytesAsync(MinioActionArgs args);
+        Task<bool> DeleteObjectAsync(MinioActionArgs args, CancellationToken cancellationToken = default);
+        Task<bool> ObjectExistsAsync(MinioActionArgs args, CancellationToken cancellationToken = default);
         Task CreateBucketIfNotExistsAsync(string bucketName, CancellationToken cancellationToken = default);
     }
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FilePocket.Domain.Models
 {
-    public class MinioObjectArgs
+    public class MinioActionArgs
     {
         public string BucketName { get; set; } = string.Empty;
         public string ObjectName { get; set; } = string.Empty;

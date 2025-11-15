@@ -64,7 +64,7 @@ namespace FilePocket.Application.Services
         {
             var fileMetadata = await repository.FileMetadata.GetByUserIdAndIdAsync(userId, fileId, true);
             var args = fileMetadata.GetObjectArgs();
-            var fileBytes = await minioService.GetObjectAsBytesAsync(args.BucketName, args.ObjectName);
+            var fileBytes = await minioService.GetObjectAsBytesAsync(args);
 
             return new FileResponseModel
             {
@@ -101,7 +101,7 @@ namespace FilePocket.Application.Services
         {
             var fileMetadata = await repository.FileMetadata.GetByUserIdAndIdAsync(userId, fileId);
             var args = fileMetadata.GetObjectArgs();
-            var fileBytes = await minioService.GetObjectAsBytesAsync(args.BucketName, args.ObjectName);
+            var fileBytes = await minioService.GetObjectAsBytesAsync(args);
 
             var note = mapper.Map<NoteModel>(fileMetadata);
 
@@ -219,7 +219,7 @@ namespace FilePocket.Application.Services
             {
                 var args = metadata.GetObjectArgs();
 
-                await minioService.WriteObjectAsync(file, args.BucketName, args.ObjectName, cancellationToken);
+                await minioService.WriteObjectAsync(file, args, cancellationToken);
             }
 
             FileResponseModel? CreateFileResponseModel(FileMetadata? fileMetadata)
@@ -284,7 +284,7 @@ namespace FilePocket.Application.Services
             {
                 var args = fileToRemove.GetObjectArgs();
 
-                minioService.DeleteObjectAsync(args.BucketName, args.ObjectName, cancellationToken);
+                minioService.DeleteObjectAsync(args, cancellationToken);
             }
         }
 
@@ -360,7 +360,7 @@ namespace FilePocket.Application.Services
                 var fileMetadata = FileMetadata.Create(
                     note.UserId, note.Title, filePath, fileType, fileSizeInMbs, note.PocketId, note.FolderId);
 
-                var pocketAndMetadataTask = UpdateTargetPocketAndMetadata(fileMetadata);
+                var pocketAndMetadataTask = UpdateTargetPocketAndMetadata(fileMetadata, WriteFileMode.Create);
                 var storageConsumptionTask = ChangeStorageConsumption(storageConsumption, fileMetadata.FileSize);
                 var writeContentToFileTask = WriteContentToFile(fileMetadata, contentBytes, WriteFileMode.Create, cancellationToken);
 
@@ -419,7 +419,7 @@ namespace FilePocket.Application.Services
                 fileMetadata.PocketId = note.PocketId;
                 fileMetadata.FolderId = note.FolderId;
 
-                var pocketAndMetadataTask = UpdateTargetPocketAndMetadata(fileMetadata, sizeChangeInMbs);
+                var pocketAndMetadataTask = UpdateTargetPocketAndMetadata(fileMetadata, WriteFileMode.Override, sizeChangeInMbs);
                 var storageConsumptionTask = ChangeStorageConsumption(storageConsumption, sizeChangeInMbs);
                 var writeContentToFileTask = WriteContentToFile(fileMetadata, contentBytes, WriteFileMode.Override, cancellationToken);
 
@@ -505,7 +505,7 @@ namespace FilePocket.Application.Services
             var fileMetadata = await repository.FileMetadata.GetByUserIdAndIdAsync(userId, id, true);
 
             var args = fileMetadata.GetObjectArgs();
-            var exists = await minioService.ObjectExistsAsync(args.BucketName, args.ObjectName);
+            var exists = await minioService.ObjectExistsAsync(args);
 
             if (!exists)
             {
@@ -514,7 +514,7 @@ namespace FilePocket.Application.Services
 
             if (fileMetadata.FileType == FileTypes.Image)
             {
-                var fileBytes = await minioService.GetObjectAsBytesAsync(args.BucketName, args.ObjectName);
+                var fileBytes = await minioService.GetObjectAsBytesAsync(args);
                 var image = imageService.GetImage(fileBytes);
 
                 return GetResizedThumbnail(maxSize, fileMetadata, image.Width, image.Height, fileBytes);
@@ -570,22 +570,25 @@ namespace FilePocket.Application.Services
             };
         }
 
-        private async Task UpdateTargetPocketAndMetadata(FileMetadata fileMetadata, double sizeChange = 0)
+        private async Task UpdateTargetPocketAndMetadata(FileMetadata fileMetadata, WriteFileMode mode, double sizeChange = 0)
         {
             var pocket = await repository.Pocket.GetByIdAsync(fileMetadata.UserId, fileMetadata.PocketId, trackChanges: true)
                 ?? throw new PocketNotFoundException(fileMetadata.PocketId);
 
-            if (sizeChange == 0)
+            if (mode == WriteFileMode.Create)
             {
                 pocket.UpdateDetails(fileMetadata);
                 repository.FileMetadata.CreateFileMetadata(fileMetadata);
+                return;
             }
-            else
+
+            if (sizeChange != 0)
             {
                 pocket.UpdateDetails(sizeChange);
-                fileMetadata.UpdatedAt = DateTime.UtcNow;
-                repository.FileMetadata.UpdateFileMetadata(fileMetadata);
             }
+
+            fileMetadata.UpdatedAt = DateTime.UtcNow;
+            repository.FileMetadata.UpdateFileMetadata(fileMetadata);
         }
 
         private Task ChangeStorageConsumption(StorageConsumption storageConsumption, double consumptionChangeValue)
@@ -646,7 +649,7 @@ namespace FilePocket.Application.Services
 
             if (mode == WriteFileMode.Create)
             {
-                var exists = await minioService.ObjectExistsAsync(args.BucketName, args.ObjectName, cancellationToken);
+                var exists = await minioService.ObjectExistsAsync(args, cancellationToken);
 
                 if (exists)
                 {
@@ -654,7 +657,7 @@ namespace FilePocket.Application.Services
                 }
             }
 
-            await minioService.WriteObjectAsync(content, contentType, args.BucketName, args.ObjectName, cancellationToken);
+            await minioService.WriteObjectAsync(content, contentType, args, cancellationToken);
         }
 
         #endregion

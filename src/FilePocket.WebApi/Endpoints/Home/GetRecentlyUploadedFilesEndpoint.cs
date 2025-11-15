@@ -7,13 +7,13 @@ namespace FilePocket.WebApi.Endpoints.Home
 {
     public class GetRecentlyUploadedFilesEndpoint : BaseEndpointWithoutRequest<List<GetRecentlyUploadedFilesResponse>>
     {
-        private readonly IFileService _minioFileService;
+        private readonly IServiceManager _service;
         private readonly IMapper _mapper;
 
-        public GetRecentlyUploadedFilesEndpoint(IFileService minioFileService, IMapper mapper)
+        public GetRecentlyUploadedFilesEndpoint(IServiceManager service, IMapper mapper)
         {
+            _service = service;
             _mapper = mapper;
-            _minioFileService = minioFileService;
         }
 
         public override void Configure()
@@ -24,7 +24,7 @@ namespace FilePocket.WebApi.Endpoints.Home
 
         public override async Task HandleAsync(CancellationToken cancellationToken)
         {
-            var recentFiles = await _minioFileService.GetLatestAsync(UserId, 10);
+            var recentFiles = await _service.FileService.GetLatestAsync(UserId, 10);
 
             var response = _mapper.Map<List<GetRecentlyUploadedFilesResponse>>(recentFiles);
 

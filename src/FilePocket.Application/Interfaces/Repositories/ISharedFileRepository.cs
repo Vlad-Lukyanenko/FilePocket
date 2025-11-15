@@ -1,4 +1,5 @@
 ﻿using FilePocket.Domain.Entities;
+using FilePocket.Domain.Entities.Abstractions;
 using FilePocket.Domain.Models;
 
 namespace FilePocket.Application.Interfaces.Repositories
@@ -17,6 +18,6 @@ namespace FilePocket.Application.Interfaces.Repositories
 
         void Delete(SharedFile sharedFile);
 
-        Task<DownloadFileModel?> GetFileBodyAsync(Guid sharedFileId);
+        Task<IBaseMetadata?> GetFileBaseMetadataAsync(Guid sharedFileId);
     }
 }

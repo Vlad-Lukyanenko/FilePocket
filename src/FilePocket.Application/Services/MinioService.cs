@@ -28,32 +28,31 @@ namespace FilePocket.Application.Services
             throw new NotImplementedException();
         }
 
-        public async Task<byte[]> GetObjectAsBytesAsync(string bucketName, string objectName)
+        public async Task<byte[]> GetObjectAsBytesAsync(MinioActionArgs args)
         {
             using var memoryStream = new MemoryStream();
 
-            var args = new GetObjectArgs()
-                .WithBucket(bucketName)
-                .WithObject(objectName)
+            var objectArgs = new GetObjectArgs()
+                .WithBucket(args.BucketName)
+                .WithObject(args.ObjectName)
                 .WithCallbackStream(stream =>
                 {
                     stream.CopyTo(memoryStream);
                 });
 
-            await Client.GetObjectAsync(args).ConfigureAwait(false);
+            await Client.GetObjectAsync(objectArgs).ConfigureAwait(false);
 
             return memoryStream.ToArray();
         }
 
-        public async Task<bool> DeleteObjectAsync(string bucketName,
-            string objectName,
+        public async Task<bool> DeleteObjectAsync(MinioActionArgs args,
             CancellationToken cancellationToken = default)
         {
             try
             {
                 var removeArgs = new RemoveObjectArgs()
-                    .WithBucket(bucketName)
-                    .WithObject(objectName);
+                    .WithBucket(args.BucketName)
+                    .WithObject(args.ObjectName);
 
                 // versionId could be passed here laiter to delete specific object version
 
@@ -67,16 +66,17 @@ namespace FilePocket.Application.Services
             }
         }
 
-        public async Task<bool> ObjectExistsAsync(string bucketName, string objectName, CancellationToken cancellationToken = default)
+        public async Task<bool> ObjectExistsAsync(MinioActionArgs args, CancellationToken cancellationToken = default)
         {
             try
             {
                 var statObjectArgs = new StatObjectArgs()
-                    .WithBucket(bucketName)
-                    .WithObject(objectName);
+                    .WithBucket(args.BucketName)
+                    .WithObject(args.ObjectName);
 
                 var statObject = await _minioClient.StatObjectAsync(statObjectArgs, cancellationToken);
-                return !statObject.ExtraHeaders.TryGetValue("x-amz-error-code", out var error) || error != "NoSuchKey";
+
+                return !statObject.ExtraHeaders.TryGetValue("X-Minio-Error-Code", out var error) || error != "NoSuchKey";
             }
             catch (Exception e)
             {
@@ -86,8 +86,7 @@ namespace FilePocket.Application.Services
 
         public async Task<long> WriteObjectAsync(
             IFormFile file,
-            string bucketName,
-            string objectName,
+            MinioActionArgs args,
             CancellationToken cancellationToken = default)
         {
             long uploadedFileSize = 0;
@@ -95,14 +94,14 @@ namespace FilePocket.Application.Services
             try
             {
                 var bktExistArgs = new BucketExistsArgs()
-                    .WithBucket(bucketName);
+                    .WithBucket(args.BucketName);
 
                 var found = await _minioClient!.BucketExistsAsync(bktExistArgs, cancellationToken).ConfigureAwait(false);
 
                 if (!found)
                 {
                     var mkBktArgs = new MakeBucketArgs()
-                        .WithBucket(bucketName);
+                        .WithBucket(args.BucketName);
                     await _minioClient.MakeBucketAsync(mkBktArgs, cancellationToken).ConfigureAwait(false);
                 }
 
@@ -112,8 +111,8 @@ namespace FilePocket.Application.Services
                 using var stream = file.OpenReadStream();
 
                 var putObjectArgs = new PutObjectArgs()
-                    .WithBucket(bucketName)
-                    .WithObject(objectName)
+                    .WithBucket(args.BucketName)
+                    .WithObject(args.ObjectName)
                     .WithStreamData(stream)
                     .WithContentType(contentType)
                     .WithObjectSize(contentLength);
@@ -132,8 +131,7 @@ namespace FilePocket.Application.Services
         public async Task<long> WriteObjectAsync(
             byte[] fileBytes,
             string contentType,
-            string bucketName,
-            string objectName,
+            MinioActionArgs args,
             CancellationToken cancellationToken = default)
         {
             long uploadedFileSize = 0;
@@ -141,14 +139,14 @@ namespace FilePocket.Application.Services
             try
             {
                 var bktExistArgs = new BucketExistsArgs()
-                    .WithBucket(bucketName);
+                    .WithBucket(args.BucketName);
 
                 var found = await _minioClient!.BucketExistsAsync(bktExistArgs, cancellationToken).ConfigureAwait(false);
 
                 if (!found)
                 {
                     var mkBktArgs = new MakeBucketArgs()
-                        .WithBucket(bucketName);
+                        .WithBucket(args.BucketName);
                     await _minioClient.MakeBucketAsync(mkBktArgs, cancellationToken).ConfigureAwait(false);
                 }
 
@@ -157,8 +155,8 @@ namespace FilePocket.Application.Services
                 using var stream = new MemoryStream(fileBytes);
 
                 var putObjectArgs = new PutObjectArgs()
-                    .WithBucket(bucketName)
-                    .WithObject(objectName)
+                    .WithBucket(args.BucketName)
+                    .WithObject(args.ObjectName)
                     .WithStreamData(stream)
                     .WithContentType(contentType)
                     .WithObjectSize(contentLength);

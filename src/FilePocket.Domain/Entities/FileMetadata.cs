@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace FilePocket.Domain.Entities;
 
-public class FileMetadata : IAmSoftDeletedEntity
+public class FileMetadata : IAmSoftDeletedEntity, IBaseMetadata
 {
     public FileMetadata() { }
 

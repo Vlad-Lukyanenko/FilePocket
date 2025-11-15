@@ -1,5 +1,6 @@
 ﻿using FilePocket.Application.Interfaces.Repositories;
 using FilePocket.Domain.Entities;
+using FilePocket.Domain.Entities.Abstractions;
 using FilePocket.Domain.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -44,7 +45,7 @@ namespace FilePocket.Infrastructure.Persistence.Repositories
             return sharedFile;
         }
 
-        public async Task<DownloadFileModel?> GetFileBodyAsync(Guid sharedFileId)
+        public async Task<IBaseMetadata?> GetFileBaseMetadataAsync(Guid sharedFileId)
         {
             var sharedFile = await DbContext.SharedFiles
                             .Where(sf => sf.Id == sharedFileId)
@@ -52,23 +53,15 @@ namespace FilePocket.Infrastructure.Persistence.Repositories
                                   sf => sf.FileId,
                                   fl => fl.Id,
                                   (sf, fl) => new { sf, fl })
-                            .Select(x => new
+                            .Select(x => new FileBaseMetadata()
                             {
-                                x.fl.Path,
-                                x.fl.ActualName
+                                Id = x.fl.Id,
+                                Path = x.fl.Path,
+                                ActualName = x.fl.ActualName
                             })
                             .SingleOrDefaultAsync();
 
-            var fullPath = sharedFile!.Path != null
-                            ? Path.Combine(sharedFile.Path, sharedFile.ActualName)
-                            : string.Empty;
-
-            var fileByteArray = await File.ReadAllBytesAsync(fullPath);
-
-            return new DownloadFileModel()
-            {
-                File = fileByteArray
-            };
+            return sharedFile;
         }
 
         public Task<SharedFile?> GetByIdAsync(Guid sharedFileId)
