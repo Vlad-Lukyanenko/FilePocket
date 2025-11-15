@@ -9,10 +9,10 @@ namespace FilePocket.WebApi.Endpoints.Notes
 {
     public class GetAllNotesEndpoint : BaseEndpointWithoutRequest<IEnumerable<NoteModel>>
     {
-        private readonly IServiceManager _service;
-        public GetAllNotesEndpoint(IServiceManager service)
+        private readonly IFileService _minioFileService;
+        public GetAllNotesEndpoint(IFileService minioFileService)
         {
-            _service = service;
+            _minioFileService = minioFileService;
         }
 
         public override void Configure()
@@ -24,7 +24,7 @@ namespace FilePocket.WebApi.Endpoints.Notes
 
         public override async Task HandleAsync(CancellationToken cancellationToken)
         {
-            var notes = await _service.FileService.GetAllNotesMetadataAsync(UserId, FolderId, false);
+            var notes = await _minioFileService.GetAllNotesMetadataAsync(UserId, FolderId, false);
 
             if (notes == null)
             {

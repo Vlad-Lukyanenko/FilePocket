@@ -6,11 +6,11 @@ namespace FilePocket.WebApi.Endpoints.Notes
 {
     public class UpdateNoteEndpoint : BaseEndpointWithoutResponse<NoteModel>
     {
-        private readonly IServiceManager _service;
+        private readonly IFileService _minioFileService;
 
-        public UpdateNoteEndpoint(IServiceManager service)
+        public UpdateNoteEndpoint(IFileService minioFileService)
         {
-            _service = service;
+            _minioFileService = minioFileService;
         }
 
         public override void Configure()
@@ -22,7 +22,7 @@ namespace FilePocket.WebApi.Endpoints.Notes
         public override async Task HandleAsync(NoteModel note, CancellationToken cancellationToken)
         {
 
-            var result = await _service.FileService.UpdateNoteContentFileAsync(note, cancellationToken);
+            var result = await _minioFileService.UpdateNoteContentFileAsync(note, cancellationToken);
 
             await SendOkAsync(result, cancellationToken);
         }

@@ -8,10 +8,13 @@ namespace FilePocket.WebApi.Endpoints.Trash
     public class GetTrashItemEndpoint : BaseEndpointWithoutRequest<SearchResponseModel>
     {
         private readonly IServiceManager _service;
+        private readonly IFileService _minioFileService;
 
-        public GetTrashItemEndpoint(IServiceManager service)
+
+        public GetTrashItemEndpoint(IServiceManager service, IFileService minioFileService)
         {
             _service = service;
+            _minioFileService = minioFileService;
         }
 
         public override void Configure()
@@ -34,7 +37,7 @@ namespace FilePocket.WebApi.Endpoints.Trash
 
             SearchResponseModel? item = itemType.ToLower() switch
             {
-                "file" => await _service.FileService.GetSoftDeletedAsync(itemId),
+                "file" => await _minioFileService.GetSoftDeletedAsync(itemId),
                 "bookmark" => await _service.BookmarkService.GetSoftDeletedAsync(itemId),
                 "folder" => await _service.FolderService.GetSoftDeletedAsync(itemId),
                 _ => throw new NotSupportedException($"Item type '{itemType}' is not supported.")

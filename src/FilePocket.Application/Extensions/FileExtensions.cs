@@ -1,6 +1,7 @@
 ﻿using FilePocket.Application.Exceptions;
 using FilePocket.Domain;
 using FilePocket.Domain.Entities;
+using FilePocket.Domain.Models;
 
 namespace FilePocket.Application.Extensions;
 

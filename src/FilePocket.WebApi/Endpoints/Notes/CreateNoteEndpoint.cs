@@ -6,11 +6,11 @@ namespace FilePocket.WebApi.Endpoints.Notes
 {
     public class CreateNoteEndpoint : BaseEndpointWithoutResponse<NoteCreateModel>
     {
-        private readonly IServiceManager _service;
+        private readonly IFileService _minioFileService;
 
-        public CreateNoteEndpoint(IServiceManager service)
+        public CreateNoteEndpoint(IFileService minioFileService)
         {
-            _service = service;
+            _minioFileService = minioFileService;
         }
 
         public override void Configure()
@@ -21,7 +21,7 @@ namespace FilePocket.WebApi.Endpoints.Notes
 
         public override async Task HandleAsync(NoteCreateModel note, CancellationToken cancellationToken)
         {
-            var result = await _service.FileService.CreateNoteContentFileAsync(note, cancellationToken);
+            var result = await _minioFileService.CreateNoteContentFileAsync(note, cancellationToken);
 
             await SendOkAsync(result, cancellationToken);
         }

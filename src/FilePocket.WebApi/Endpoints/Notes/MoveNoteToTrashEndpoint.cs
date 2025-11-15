@@ -5,10 +5,10 @@ namespace FilePocket.WebApi.Endpoints.Notes
 {
     public class MoveNoteToTrashEndpoint: BaseEndpointWithoutRequestAndResponse
     {
-        private readonly IServiceManager _service;
-        public MoveNoteToTrashEndpoint(IServiceManager service)
+        private readonly IFileService _minioFileService;
+        public MoveNoteToTrashEndpoint(IFileService minioFileService)
         {
-            _service = service;
+            _minioFileService = minioFileService;
         }
         public override void Configure()
         {
@@ -18,7 +18,7 @@ namespace FilePocket.WebApi.Endpoints.Notes
         public override async Task HandleAsync(CancellationToken cancellationToken)
         {
             var id = Route<Guid>("id"); 
-            var result = await _service.FileService.MoveToTrash(UserId, id, cancellationToken);
+            var result = await _minioFileService.MoveToTrash(UserId, id, cancellationToken);
 
             if (result)
             {

@@ -21,11 +21,12 @@ public class ServiceManager(
     IFolderService folderService,
     IFileService fileService,
     IEncryptionService encryptionService,
-    IHtmlParserService htmlParserService)
+    IHtmlParserService htmlParserService,
+    IMinioService minioService)
     : IServiceManager
 {
     private readonly Lazy<IPocketService> _pocketService = new(() => new PocketService(repositoryManager, mapper, configuration));
-    private readonly Lazy<ISharedFileService> _sharedFileService = new(() => new SharedFileService(repositoryManager, mapper));
+    private readonly Lazy<ISharedFileService> _sharedFileService = new(() => new SharedFileService(repositoryManager, mapper, minioService));
     private readonly Lazy<IFileService> _fileService = new(() => new FileService(repositoryManager, configuration, imageService, encryptionService, mapper));
     private readonly Lazy<IFolderService> _folderService = new(() => new FolderService(repositoryManager, fileService, mapper));
     private readonly Lazy<IAuthenticationService> _authenticationService = new(() => new AuthenticationService(logger, userManager, options, consumptionOptions, mapper));

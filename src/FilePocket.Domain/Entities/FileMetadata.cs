@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace FilePocket.Domain.Entities;
 
-public class FileMetadata : IAmSoftDeletedEntity
+public class FileMetadata : IAmSoftDeletedEntity, IBaseMetadata
 {
     public FileMetadata() { }
 
@@ -12,7 +12,7 @@ public class FileMetadata : IAmSoftDeletedEntity
         string originalName, string actualName,
         string path, FileTypes fileType, double fileSize,
         Guid pocketId, Guid? folderId,
-        bool isDeleted, 
+        bool isDeleted,
         DateTime createdAt)
     {
         Id = id;
@@ -29,7 +29,7 @@ public class FileMetadata : IAmSoftDeletedEntity
         FileSize = fileSize;
 
         IsDeleted = isDeleted;
-        
+
         CreatedAt = createdAt;
     }
 

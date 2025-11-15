@@ -5,10 +5,10 @@ namespace FilePocket.WebApi.Endpoints.Notes
 {
     public class DeleteNoteEndpoint : BaseEndpointWithoutRequestAndResponse
     {
-        private readonly IServiceManager _service;
-        public DeleteNoteEndpoint(IServiceManager service)
+        private readonly IFileService _minoService;
+        public DeleteNoteEndpoint(IFileService minioFileService)
         {
-            _service = service;
+            _minoService = minioFileService;
         }
         public override void Configure()
         {
@@ -18,7 +18,7 @@ namespace FilePocket.WebApi.Endpoints.Notes
         public override async Task HandleAsync(CancellationToken cancellationToken)
         {
             var id = Route<Guid>("id");
-            var result = await _service.FileService.RemoveFileAsync(UserId, id, cancellationToken);
+            var result = await _minoService.RemoveFileAsync(UserId, id, cancellationToken);
 
             if (result)
             {

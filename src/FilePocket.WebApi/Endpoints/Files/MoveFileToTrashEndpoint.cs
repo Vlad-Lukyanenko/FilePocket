@@ -7,11 +7,11 @@ namespace FilePocket.WebApi.Endpoints.Files;
 
 public class MoveFileToTrashEndpoint : BaseEndpointWithoutRequestAndResponse
 {
-    private readonly IServiceManager _service;
+    private readonly IFileService _minioFileService;
 
-    public MoveFileToTrashEndpoint(IServiceManager service)
+    public MoveFileToTrashEndpoint(IFileService minioFileService)
     {
-        _service = service;
+        _minioFileService = minioFileService;
     }
 
     public override void Configure()
@@ -23,7 +23,7 @@ public class MoveFileToTrashEndpoint : BaseEndpointWithoutRequestAndResponse
     public override async Task HandleAsync(CancellationToken cancellationToken)
     {
         var fileId = Route<Guid>("fileId");
-        await _service.FileService.MoveToTrash(UserId, fileId);
+        await _minioFileService.MoveToTrash(UserId, fileId);
 
         await SendNoContentAsync();
     }

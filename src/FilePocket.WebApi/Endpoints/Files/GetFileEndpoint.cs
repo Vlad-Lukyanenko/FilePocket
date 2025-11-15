@@ -11,11 +11,11 @@ namespace FilePocket.WebApi.Endpoints.Files
 {
     public class GetFileEndpoint : BaseEndpointWithoutRequest<FileResponseModel>
     {
-        private readonly IServiceManager _service;
+        private readonly IFileService _minioFileService;
 
-        public GetFileEndpoint(IServiceManager service)
+        public GetFileEndpoint(IFileService minioFileService)
         {
-            _service = service;
+            _minioFileService = minioFileService;
         }
 
         public override void Configure()
@@ -27,15 +27,15 @@ namespace FilePocket.WebApi.Endpoints.Files
         public override async Task HandleAsync(CancellationToken cancellationToken)
         {
             var fileId = Route<Guid>("fileId");
-            var file = await _service.FileService.GetFileByUserIdAndIdAsync(UserId, fileId);
+            var minioFile = await _minioFileService.GetFileByUserIdAndIdAsync(UserId, fileId);
 
-            if (file == null)
+            if (minioFile == null)
             {
                 await SendNotFoundAsync(cancellationToken);
                 return;
             }
 
-            await SendOkAsync(file, cancellationToken);
+            await SendOkAsync(minioFile, cancellationToken);
         }
     }
 }

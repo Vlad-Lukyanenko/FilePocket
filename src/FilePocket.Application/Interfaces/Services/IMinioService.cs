@@ -1,14 +1,31 @@
-﻿using FilePocket.Domain.Models;
+﻿using FilePocket.Domain;
+using FilePocket.Domain.Entities;
+using FilePocket.Domain.Models;
 using Microsoft.AspNetCore.Http;
+using Minio;
 
 namespace FilePocket.Application.Interfaces.Services
 {
     public interface IMinioService
     {
-        Task UploadFileAsync(IFormFile file, string bucketName, string objectName, string contentType, CancellationToken cancellationToken = default);
-        Task<FileResponseModel> DownloadFileAsync(string bucketName, string objectName, CancellationToken cancellationToken = default);
-        Task DeleteFileAsync(string bucketName, string objectName, CancellationToken cancellationToken = default);
-        Task<bool> DoesObjectExistAsync(string bucketName, string objectName, CancellationToken cancellationToken = default);
+        IMinioClient Client { get; }
+
+        string BucketName { get; }
+
+        Task<long> WriteObjectAsync(
+            IFormFile file,
+            MinioActionArgs args,
+            CancellationToken cancellationToken = default);
+
+        Task<long> WriteObjectAsync(
+            byte[] data,
+            string contentType,
+            MinioActionArgs args,
+            CancellationToken cancellationToken = default);
+
+        Task<byte[]> GetObjectAsBytesAsync(MinioActionArgs args);
+        Task<bool> DeleteObjectAsync(MinioActionArgs args, CancellationToken cancellationToken = default);
+        Task<bool> ObjectExistsAsync(MinioActionArgs args, CancellationToken cancellationToken = default);
         Task CreateBucketIfNotExistsAsync(string bucketName, CancellationToken cancellationToken = default);
     }
 }

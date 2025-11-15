@@ -11,10 +11,10 @@ namespace FilePocket.WebApi.Endpoints.Files
 {
     public class UpdateFileEndpoint : BaseEndpointWithoutResponse<UpdateFileModel>
     {
-        private readonly IServiceManager _service;
-        public UpdateFileEndpoint(IServiceManager service)
+        private readonly IFileService _minioFileService;
+        public UpdateFileEndpoint(IFileService minioFileService)
         {
-            _service = service;
+            _minioFileService = minioFileService;
         }
         public override void Configure()
         {
@@ -27,7 +27,7 @@ namespace FilePocket.WebApi.Endpoints.Files
 
             try
             {
-                await _service.FileService.UpdateFileAsync(request);
+                await _minioFileService.UpdateFileAsync(request);
                 await SendNoContentAsync(cancellationToken);
             }
             catch

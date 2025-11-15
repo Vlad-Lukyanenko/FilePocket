@@ -17,7 +17,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
+using Minio;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -85,6 +87,7 @@ builder.Services.Configure<AdminSeedingDataModel>(builder.Configuration.GetSecti
 builder.Services.Configure<AccountConsumptionConfigurationModel>(builder.Configuration.GetSection(key: AccountConsumptionConfigurationModel.Section));
 builder.Services.Configure<JwtConfigurationModel>(builder.Configuration.GetSection("JwtSettings"));
 builder.Services.Configure<ApiKeyConfigurationModel>(builder.Configuration.GetSection("ApiKeySettings"));
+builder.Services.Configure<MinioConfigurationModel>(builder.Configuration.GetSection("Minio"));
 builder.Services.AddHostedService<InitialRolesAndAdminSeeding>();
 
 // Add services to the container.
@@ -126,6 +129,17 @@ builder.Services.AddHangfire(config =>
 });
 builder.Services.AddHangfireServer();
 
+builder.Services.AddSingleton<IMinioClient>(sp =>
+{
+    var config = sp.GetRequiredService<IOptions<MinioConfigurationModel>>().Value;
+
+    return new MinioClient()
+        .WithEndpoint(config.Endpoint)
+        .WithCredentials(config.AccessKey, config.SecretKey)
+        .Build();
+});
+
+
 builder.Services.AddScoped<IRepositoryManager, RepositoryManager>();
 builder.Services.AddScoped<IImageService, ImageService>();
 builder.Services.AddScoped<IEncryptionService, EncryptionService>();
@@ -133,9 +147,11 @@ builder.Services.AddSingleton<IUploadService, UploadService>();
 builder.Services.AddScoped<IServiceManager, ServiceManager>();
 builder.Services.AddScoped<IBookmarkService, BookmarkService>();
 builder.Services.AddScoped<IFileService, FileService>();
+builder.Services.AddScoped<IFileService, MinioFileService>();
 builder.Services.AddScoped<IFolderService, FolderService>();
 builder.Services.AddScoped<ITrashService, TrashService>();
 builder.Services.AddScoped<IHtmlParserService, HtmlParserService>();
+builder.Services.AddScoped<IMinioService, MinioService>();
 builder.Services.AddScoped<JwtOrApiKeyAuthorizeAttribute>();
 
 var app = builder.Build();
